@@ -1,5 +1,5 @@
-import Spacer from '@/app/components/Spacer';
-import AccountDropdown from '@/app/components/AccountDropdown';
+import Spacer from '@/components/Spacer';
+import AccountDropdown from '@/components/AccountDropdown';
 
 export default function Navbar() {
     return (

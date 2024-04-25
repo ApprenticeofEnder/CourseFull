@@ -1,13 +1,21 @@
 import Image from 'next/image';
-import Navbar from './components/Navbar';
-import Spacer from './components/Spacer';
-
-export default function Home() {
+import Navbar from '@/components/Navbar';
+import Spacer from '@/components/Spacer';
+import { createClient } from '@/supabase/client';
+export default async function Home() {
+    const supabase = createClient();
+    const {
+        data: { user },
+        error,
+    } = await supabase.auth.getUser();
+    console.log(user);
     return (
         <main>
             <Navbar />
             <Spacer>
-                <h1 className="italic">Hello!</h1>
+                <div>
+                    <h1>Hey, friend!</h1>
+                </div>
             </Spacer>
         </main>
     );
