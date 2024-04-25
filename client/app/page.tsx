@@ -2,6 +2,8 @@ import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Spacer from '@/components/Spacer';
 import { createClient } from '@/supabase/client';
+import AnonHomeStatus from '@/components/HomeStatus/AnonHomeStatus';
+import HomeStatus from '@/components/HomeStatus/HomeStatus';
 export default async function Home() {
     const supabase = createClient();
     const {
@@ -15,6 +17,7 @@ export default async function Home() {
             <Spacer>
                 <div>
                     <h1>Hey, friend!</h1>
+                    {user ? <HomeStatus user={user} /> : <AnonHomeStatus />}
                 </div>
             </Spacer>
         </main>
