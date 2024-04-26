@@ -10,14 +10,15 @@ export default async function Home() {
         data: { user },
         error,
     } = await supabase.auth.getUser();
-    console.log(user);
     return (
         <main>
             <Navbar />
             <Spacer>
-                <div>
-                    <h1>Hey, friend!</h1>
-                    {user ? <HomeStatus user={user} /> : <AnonHomeStatus />}
+                <div className="relative py-10 flex justify-center h-dvh">
+                    <div className="flex flex-col justify-center max-w-full">
+                        <h1 className="text-6xl text-center">Hey, friend!</h1>
+                        {user ? <HomeStatus user={user} /> : <AnonHomeStatus />}
+                    </div>
                 </div>
             </Spacer>
         </main>

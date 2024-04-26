@@ -42,10 +42,12 @@ export default function AccountDropdown() {
     return (
         <Menu as="div" className="relative ml-3">
             <div>
-                <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                    <span className="absolute -inset-1.5" />
+                <Menu.Button className="button text-sm rounded-md button-outer">
                     <span className="sr-only">Open user menu</span>
-                    <UserCircleIcon className="h-8 w-8 rounded-full"></UserCircleIcon>
+                    <div className="button rounded-md button-inner flex">
+                        <UserCircleIcon className="h-8 w-8 rounded-full"></UserCircleIcon>
+                        <div className="p-1 text-lg">You</div>
+                    </div>
                 </Menu.Button>
             </div>
             <Transition
@@ -64,7 +66,7 @@ export default function AccountDropdown() {
                                 <a
                                     href={menuItem.href}
                                     className={classNames(
-                                        active ? 'bg-gray-100' : '',
+                                        active ? 'bg-gray-200' : '',
                                         'block px-4 py-2 text-sm text-gray-700'
                                     )}
                                 >

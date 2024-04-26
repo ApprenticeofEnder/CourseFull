@@ -3,9 +3,11 @@ import AccountDropdown from '@/components/AccountDropdown';
 
 export default function Navbar() {
     return (
-        <nav className="bg-gray-800">
+        <nav
+        // className="bg-gray-800"
+        >
             <Spacer>
-                <div className="relative flex h-16 items-center justify-between">
+                <div className="relative flex h-20 items-center justify-between">
                     <h1>
                         <span className="sr-only">CourseFull</span>
                         CourseFull
