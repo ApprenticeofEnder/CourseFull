@@ -28,6 +28,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_25_040322) do
   enable_extension "pgcrypto"
   enable_extension "pgjwt"
   enable_extension "pgsodium"
+  enable_extension "pgtap"
   enable_extension "plpgsql"
   enable_extension "supabase_vault"
   enable_extension "uuid-ossp"
