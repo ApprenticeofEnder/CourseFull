@@ -1,10 +1,10 @@
 class CreateDeliverables < ActiveRecord::Migration[7.1]
   def change
     create_table :deliverables do |t|
-      t.string :name
-      t.float :weight
-      t.float :mark
-      t.text :notes
+      t.string :name, null: false
+      t.float :weight, null: false
+      t.float :mark, null: false
+      t.text :notes, null: false
 
       t.timestamps
     end

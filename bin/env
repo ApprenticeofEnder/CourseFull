@@ -1,0 +1,3 @@
+#!/bin/bash -e
+
+op run --env-file=.env.tpl -- bash -i

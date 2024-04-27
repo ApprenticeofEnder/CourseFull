@@ -33,23 +33,23 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_25_040322) do
   enable_extension "uuid-ossp"
 
   create_table "courses", force: :cascade do |t|
-    t.string "title"
-    t.string "course_code"
+    t.string "title", null: false
+    t.string "course_code", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "deliverables", force: :cascade do |t|
-    t.string "name"
-    t.float "weight"
-    t.float "mark"
-    t.text "notes"
+    t.string "name", null: false
+    t.float "weight", null: false
+    t.float "mark", null: false
+    t.text "notes", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "semesters", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
