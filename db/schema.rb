@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_25_040322) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_27_235359) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -37,6 +37,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_25_040322) do
     t.string "course_code", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "semester_id"
+    t.index ["semester_id"], name: "index_courses_on_semester_id"
   end
 
   create_table "deliverables", force: :cascade do |t|
@@ -46,6 +48,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_25_040322) do
     t.text "notes", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "course_id"
+    t.index ["course_id"], name: "index_deliverables_on_course_id"
   end
 
   create_table "semesters", force: :cascade do |t|
@@ -54,4 +58,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_25_040322) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "courses", "semesters"
+  add_foreign_key "deliverables", "courses"
 end

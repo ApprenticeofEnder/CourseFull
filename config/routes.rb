@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
-  scope '/api/v1' do
-    resources :deliverables
-    resources :semesters
-    resources :courses
+  namespace :api, defaults: {format: 'json'} do
+    namespace :v1  do
+      resources :semesters do
+        resources :courses do
+          resources :deliverables 
+        end
+      end
+    end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
