@@ -5,7 +5,7 @@ class Semester < ApplicationRecord
   has_many :courses, dependent: :destroy
   validates :name, presence: true, length: { minimum: 2, maximum: 150 }
   validates :goal, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
-  enum :status, [:not_started, :active, :complete]
+  enum :status, [:not_started, :active, :complete], default: :not_started
 
   def update_goal()
     self.set_goal(self.goal)
