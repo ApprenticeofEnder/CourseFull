@@ -18,9 +18,9 @@ module Api
 
       # POST /deliverables
       def create
-        @deliverable = Deliverable.new(deliverable_params)
-
+        @deliverable = @course.deliverables.build(deliverable_params)
         if @deliverable.save
+          @course.update_goal()
           render json: @deliverable, status: :created
         else
           render json: @deliverable.errors, status: :unprocessable_entity
@@ -30,7 +30,7 @@ module Api
       # PATCH/PUT /deliverables/1
       def update
         if @deliverable.update(deliverable_params)
-          # Update goals here
+          @course.update_goal()
           render json: @deliverable
         else
           render json: @deliverable.errors, status: :unprocessable_entity
@@ -43,19 +43,20 @@ module Api
       end
 
       private
-        def get_course
-          @course = Course.find(params[:course_id])
-        end
 
-        # Use callbacks to share common setup or constraints between actions.
-        def set_deliverable
-          @deliverable = @course.deliverables.find(params[:id])
-        end
+      def get_course
+        @course = Course.find(params[:course_id])
+      end
 
-        # Only allow a list of trusted parameters through.
-        def deliverable_params
-          params.require(:deliverable).permit(:name, :weight, :mark, :notes, :course_id)
-        end
+      # Use callbacks to share common setup or constraints between actions.
+      def set_deliverable
+        @deliverable = @course.deliverables.find(params[:id])
+      end
+
+      # Only allow a list of trusted parameters through.
+      def deliverable_params
+        params.require(:deliverable).permit(:name, :weight, :mark, :notes, :course_id)
+      end
     end
   end
 end

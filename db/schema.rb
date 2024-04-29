@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_27_235359) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_29_203912) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -38,6 +38,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_27_235359) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "semester_id"
+    t.integer "status", default: 0, null: false
+    t.float "goal", default: 0.0, null: false
+    t.float "grade", default: 0.0, null: false
+    t.float "deliverable_goal", default: 0.0, null: false
     t.index ["semester_id"], name: "index_courses_on_semester_id"
   end
 
@@ -49,6 +53,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_27_235359) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "course_id"
+    t.integer "status", default: 0, null: false
+    t.float "goal", default: 0.0, null: false
     t.index ["course_id"], name: "index_deliverables_on_course_id"
   end
 
@@ -56,6 +62,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_27_235359) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 0, null: false
+    t.float "goal", default: 0.0, null: false
   end
 
   add_foreign_key "courses", "semesters"
