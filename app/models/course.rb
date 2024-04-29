@@ -22,8 +22,6 @@ class Course < ApplicationRecord
     goal_calculator = GoalCalculator.new(goal)
     self.deliverables.complete.all do |deliverable|
       goal_calculator.add_mark(deliverable.mark, deliverable.weight)
-      # earned_points += (deliverable.mark_dec * deliverable.weight)
-      # completed_weight += deliverable.weight
     end
 
     self.deliverable_goal = goal_calculator.deliverable_goal

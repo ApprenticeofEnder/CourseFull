@@ -2,7 +2,7 @@ require "rails_helper"
 require "factory_bot"
 
 RSpec.describe "Semesters", type: :request do
-  let(:semester) { build(:semester) }
+  let(:semester) { create(:semester) }
   context "GET /api/v1/semesters" do
     it "should get the semesters without error" do
       get "/api/v1/semesters"
