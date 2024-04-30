@@ -8,7 +8,7 @@ import {
     XMarkIcon,
     UserCircleIcon,
 } from '@heroicons/react/24/outline';
-
+import { SessionProps } from '@/lib/types';
 /**
  * @param classes Tailwind CSS class strings as arguments
  * @returns A space separated list of classes,
@@ -23,7 +23,7 @@ type MenuItem = {
     text: string;
 };
 
-const menuItems: MenuItem[] = [
+let menuItemsAuth: MenuItem[] = [
     {
         href: '#',
         text: 'Your Profile',
@@ -38,15 +38,36 @@ const menuItems: MenuItem[] = [
     },
 ];
 
-export default function AccountDropdown() {
+let menuItemsAnon: MenuItem[] = [
+    {
+        href: '/login',
+        text: 'Login',
+    },
+    {
+        href: '/signup',
+        text: 'Sign Up',
+    },
+];
+
+let userIconAnon = (
+    <Fragment>
+        <UserCircleIcon className="h-8 w-8 rounded-full"></UserCircleIcon>
+        <div className="p-1 text-lg">Anon</div>
+    </Fragment>
+);
+
+export default function AccountDropdown({ session }: SessionProps) {
+    let userIcon = userIconAnon;
+    let menuItems = menuItemsAnon;
+    if (session) {
+    }
     return (
         <Menu as="div" className="relative ml-3">
             <div>
                 <Menu.Button className="button text-sm rounded-md button-outer">
                     <span className="sr-only">Open user menu</span>
                     <div className="button rounded-md button-inner flex">
-                        <UserCircleIcon className="h-8 w-8 rounded-full"></UserCircleIcon>
-                        <div className="p-1 text-lg">You</div>
+                        {userIcon}
                     </div>
                 </Menu.Button>
             </div>

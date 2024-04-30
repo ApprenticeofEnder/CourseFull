@@ -1,6 +1,8 @@
 'use client';
 
 import { Fragment } from 'react';
+import Link from 'next/link';
+
 import Button from '@/components/Button/Button';
 
 export default function AnonHomeStatus() {
@@ -11,22 +13,14 @@ export default function AnonHomeStatus() {
             </div>
             <div className="grid grid-cols-6 gap-4 text-center">
                 <div className="col-start-2 col-end-4">
-                    <Button
-                        onClick={() => {
-                            console.log('Login!');
-                        }}
-                    >
-                        Login
-                    </Button>
+                    <Link href="/login">
+                        <Button>Login</Button>
+                    </Link>
                 </div>
                 <div className="col-start-4 col-end-6">
-                    <Button
-                        onClick={() => {
-                            console.log('Sign up!');
-                        }}
-                    >
-                        Sign Up
-                    </Button>
+                    <Link href="/signup">
+                        <Button>Sign Up</Button>
+                    </Link>
                 </div>
             </div>
         </Fragment>

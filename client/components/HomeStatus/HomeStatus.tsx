@@ -1,7 +1,5 @@
-type Props = {
-    user: any;
-};
+import { SessionProps } from '@/lib/types';
 
-export default function HomeStatus({ user }: Props) {
+export default function HomeStatus({ session }: SessionProps) {
     return <></>;
 }

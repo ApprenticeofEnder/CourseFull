@@ -1,7 +1,11 @@
 import Spacer from '@/components/Spacer';
 import AccountDropdown from '@/components/AccountDropdown';
 
-export default function Navbar() {
+type Props = {
+    session: any;
+};
+
+export default function Navbar({ session }: Props) {
     return (
         <nav
         // className="bg-gray-800"
@@ -12,7 +16,7 @@ export default function Navbar() {
                         <span className="sr-only">CourseFull</span>
                         CourseFull
                     </h1>
-                    <AccountDropdown />
+                    <AccountDropdown session={session} />
                 </div>
             </Spacer>
         </nav>
