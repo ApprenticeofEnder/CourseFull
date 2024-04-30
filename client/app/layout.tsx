@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Atkinson_Hyperlegible } from 'next/font/google';
+import { NextUIProvider } from '@nextui-org/react';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -26,7 +27,7 @@ export default function RootLayout({
                     'bg-neutral-50 dark:bg-neutral-950 text-neutral-950 dark:text-neutral-50'
                 }
             >
-                {children}
+                <NextUIProvider>{children}</NextUIProvider>
             </body>
         </html>
     );

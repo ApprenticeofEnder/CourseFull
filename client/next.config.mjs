@@ -3,15 +3,15 @@ const nextConfig = {
     images: {
         unoptimized: true,
     },
-    // Miiiight need this later? not sure
-    // async rewrites() {
-    //     return [
-    //         {
-    //             source: '/api/v1/:endpoint*',
-    //             destination: 'http://localhost:8080/api/v1/:endpoint*',
-    //         },
-    //     ];
-    // },
+    async rewrites() {
+        const proxies = [
+            {
+                source: '/api/v1/:endpoint*',
+                destination: 'http://localhost:8080/api/v1/:endpoint*',
+            },
+        ];
+        return process.env.NODE_ENV === 'production' ? [] : proxies;
+    },
 };
 
 export default nextConfig;
