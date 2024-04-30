@@ -20,6 +20,7 @@ module Api
       def create
         @course = @semester.courses.build(course_params)
         @course.goal = @semester.goal
+        @course.deliverable_goal = @semester.goal
         if @course.save
           render json: @course, status: :created
         else
@@ -29,6 +30,7 @@ module Api
 
       # PATCH/PUT /courses/1
       def update
+        @course.assign_attributes(course_params)
         if @course.update(course_params)
           render json: @course
         else

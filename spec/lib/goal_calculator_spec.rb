@@ -64,4 +64,36 @@ RSpec.describe GoalCalculator do
       expect(calculator.deliverable_goal).to eq(65)
     end
   end
+
+  context "the completed results" do
+    results = [
+      [75, 6],
+      [50, 6],
+      [90, 6],
+      [80, 6],
+      [78, 6],
+      [82, 30],
+      [85, 40],
+    ]
+
+    it "should have a goal of 0% for remaining coursework" do
+      calculator = GoalCalculator.new(goal)
+
+      results.each do |result|
+        calculator.add_mark(result[0], result[1])
+      end
+
+      expect(calculator.deliverable_goal).to eq(0)
+    end
+
+    it "should be completed" do
+      calculator = GoalCalculator.new(goal)
+
+      results.each do |result|
+        calculator.add_mark(result[0], result[1])
+      end
+
+      expect(calculator.complete?).to eq(true)
+    end
+  end
 end

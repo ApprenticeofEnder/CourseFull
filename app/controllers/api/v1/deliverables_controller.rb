@@ -19,8 +19,8 @@ module Api
       # POST /deliverables
       def create
         @deliverable = @course.deliverables.build(deliverable_params)
+        @deliverable.goal = @course.deliverable_goal
         if @deliverable.save
-          @course.update_goal()
           render json: @deliverable, status: :created
         else
           render json: @deliverable.errors, status: :unprocessable_entity
@@ -55,7 +55,7 @@ module Api
 
       # Only allow a list of trusted parameters through.
       def deliverable_params
-        params.require(:deliverable).permit(:name, :weight, :mark, :notes, :course_id)
+        params.require(:deliverable).permit(:name, :weight, :mark, :notes, :status, :course_id)
       end
     end
   end

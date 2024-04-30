@@ -30,7 +30,7 @@ class GoalCalculator
     return @weight_remaining > 0
   end
 
-  def completed?
+  def complete?
     return @weight_completed >= 100
   end
 
@@ -43,7 +43,7 @@ class GoalCalculator
   end
 
   def grade
-    if self.completed?
+    if self.complete?
       raw_result = 100 * @earned_points / @completed_weight.round(2)
       return raw_result.round(2)
     end
