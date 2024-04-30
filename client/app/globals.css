@@ -4,28 +4,25 @@
 @tailwind components;
 @tailwind utilities;
 
-.button {
-  @apply bg-neutral-700 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-950
-}
-
-.button-inner {
-  @apply transition motion-reduce:transition-none p-2 m-0.5 border-neutral-700 dark:border-neutral-50 active:bg-lime-500 active:dark:bg-lime-400 active:border-lime-600 active:dark:border-lime-500 border-2;
-}
-
-.button-outer {
-  @apply transition motion-reduce:transition-none pb-2 hover:translate-y-1 hover:pb-1 active:translate-y-2 active:pb-0 bg-neutral-500 dark:bg-neutral-400;
-}
-
-.button-outer__clicked {
-  @apply translate-y-2 pb-0
-}
-
-.button-inner__clicked {
-  @apply bg-lime-500 dark:bg-lime-400 border-lime-600 dark:border-lime-500;
-}
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@layer components {
+  .button {
+    background-color: theme('colors.sky.300');
+    border-radius: theme('borderRadius.lg');
+    border: solid theme('borderWidth.2') theme('colors.sky.400');
+    box-shadow: 0 theme('spacing.button-shadow') 0 0 theme('colors.sky.400'), 0 theme('spacing.button-shadow') theme('spacing.button-shadow') 0 rgba(0, 0, 0, 0.4);
+    @apply relative transition motion-reduce:transition-none;
+    @apply active:border-lime-600 active:bg-lime-500 active:translate-y-0 active:shadow-none;
+    @apply -translate-y-2;
+  }
+
+  .button:hover{
+    box-shadow: 0 theme('spacing.button-shadow-hover') 0 0 theme('colors.sky.400'), 0 theme('spacing.button-shadow-hover') theme('spacing.button-shadow-hover') 0 rgba(0, 0, 0, 0.4);
   }
 }

@@ -6,7 +6,7 @@ import Spacer from '@/components/Spacer';
 import AnonHomeStatus from '@/components/HomeStatus/AnonHomeStatus';
 import HomeStatus from '@/components/HomeStatus/HomeStatus';
 
-import useSupabaseSession from '@/supabase/useSupabaseSession';
+import { useSupabaseSession } from '@/supabase';
 
 export default function Home() {
     const session = useSupabaseSession();

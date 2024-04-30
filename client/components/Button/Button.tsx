@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef } from 'react';
+import { MouseEvent, MouseEventHandler, forwardRef } from 'react';
 import {
     useButton,
     Ripple,
@@ -8,7 +8,9 @@ import {
     ButtonProps as BaseButtonProps,
 } from '@nextui-org/react';
 
-export interface ButtonProps extends BaseButtonProps {}
+export interface ButtonProps extends BaseButtonProps {
+    buttonSize?: 'sm' | 'md' | 'lg';
+}
 
 const NDButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     const {
@@ -21,51 +23,38 @@ const NDButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         startContent,
         endContent,
         isLoading,
-        disableRipple,
         getButtonProps,
-        getRippleProps,
     } = useButton({
         ref,
         ...props,
     });
 
-    const { ripples, onClear } = getRippleProps();
+    let buttonSize = props.buttonSize || 'md';
+
+    const sizes = {
+        sm: 'px-2 py-1',
+        md: 'px-3 py-2',
+        lg: 'px-5 py-3',
+    };
 
     return (
         <button
             ref={domRef}
-            className="relative rounded-md button-outer w-full"
+            className={
+                'button hover:-translate-y-1 active:translate-y-0 active:shadow-none ' +
+                sizes[buttonSize]
+            }
             {...getButtonProps()}
         >
-            <div className="button rounded-md button-inner">
-                {startContent}
-                {isLoading && spinnerPlacement === 'start' && spinner}
-                {children}
-                {isLoading && spinnerPlacement === 'end' && spinner}
-                {endContent}
-                {!disableRipple && (
-                    <Ripple ripples={ripples} onClear={onClear} />
-                )}
-            </div>
+            {startContent}
+            {isLoading && spinnerPlacement === 'start' && spinner}
+            {children}
+            {isLoading && spinnerPlacement === 'end' && spinner}
+            {endContent}
         </button>
     );
 });
 
 NDButton.displayName = 'NDButton';
-
-NDButton.defaultProps = {
-    onPressStart: (e) => {
-        e.target.classList.toggle(
-            'button-outer__clicked hover:translate-y-1 hover:pb-1'
-        );
-        e.target.children[0].classList.toggle('button-inner__clicked');
-    },
-    onPressEnd: (e) => {
-        e.target.classList.toggle(
-            'button-outer__clicked hover:translate-y-1 hover:pb-1'
-        );
-        e.target.children[0].classList.toggle('button-inner__clicked');
-    },
-};
 
 export default NDButton;

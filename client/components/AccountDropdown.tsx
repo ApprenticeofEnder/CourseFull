@@ -1,14 +1,11 @@
 'use client';
 
 import { Fragment } from 'react';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
-import {
-    Bars3Icon,
-    BellIcon,
-    XMarkIcon,
-    UserCircleIcon,
-} from '@heroicons/react/24/outline';
+import { Menu, Transition } from '@headlessui/react';
+import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { SessionProps } from '@/lib/types';
+import MenuButton from '@/components/Button/MenuButton';
+
 /**
  * @param classes Tailwind CSS class strings as arguments
  * @returns A space separated list of classes,
@@ -51,8 +48,8 @@ let menuItemsAnon: MenuItem[] = [
 
 let userIconAnon = (
     <Fragment>
-        <UserCircleIcon className="h-8 w-8 rounded-full"></UserCircleIcon>
-        <div className="p-1 text-lg">Anon</div>
+        <UserCircleIcon className="h-6 w-6 rounded-full"></UserCircleIcon>
+        <div className="p-1 text-sm">Anon</div>
     </Fragment>
 );
 
@@ -65,11 +62,9 @@ export default function AccountDropdown({ session }: SessionProps) {
     return (
         <Menu as="div" className="relative ml-3">
             <div>
-                <Menu.Button className="button text-sm rounded-md button-outer">
+                <Menu.Button as={MenuButton}>
                     <span className="sr-only">Open user menu</span>
-                    <div className="button rounded-md button-inner flex">
-                        {userIcon}
-                    </div>
+                    <div className="flex">{userIcon}</div>
                 </Menu.Button>
             </div>
             <Transition

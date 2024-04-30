@@ -15,12 +15,38 @@ const config: Config = {
                 'gradient-conic':
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
             },
+            spacing: {
+                'button-shadow': '8px',
+                'button-shadow-hover': '4px',
+            },
         },
         fontFamily: {
             sans: ['Atkinson\\ Hyperlegible', 'sans-serif'],
         },
     },
     darkMode: 'class',
-    plugins: [nextui()],
+    plugins: [
+        nextui({
+            themes: {
+                light: {
+                    // layout: {},
+                    colors: {
+                        foreground: '#082f49',
+                        background: '#e0f2fe',
+                        primary: {
+                            foreground: '#FFFFFF',
+                            DEFAULT: '#38bdf8',
+                        },
+                        focus: '#e0f2fe',
+                    },
+                },
+                // dark: {
+                //     layout: {},
+                //     colors: {},
+                // },
+            },
+        }),
+        require('@headlessui/tailwindcss'),
+    ],
 };
 export default config;

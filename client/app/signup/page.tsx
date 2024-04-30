@@ -1,7 +1,8 @@
 'use client';
 import Spacer from '@/components/Spacer';
-import useSupabaseSession from '@/supabase/useSupabaseSession';
-import supabase from '@/supabase';
+import Button from '@/components/Button/Button';
+import supabase, { useSupabaseSession } from '@/supabase';
+import { Input } from '@nextui-org/react';
 
 export default function Signup() {
     const session = useSupabaseSession();
@@ -19,11 +20,19 @@ const { data, error } = await supabase.auth.signUp(
     }
   }
 )
-
+<ChevronRightIcon className="rotate-90 h-6 w-6" />
      */
     return (
         <main>
-            <Spacer>Henlo</Spacer>
+            <Spacer>
+                <Input type="email" label="Email" placeholder="Email" />
+                <Input
+                    type="password"
+                    label="Password"
+                    placeholder="Password"
+                />
+                <Button className="bg-red-500">Sign Up</Button>
+            </Spacer>
             {/* 
             Name
             Email
