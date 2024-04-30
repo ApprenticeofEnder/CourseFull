@@ -60,6 +60,7 @@ export default function AccountDropdown({ session }: SessionProps) {
     let userIcon = userIconAnon;
     let menuItems = menuItemsAnon;
     if (session) {
+        menuItems = menuItemsAuth;
     }
     return (
         <Menu as="div" className="relative ml-3">
