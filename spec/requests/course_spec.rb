@@ -120,4 +120,6 @@ RSpec.describe "Courses", type: :request do
       expect(response.status).to eq(404)
     end
   end
+
+  # TODO: Add some better tests
 end

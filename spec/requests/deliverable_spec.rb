@@ -67,7 +67,6 @@ RSpec.describe "Deliverables", type: :request do
       expect(response.parsed_body[:goal]).to_not eq(80.0)
     end
   end
-  # describe "GET /index" do
-  #   pending "add some examples (or delete) #{__FILE__}"
-  # end
+
+  # TODO: Add some better tests
 end

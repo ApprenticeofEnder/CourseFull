@@ -46,4 +46,6 @@ RSpec.describe "Semesters", type: :request do
       expect(response.status).to eq(422)
     end
   end
+
+  # TODO: Add some better tests
 end
