@@ -8,6 +8,8 @@ import {
     ButtonProps as BaseButtonProps,
 } from '@nextui-org/react';
 
+import { classNames } from '@/lib/helpers';
+
 export interface ButtonProps extends BaseButtonProps {
     buttonSize?: 'sm' | 'md' | 'lg';
 }
@@ -40,10 +42,11 @@ const NDButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     return (
         <button
             ref={domRef}
-            className={
-                'button hover:-translate-y-1 active:translate-y-0 active:shadow-none ' +
-                sizes[buttonSize]
-            }
+            className={classNames(
+                'button hover:-translate-y-1 active:translate-y-0 active:shadow-none',
+                sizes[buttonSize],
+                props.className || ''
+            )}
             {...getButtonProps()}
         >
             {startContent}

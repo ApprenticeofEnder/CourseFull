@@ -11,6 +11,16 @@
   }
 }
 
+@layer base {
+  h1 {
+    @apply text-4xl sm:text-6xl text-center;
+  }
+
+  h2 {
+    @apply text-3xl sm:text-4xl text-center;
+  }
+}
+
 @layer components {
   .button {
     background-color: theme('colors.sky.300');
@@ -18,11 +28,21 @@
     border: solid theme('borderWidth.2') theme('colors.sky.400');
     box-shadow: 0 theme('spacing.button-shadow') 0 0 theme('colors.sky.400'), 0 theme('spacing.button-shadow') theme('spacing.button-shadow') 0 rgba(0, 0, 0, 0.4);
     @apply relative transition motion-reduce:transition-none;
-    @apply active:border-lime-600 active:bg-lime-500 active:translate-y-0 active:shadow-none;
+    @apply active:translate-y-0 active:shadow-none;
     @apply -translate-y-2;
   }
 
   .button:hover{
     box-shadow: 0 theme('spacing.button-shadow-hover') 0 0 theme('colors.sky.400'), 0 theme('spacing.button-shadow-hover') theme('spacing.button-shadow-hover') 0 rgba(0, 0, 0, 0.4);
+  }
+
+  .button-confirm {
+    background-color: theme('colors.green.300');
+    border: solid theme('borderWidth.2') theme('colors.green.400');
+    box-shadow: 0 theme('spacing.button-shadow') 0 0 theme('colors.green.400'), 0 theme('spacing.button-shadow') theme('spacing.button-shadow') 0 rgba(0, 0, 0, 0.4);
+  }
+
+  .button-confirm:hover{
+    box-shadow: 0 theme('spacing.button-shadow-hover') 0 0 theme('colors.green.400'), 0 theme('spacing.button-shadow-hover') theme('spacing.button-shadow-hover') 0 rgba(0, 0, 0, 0.4);
   }
 }

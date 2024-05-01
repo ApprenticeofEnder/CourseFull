@@ -5,15 +5,7 @@ import { Menu, Transition } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { SessionProps } from '@/lib/types';
 import MenuButton from '@/components/Button/MenuButton';
-
-/**
- * @param classes Tailwind CSS class strings as arguments
- * @returns A space separated list of classes,
- * or an empty string if no classes are available.
- */
-function classNames(...classes: string[]): string {
-    return classes.filter(Boolean).join(' ');
-}
+import { classNames } from '@/lib/helpers';
 
 type MenuItem = {
     href: string;

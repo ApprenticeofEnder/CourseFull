@@ -23,7 +23,7 @@ export default function Home() {
             <Spacer>
                 <div className="relative py-10 flex justify-center h-dvh">
                     <div className="flex flex-col justify-center max-w-full">
-                        <h1 className="text-6xl text-center">Hey, friend!</h1>
+                        <h1>Hey, friend!</h1>
                         {statusScreen}
                     </div>
                 </div>
