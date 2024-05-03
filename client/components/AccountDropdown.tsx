@@ -5,7 +5,7 @@ import { Menu, Transition } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { SessionProps } from '@/lib/types';
 import MenuButton from '@/components/Button/MenuButton';
-import { classNames } from '@/lib/helpers';
+import { classNames, Endpoints } from '@/lib/helpers';
 
 type MenuItem = {
     href: string;
@@ -22,18 +22,18 @@ let menuItemsAuth: MenuItem[] = [
         text: 'Settings',
     },
     {
-        href: '#',
+        href: Endpoints.LOGOUT,
         text: 'Sign Out',
     },
 ];
 
 let menuItemsAnon: MenuItem[] = [
     {
-        href: '/login',
+        href: Endpoints.LOGIN,
         text: 'Login',
     },
     {
-        href: '/signup',
+        href: Endpoints.SIGN_UP,
         text: 'Sign Up',
     },
 ];

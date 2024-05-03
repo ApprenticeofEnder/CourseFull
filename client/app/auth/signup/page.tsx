@@ -44,7 +44,7 @@ const { data, error } = await supabase.auth.signUp(
             <Spacer>
                 <div className="flex flex-row justify-center">
                     <div className="w-3/4 sm:w-1/2 h-dvh flex flex-col justify-center gap-4">
-                        <h1>CourseFull</h1>
+                        <h1>Sign up for CourseFull</h1>
                         <Input
                             type="email"
                             label="Email"

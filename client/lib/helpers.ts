@@ -6,3 +6,9 @@
 export function classNames(...classes: string[]): string {
     return classes.filter(Boolean).join(' ');
 }
+
+export enum Endpoints {
+    LOGIN = '/auth/login',
+    SIGN_UP = '/auth/signup',
+    LOGOUT = '/auth/logout',
+}
