@@ -1,11 +1,13 @@
 'use client';
 
-import { ElementType, Fragment, ReactElement } from 'react';
+import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { SessionProps } from '@/lib/types';
 import MenuButton from '@/components/Button/MenuButton';
 import { classNames, Endpoints } from '@/lib/helpers';
+
+import { UserMetadata } from '@supabase/supabase-js';
 
 type MenuItem = {
     href: string;
@@ -51,6 +53,8 @@ let menuItems = menuItemsAnon;
 export default function AccountDropdown({ session }: SessionProps) {
     if (session) {
         menuItems = menuItemsAuth;
+        const metadata: UserMetadata = session.user.user_metadata;
+        userName = metadata.first_name;
     }
 
     return (

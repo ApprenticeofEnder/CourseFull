@@ -13,6 +13,8 @@ export default function Signup() {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [fname, setFname] = useState('');
+    const [lname, setLname] = useState('');
     const [loading, setLoading] = useState(false);
 
     async function supabaseSignUp() {
@@ -20,6 +22,12 @@ export default function Signup() {
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
+            options: {
+                data: {
+                    first_name: fname,
+                    last_name: lname,
+                },
+            },
         });
         setLoading(false);
         if (error) {
@@ -36,6 +44,20 @@ export default function Signup() {
     return (
         <Fragment>
             <h1>Sign up for CourseFull</h1>
+            <Input
+                type="text"
+                label="First Name"
+                placeholder="First Name"
+                value={fname}
+                onValueChange={setFname}
+            />
+            <Input
+                type="text"
+                label="Last Name"
+                placeholder="Last Name"
+                value={lname}
+                onValueChange={setLname}
+            />
             <Input
                 type="email"
                 label="Email"
