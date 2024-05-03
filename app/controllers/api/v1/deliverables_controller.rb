@@ -1,62 +1,64 @@
-module Api
-  module V1
-    class DeliverablesController < ApplicationController
-      before_action :get_course
-      before_action :set_deliverable, only: %i[ show update destroy ]
+class Api::V1::DeliverablesController < ApplicationController
+  before_action :get_api_v1_course, only: %i[ create ]
+  before_action :set_api_v1_deliverable, only: %i[ show update destroy ]
 
-      # GET /deliverables
-      def index
-        @deliverables = @course.deliverables
+  # GET /api/v1/deliverables
+  def index
+    @api_v1_deliverables = Api::V1::Deliverable.all
 
-        render json: @deliverables
-      end
+    render json: @api_v1_deliverables
+  end
 
-      # GET /deliverables/1
-      def show
-        render json: @deliverable
-      end
+  # GET /api/v1/deliverables/1
+  def show
+    render json: @api_v1_deliverable
+  end
 
-      # POST /deliverables
-      def create
-        @deliverable = @course.deliverables.build(deliverable_params)
-        @deliverable.goal = @course.deliverable_goal
-        if @deliverable.save
-          render json: @deliverable, status: :created
-        else
-          render json: @deliverable.errors, status: :unprocessable_entity
-        end
-      end
+  # POST /api/v1/deliverables
+  def create
+    @api_v1_deliverable = Api::V1::Deliverable.new(api_v1_deliverable_params)
+    @api_v1_deliverable.goal = @course.deliverable.goal
 
-      # PATCH/PUT /deliverables/1
-      def update
-        if @deliverable.update(deliverable_params)
-          @course.update_goal()
-          render json: @deliverable
-        else
-          render json: @deliverable.errors, status: :unprocessable_entity
-        end
-      end
-
-      # DELETE /deliverables/1
-      def destroy
-        @deliverable.destroy!
-      end
-
-      private
-
-      def get_course
-        @course = Course.find(params[:course_id])
-      end
-
-      # Use callbacks to share common setup or constraints between actions.
-      def set_deliverable
-        @deliverable = @course.deliverables.find(params[:id])
-      end
-
-      # Only allow a list of trusted parameters through.
-      def deliverable_params
-        params.require(:deliverable).permit(:name, :weight, :mark, :notes, :status, :course_id)
-      end
+    if @api_v1_deliverable.save
+      render json: @api_v1_deliverable, status: :created, location: @api_v1_deliverable
+    else
+      render json: @api_v1_deliverable.errors, status: :unprocessable_entity
     end
+  end
+
+  # PATCH/PUT /api/v1/deliverables/1
+  def update
+    if @api_v1_deliverable.update(api_v1_deliverable_update_params)
+      render json: @api_v1_deliverable
+    else
+      render json: @api_v1_deliverable.errors, status: :unprocessable_entity
+    end
+  end
+
+  # DELETE /api/v1/deliverables/1
+  def destroy
+    @api_v1_deliverable.destroy!
+  end
+
+  private
+
+  # Use callbacks to share common setup or constraints between actions.
+
+  # TODO: Add authorization to all of this
+  def get_api_v1_course
+    @api_v1_course = Api::V1::Course.find(params[:course_id])
+  end
+
+  def set_api_v1_deliverable
+    @api_v1_deliverable = Api::V1::Deliverable.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def api_v1_deliverable_params
+    params.require(:api_v1_deliverable).permit(:name, :weight, :mark, :notes, :course_id, :status)
+  end
+
+  def api_v1_deliverable_update_params
+    params.require(:api_v1_deliverable).permit(:name, :weight, :mark, :notes, :status)
   end
 end

@@ -10,62 +10,57 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_29_203912) do
-  create_schema "auth"
-  create_schema "extensions"
-  create_schema "graphql"
-  create_schema "graphql_public"
-  create_schema "pgbouncer"
-  create_schema "pgsodium"
-  create_schema "pgsodium_masks"
-  create_schema "realtime"
-  create_schema "storage"
-  create_schema "vault"
-
+ActiveRecord::Schema[7.1].define(version: 2024_05_03_052856) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_graphql"
-  enable_extension "pg_stat_statements"
-  enable_extension "pgcrypto"
-  enable_extension "pgjwt"
-  enable_extension "pgsodium"
   enable_extension "plpgsql"
-  enable_extension "supabase_vault"
-  enable_extension "uuid-ossp"
 
-  create_table "courses", force: :cascade do |t|
-    t.string "title", null: false
-    t.string "course_code", null: false
+  create_table "api_v1_courses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "title"
+    t.string "course_code"
+    t.integer "status"
+    t.float "goal"
+    t.float "grade"
+    t.float "deliverable_goal"
+    t.uuid "api_v1_semester_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "semester_id"
-    t.integer "status", default: 0, null: false
-    t.float "goal", default: 0.0, null: false
-    t.float "grade", default: 0.0, null: false
-    t.float "deliverable_goal", default: 0.0, null: false
-    t.index ["semester_id"], name: "index_courses_on_semester_id"
+    t.index ["api_v1_semester_id"], name: "index_api_v1_courses_on_api_v1_semester_id"
   end
 
-  create_table "deliverables", force: :cascade do |t|
-    t.string "name", null: false
-    t.float "weight", null: false
-    t.float "mark", null: false
-    t.text "notes", null: false
+  create_table "api_v1_deliverables", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.float "weight"
+    t.float "mark"
+    t.text "notes"
+    t.uuid "api_v1_course_id", null: false
+    t.integer "status"
+    t.float "goal"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "course_id"
-    t.integer "status", default: 0, null: false
-    t.float "goal", default: 0.0, null: false
-    t.index ["course_id"], name: "index_deliverables_on_course_id"
+    t.index ["api_v1_course_id"], name: "index_api_v1_deliverables_on_api_v1_course_id"
   end
 
-  create_table "semesters", force: :cascade do |t|
-    t.string "name", null: false
+  create_table "api_v1_semesters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.integer "status"
+    t.float "goal"
+    t.uuid "api_v1_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "status", default: 0, null: false
-    t.float "goal", default: 0.0, null: false
+    t.index ["api_v1_user_id"], name: "index_api_v1_semesters_on_api_v1_user_id"
   end
 
-  add_foreign_key "courses", "semesters"
-  add_foreign_key "deliverables", "courses"
+  create_table "api_v1_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.uuid "supabase_id"
+    t.integer "courses_remaining"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "api_v1_courses", "api_v1_semesters"
+  add_foreign_key "api_v1_deliverables", "api_v1_courses"
+  add_foreign_key "api_v1_semesters", "api_v1_users"
 end

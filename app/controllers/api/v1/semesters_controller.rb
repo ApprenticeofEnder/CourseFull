@@ -1,69 +1,58 @@
-module Api
-  module V1
-    class SemestersController < ApplicationController
-      before_action :set_semester, only: %i[ show update destroy ]
+class Api::V1::SemestersController < ApplicationController
+  before_action :set_api_v1_semester, only: %i[ show update destroy ]
 
-      # GET /semesters
-      def index
-        @semesters = Semester.all
+  # GET /api/v1/semesters
+  def index
+    @api_v1_semesters = Api::V1::Semester.all
 
-        render json: @semesters
-      end
+    render json: @api_v1_semesters
+  end
 
-      # GET /semesters/1
-      def show
-        render json: @semester
-      end
+  # GET /api/v1/semesters/1
+  def show
+    render json: @api_v1_semester
+  end
 
-      # POST /semesters
-      def create
-        @semester = Semester.new(semester_params)
+  # POST /api/v1/semesters
+  def create
+    @api_v1_semester = Api::V1::Semester.new(api_v1_semester_params)
 
-        if @semester.save
-          render json: @semester, status: :created
-        else
-          render json: @semester.errors, status: :unprocessable_entity
-        end
-      end
-
-      # PATCH/PUT /semesters/1
-      def update
-        if @semester.update(semester_params)
-          render json: @semester
-        else
-          render json: @semester.errors, status: :unprocessable_entity
-        end
-      end
-
-      # PATCH/PUT /semesters/1/goal
-      def set_goal
-        if @semester.set_goal(goal_params)
-          render json: @semester
-        else
-          render json: @semester.errors, status: :unprocessable_entity
-        end
-      end
-
-      # DELETE /semesters/1
-      def destroy
-        @semester.destroy!
-      end
-
-      private
-
-      # Use callbacks to share common setup or constraints between actions.
-      def set_semester
-        @semester = Semester.find(params[:id])
-      end
-
-      # Only allow a list of trusted parameters through.
-      def semester_params
-        params.require(:semester).permit(:name, :status, :goal, :status)
-      end
-
-      def goal_params
-        params.require(:semester).permit(:goal)
-      end
+    if @api_v1_semester.save
+      render json: @api_v1_semester, status: :created, location: @api_v1_semester
+    else
+      render json: @api_v1_semester.errors, status: :unprocessable_entity
     end
+  end
+
+  # PATCH/PUT /api/v1/semesters/1
+  def update
+    if @api_v1_semester.update(api_v1_semester_params)
+      render json: @api_v1_semester
+    else
+      render json: @api_v1_semester.errors, status: :unprocessable_entity
+    end
+  end
+
+  # DELETE /api/v1/semesters/1
+  def destroy
+    @api_v1_semester.destroy!
+  end
+
+  private
+
+  # TODO: Add authorization to all of this
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_api_v1_semester
+    @api_v1_semester = Api::V1::Semester.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def api_v1_semester_params
+    params.require(:api_v1_semester).permit(:name, :status, :goal, :user_id)
+  end
+
+  def goal_params
+    params.require(:semester).permit(:goal)
   end
 end
