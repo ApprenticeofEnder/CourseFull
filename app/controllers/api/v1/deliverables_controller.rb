@@ -1,4 +1,4 @@
-class Api::V1::DeliverablesController < ApplicationController
+class Api::V1::DeliverablesController < Api::V1::ApplicationController
   before_action :get_api_v1_course, only: %i[ create ]
   before_action :set_api_v1_deliverable, only: %i[ show update destroy ]
 

@@ -1,4 +1,4 @@
-class Api::V1::SemestersController < ApplicationController
+class Api::V1::SemestersController < Api::V1::ApplicationController
   before_action :set_api_v1_semester, only: %i[ show update destroy ]
 
   # GET /api/v1/semesters

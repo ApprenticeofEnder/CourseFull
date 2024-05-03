@@ -1,6 +1,6 @@
-class Api::V1::UsersController < ApplicationController
+class Api::V1::UsersController < Api::V1::ApplicationController
   before_action :set_api_v1_user, only: %i[ show update destroy ]
-
+  # before_action :authorized, only: %i[show update destroy]
   # GET /api/v1/users
   def index
     @api_v1_users = Api::V1::User.all
