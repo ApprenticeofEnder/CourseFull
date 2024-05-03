@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment } from 'react';
+import { ElementType, Fragment, ReactElement } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { SessionProps } from '@/lib/types';
@@ -12,7 +12,7 @@ type MenuItem = {
     text: string;
 };
 
-let menuItemsAuth: MenuItem[] = [
+const menuItemsAuth: MenuItem[] = [
     {
         href: '#',
         text: 'Your Profile',
@@ -27,7 +27,7 @@ let menuItemsAuth: MenuItem[] = [
     },
 ];
 
-let menuItemsAnon: MenuItem[] = [
+const menuItemsAnon: MenuItem[] = [
     {
         href: Endpoints.LOGIN,
         text: 'Login',
@@ -38,25 +38,27 @@ let menuItemsAnon: MenuItem[] = [
     },
 ];
 
-let userIconAnon = (
-    <Fragment>
-        <UserCircleIcon className="h-6 w-6 rounded-full"></UserCircleIcon>
-        <div className="p-1 text-sm">Anon</div>
-    </Fragment>
+const userIconAnon = (
+    <UserCircleIcon className="h-6 w-6 rounded-full"></UserCircleIcon>
 );
 
+const userNameAnon = 'Anon';
+
+let userIcon = userIconAnon;
+let userName = userNameAnon;
+let menuItems = menuItemsAnon;
+
 export default function AccountDropdown({ session }: SessionProps) {
-    let userIcon = userIconAnon;
-    let menuItems = menuItemsAnon;
     if (session) {
         menuItems = menuItemsAuth;
     }
+
     return (
         <Menu as="div" className="relative ml-3">
             <div>
-                <Menu.Button as={MenuButton}>
+                <Menu.Button as={MenuButton} startContent={userIcon}>
                     <span className="sr-only">Open user menu</span>
-                    <div className="flex">{userIcon}</div>
+                    <div className="text-sm">{userName}</div>
                 </Menu.Button>
             </div>
             <Transition

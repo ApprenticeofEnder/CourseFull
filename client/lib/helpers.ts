@@ -11,4 +11,5 @@ export enum Endpoints {
     LOGIN = '/auth/login',
     SIGN_UP = '/auth/signup',
     LOGOUT = '/auth/logout',
+    ROOT = '/',
 }

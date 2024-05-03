@@ -1,8 +1,13 @@
+'use client';
+
 import supabase from '@/supabase';
 import { Spinner } from '@nextui-org/react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { Endpoints } from '@/lib/helpers';
+import React from 'react';
 
 export default function Logout() {
+    const router = useRouter();
     async function signOut() {
         const { error } = await supabase.auth.signOut();
         if (error) {
@@ -13,10 +18,10 @@ export default function Logout() {
 
     signOut()
         .then(() => {
-            redirect('/');
+            router.push(Endpoints.ROOT);
         })
         .catch((err: Error) => {
-            alert(`Error signing out: ${err.message}`);
+            console.error(err.message);
         });
 
     return <Spinner label="Signing you out..." color="primary" />;
