@@ -19,6 +19,8 @@ class Api::V1::SemestersController < Api::V1::ApplicationController
   def create
     @api_v1_semester = Api::V1::Semester.new(api_v1_semester_params)
 
+    @api_v1_semester.api_v1_user_id = @api_v1_user.id
+
     if @api_v1_semester.save
       render json: @api_v1_semester, status: :created
     else
@@ -53,7 +55,7 @@ class Api::V1::SemestersController < Api::V1::ApplicationController
 
   # Only allow a list of trusted parameters through.
   def api_v1_semester_params
-    params.require(:api_v1_semester).permit(:name, :status, :goal, :user_id)
+    params.require(:api_v1_semester).permit(:name, :status, :goal)
   end
 
   def goal_params

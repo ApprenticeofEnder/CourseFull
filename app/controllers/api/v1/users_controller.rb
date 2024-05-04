@@ -10,8 +10,6 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   def create
     @api_v1_user = Api::V1::User.new(api_v1_user_params)
 
-    @api_v1_user.courses_remaining = Api::V1::User.starting_course_credits
-
     if @api_v1_user.save
       render json: @api_v1_user, status: :created
     else

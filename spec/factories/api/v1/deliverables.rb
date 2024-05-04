@@ -3,7 +3,7 @@ FactoryBot.define do
     mark { 0.0 }
     status { "active" }
     notes { Faker::Lorem.paragraph }
-    course
+    api_v1_course
 
     factory :api_v1_assignment do
       name { "Assignment #{Faker::Number.between(1, 10)}: #{Faker::Lorem.word}" }

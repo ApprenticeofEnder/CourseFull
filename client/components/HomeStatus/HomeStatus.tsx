@@ -6,6 +6,8 @@ export default function HomeStatus({ session }: SessionProps) {
         <Fragment>
             {/* 
         Progress
+            - If a semester is active, display the current average vs the goal
+            - Otherwise . . . how do I want to handle that?
         Semester Select
         Probably a modal for creating a semester too
         */}
