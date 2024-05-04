@@ -15,6 +15,7 @@ class Api::V1::Course < ApplicationRecord
   validates :goal, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :grade, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :status, inclusion: { in: statuses.keys }
+  validates :semester, presence: true
 
   def update_goal()
     self.set_goal(self.goal)

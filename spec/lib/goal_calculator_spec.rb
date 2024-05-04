@@ -1,99 +1,105 @@
 require "rails_helper"
 
 RSpec.describe GoalCalculator do
-  goal = 80.0
+  let(:goal) { 80.0 }
 
-  context "the chaotic results" do
-    results = [
-      [75, 6],
-      [50, 6],
-      [90, 6],
-      [80, 6],
-      [78, 6],
-      [82, 30],
-    ]
-    it "should have a goal of 82.55% for remaining coursework" do
-      calculator = GoalCalculator.new(goal)
+  # let(:course) {
+  #   build(:course) do |course|
+  #     build_list()
+  #   end
+  # }
 
-      results.each do |result|
-        calculator.add_mark(result[0], result[1])
+  let(:course_with_chaotic_results) {
+    build(:api_v1_course) do |course|
+      assignments = build_list(:api_v1_completed_assignment, 5)
+      midterm = build(:api_v1_completed_midterm)
+      course.deliverables = [*assignments, midterm]
+    end
+  }
+
+  let(:course_with_baseline_results) {
+    build(:api_v1_course) do |course|
+      assignment_marks = [75, 50, 90, 80, 78]
+      assignments = build_list(:api_v1_completed_assignment, assignment_marks.length) do |assignment, i|
+        assignment.mark = assignment_marks[i]
       end
+      midterm = build(:api_v1_completed_midterm, mark: 82.0)
+      course.deliverables = [*assignments, midterm]
+    end
+  }
 
-      expect(calculator.deliverable_goal).to eq(82.55)
+  let(:course_with_tiger_results) {
+    build(:api_v1_course) do |course|
+      assignments = build_list(:api_v1_completed_assignment, 5, mark: 90)
+      midterm = build(:api_v1_completed_midterm, mark: 90.0)
+      course.deliverables = [*assignments, midterm]
+    end
+  }
+
+  let(:completed_course) {
+    build(:api_v1_course) do |course|
+      assignments = build_list(:api_v1_completed_assignment, 5)
+      midterm = build(:api_v1_completed_midterm)
+      exam = build(:api_v1_completed_exam)
+      course.deliverables = [*assignments, midterm, exam]
+    end
+  }
+
+  context "the baseline results" do
+    before :each do
+      course = course_with_baseline_results
+      @calculator = GoalCalculator.new(goal)
+
+      course.deliverables.each do |deliverable|
+        @calculator.add_mark(deliverable.mark, deliverable.weight)
+      end
+    end
+
+    it "should have a goal of 82.55% for remaining coursework" do
+      expect(@calculator.deliverable_goal).to eq(82.55)
     end
 
     it "should have 40 points remaining" do
-      calculator = GoalCalculator.new(goal)
-
-      results.each do |result|
-        calculator.add_mark(result[0], result[1])
-      end
-
-      expect(calculator.weight_remaining?).to eq(true)
-      expect(calculator.weight_remaining).to eq(40.0)
+      expect(@calculator.weight_remaining?).to eq(true)
+      expect(@calculator.weight_remaining).to eq(40.0)
     end
 
     it "should have 60 points completed" do
-      calculator = GoalCalculator.new(goal)
-
-      results.each do |result|
-        calculator.add_mark(result[0], result[1])
-      end
-
-      expect(calculator.weight_completed).to eq(60.0)
+      expect(@calculator.weight_completed).to eq(60.0)
     end
   end
 
   context "the tiger results" do
-    results = [
-      [90, 6],
-      [90, 6],
-      [90, 6],
-      [90, 6],
-      [90, 6],
-      [90, 30],
-    ]
+    before :each do
+      course = course_with_tiger_results
+      @calculator = GoalCalculator.new(goal)
+
+      course.deliverables.each do |deliverable|
+        @calculator.add_mark(deliverable.mark, deliverable.weight)
+      end
+    end
 
     it "should have a goal of 65% for remaining coursework" do
-      calculator = GoalCalculator.new(goal)
-
-      results.each do |result|
-        calculator.add_mark(result[0], result[1])
-      end
-
-      expect(calculator.deliverable_goal).to eq(65)
+      expect(@calculator.deliverable_goal).to eq(65)
     end
   end
 
   context "the completed results" do
-    results = [
-      [75, 6],
-      [50, 6],
-      [90, 6],
-      [80, 6],
-      [78, 6],
-      [82, 30],
-      [85, 40],
-    ]
+    before :each do
+      course = completed_course
+      @calculator = GoalCalculator.new(goal)
+
+      course.deliverables.each do |deliverable|
+        @calculator.add_mark(deliverable.mark, deliverable.weight)
+      end
+    end
 
     it "should have a goal of 0% for remaining coursework" do
-      calculator = GoalCalculator.new(goal)
-
-      results.each do |result|
-        calculator.add_mark(result[0], result[1])
-      end
-
-      expect(calculator.deliverable_goal).to eq(0)
+      expect(@calculator.deliverable_goal).to eq(0)
     end
 
     it "should be completed" do
-      calculator = GoalCalculator.new(goal)
-
-      results.each do |result|
-        calculator.add_mark(result[0], result[1])
-      end
-
-      expect(calculator.complete?).to eq(true)
+      expect(@calculator.complete?).to eq(true)
     end
   end
 end

@@ -3,10 +3,11 @@ FactoryBot.define do
     mark { 0.0 }
     status { "active" }
     notes { Faker::Lorem.paragraph }
-    api_v1_course
+    goal { 80.0 }
+    course factory: :api_v1_course
 
     factory :api_v1_assignment do
-      name { "Assignment #{Faker::Number.between(1, 10)}: #{Faker::Lorem.word}" }
+      name { "Assignment #{Faker::Number.between(from: 1, to: 10)}: #{Faker::Lorem.word}" }
       weight { 6.0 }
 
       factory :api_v1_completed_assignment do
@@ -16,7 +17,7 @@ FactoryBot.define do
     end
 
     factory :api_v1_midterm do
-      name { "Midterm #{Faker::Number.between(1, 3)}" }
+      name { "Midterm #{Faker::Number.between(from: 1, to: 3)}" }
       weight { 30.0 }
 
       factory :api_v1_completed_midterm do
