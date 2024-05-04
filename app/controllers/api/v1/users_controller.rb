@@ -1,5 +1,4 @@
 class Api::V1::UsersController < Api::V1::ApplicationController
-  # before_action :set_api_v1_user, only: %i[ show update destroy ]
   before_action :authenticated, only: %i[show update destroy]
 
   # GET /api/v1/users/me
@@ -35,13 +34,6 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   end
 
   private
-
-  # TODO: Add authorization to all of this
-
-  # Use callbacks to share common setup or constraints between actions.
-  # def set_api_v1_user
-  #   @api_v1_user = Api::V1::User.find(params[:id])
-  # end
 
   # Only allow a list of trusted parameters through.
   def api_v1_user_params

@@ -26,6 +26,10 @@ RSpec.describe "/api/v1/users", type: :request do
     attributes_for(:api_v1_user, email: nil)
   }
 
+  let(:fixed_supabase_id_attributes) {
+    attributes_for(:api_v1_user, supabase_id: "332600c0-f46e-406d-b2a2-824f0a750ed2")
+  }
+
   # This should return the minimal set of values that should be in the headers
   # in order to pass any filters (e.g. authentication) defined in
   # Api::V1::UsersController, or in your router and rack
@@ -34,10 +38,10 @@ RSpec.describe "/api/v1/users", type: :request do
     {}
   }
 
-  let(:auth_headers) {
-    auth_token = JWT.encode({ sub: "c7689623-6852-4664-928d-43f778264337" }, ENV["JWT_SECRET"])
+  def auth_headers(user)
+    auth_token = JWT.encode({ sub: user[:supabase_id].to_s }, ENV["JWT_SECRET"])
     { authorization: "Bearer #{auth_token}" }
-  }
+  end
 
   # TODO
   # Need to implement JWT Auth
@@ -50,29 +54,23 @@ RSpec.describe "/api/v1/users", type: :request do
   # Remaining resource APIs should have constraints on what users can mess with to their own stuff
 
   describe "GET /api/v1/users/me" do
-    context "with valid token" do
-      before :each do
-        post "/api/v1/users",
-             params: { api_v1_user: valid_attributes }, headers: valid_headers, as: :json
-      end
+    before :each do
+      @user = api_v1_user
+    end
 
+    context "with valid token" do
       it "returns a successful status code" do
-        get "/api/v1/users/me", headers: auth_headers, as: :json
+        get "/api/v1/users/me", headers: auth_headers(@user), as: :json
         expect(response).to have_http_status(:ok)
       end
 
       it "gets user data" do
-        get "/api/v1/users/me", headers: auth_headers, as: :json
-        expect(response.parsed_body[:email]).to eq(valid_attributes[:email])
+        get "/api/v1/users/me", headers: auth_headers(@user), as: :json
+        expect(response.parsed_body[:email]).to eq(@user[:email])
       end
     end
 
     context "with invalid token" do
-      before :each do
-        post "/api/v1/users",
-             params: { api_v1_user: valid_attributes }, headers: valid_headers, as: :json
-      end
-
       it "returns a failing status code" do
         get "/api/v1/users/me", headers: valid_headers, as: :json
         expect(response).to have_http_status(:unauthorized)
@@ -89,11 +87,20 @@ RSpec.describe "/api/v1/users", type: :request do
         }.to change(Api::V1::User, :count).by(1)
       end
 
-      it "renders a JSON response with the new api_v1_user" do
+      it "renders a JSON response with the new Api::V1::User" do
         post "/api/v1/users",
              params: { api_v1_user: valid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including("application/json"))
+      end
+
+      it "should not allow duplicate Supabase IDs" do
+        post "/api/v1/users",
+             params: { api_v1_user: fixed_supabase_id_attributes }, headers: valid_headers, as: :json
+        expect {
+          post "/api/v1/users",
+               params: { api_v1_user: fixed_supabase_id_attributes }, headers: valid_headers, as: :json
+        }.to change(Api::V1::User, :count).by(0)
       end
     end
 
@@ -105,7 +112,7 @@ RSpec.describe "/api/v1/users", type: :request do
         }.to change(Api::V1::User, :count).by(0)
       end
 
-      it "renders a JSON response with errors for the new api_v1_user" do
+      it "renders a JSON response with errors for the new Api::V1::User" do
         post "/api/v1/users",
              params: { api_v1_user: invalid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
@@ -115,98 +122,83 @@ RSpec.describe "/api/v1/users", type: :request do
   end
 
   describe "DELETE /api/v1/users/me" do
-    it "destroys the requested api_v1_user" do
-      Api::V1::User.create! attributes_for(:api_v1_user)
-      expect {
-        delete "/api/v1/users/me", headers: auth_headers, as: :json
-      }.to change(Api::V1::User, :count).by(-1)
+    before :each do
+      @user = api_v1_user
+    end
+
+    context "with valid auth token" do
+      it "destroys the requested Api::V1::User" do
+        expect {
+          delete "/api/v1/users/me", headers: auth_headers(@user), as: :json
+        }.to change(Api::V1::User, :count).by(-1)
+      end
+
+      it "returns a successful deletion status code" do
+        delete "/api/v1/users/me", headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+
+    context "with invalid auth token" do
+      it "does not destroy the requested Api::V1::User" do
+        expect {
+          delete "/api/v1/users/me", headers: valid_headers, as: :json
+        }.to change(Api::V1::User, :count).by(0)
+      end
+
+      it "returns an unauthorized status code" do
+        delete "/api/v1/users/me", headers: valid_headers, as: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 
-  # TODO:
+  describe "PATCH /api/v1/users/me" do
+    before :each do
+      @user = api_v1_user
+    end
+    context "with valid parameters" do
+      let(:new_attributes) {
+        attributes_for(:api_v1_user)
+      }
 
-  # describe "GET /show" do
-  #   it "renders a successful response" do
-  #     user = Api::V1::User.create! valid_attributes
-  #     get api_v1_user_url(user), as: :json
-  #     expect(response).to be_successful
-  #   end
-  # end
+      it "updates the requested api_v1_user" do
+        old_user = @user.dup
+        patch "/api/v1/users/me",
+              params: { api_v1_user: new_attributes }, headers: auth_headers(@user), as: :json
+        @user.reload
+        [:email, :first_name, :last_name, :supabase_id].each do |key|
+          expect(@user[key]).to_not eq(old_user[key])
+        end
+      end
 
-  # describe "POST /create" do
-  #   context "with valid parameters" do
-  #     it "creates a new Api::V1::User" do
-  #       expect {
-  #         post api_v1_users_url,
-  #              params: { api_v1_user: valid_attributes }, headers: valid_headers, as: :json
-  #       }.to change(Api::V1::User, :count).by(1)
-  #     end
+      it "renders a JSON response with the api_v1_user" do
+        patch "/api/v1/users/me",
+              params: { api_v1_user: new_attributes }, headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to match(a_string_including("application/json"))
+      end
+    end
 
-  #     it "renders a JSON response with the new api_v1_user" do
-  #       post api_v1_users_url,
-  #            params: { api_v1_user: valid_attributes }, headers: valid_headers, as: :json
-  #       expect(response).to have_http_status(:created)
-  #       expect(response.content_type).to match(a_string_including("application/json"))
-  #     end
-  #   end
+    context "with invalid parameters" do
+      it "renders a JSON response with errors for the api_v1_user" do
+        patch "/api/v1/users/me",
+              params: { api_v1_user: invalid_attributes }, headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.content_type).to match(a_string_including("application/json"))
+      end
+    end
 
-  #   context "with invalid parameters" do
-  #     it "does not create a new Api::V1::User" do
-  #       expect {
-  #         post api_v1_users_url,
-  #              params: { api_v1_user: invalid_attributes }, as: :json
-  #       }.to change(Api::V1::User, :count).by(0)
-  #     end
+    context "with invalid auth token" do
+      let(:new_attributes) {
+        attributes_for(:api_v1_user)
+      }
 
-  #     it "renders a JSON response with errors for the new api_v1_user" do
-  #       post api_v1_users_url,
-  #            params: { api_v1_user: invalid_attributes }, headers: valid_headers, as: :json
-  #       expect(response).to have_http_status(:unprocessable_entity)
-  #       expect(response.content_type).to match(a_string_including("application/json"))
-  #     end
-  #   end
-  # end
-
-  # describe "PATCH /update" do
-  #   context "with valid parameters" do
-  #     let(:new_attributes) {
-  #       skip("Add a hash of attributes valid for your model")
-  #     }
-
-  #     it "updates the requested api_v1_user" do
-  #       user = Api::V1::User.create! valid_attributes
-  #       patch api_v1_user_url(user),
-  #             params: { api_v1_user: new_attributes }, headers: valid_headers, as: :json
-  #       user.reload
-  #       skip("Add assertions for updated state")
-  #     end
-
-  #     it "renders a JSON response with the api_v1_user" do
-  #       user = Api::V1::User.create! valid_attributes
-  #       patch api_v1_user_url(user),
-  #             params: { api_v1_user: new_attributes }, headers: valid_headers, as: :json
-  #       expect(response).to have_http_status(:ok)
-  #       expect(response.content_type).to match(a_string_including("application/json"))
-  #     end
-  #   end
-
-  #   context "with invalid parameters" do
-  #     it "renders a JSON response with errors for the api_v1_user" do
-  #       user = Api::V1::User.create! valid_attributes
-  #       patch api_v1_user_url(user),
-  #             params: { api_v1_user: invalid_attributes }, headers: valid_headers, as: :json
-  #       expect(response).to have_http_status(:unprocessable_entity)
-  #       expect(response.content_type).to match(a_string_including("application/json"))
-  #     end
-  #   end
-  # end
-
-  # describe "DELETE /destroy" do
-  #   it "destroys the requested api_v1_user" do
-  #     user = Api::V1::User.create! valid_attributes
-  #     expect {
-  #       delete api_v1_user_url(user), headers: valid_headers, as: :json
-  #     }.to change(Api::V1::User, :count).by(-1)
-  #   end
-  # end
+      it "returns an unauthorized status code" do
+        patch "/api/v1/users/me",
+              params: { api_v1_user: new_attributes }, headers: valid_headers, as: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
 end
