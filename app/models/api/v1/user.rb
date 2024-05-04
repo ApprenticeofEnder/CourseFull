@@ -1,5 +1,5 @@
 class Api::V1::User < ApplicationRecord
-  has_many :semesters, dependent: :destroy
+  has_many :semesters
 
   validates :first_name, presence: true
   validates :last_name, presence: true

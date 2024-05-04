@@ -1,7 +1,7 @@
 class Api::V1::Semester < ApplicationRecord
   # Relationships
-  has_many :courses, dependent: :destroy
-  belongs_to :user
+  has_many :courses
+  belongs_to :user, foreign_key: "api_v1_user_id", dependent: :destroy
 
   # Scopes
   scope :not_started, -> { where(status: :not_started) }
@@ -22,7 +22,7 @@ class Api::V1::Semester < ApplicationRecord
 
   def set_goal(goal)
     self.update(goal: goal)
-    self.courses.active.all do |course|
+    self.courses.active.find_each do |course|
       course.set_goal(goal)
     end
   end

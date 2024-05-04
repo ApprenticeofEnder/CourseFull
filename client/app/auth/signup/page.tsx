@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import { Endpoints } from '@/lib/helpers';
-import supabase, { useSupabaseSession } from '@/supabase';
+import { supabase, useSupabaseSession } from '@/supabase';
 
 export default function Signup() {
     const session = useSupabaseSession();
@@ -34,7 +34,7 @@ export default function Signup() {
             alert(`Something went wrong: ${error.message}`);
             return;
         }
-        router.push(Endpoints.ROOT);
+        router.push(Endpoints.EMAIL_VERIFY);
     }
 
     if (session) {

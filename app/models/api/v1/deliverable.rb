@@ -1,6 +1,6 @@
 class Api::V1::Deliverable < ApplicationRecord
   # Relationships
-  belongs_to :course
+  belongs_to :course, foreign_key: "api_v1_course_id", dependent: :destroy
 
   # Scopes
   scope :active, -> { where(status: :active) }

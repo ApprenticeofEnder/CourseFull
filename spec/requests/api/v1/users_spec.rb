@@ -49,7 +49,7 @@ RSpec.describe "/api/v1/users", type: :request do
 
   # Remaining resource APIs should have constraints on what users can mess with to their own stuff
 
-  describe "GET /api/v1/users" do
+  describe "GET /api/v1/users/me" do
     context "with valid token" do
       before :each do
         post "/api/v1/users",
@@ -113,6 +113,17 @@ RSpec.describe "/api/v1/users", type: :request do
       end
     end
   end
+
+  describe "DELETE /api/v1/users/me" do
+    it "destroys the requested api_v1_user" do
+      Api::V1::User.create! attributes_for(:api_v1_user)
+      expect {
+        delete "/api/v1/users/me", headers: auth_headers, as: :json
+      }.to change(Api::V1::User, :count).by(-1)
+    end
+  end
+
+  # TODO:
 
   # describe "GET /show" do
   #   it "renders a successful response" do

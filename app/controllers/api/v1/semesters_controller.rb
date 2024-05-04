@@ -1,9 +1,11 @@
 class Api::V1::SemestersController < Api::V1::ApplicationController
+  before_action :authenticated
   before_action :set_api_v1_semester, only: %i[ show update destroy ]
+  before_action :authorized, only: %i[ create update ]
 
   # GET /api/v1/semesters
   def index
-    @api_v1_semesters = Api::V1::Semester.all
+    @api_v1_semesters = Api::V1::Semester.where(api_v1_user_id: @api_v1_user.id)
 
     render json: @api_v1_semesters
   end
@@ -18,7 +20,7 @@ class Api::V1::SemestersController < Api::V1::ApplicationController
     @api_v1_semester = Api::V1::Semester.new(api_v1_semester_params)
 
     if @api_v1_semester.save
-      render json: @api_v1_semester, status: :created, location: @api_v1_semester
+      render json: @api_v1_semester, status: :created
     else
       render json: @api_v1_semester.errors, status: :unprocessable_entity
     end
@@ -40,11 +42,13 @@ class Api::V1::SemestersController < Api::V1::ApplicationController
 
   private
 
-  # TODO: Add authorization to all of this
-
   # Use callbacks to share common setup or constraints between actions.
   def set_api_v1_semester
-    @api_v1_semester = Api::V1::Semester.find(params[:id])
+    begin
+      @api_v1_semester = Api::V1::Semester.find_by!(id: params[:id], api_v1_user_id: @api_v1_user.id)
+    rescue ActiveRecord::RecordNotFound
+      unauthorized
+    end
   end
 
   # Only allow a list of trusted parameters through.

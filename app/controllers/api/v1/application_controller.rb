@@ -1,7 +1,7 @@
 class Api::V1::ApplicationController < ActionController::API
   # before_action :authorized
 
-  # rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
   rescue_from ArgumentError, with: :render_status_set_error
 
   private
@@ -46,7 +46,19 @@ class Api::V1::ApplicationController < ActionController::API
     !!logged_in_user
   end
 
-  def authorized
+  def authenticated
     render json: { message: "Please log in" }, status: :unauthorized unless logged_in?
+  end
+
+  def valid_user_id?
+    params[:user_id] == @api_v1_user.id
+  end
+
+  def unauthorized
+    render json: { message: "You cannot access that resource" }, status: :forbidden
+  end
+
+  def authorized
+    unauthorized unless valid_user_id?
   end
 end
