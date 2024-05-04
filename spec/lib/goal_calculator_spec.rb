@@ -45,14 +45,18 @@ RSpec.describe GoalCalculator do
     end
   }
 
+  def process_course(course, current_goal)
+    calculator = GoalCalculator.new(current_goal)
+    course.deliverables.each do |deliverable|
+      calculator.add_mark(deliverable.mark, deliverable.weight)
+    end
+    return calculator
+  end
+
   context "the baseline results" do
     before :each do
       course = course_with_baseline_results
-      @calculator = GoalCalculator.new(goal)
-
-      course.deliverables.each do |deliverable|
-        @calculator.add_mark(deliverable.mark, deliverable.weight)
-      end
+      @calculator = process_course(course, goal)
     end
 
     it "should have a goal of 82.55% for remaining coursework" do
@@ -72,11 +76,7 @@ RSpec.describe GoalCalculator do
   context "the tiger results" do
     before :each do
       course = course_with_tiger_results
-      @calculator = GoalCalculator.new(goal)
-
-      course.deliverables.each do |deliverable|
-        @calculator.add_mark(deliverable.mark, deliverable.weight)
-      end
+      @calculator = process_course(course, goal)
     end
 
     it "should have a goal of 65% for remaining coursework" do
@@ -87,11 +87,7 @@ RSpec.describe GoalCalculator do
   context "the completed results" do
     before :each do
       course = completed_course
-      @calculator = GoalCalculator.new(goal)
-
-      course.deliverables.each do |deliverable|
-        @calculator.add_mark(deliverable.mark, deliverable.weight)
-      end
+      @calculator = process_course(course, goal)
     end
 
     it "should have a goal of 0% for remaining coursework" do
