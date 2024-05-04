@@ -3,6 +3,6 @@ FactoryBot.define do
     title { Faker::Educator.course_name }
     course_code { "#{Faker::Alphanumeric.alpha(number: 4)} #{Faker::Number.number(digits: 4)}" }
     status { "active" }
-    api_v1_semester
+    semester factory: :api_v1_semester
   end
 end
