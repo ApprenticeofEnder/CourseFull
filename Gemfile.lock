@@ -220,6 +220,7 @@ GEM
     timeout (0.4.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    uuidtools (2.2.0)
     webrick (1.8.1)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
@@ -247,6 +248,7 @@ DEPENDENCIES
   rails-controller-testing
   rspec-rails
   tzinfo-data
+  uuidtools
 
 RUBY VERSION
    ruby 3.3.1p55

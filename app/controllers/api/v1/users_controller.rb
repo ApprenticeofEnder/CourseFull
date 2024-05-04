@@ -1,14 +1,8 @@
 class Api::V1::UsersController < Api::V1::ApplicationController
-  before_action :set_api_v1_user, only: %i[ show update destroy ]
-  # before_action :authorized, only: %i[show update destroy]
-  # GET /api/v1/users
-  def index
-    @api_v1_users = Api::V1::User.all
+  # before_action :set_api_v1_user, only: %i[ show update destroy ]
+  before_action :authorized, only: %i[show update destroy]
 
-    render json: @api_v1_users
-  end
-
-  # GET /api/v1/users/1
+  # GET /api/v1/users/me
   def show
     render json: @api_v1_user
   end
@@ -20,7 +14,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
     @api_v1_user.courses_remaining = Api::V1::User.starting_course_credits
 
     if @api_v1_user.save
-      render json: @api_v1_user, status: :created, location: @api_v1_user
+      render json: @api_v1_user, status: :created
     else
       render json: @api_v1_user.errors, status: :unprocessable_entity
     end
@@ -45,9 +39,9 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   # TODO: Add authorization to all of this
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_api_v1_user
-    @api_v1_user = Api::V1::User.find(params[:id])
-  end
+  # def set_api_v1_user
+  #   @api_v1_user = Api::V1::User.find(params[:id])
+  # end
 
   # Only allow a list of trusted parameters through.
   def api_v1_user_params

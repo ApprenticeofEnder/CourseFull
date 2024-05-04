@@ -13,12 +13,8 @@ RSpec.describe Api::V1::UsersController, type: :routing do
   # Remaining resource APIs should have constraints on what users can mess with to their own stuff
 
   describe "routing" do
-    it "routes to #index" do
-      expect(get: "/api/v1/users").to route_to("api/v1/users#index")
-    end
-
     it "routes to #show" do
-      expect(get: "/api/v1/users/1").to route_to("api/v1/users#show", id: "1")
+      expect(get: "/api/v1/users/me").to route_to("api/v1/users#show")
     end
 
     it "routes to #create" do
@@ -26,15 +22,15 @@ RSpec.describe Api::V1::UsersController, type: :routing do
     end
 
     it "routes to #update via PUT" do
-      expect(put: "/api/v1/users/1").to route_to("api/v1/users#update", id: "1")
+      expect(put: "/api/v1/users/me").to route_to("api/v1/users#update")
     end
 
     it "routes to #update via PATCH" do
-      expect(patch: "/api/v1/users/1").to route_to("api/v1/users#update", id: "1")
+      expect(patch: "/api/v1/users/me").to route_to("api/v1/users#update")
     end
 
     it "routes to #destroy" do
-      expect(delete: "/api/v1/users/1").to route_to("api/v1/users#destroy", id: "1")
+      expect(delete: "/api/v1/users/me").to route_to("api/v1/users#destroy")
     end
   end
 end

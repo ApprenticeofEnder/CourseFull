@@ -3,7 +3,6 @@ FactoryBot.define do
     first_name { "Test" }
     last_name { "Test" }
     email { "test@test.com" }
-    supabase_id { "" }
-    courses_remaining { 3 }
+    supabase_id { "c7689623-6852-4664-928d-43f778264337" }
   end
 end

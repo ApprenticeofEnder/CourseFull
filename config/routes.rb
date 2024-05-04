@@ -13,22 +13,13 @@ Rails.application.routes.draw do
       resources :courses
       resources :deliverables
       resources :semesters
-      resources :users
-      # post 'users' => 'api_v1_users#create'
-      # get 'users/me' => 'api_v1_users#show'
-      # put 'users/me' => 'api_v1_users#update'
-      # delete 'users/me' => 'api_v1_users#destroy'
+      get "users/me" => "users#show"
+      put "users/me" => "users#update"
+      patch "users/me" => "users#update"
+      delete "users/me" => "users#destroy"
+      post "users" => "users#create"
     end
   end
-  # namespace :api, defaults: {format: 'json'} do
-  #   namespace :v1  do
-  #     resources :semesters do
-  #       resources :courses do
-  #         resources :deliverables
-  #       end
-  #     end
-  #   end
-  # end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
