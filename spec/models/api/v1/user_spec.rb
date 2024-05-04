@@ -34,12 +34,12 @@ RSpec.describe Api::V1::User, type: :model do
   end
 
   context "courses_remaining" do
-    it "should not be valid if equal to 0" do
+    it "should be valid if equal to 0" do
       api_v1_user.courses_remaining = 0
       expect(api_v1_user).to be_valid
     end
 
-    it "should not be valid if greater than 0" do
+    it "should be valid if greater than 0" do
       api_v1_user.courses_remaining = 4
       expect(api_v1_user).to be_valid
     end
