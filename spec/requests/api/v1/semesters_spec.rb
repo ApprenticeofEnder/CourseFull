@@ -42,6 +42,11 @@ RSpec.describe "/api/v1/semesters", type: :request do
     { authorization: "Bearer #{auth_token}" }
   end
 
+  before :each do
+    semester
+    @user = semester.user
+  end
+
   #   describe "GET /index" do
   #     it "renders a successful response" do
   #       Api::V1::Semester.create! valid_attributes
