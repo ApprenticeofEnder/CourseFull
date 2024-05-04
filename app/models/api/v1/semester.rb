@@ -15,6 +15,7 @@ class Api::V1::Semester < ApplicationRecord
   validates :name, presence: true, length: { minimum: 2, maximum: 150 }
   validates :goal, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :status, inclusion: { in: statuses.keys }
+  validates :user, presence: true
 
   def update_goal()
     self.set_goal(self.goal)
