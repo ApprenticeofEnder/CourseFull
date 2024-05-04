@@ -1,6 +1,6 @@
 class Api::V1::Semester < ApplicationRecord
   # Relationships
-  has_many :courses
+  has_many :courses, foreign_key: "api_v1_course_id"
   belongs_to :user, foreign_key: "api_v1_user_id", dependent: :destroy
 
   # Scopes

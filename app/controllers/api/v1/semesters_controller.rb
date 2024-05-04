@@ -1,7 +1,6 @@
 class Api::V1::SemestersController < Api::V1::ApplicationController
   before_action :authenticated
   before_action :set_api_v1_semester, only: %i[ show update destroy ]
-  before_action :authorized, only: %i[ create update ]
 
   # GET /api/v1/semesters
   def index
@@ -19,7 +18,7 @@ class Api::V1::SemestersController < Api::V1::ApplicationController
   def create
     @api_v1_semester = Api::V1::Semester.new(api_v1_semester_params)
 
-    @api_v1_semester.api_v1_user_id = @api_v1_user.id
+    @api_v1_semester.user = @api_v1_user
 
     if @api_v1_semester.save
       render json: @api_v1_semester, status: :created

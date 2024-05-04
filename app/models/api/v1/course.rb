@@ -1,5 +1,5 @@
 class Api::V1::Course < ApplicationRecord
-  has_many :deliverables
+  has_many :deliverables, foreign_key: "api_v1_deliverable_id"
   belongs_to :semester, foreign_key: "api_v1_semester_id", dependent: :destroy
 
   # Scopes

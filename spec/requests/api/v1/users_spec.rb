@@ -45,14 +45,6 @@ RSpec.describe "/api/v1/users", type: :request do
     { authorization: "Bearer #{auth_token}" }
   end
 
-  # TODO
-  # Need to implement JWT Auth
-  # Need to adjust it to the following API:
-  # POST   /api/v1/users    => sign up
-  # GET    /api/v1/users/me => get user data
-  # PUT    /api/v1/users/me => update information
-  # DELETE /api/v1/users/me => delete account
-
   # Remaining resource APIs should have constraints on what users can mess with to their own stuff
 
   before :each do
@@ -73,7 +65,7 @@ RSpec.describe "/api/v1/users", type: :request do
     end
 
     context "with invalid token" do
-      it "returns a failing status code" do
+      it "should render a 401 forbidden response for a missing token" do
         get "/api/v1/users/me", headers: valid_headers, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
@@ -83,6 +75,12 @@ RSpec.describe "/api/v1/users", type: :request do
       it "returns different data for different users" do
         user_2 = create(:api_v1_user)
         expect(user_2[:first_name]).to_not eq(user[:first_name])
+
+        get "/api/v1/users/me", headers: auth_headers(user), as: :json
+        expect(response.parsed_body[:first_name]).to eq(user[:first_name])
+
+        get "/api/v1/users/me", headers: auth_headers(user_2), as: :json
+        expect(response.parsed_body[:first_name]).to eq(user_2[:first_name])
       end
     end
   end

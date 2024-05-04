@@ -39,13 +39,13 @@ RSpec.describe Api::V1::User, type: :model do
       expect(api_v1_user).to_not be_valid
     end
 
-    it "should not be more than 60 characters" do
-      api_v1_user.first_name = Faker::Alphanumeric.alpha(number: 61)
+    it "should not be more than 150 characters" do
+      api_v1_user.first_name = Faker::Alphanumeric.alpha(number: 151)
       expect(api_v1_user).to_not be_valid
     end
 
-    it "should validate for all lengths between 2 and 60, inclusive" do
-      [2..61].each do |length|
+    it "should validate for all lengths between 2 and 150, inclusive" do
+      [2..151].each do |length|
         api_v1_user.first_name = Faker::Alphanumeric.alpha(number: length)
         expect(api_v1_user).to be_valid
       end
@@ -58,13 +58,13 @@ RSpec.describe Api::V1::User, type: :model do
       expect(api_v1_user).to_not be_valid
     end
 
-    it "should not be more than 60 characters" do
-      api_v1_user.last_name = Faker::Alphanumeric.alpha(number: 61)
+    it "should not be more than 150 characters" do
+      api_v1_user.last_name = Faker::Alphanumeric.alpha(number: 151)
       expect(api_v1_user).to_not be_valid
     end
 
-    it "should validate for all lengths between 2 and 60, inclusive" do
-      [2..61].each do |length|
+    it "should validate for all lengths between 2 and 150, inclusive" do
+      [2..151].each do |length|
         api_v1_user.last_name = Faker::Alphanumeric.alpha(number: length)
         expect(api_v1_user).to be_valid
       end
