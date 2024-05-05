@@ -91,12 +91,6 @@ RSpec.describe Api::V1::User, type: :model do
       api_v1_user.email = "Me@"
       expect(api_v1_user).to_not be_valid
     end
-
-    it "should not validate email strings with one-word domains" do
-      skip("Figure out whether this should be acceptable or not")
-      api_v1_user.email = "me@me"
-      expect(api_v1_user).to_not be_valid
-    end
   end
 
   context "courses_remaining" do

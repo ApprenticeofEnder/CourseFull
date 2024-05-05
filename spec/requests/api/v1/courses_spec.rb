@@ -62,7 +62,78 @@ RSpec.describe "/api/v1/courses", type: :request do
 
   before :each do
     @user = user
+    @semester = @user.semesters.first
+    @course_id = @semester.courses.first.id
     @user_2 = user
+    @semester_2 = @user_2.semesters.first
+    @course_2_id = @semester_2.courses.first.id
+  end
+
+  describe "GET /api/v1/courses" do
+    context "with valid auth token" do
+      it "renders a successful response" do
+        get "/api/v1/courses", headers: auth_headers(@user), as: :json
+        expect(response).to be_successful
+      end
+
+      it "gets all currently available courses" do
+        create(:api_v1_course, semester: @semester, user: @user)
+        create(:api_v1_course, semester: @semester, user: @user)
+
+        get "/api/v1/courses", headers: auth_headers(@user), as: :json
+        expect(response).to be_successful
+        expect(response.parsed_body.length).to eq(3)
+      end
+
+      it "gets different courses for different users" do
+        create(:api_v1_course, semester: @semester, user: @user)
+        create(:api_v1_course, semester: @semester_2, user: @user_2)
+
+        [@user, @user_2].each do |current_user|
+          get "/api/v1/courses", headers: auth_headers(current_user), as: :json
+          expect(response).to be_successful
+          expect(response.parsed_body.length).to eq(2)
+        end
+      end
+    end
+
+    context "with invalid auth token" do
+      it "should render a 401 unauthorized response for a missing token" do
+        get "/api/v1/courses", headers: valid_headers, as: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
+  describe "GET /api/v1/courses/:id" do
+    context "with valid auth token" do
+      it "renders a successful response" do
+        get "/api/v1/courses/#{@course_id}", headers: auth_headers(@user), as: :json
+        expect(response).to be_successful
+      end
+
+      it "gets the correct course" do
+        get "/api/v1/courses/#{@course_id}", headers: auth_headers(@user), as: :json
+        expect(response.parsed_body[:title]).to eq(@semester.courses.first[:title])
+      end
+
+      it "gets only semesters the user has access to" do
+        get "/api/v1/courses/#{@course_2_id}", headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it "renders a 403 forbidden response for a nonexistent ID" do
+        get "/api/v1/courses/#{SecureRandom.uuid}", headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context "with invalid auth token" do
+      it "should render a 401 unauthorized response for a missing token" do
+        get "/api/v1/courses/#{@course_id}", headers: valid_headers, as: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
   end
 
   describe "POST /api/v1/courses" do
@@ -87,6 +158,16 @@ RSpec.describe "/api/v1/courses", type: :request do
         expect(response.parsed_body[:api_v1_user_id]).to eq(@user[:id])
       end
 
+      it "ensures that the parent semester belongs to the user" do
+        attributes = valid_attributes(@user)
+        attributes[:api_v1_semester_id] = @semester_2.id
+        expect {
+          post "/api/v1/courses",
+               params: { api_v1_course: attributes }, headers: auth_headers(@user), as: :json
+          expect(response).to have_http_status(:forbidden)
+        }.to change(Api::V1::Course, :count).by(0)
+      end
+
       it "does not create a new Api::V1::Course with invalid parameters" do
         invalid_attributes { |attribute_set|
           expect {
@@ -105,57 +186,75 @@ RSpec.describe "/api/v1/courses", type: :request do
       end
     end
   end
+
+  describe "PATCH /api/v1/courses/:id" do
+    context "with valid auth token" do
+      it "should render a successful JSON response with valid parameters" do
+        patch "/api/v1/courses/#{@course_id}",
+              params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:ok)
+        expect(response).to be_successful
+        expect(response.content_type).to match(a_string_including("application/json"))
+      end
+
+      it "should update the Api::V1::Course" do
+        old_course = @semester.courses.first.dup
+        patch "/api/v1/courses/#{@course_id}",
+              params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+        @semester.reload
+        expect(old_course[:title]).to_not eq(@semester.courses.first[:title])
+      end
+
+      it "should return an error response with invalid parameters" do
+        skip("To be implemented")
+      end
+
+      it "renders a 403 forbidden response when trying to access another user's semester" do
+        skip("To be implemented")
+      end
+
+      it "renders a 403 forbidden response for a nonexistent ID" do
+        skip("To be implemented")
+      end
+    end
+
+    context "with invalid auth token" do
+      it "should render a 401 unauthorized response for a missing token" do
+        skip("To be implemented")
+      end
+    end
+  end
+
+  describe "DELETE /api/v1/courses/:id" do
+    context "with valid auth token" do
+      it "renders a successful response" do
+        skip("To be implemented")
+      end
+
+      it "deletes the course from the database" do
+        skip("To be implemented")
+      end
+
+      it "deletes only semesters the user has access to" do
+        skip("To be implemented")
+      end
+
+      it "renders a 403 forbidden response when trying to access another user's semester" do
+        skip("To be implemented")
+      end
+
+      it "renders a 403 forbidden response for a nonexistent ID" do
+        skip("To be implemented")
+      end
+    end
+
+    context "with invalid auth token" do
+      it "should render a 401 unauthorized response for a missing token" do
+        skip("To be implemented")
+      end
+    end
+  end
 end
-
-#   describe "GET /index" do
-#     it "renders a successful response" do
-#       Api::V1::Course.create! valid_attributes
-#       get api_v1_courses_url, headers: valid_headers, as: :json
-#       expect(response).to be_successful
-#     end
-#   end
-
-#   describe "GET /show" do
-#     it "renders a successful response" do
-#       course = Api::V1::Course.create! valid_attributes
-#       get api_v1_course_url(course), as: :json
-#       expect(response).to be_successful
-#     end
-#   end
-
-#   describe "POST /create" do
-#     context "with valid parameters" do
-#       it "creates a new Api::V1::Course" do
-#         expect {
-#           post api_v1_courses_url,
-#                params: { api_v1_course: valid_attributes }, headers: valid_headers, as: :json
-#         }.to change(Api::V1::Course, :count).by(1)
-#       end
-
-#       it "renders a JSON response with the new api_v1_course" do
-#         post api_v1_courses_url,
-#              params: { api_v1_course: valid_attributes }, headers: valid_headers, as: :json
-#         expect(response).to have_http_status(:created)
-#         expect(response.content_type).to match(a_string_including("application/json"))
-#       end
-#     end
-
-#     context "with invalid parameters" do
-#       it "does not create a new Api::V1::Course" do
-#         expect {
-#           post api_v1_courses_url,
-#                params: { api_v1_course: invalid_attributes }, as: :json
-#         }.to change(Api::V1::Course, :count).by(0)
-#       end
-
-#       it "renders a JSON response with errors for the new api_v1_course" do
-#         post api_v1_courses_url,
-#              params: { api_v1_course: invalid_attributes }, headers: valid_headers, as: :json
-#         expect(response).to have_http_status(:unprocessable_entity)
-#         expect(response.content_type).to match(a_string_including("application/json"))
-#       end
-#     end
-#   end
 
 #   describe "PATCH /update" do
 #     context "with valid parameters" do

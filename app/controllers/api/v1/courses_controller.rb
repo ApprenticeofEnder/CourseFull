@@ -49,7 +49,6 @@ class Api::V1::CoursesController < Api::V1::ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
 
-  # TODO: Add authorization to all of this
   def get_api_v1_semester
     begin
       @api_v1_semester = Api::V1::Semester.find_by!(id: params[:api_v1_course][:api_v1_semester_id], api_v1_user_id: @api_v1_user.id)

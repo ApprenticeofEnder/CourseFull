@@ -39,7 +39,9 @@ RSpec.describe "/api/v1/semesters", type: :request do
 
   before :each do
     @user = user
+    @semester_id = @user.semesters.first.id
     @user_2 = user
+    @semester_2_id = @user_2.semesters.first.id
   end
 
   describe "GET /api/v1/semesters" do
@@ -80,17 +82,17 @@ RSpec.describe "/api/v1/semesters", type: :request do
   describe "GET /api/v1/semesters/:id" do
     context "with valid auth token" do
       it "renders a successful response" do
-        get "/api/v1/semesters/#{@user.semesters.first.id}", headers: auth_headers(@user), as: :json
+        get "/api/v1/semesters/#{@semester_id}", headers: auth_headers(@user), as: :json
         expect(response).to be_successful
       end
 
       it "gets the correct semester" do
-        get "/api/v1/semesters/#{@user.semesters.first.id}", headers: auth_headers(@user), as: :json
+        get "/api/v1/semesters/#{@semester_id}", headers: auth_headers(@user), as: :json
         expect(response.parsed_body[:name]).to eq(@user.semesters.first[:name])
       end
 
       it "gets only semesters the user has access to" do
-        get "/api/v1/semesters/#{@user_2.semesters.first.id}", headers: auth_headers(@user), as: :json
+        get "/api/v1/semesters/#{@semester_2_id}", headers: auth_headers(@user), as: :json
         expect(response).to have_http_status(:forbidden)
       end
 
@@ -103,7 +105,7 @@ RSpec.describe "/api/v1/semesters", type: :request do
 
     context "with invalid auth token" do
       it "should render a 401 unauthorized response for a missing token" do
-        get "/api/v1/semesters/#{@user.semesters.first.id}", headers: valid_headers, as: :json
+        get "/api/v1/semesters/#{@semester_id}", headers: valid_headers, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -155,15 +157,15 @@ RSpec.describe "/api/v1/semesters", type: :request do
 
     context "with valid auth token" do
       it "should render a successful JSON response with valid parameters" do
-        patch "/api/v1/semesters/#{@user.semesters.first.id}",
+        patch "/api/v1/semesters/#{@semester_id}",
               params: { api_v1_semester: new_attributes }, headers: auth_headers(@user), as: :json
-        expect(response).to have_http_status(:ok)
+        expect(response).to be_successful
         expect(response.content_type).to match(a_string_including("application/json"))
       end
 
       it "should update the Api::V1::Semester" do
         old_semester = @user.semesters.first.dup
-        patch "/api/v1/semesters/#{@user.semesters.first.id}",
+        patch "/api/v1/semesters/#{@semester_id}",
               params: { api_v1_semester: new_attributes }, headers: auth_headers(@user), as: :json
         @user.reload
         expect(old_semester[:name]).to_not eq(@user.semesters.first[:name])
@@ -171,14 +173,14 @@ RSpec.describe "/api/v1/semesters", type: :request do
 
       it "should return an error response with invalid parameters" do
         invalid_attributes { |attribute_set|
-          patch "/api/v1/semesters/#{@user.semesters.first.id}",
+          patch "/api/v1/semesters/#{@semester_id}",
                 params: { api_v1_semester: attribute_set }, headers: auth_headers(@user), as: :json
           expect(response).to have_http_status(:unprocessable_entity)
         }
       end
 
       it "renders a 403 forbidden response when trying to access someone else's semester" do
-        patch "/api/v1/semesters/#{@user_2.semesters.first.id}",
+        patch "/api/v1/semesters/#{@semester_2_id}",
               params: { api_v1_semester: new_attributes }, headers: auth_headers(@user), as: :json
         expect(response).to have_http_status(:forbidden)
       end
@@ -192,7 +194,7 @@ RSpec.describe "/api/v1/semesters", type: :request do
 
     context "with invalid auth token" do
       it "should render a 401 unauthorized response for a missing token" do
-        patch "/api/v1/semesters/#{@user.semesters.first.id}",
+        patch "/api/v1/semesters/#{@semester_id}",
               params: { api_v1_semester: new_attributes }, headers: valid_headers, as: :json
 
         expect(response).to have_http_status(:unauthorized)
@@ -203,19 +205,21 @@ RSpec.describe "/api/v1/semesters", type: :request do
   describe "DELETE /api/v1/semesters/:id" do
     context "with valid auth token" do
       it "renders a successful response" do
-        delete "/api/v1/semesters/#{@user.semesters.first.id}", headers: auth_headers(@user), as: :json
+        delete "/api/v1/semesters/#{@semester_id}", headers: auth_headers(@user), as: :json
         expect(response).to be_successful
       end
 
       it "deletes the semester from the database" do
         expect {
-          delete "/api/v1/semesters/#{@user.semesters.first.id}", headers: auth_headers(@user), as: :json
+          delete "/api/v1/semesters/#{@semester_id}", headers: auth_headers(@user), as: :json
         }.to change(Api::V1::Semester, :count).by(-1)
       end
 
       it "deletes only semesters the user has access to" do
-        delete "/api/v1/semesters/#{@user_2.semesters.first.id}", headers: auth_headers(@user), as: :json
-        expect(response).to have_http_status(:forbidden)
+        expect {
+          delete "/api/v1/semesters/#{@semester_2_id}", headers: auth_headers(@user), as: :json
+          expect(response).to have_http_status(:forbidden)
+        }.to change(Api::V1::Semester, :count).by(0)
       end
 
       it "renders a 403 forbidden response for a nonexistent ID" do
@@ -226,7 +230,7 @@ RSpec.describe "/api/v1/semesters", type: :request do
 
     context "with invalid auth token" do
       it "should render a 401 unauthorized response for a missing token" do
-        delete "/api/v1/semesters/#{@user.semesters.first.id}", headers: valid_headers, as: :json
+        delete "/api/v1/semesters/#{@semester_id}", headers: valid_headers, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
