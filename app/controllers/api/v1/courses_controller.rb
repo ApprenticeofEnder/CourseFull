@@ -53,7 +53,7 @@ class Api::V1::CoursesController < Api::V1::ApplicationController
     begin
       @api_v1_semester = Api::V1::Semester.find_by!(id: params[:api_v1_course][:api_v1_semester_id], api_v1_user_id: @api_v1_user.id)
     rescue ActiveRecord::RecordNotFound
-      unauthorized
+      forbidden
     end
   end
 
@@ -61,7 +61,7 @@ class Api::V1::CoursesController < Api::V1::ApplicationController
     begin
       @api_v1_course = Api::V1::Course.find_by!(id: params[:id], api_v1_user_id: @api_v1_user.id)
     rescue ActiveRecord::RecordNotFound
-      unauthorized
+      forbidden
     end
   end
 

@@ -50,15 +50,11 @@ class Api::V1::ApplicationController < ActionController::API
     render json: { message: "Please log in" }, status: :unauthorized unless logged_in?
   end
 
-  def valid_user_id?
-    params[:user_id] == @api_v1_user.id
-  end
-
-  def unauthorized
+  def forbidden
     render json: { message: "You cannot access that resource" }, status: :forbidden
   end
 
   def authorized
-    unauthorized unless valid_user_id?
+    forbidden unless valid_user_id?
   end
 end

@@ -48,7 +48,7 @@ class Api::V1::SemestersController < Api::V1::ApplicationController
     begin
       @api_v1_semester = Api::V1::Semester.find_by!(id: params[:id], api_v1_user_id: @api_v1_user.id)
     rescue ActiveRecord::RecordNotFound
-      unauthorized
+      forbidden
     end
   end
 
