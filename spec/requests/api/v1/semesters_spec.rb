@@ -13,10 +13,6 @@ require "rails_helper"
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/api/v1/semesters", type: :request do
-  # This should return the minimal set of attributes required to create a valid
-  # Api::V1::Semester. As you add validations to Api::V1::Semester, be sure to
-  # adjust the attributes here as well.
-
   def user
     create(:api_v1_user) do |user|
       create(:api_v1_semester, user: user)
@@ -26,7 +22,7 @@ RSpec.describe "/api/v1/semesters", type: :request do
   let(:valid_attributes) { attributes_for(:api_v1_semester, user: nil) }
 
   def invalid_attributes
-    attributes = [:name, :status, :goal]
+    attributes = valid_attributes.keys
     @attribute_count = attributes.length
     attributes.each do |attribute|
       yield attributes_for(:api_v1_semester, attribute => nil)
@@ -40,11 +36,6 @@ RSpec.describe "/api/v1/semesters", type: :request do
   let(:valid_headers) {
     {}
   }
-
-  def auth_headers(user)
-    auth_token = JWT.encode({ sub: user[:supabase_id].to_s }, ENV["JWT_SECRET"])
-    { authorization: "Bearer #{auth_token}" }
-  end
 
   before :each do
     @user = user

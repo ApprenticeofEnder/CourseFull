@@ -5,6 +5,7 @@ FactoryBot.define do
     notes { Faker::Lorem.paragraph }
     goal { 80.0 }
     course factory: :api_v1_course
+    user factory: :api_v1_user
 
     factory :api_v1_assignment do
       name { "Assignment #{Faker::Number.between(from: 1, to: 10)}: #{Faker::Lorem.word}" }

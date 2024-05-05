@@ -1,6 +1,7 @@
 class Api::V1::Course < ApplicationRecord
   has_many :deliverables, foreign_key: "api_v1_deliverable_id"
   belongs_to :semester, foreign_key: "api_v1_semester_id", dependent: :destroy
+  belongs_to :user, foreign_key: "api_v1_user_id", dependent: :destroy
 
   # Scopes
   scope :active, -> { where(status: :active) }
@@ -13,9 +14,11 @@ class Api::V1::Course < ApplicationRecord
   validates :title, presence: true, length: { minimum: 2, maximum: 150 }
   validates :course_code, presence: true, length: { minimum: 2, maximum: 16 }
   validates :goal, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
+  validates :deliverable_goal, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :grade, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :status, inclusion: { in: statuses.keys }
   validates :semester, presence: true
+  validates :user, presence: true
 
   def update_goal()
     self.set_goal(self.goal)

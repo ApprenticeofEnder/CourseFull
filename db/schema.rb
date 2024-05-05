@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_03_052856) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_05_061316) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,7 +24,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_03_052856) do
     t.uuid "api_v1_semester_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "api_v1_user_id", null: false
     t.index ["api_v1_semester_id"], name: "index_api_v1_courses_on_api_v1_semester_id"
+    t.index ["api_v1_user_id"], name: "index_api_v1_courses_on_api_v1_user_id"
   end
 
   create_table "api_v1_deliverables", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -37,7 +39,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_03_052856) do
     t.float "goal"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "api_v1_user_id", null: false
     t.index ["api_v1_course_id"], name: "index_api_v1_deliverables_on_api_v1_course_id"
+    t.index ["api_v1_user_id"], name: "index_api_v1_deliverables_on_api_v1_user_id"
   end
 
   create_table "api_v1_semesters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -61,6 +65,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_03_052856) do
   end
 
   add_foreign_key "api_v1_courses", "api_v1_semesters"
+  add_foreign_key "api_v1_courses", "api_v1_users"
   add_foreign_key "api_v1_deliverables", "api_v1_courses"
+  add_foreign_key "api_v1_deliverables", "api_v1_users"
   add_foreign_key "api_v1_semesters", "api_v1_users"
 end

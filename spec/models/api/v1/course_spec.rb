@@ -45,6 +45,11 @@ RSpec.describe Api::V1::Course, type: :model do
       api_v1_course.status = nil
       expect(api_v1_course).to_not be_valid
     end
+
+    it "without a deliverable goal" do
+      api_v1_course.deliverable_goal = nil
+      expect(api_v1_course).to_not be_valid
+    end
   end
 
   context "status" do

@@ -1,6 +1,7 @@
 class Api::V1::Deliverable < ApplicationRecord
   # Relationships
   belongs_to :course, foreign_key: "api_v1_course_id", dependent: :destroy
+  belongs_to :user, foreign_key: "api_v1_user_id", dependent: :destroy
 
   # Scopes
   scope :active, -> { where(status: :active) }
@@ -16,4 +17,6 @@ class Api::V1::Deliverable < ApplicationRecord
   validates :notes, presence: true, allow_blank: true, length: { maximum: 5000 }
   validates :goal, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :status, inclusion: { in: statuses.keys }
+  validates :course, presence: true
+  validates :user, presence: true
 end

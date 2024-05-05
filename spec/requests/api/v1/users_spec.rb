@@ -21,7 +21,9 @@ RSpec.describe "/api/v1/users", type: :request do
   }
 
   def invalid_attributes
-    attributes = [:first_name, :last_name, :email, :supabase_id]
+    attributes_hash = valid_attributes.dup
+    attributes_hash.delete(:courses_remaining)
+    attributes = attributes_hash.keys
     @attribute_count = attributes.length
     attributes.each do |attribute|
       yield attributes_for(:api_v1_user, attribute => nil)
@@ -39,11 +41,6 @@ RSpec.describe "/api/v1/users", type: :request do
   let(:valid_headers) {
     {}
   }
-
-  def auth_headers(user)
-    auth_token = JWT.encode({ sub: user[:supabase_id].to_s }, ENV["JWT_SECRET"])
-    { authorization: "Bearer #{auth_token}" }
-  end
 
   # Remaining resource APIs should have constraints on what users can mess with to their own stuff
 

@@ -56,8 +56,4 @@ class Api::V1::SemestersController < Api::V1::ApplicationController
   def api_v1_semester_params
     params.require(:api_v1_semester).permit(:name, :status, :goal)
   end
-
-  def goal_params
-    params.require(:semester).permit(:goal)
-  end
 end
