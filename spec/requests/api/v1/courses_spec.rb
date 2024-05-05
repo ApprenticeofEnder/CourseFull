@@ -31,7 +31,7 @@ RSpec.describe "/api/v1/courses", type: :request do
     attributes_hash.delete(:goal)
     attributes_hash.delete(:grade)
     attributes_hash.delete(:deliverable_goal)
-    attributes_hash.delete(:semester) if is_updating
+    attributes_hash.delete(:api_v1_semester_id) if is_updating
 
     attributes = attributes_hash.keys
 
@@ -110,6 +110,7 @@ RSpec.describe "/api/v1/courses", type: :request do
       it "renders a successful response" do
         get "/api/v1/courses/#{@course_id}", headers: auth_headers(@user), as: :json
         expect(response).to be_successful
+        expect(response.content_type).to match(a_string_including("application/json"))
       end
 
       it "gets the correct course" do
@@ -206,21 +207,39 @@ RSpec.describe "/api/v1/courses", type: :request do
       end
 
       it "should return an error response with invalid parameters" do
-        skip("To be implemented")
+        invalid_attributes(is_updating: true) { |attribute_set|
+          patch "/api/v1/courses/#{@course_id}",
+                params: { api_v1_course: attribute_set }, headers: auth_headers(@user), as: :json
+          expect(response).to have_http_status(:unprocessable_entity)
+        }
       end
 
-      it "renders a 403 forbidden response when trying to access another user's semester" do
-        skip("To be implemented")
+      it "renders a 403 forbidden response when trying to access another user's course" do
+        patch "/api/v1/courses/#{@course_2_id}",
+              params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it "does not allow a user to update another's semester" do
+        old_course = @semester.courses.first.dup
+        patch "/api/v1/courses/#{@course_2_id}",
+              params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+        @semester.reload
+        expect(old_course[:title]).to eq(@semester.courses.first[:title])
       end
 
       it "renders a 403 forbidden response for a nonexistent ID" do
-        skip("To be implemented")
+        patch "/api/v1/courses/#{SecureRandom.uuid}",
+              params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context "with invalid auth token" do
       it "should render a 401 unauthorized response for a missing token" do
-        skip("To be implemented")
+        patch "/api/v1/courses/#{@course_id}",
+              params: { api_v1_course: valid_attributes(@user) }, headers: valid_headers, as: :json
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end
@@ -228,74 +247,34 @@ RSpec.describe "/api/v1/courses", type: :request do
   describe "DELETE /api/v1/courses/:id" do
     context "with valid auth token" do
       it "renders a successful response" do
-        skip("To be implemented")
+        delete "/api/v1/courses/#{@course_id}", headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:no_content)
       end
 
       it "deletes the course from the database" do
-        skip("To be implemented")
+        expect {
+          delete "/api/v1/courses/#{@course_id}", headers: auth_headers(@user), as: :json
+        }.to change(Api::V1::Course, :count).by(-1)
       end
 
-      it "deletes only semesters the user has access to" do
-        skip("To be implemented")
-      end
-
-      it "renders a 403 forbidden response when trying to access another user's semester" do
-        skip("To be implemented")
+      it "deletes only courses the user has access to" do
+        expect {
+          delete "/api/v1/courses/#{@course_2_id}", headers: auth_headers(@user), as: :json
+          expect(response).to have_http_status(:forbidden)
+        }.to change(Api::V1::Course, :count).by(0)
       end
 
       it "renders a 403 forbidden response for a nonexistent ID" do
-        skip("To be implemented")
+        delete "/api/v1/courses/#{SecureRandom.uuid}", headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context "with invalid auth token" do
       it "should render a 401 unauthorized response for a missing token" do
-        skip("To be implemented")
+        delete "/api/v1/courses/#{@course_id}", headers: valid_headers, as: :json
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end
 end
-
-#   describe "PATCH /update" do
-#     context "with valid parameters" do
-#       let(:new_attributes) {
-#         skip("Add a hash of attributes valid for your model")
-#       }
-
-#       it "updates the requested api_v1_course" do
-#         course = Api::V1::Course.create! valid_attributes
-#         patch api_v1_course_url(course),
-#               params: { api_v1_course: new_attributes }, headers: valid_headers, as: :json
-#         course.reload
-#         skip("Add assertions for updated state")
-#       end
-
-#       it "renders a JSON response with the api_v1_course" do
-#         course = Api::V1::Course.create! valid_attributes
-#         patch api_v1_course_url(course),
-#               params: { api_v1_course: new_attributes }, headers: valid_headers, as: :json
-#         expect(response).to have_http_status(:ok)
-#         expect(response.content_type).to match(a_string_including("application/json"))
-#       end
-#     end
-
-#     context "with invalid parameters" do
-#       it "renders a JSON response with errors for the api_v1_course" do
-#         course = Api::V1::Course.create! valid_attributes
-#         patch api_v1_course_url(course),
-#               params: { api_v1_course: invalid_attributes }, headers: valid_headers, as: :json
-#         expect(response).to have_http_status(:unprocessable_entity)
-#         expect(response.content_type).to match(a_string_including("application/json"))
-#       end
-#     end
-#   end
-
-#   describe "DELETE /destroy" do
-#     it "destroys the requested api_v1_course" do
-#       course = Api::V1::Course.create! valid_attributes
-#       expect {
-#         delete api_v1_course_url(course), headers: valid_headers, as: :json
-#       }.to change(Api::V1::Course, :count).by(-1)
-#     end
-#   end
-# end

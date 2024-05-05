@@ -84,6 +84,7 @@ RSpec.describe "/api/v1/semesters", type: :request do
       it "renders a successful response" do
         get "/api/v1/semesters/#{@semester_id}", headers: auth_headers(@user), as: :json
         expect(response).to be_successful
+        expect(response.content_type).to match(a_string_including("application/json"))
       end
 
       it "gets the correct semester" do
@@ -185,6 +186,14 @@ RSpec.describe "/api/v1/semesters", type: :request do
         expect(response).to have_http_status(:forbidden)
       end
 
+      it "does not allow a user to update another's semester" do
+        old_semester = @user_2.semesters.first.dup
+        patch "/api/v1/semesters/#{@semester_2_id}",
+              params: { api_v1_semester: new_attributes }, headers: auth_headers(@user), as: :json
+        @user_2.reload
+        expect(old_semester[:name]).to eq(@user_2.semesters.first[:name])
+      end
+
       it "renders a 403 forbidden response for a nonexistent ID" do
         patch "/api/v1/semesters/#{SecureRandom.uuid}",
               params: { api_v1_semester: new_attributes }, headers: auth_headers(@user), as: :json
@@ -206,7 +215,7 @@ RSpec.describe "/api/v1/semesters", type: :request do
     context "with valid auth token" do
       it "renders a successful response" do
         delete "/api/v1/semesters/#{@semester_id}", headers: auth_headers(@user), as: :json
-        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
       end
 
       it "deletes the semester from the database" do
