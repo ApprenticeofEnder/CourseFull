@@ -126,7 +126,7 @@ RSpec.describe "/api/v1/courses", type: :request do
         expect(response.parsed_body[:title]).to eq(@semester.courses.first[:title])
       end
 
-      it "gets only semesters the user has access to" do
+      it "gets only courses the user has access to" do
         get "/api/v1/courses/#{@course_2_id}", headers: auth_headers(@user), as: :json
         expect(response).to have_http_status(:forbidden)
       end
@@ -228,7 +228,7 @@ RSpec.describe "/api/v1/courses", type: :request do
         expect(response).to have_http_status(:forbidden)
       end
 
-      it "does not allow a user to update another's semester" do
+      it "does not allow a user to update another's course" do
         old_course = @semester.courses.first.dup
         patch "/api/v1/courses/#{@course_2_id}",
               params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json

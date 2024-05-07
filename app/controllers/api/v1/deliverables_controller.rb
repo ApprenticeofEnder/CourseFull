@@ -19,7 +19,7 @@ class Api::V1::DeliverablesController < Api::V1::ApplicationController
   def create
     @api_v1_deliverable = Api::V1::Deliverable.new(api_v1_deliverable_params)
 
-    @api_v1_deliverable.goal = @course.deliverable_goal
+    @api_v1_deliverable.goal = @api_v1_course.deliverable_goal
     @api_v1_deliverable.user = @api_v1_user
 
     if @api_v1_deliverable.save
@@ -58,7 +58,7 @@ class Api::V1::DeliverablesController < Api::V1::ApplicationController
 
   def set_api_v1_deliverable
     begin
-      @api_v1_deliverable = Api::V1::Deliverable.find_by!(params[:id], api_v1_user_id: @api_v1_user.id)
+      @api_v1_deliverable = Api::V1::Deliverable.find_by!(id: params[:id], api_v1_user_id: @api_v1_user.id)
     rescue ActiveRecord::RecordNotFound
       forbidden
     end
