@@ -1,10 +1,11 @@
 class Api::V1::DeliverablesController < Api::V1::ApplicationController
+  before_action :authenticated
   before_action :get_api_v1_course, only: %i[ create ]
   before_action :set_api_v1_deliverable, only: %i[ show update destroy ]
 
   # GET /api/v1/deliverables
   def index
-    @api_v1_deliverables = Api::V1::Deliverable.all
+    @api_v1_deliverables = Api::V1::Deliverable.where(api_v1_user_id: @api_v1_user.id)
 
     render json: @api_v1_deliverables
   end
@@ -17,7 +18,9 @@ class Api::V1::DeliverablesController < Api::V1::ApplicationController
   # POST /api/v1/deliverables
   def create
     @api_v1_deliverable = Api::V1::Deliverable.new(api_v1_deliverable_params)
-    @api_v1_deliverable.goal = @course.deliverable.goal
+
+    @api_v1_deliverable.goal = @course.deliverable_goal
+    @api_v1_deliverable.user = @api_v1_user
 
     if @api_v1_deliverable.save
       render json: @api_v1_deliverable, status: :created, location: @api_v1_deliverable
@@ -46,16 +49,24 @@ class Api::V1::DeliverablesController < Api::V1::ApplicationController
 
   # TODO: Add authorization to all of this
   def get_api_v1_course
-    @api_v1_course = Api::V1::Course.find(params[:course_id])
+    begin
+      @api_v1_course = Api::V1::Course.find_by!(id: params[:api_v1_deliverable][:api_v1_course_id], api_v1_user_id: @api_v1_user.id)
+    rescue ActiveRecord::RecordNotFound
+      forbidden
+    end
   end
 
   def set_api_v1_deliverable
-    @api_v1_deliverable = Api::V1::Deliverable.find(params[:id])
+    begin
+      @api_v1_deliverable = Api::V1::Deliverable.find_by!(params[:id], api_v1_user_id: @api_v1_user.id)
+    rescue ActiveRecord::RecordNotFound
+      forbidden
+    end
   end
 
   # Only allow a list of trusted parameters through.
   def api_v1_deliverable_params
-    params.require(:api_v1_deliverable).permit(:name, :weight, :mark, :notes, :course_id, :status)
+    params.require(:api_v1_deliverable).permit(:name, :weight, :mark, :notes, :api_v1_course_id, :status)
   end
 
   def api_v1_deliverable_update_params

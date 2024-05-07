@@ -21,7 +21,7 @@ class Api::V1::SemestersController < Api::V1::ApplicationController
     @api_v1_semester.user = @api_v1_user
 
     if @api_v1_semester.save
-      render json: @api_v1_semester, status: :created
+      render json: @api_v1_semester, status: :created, location: @api_v1_semester
     else
       render json: @api_v1_semester.errors, status: :unprocessable_entity
     end

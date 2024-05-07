@@ -48,11 +48,19 @@ RSpec.describe "/api/v1/courses", type: :request do
     end
   end
 
+  def course(user, semester)
+    create(:api_v1_course, semester: semester, user: user)
+  end
+
+  def semester(user)
+    create(:api_v1_semester, user: user) do |semester|
+      course(user, semester)
+    end
+  end
+
   def user
     create(:api_v1_user) do |user|
-      create(:api_v1_semester, user: user) do |semester|
-        create(:api_v1_course, semester: semester, user: user)
-      end
+      semester(user)
     end
   end
 
