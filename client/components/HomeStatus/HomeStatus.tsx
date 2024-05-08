@@ -1,10 +1,20 @@
-import { SessionProps } from '@/lib/types';
+import { SemesterProgress, SessionProps } from '@/lib/types';
 import { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Endpoints } from '@/lib/helpers';
 
+import Progress from '@/components/Goals/SemesterProgress';
+
 export default function HomeStatus({ session }: SessionProps) {
-    const [progress, setProgress] = useState<object[] | null>(null);
+    const [progress, setProgress] = useState<SemesterProgress[] | null>([
+        {
+            semester: 'TEST SEMESTER',
+            semesterId: 'EEEE',
+            average: 78.2,
+            numCourses: 4,
+            goal: 80.0,
+        },
+    ]);
 
     useEffect(() => {
         async function requestProgress() {
@@ -13,7 +23,7 @@ export default function HomeStatus({ session }: SessionProps) {
                     Authorization: `Bearer ${session.access_token}`,
                 },
             });
-            setProgress(data);
+            // setProgress(data);
         }
 
         requestProgress().catch((err) => {
@@ -23,8 +33,13 @@ export default function HomeStatus({ session }: SessionProps) {
     return (
         <Fragment>
             {progress?.length ? (
-                progress.map((semesterProgress: object) => {
-                    return <p>{JSON.stringify(semesterProgress)}</p>;
+                progress.map((semesterProgress: SemesterProgress) => {
+                    return (
+                        <Progress
+                            {...semesterProgress}
+                            key={semesterProgress.semester}
+                        ></Progress>
+                    );
                 })
             ) : (
                 <p>No progress made.</p>

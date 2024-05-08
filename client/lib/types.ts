@@ -9,4 +9,12 @@ type SessionProps = {
     session: Session;
 };
 
-export type { ChildrenProps, SessionProps };
+interface SemesterProgress {
+    semester: string;
+    semesterId: string;
+    average: number;
+    numCourses: number;
+    goal: number;
+}
+
+export type { ChildrenProps, SessionProps, SemesterProgress };
