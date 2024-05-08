@@ -3,12 +3,6 @@ require "rails_helper"
 RSpec.describe GoalCalculator do
   let(:goal) { 80.0 }
 
-  # let(:course) {
-  #   build(:course) do |course|
-  #     build_list()
-  #   end
-  # }
-
   let(:course_with_chaotic_results) {
     build(:api_v1_course) do |course|
       assignments = build_list(:api_v1_completed_assignment, 5)
@@ -38,9 +32,9 @@ RSpec.describe GoalCalculator do
 
   let(:completed_course) {
     build(:api_v1_course) do |course|
-      assignments = build_list(:api_v1_completed_assignment, 5)
-      midterm = build(:api_v1_completed_midterm)
-      exam = build(:api_v1_completed_exam)
+      assignments = build_list(:api_v1_completed_assignment, 5, mark: 85)
+      midterm = build(:api_v1_completed_midterm, mark: 85)
+      exam = build(:api_v1_completed_exam, mark: 85)
       course.deliverables = [*assignments, midterm, exam]
     end
   }
@@ -71,6 +65,10 @@ RSpec.describe GoalCalculator do
     it "should have 60 points completed" do
       expect(@calculator.weight_completed).to eq(60.0)
     end
+
+    it "should have a grade of ~78" do
+      expect(@calculator.grade).to eq(78.3)
+    end
   end
 
   context "the tiger results" do
@@ -80,7 +78,11 @@ RSpec.describe GoalCalculator do
     end
 
     it "should have a goal of 65% for remaining coursework" do
-      expect(@calculator.deliverable_goal).to eq(65)
+      expect(@calculator.deliverable_goal).to eq(65.0)
+    end
+
+    it "should have a grade of 90" do
+      expect(@calculator.grade).to eq(90.0)
     end
   end
 
@@ -96,6 +98,10 @@ RSpec.describe GoalCalculator do
 
     it "should be completed" do
       expect(@calculator.complete?).to eq(true)
+    end
+
+    it "should have a grade of 85" do
+      expect(@calculator.grade).to eq(85.00)
     end
   end
 end

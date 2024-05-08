@@ -1,18 +1,11 @@
 Rails.application.routes.draw do
-  # TODO
-  # Need to implement JWT Auth
-  # Need to adjust it to the following API:
-  # POST   /api/v1/users    => sign up
-  # GET    /api/v1/users/me => get user data
-  # PUT    /api/v1/users/me => update information
-  # DELETE /api/v1/users/me => delete account
-
   # Remaining APIs are pretty much as is?
   namespace :api do
     namespace :v1 do
       resources :courses
       resources :deliverables
       resources :semesters
+      get "users/me/progress" => "users#progress"
       get "users/me" => "users#show"
       put "users/me" => "users#update"
       patch "users/me" => "users#update"

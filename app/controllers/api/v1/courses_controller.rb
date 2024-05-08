@@ -25,6 +25,7 @@ class Api::V1::CoursesController < Api::V1::ApplicationController
     @api_v1_course.user = @api_v1_user
 
     if @api_v1_course.save
+      @api_v1_course.update_goal
       render json: @api_v1_course, status: :created, location: @api_v1_course
     else
       render json: @api_v1_course.errors, status: :unprocessable_entity

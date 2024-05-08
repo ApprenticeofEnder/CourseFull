@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { SessionProps } from '@/lib/types';
-import MenuButton from '@/components/Button/MenuButton';
+import Button from '@/components/Button/Button';
 import { classNames, Endpoints } from '@/lib/helpers';
 
 import { UserMetadata } from '@supabase/supabase-js';
@@ -60,7 +60,7 @@ export default function AccountDropdown({ session }: SessionProps) {
     return (
         <Menu as="div" className="relative ml-3">
             <div>
-                <Menu.Button as={MenuButton} startContent={userIcon}>
+                <Menu.Button as={Button} startContent={userIcon}>
                     <span className="sr-only">Open user menu</span>
                     <div className="text-sm">{userName}</div>
                 </Menu.Button>

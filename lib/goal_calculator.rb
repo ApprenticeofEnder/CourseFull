@@ -43,10 +43,7 @@ class GoalCalculator
   end
 
   def grade
-    if self.complete?
-      raw_result = 100 * @earned_points / @completed_weight.round(2)
-      return raw_result.round(2)
-    end
-    return 0
+    raw_result = 100 * @earned_points / @weight_completed
+    return raw_result.round(2)
   end
 end

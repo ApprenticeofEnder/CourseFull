@@ -14,7 +14,24 @@ require "rails_helper"
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/api/v1/users", type: :request do
-  let(:user) { create(:api_v1_user) }
+  def user
+    create(:api_v1_user)
+  end
+
+  def course(user, semester)
+    create(:api_v1_course, semester: semester, user: user, status: :active) do |course|
+      create_list(:api_v1_completed_assignment, 4, course: course, user: user, mark: Faker::Number.between(from: 20.0, to: 100.0))
+    end
+  end
+
+  def semester(user)
+    create(:api_v1_semester, user: user, status: :active) do |semester|
+      (0..2).each do |i|
+        course(user, semester)
+      end
+      semester.update_goal()
+    end
+  end
 
   let(:valid_attributes) {
     attributes_for(:api_v1_user)
@@ -45,19 +62,20 @@ RSpec.describe "/api/v1/users", type: :request do
   # Remaining resource APIs should have constraints on what users can mess with to their own stuff
 
   before :each do
-    user
+    @user = user
+    @user_2 = user
   end
 
   describe "GET /api/v1/users/me" do
     context "with valid token" do
       it "returns a successful status code" do
-        get "/api/v1/users/me", headers: auth_headers(user), as: :json
+        get "/api/v1/users/me", headers: auth_headers(@user), as: :json
         expect(response).to have_http_status(:ok)
       end
 
       it "gets user data" do
-        get "/api/v1/users/me", headers: auth_headers(user), as: :json
-        expect(response.parsed_body[:email]).to eq(user[:email])
+        get "/api/v1/users/me", headers: auth_headers(@user), as: :json
+        expect(response.parsed_body[:email]).to eq(@user[:email])
       end
     end
 
@@ -70,14 +88,37 @@ RSpec.describe "/api/v1/users", type: :request do
 
     context "with multiple users" do
       it "returns different data for different users" do
-        user_2 = create(:api_v1_user)
-        expect(user_2[:first_name]).to_not eq(user[:first_name])
+        expect(@user_2[:first_name]).to_not eq(@user[:first_name])
 
-        get "/api/v1/users/me", headers: auth_headers(user), as: :json
-        expect(response.parsed_body[:first_name]).to eq(user[:first_name])
+        get "/api/v1/users/me", headers: auth_headers(@user), as: :json
+        expect(response.parsed_body[:first_name]).to eq(@user[:first_name])
 
-        get "/api/v1/users/me", headers: auth_headers(user_2), as: :json
-        expect(response.parsed_body[:first_name]).to eq(user_2[:first_name])
+        get "/api/v1/users/me", headers: auth_headers(@user_2), as: :json
+        expect(response.parsed_body[:first_name]).to eq(@user_2[:first_name])
+      end
+    end
+  end
+
+  describe "GET /api/v1/users/me/progress" do
+    before :each do
+      semester(@user)
+      semester(@user)
+      semester(@user_2)
+      semester(@user_2)
+    end
+
+    context "with valid token" do
+      it "returns a successful response" do
+        get "/api/v1/users/me/progress", headers: auth_headers(@user), as: :json
+        expect(response).to be_successful
+      end
+
+      it "returns the correct amount of semesters" do
+        get "/api/v1/users/me/progress", headers: auth_headers(@user), as: :json
+        expect(response.parsed_body.length).to eq(2)
+
+        get "/api/v1/users/me/progress", headers: auth_headers(@user_2), as: :json
+        expect(response.parsed_body.length).to eq(2)
       end
     end
   end
@@ -142,12 +183,12 @@ RSpec.describe "/api/v1/users", type: :request do
     context "with valid auth token" do
       it "destroys the requested Api::V1::User" do
         expect {
-          delete "/api/v1/users/me", headers: auth_headers(user), as: :json
+          delete "/api/v1/users/me", headers: auth_headers(@user), as: :json
         }.to change(Api::V1::User, :count).by(-1)
       end
 
       it "returns a successful deletion status code" do
-        delete "/api/v1/users/me", headers: auth_headers(user), as: :json
+        delete "/api/v1/users/me", headers: auth_headers(@user), as: :json
         expect(response).to have_http_status(:no_content)
       end
     end
@@ -167,24 +208,23 @@ RSpec.describe "/api/v1/users", type: :request do
   end
 
   describe "PATCH /api/v1/users/me" do
+    let(:new_attributes) {
+      attributes_for(:api_v1_user)
+    }
     context "with valid parameters" do
-      let(:new_attributes) {
-        attributes_for(:api_v1_user)
-      }
-
       it "updates the requested api_v1_user" do
-        old_user = user.dup
+        old_user = @user.dup
         patch "/api/v1/users/me",
-              params: { api_v1_user: new_attributes }, headers: auth_headers(user), as: :json
-        user.reload
+              params: { api_v1_user: new_attributes }, headers: auth_headers(@user), as: :json
+        @user.reload
         [:email, :first_name, :last_name, :supabase_id].each do |key|
-          expect(user[key]).to_not eq(old_user[key])
+          expect(@user[key]).to_not eq(old_user[key])
         end
       end
 
       it "renders a JSON response with the api_v1_user" do
         patch "/api/v1/users/me",
-              params: { api_v1_user: new_attributes }, headers: auth_headers(user), as: :json
+              params: { api_v1_user: new_attributes }, headers: auth_headers(@user), as: :json
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to match(a_string_including("application/json"))
       end
@@ -194,7 +234,7 @@ RSpec.describe "/api/v1/users", type: :request do
       it "renders a JSON response with errors for the api_v1_user" do
         invalid_attributes { |attribute_set|
           patch "/api/v1/users/me",
-                params: { api_v1_user: attribute_set }, headers: auth_headers(user), as: :json
+                params: { api_v1_user: attribute_set }, headers: auth_headers(@user), as: :json
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to match(a_string_including("application/json"))
         }
@@ -202,10 +242,6 @@ RSpec.describe "/api/v1/users", type: :request do
     end
 
     context "with invalid auth token" do
-      let(:new_attributes) {
-        attributes_for(:api_v1_user)
-      }
-
       it "returns an unauthorized status code" do
         patch "/api/v1/users/me",
               params: { api_v1_user: new_attributes }, headers: valid_headers, as: :json

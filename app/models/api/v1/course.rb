@@ -20,7 +20,7 @@ class Api::V1::Course < ApplicationRecord
   validates :semester, presence: true
   validates :user, presence: true
 
-  def update_goal()
+  def update_goal
     self.set_goal(self.goal)
   end
 
@@ -44,5 +44,8 @@ class Api::V1::Course < ApplicationRecord
 
     self.save
     self.deliverables.active.update_all(goal: self.deliverable_goal)
+  end
+
+  def current_grade
   end
 end

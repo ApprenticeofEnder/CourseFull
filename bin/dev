@@ -1,3 +1,4 @@
 #!/bin/bash -e
-op run --env-file=./.env.dev.tpl -- rails db:migrate
-op run --env-file=./.env.dev.tpl -- foreman start -f Procfile.local
+export $(op inject -i .env.dev.tpl)
+rails db:migrate
+foreman start -f Procfile.local

@@ -32,6 +32,7 @@ class Api::V1::DeliverablesController < Api::V1::ApplicationController
   # PATCH/PUT /api/v1/deliverables/1
   def update
     if @api_v1_deliverable.update(api_v1_deliverable_update_params)
+      @api_v1_deliverable.course.update_goal
       render json: @api_v1_deliverable
     else
       render json: @api_v1_deliverable.errors, status: :unprocessable_entity

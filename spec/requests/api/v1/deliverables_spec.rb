@@ -197,6 +197,8 @@ RSpec.describe "/api/v1/deliverables", type: :request do
     end
   end
 
+  # TODO: Add test for updating goals
+
   describe "PATCH /api/v1/deliverables/:id" do
     context "with valid auth token" do
       it "should render a successful JSON response with valid parameters" do
