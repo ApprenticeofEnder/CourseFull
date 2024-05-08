@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Endpoints } from '@/lib/helpers';
 
-import Progress from '@/components/Goals/SemesterProgress';
+import Progress from '@/components/Card/SemesterProgress';
 
 export default function HomeStatus({ session }: SessionProps) {
     const [progress, setProgress] = useState<SemesterProgress[] | null>([
