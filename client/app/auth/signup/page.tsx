@@ -3,6 +3,7 @@
 import { Fragment, useState } from 'react';
 import { Input } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import { Endpoints } from '@/lib/helpers';
@@ -18,23 +19,45 @@ export default function Signup() {
     const [loading, setLoading] = useState(false);
 
     async function supabaseSignUp() {
-        setLoading(true);
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: {
+        try {
+            setLoading(true);
+            const supabaseResponse = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        first_name: fname,
+                        last_name: lname,
+                    },
+                },
+            });
+            if (supabaseResponse.error) {
+                throw supabaseResponse.error.message;
+            }
+
+            const apiPostData = {
+                api_v1_user: {
                     first_name: fname,
                     last_name: lname,
+                    email,
+                    supabase_id: supabaseResponse.data.user?.id,
                 },
-            },
-        });
-        setLoading(false);
-        if (error) {
-            alert(`Something went wrong: ${error.message}`);
-            return;
+            };
+
+            const apiResponse = await axios.post(
+                Endpoints.API_USER_CREATE,
+                apiPostData
+            );
+
+            if (apiResponse.status !== 201) {
+                throw apiResponse.data;
+            }
+
+            router.push(Endpoints.EMAIL_VERIFY);
+        } catch (error) {
+            alert(`Something went wrong: ${error}`);
+            setLoading(false);
         }
-        router.push(Endpoints.EMAIL_VERIFY);
     }
 
     if (session) {

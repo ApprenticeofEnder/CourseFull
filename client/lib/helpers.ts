@@ -13,4 +13,6 @@ export enum Endpoints {
     LOGOUT = '/auth/logout',
     EMAIL_VERIFY = '/auth/email-verify',
     ROOT = '/',
+    API_PROGRESS = '/api/v1/users/me/progress',
+    API_USER_CREATE = '/api/v1/users',
 }

@@ -1,3 +1,3 @@
 #!/bin/bash -e
-
-op run --env-file=./.env.prod.tpl -- rails db:migrate
+export $(op inject -i .env.prod.tpl)
+rails db:migrate

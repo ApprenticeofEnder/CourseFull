@@ -38,6 +38,8 @@ class Api::V1::ApplicationController < ActionController::API
   def logged_in_user
     if decoded_token
       supabase_id = decoded_token[0]["sub"]
+      # confirmed = decoded_token[0]["user_metadata"]["email_confirmed"]
+      # TODO: Confirm whether the dev email confirmed thing is a fluke
       @api_v1_user = Api::V1::User.find_by(supabase_id: supabase_id)
     end
   end
@@ -52,9 +54,5 @@ class Api::V1::ApplicationController < ActionController::API
 
   def forbidden
     render json: { message: "You cannot access that resource" }, status: :forbidden
-  end
-
-  def authorized
-    forbidden unless valid_user_id?
   end
 end
