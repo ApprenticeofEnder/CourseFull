@@ -8,17 +8,15 @@ export default forwardRef<HTMLButtonElement, ButtonProps>(function (
     ref
 ) {
     return (
-        <Fragment>
-            <Button
-                className={classNames(
-                    'button-confirm bg-green-300',
-                    className || ''
-                )}
-                {...props}
-                ref={ref}
-            >
-                <div className="flex justify-between">{children}</div>
-            </Button>
-        </Fragment>
+        <Button
+            className={classNames(
+                'button-confirm bg-green-300',
+                className || ''
+            )}
+            {...props}
+            ref={ref}
+        >
+            <div className="flex justify-between">{children}</div>
+        </Button>
     );
 });

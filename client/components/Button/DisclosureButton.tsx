@@ -14,7 +14,7 @@ export default forwardRef<HTMLButtonElement, DisclosureButtonProps>(function (
         <Button className={className} {...remainingProps} ref={ref}>
             <div className="flex justify-between">
                 {children}
-                <ChevronRightIcon className="ui-open:-rotate-90 ui-not-open:rotate-90 h-6 w-6" />
+                <ChevronRightIcon className="ui-open:translate-y-1 ui-open:-rotate-90 ui-not-open:rotate-90 ui-not-open:translate-y-0.5 h-4 w-4 translate-y" />
             </div>
         </Button>
     );

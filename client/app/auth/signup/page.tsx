@@ -8,6 +8,7 @@ import axios from 'axios';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import { Endpoints } from '@/lib/helpers';
 import { supabase, useSupabaseSession } from '@/supabase';
+import { createUser } from '@/services/userService';
 
 export default function Signup() {
     const session = useSupabaseSession();
@@ -18,45 +19,20 @@ export default function Signup() {
     const [lname, setLname] = useState('');
     const [loading, setLoading] = useState(false);
 
-    async function supabaseSignUp() {
-        try {
-            setLoading(true);
-            const supabaseResponse = await supabase.auth.signUp({
-                email,
-                password,
-                options: {
-                    data: {
-                        first_name: fname,
-                        last_name: lname,
-                    },
-                },
-            });
-            if (supabaseResponse.error) {
-                throw supabaseResponse.error.message;
+    async function handleSignUp() {
+        setLoading(true);
+        const { success } = await createUser(
+            fname,
+            lname,
+            email,
+            password,
+            (error) => {
+                alert(`Something went wrong: ${error}`);
+                setLoading(false);
             }
-
-            const apiPostData = {
-                api_v1_user: {
-                    first_name: fname,
-                    last_name: lname,
-                    email,
-                    supabase_id: supabaseResponse.data.user?.id,
-                },
-            };
-
-            const apiResponse = await axios.post(
-                Endpoints.API_USER_CREATE,
-                apiPostData
-            );
-
-            if (apiResponse.status !== 201) {
-                throw apiResponse.data;
-            }
-
+        );
+        if (success) {
             router.push(Endpoints.EMAIL_VERIFY);
-        } catch (error) {
-            alert(`Something went wrong: ${error}`);
-            setLoading(false);
         }
     }
 
@@ -97,7 +73,7 @@ export default function Signup() {
             />
             <ConfirmButton
                 className="w-1/2 m-auto my-2"
-                onPressEnd={supabaseSignUp}
+                onPressEnd={handleSignUp}
                 isLoading={loading}
             >
                 {loading ? 'Signing up...' : 'Sign Up'}

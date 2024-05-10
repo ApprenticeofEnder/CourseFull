@@ -6,6 +6,7 @@ import { supabase, useSupabaseSession } from '@/supabase';
 import { Fragment, useState } from 'react';
 import { Input } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
+import { login } from '@/services/userService';
 
 export default function Login() {
     const session = useSupabaseSession();
@@ -14,18 +15,16 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    async function supabaseLogin() {
+    async function handleLogin() {
         setLoading(true);
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-        if (error) {
-            alert(`Something went wrong: ${error.message}`);
+
+        const { success } = await login(email, password, (error) => {
+            alert(`Something went wrong: ${error}`);
             setLoading(false);
-            return;
+        });
+        if (success) {
+            router.push(Endpoints.ROOT);
         }
-        router.push(Endpoints.ROOT);
     }
 
     if (session) {
@@ -51,7 +50,7 @@ export default function Login() {
             />
             <ConfirmButton
                 className="button-confirm w-1/2 m-auto my-2"
-                onClick={supabaseLogin}
+                onClick={handleLogin}
                 isLoading={loading}
             >
                 {loading ? 'Logging in...' : 'Log In'}

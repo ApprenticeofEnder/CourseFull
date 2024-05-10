@@ -22,7 +22,7 @@ export default function Home() {
             <Navbar session={session} />
             <Spacer>
                 <div className="relative py-10 flex justify-center h-dvh">
-                    <div className="flex flex-col justify-center max-w-full">
+                    <div className="flex flex-col justify-center max-w-full w-1/2">
                         <h1>Hey, friend!</h1>
                         {statusScreen}
                     </div>

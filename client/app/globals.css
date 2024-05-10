@@ -56,4 +56,19 @@
             0 theme('spacing.button-shadow-hover')
                 theme('spacing.button-shadow-hover') 0 rgba(0, 0, 0, 0.4);
     }
+
+    .button-danger {
+        background-color: theme('colors.red.300');
+        border: solid theme('borderWidth.2') theme('colors.red.400');
+        box-shadow: 0 theme('spacing.button-shadow') 0 0 theme('colors.red.400'),
+            0 theme('spacing.button-shadow') theme('spacing.button-shadow') 0
+                rgba(0, 0, 0, 0.4);
+    }
+
+    .button-danger:hover {
+        box-shadow: 0 theme('spacing.button-shadow-hover') 0 0
+                theme('colors.red.400'),
+            0 theme('spacing.button-shadow-hover')
+                theme('spacing.button-shadow-hover') 0 rgba(0, 0, 0, 0.4);
+    }
 }
