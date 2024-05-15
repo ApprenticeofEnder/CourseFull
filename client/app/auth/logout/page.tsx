@@ -1,10 +1,11 @@
 'use client';
 
-import { supabase } from '@/supabase';
-import { Spinner } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
-import { Endpoints } from '@/lib/helpers';
 import React from 'react';
+import { useRouter } from 'next/navigation';
+import { Spinner } from '@nextui-org/react';
+
+import { Endpoints } from '@/lib/enums';
+import { supabase } from '@/supabase';
 
 export default function Logout() {
     const router = useRouter();

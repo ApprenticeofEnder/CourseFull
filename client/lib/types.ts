@@ -6,13 +6,13 @@ type ChildrenProps = {
     children: ReactNode;
 };
 
-type SessionProps = {
-    session: Session;
-};
-
 type ModalProps = {
     open: boolean;
 };
+
+interface SessionProps {
+    session: Session;
+}
 
 interface SemesterProgressType {
     semester: string;
@@ -29,7 +29,7 @@ interface Semester {
     goal: number;
 }
 
-interface ServiceResponse {
+interface APIServiceResponse {
     response?: AxiosResponse;
     success: boolean;
 }
@@ -40,5 +40,5 @@ export type {
     SemesterProgressType,
     Semester,
     ModalProps,
-    ServiceResponse,
+    APIServiceResponse,
 };

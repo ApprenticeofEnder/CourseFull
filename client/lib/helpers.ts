@@ -1,5 +1,8 @@
 import { AxiosResponse } from 'axios';
-import { ServiceResponse } from './types';
+
+import { APIServiceResponse } from '@/lib/types';
+import { SemesterStatus, Endpoints } from '@/lib/enums';
+import { Session } from '@supabase/supabase-js';
 
 /**
  * @param classes Tailwind CSS class strings as arguments
@@ -10,37 +13,100 @@ export function classNames(...classes: string[]): string {
     return classes.filter(Boolean).join(' ');
 }
 
-export enum Endpoints {
-    LOGIN = '/auth/login',
-    SIGN_UP = '/auth/signup',
-    LOGOUT = '/auth/logout',
-    EMAIL_VERIFY = '/auth/email-verify',
-    ROOT = '/',
-    API_PROGRESS = '/api/v1/users/me/progress',
-    API_SEMESTERS = '/api/v1/semesters',
-    API_USER_CREATE = '/api/v1/users',
-}
-
-export enum SemesterStatus {
-    NOT_STARTED = 'not_started',
-    ACTIVE = 'active',
-    COMPLETE = 'complete',
-}
-
 export function Readable<SemesterStatus>(status: SemesterStatus) {
     if (status === SemesterStatus.NOT_STARTED) return 'Not started';
     if (status === SemesterStatus.ACTIVE) return 'Active';
     if (status === SemesterStatus.COMPLETE) return 'Completed';
 }
 
-export async function errorHandler(
-    apiCall: () => Promise<AxiosResponse | undefined>,
-    onFailure: (error: unknown) => void
-): Promise<ServiceResponse> {
+function ensureError(value: unknown): Error {
+    if (value instanceof Error) return value;
+
+    let stringified = '[Unable to stringify the thrown value]';
     try {
-        return { response: await apiCall(), success: true };
-    } catch (error) {
+        stringified = JSON.stringify(value);
+    } catch {}
+
+    const error = new Error(
+        `This value was thrown as is, not through an Error: ${stringified}`
+    );
+    return error;
+}
+
+export async function authenticatedApiErrorHandler(
+    apiCall: (session: Session) => Promise<AxiosResponse | undefined>,
+    session: Session | null,
+    onFailure: (error: Error) => void
+): Promise<APIServiceResponse> {
+    try {
+        if (!session) {
+            throw new Error('Invalid session.');
+        }
+        const apiResponse = await apiCall(session);
+        return { response: apiResponse, success: true };
+    } catch (err: unknown) {
+        const error = ensureError(err);
+        console.error(error);
         onFailure(error);
         return { success: false };
     }
 }
+
+export async function apiErrorHandler(
+    apiCall: () => Promise<AxiosResponse | undefined>,
+    onFailure: (error: Error) => void
+): Promise<APIServiceResponse> {
+    try {
+        const apiResponse = await apiCall();
+        return { response: apiResponse, success: true };
+    } catch (err: unknown) {
+        const error = ensureError(err);
+        console.error(error);
+        onFailure(error);
+        return { success: false };
+    }
+}
+
+export function semesterURL(semesterId: string | undefined): string {
+    try {
+        let result = `${Endpoints.DASHBOARD}/semesters/${semesterId}`;
+        if (!semesterId) {
+            throw new Error(`Invalid Semester ID: ${semesterId}`);
+        }
+        return result;
+    } catch (err) {
+        const error = ensureError(err);
+        console.error(error);
+        return '#';
+    }
+}
+
+export function courseURL(courseId: string) {
+    try {
+        let result = `${Endpoints.DASHBOARD}/courses/${courseId}`;
+        if (!courseId) {
+            throw new Error(`Invalid Course ID: ${courseId}`);
+        }
+        return result;
+    } catch (err) {
+        const error = ensureError(err);
+        console.error(error);
+        return '#';
+    }
+}
+
+// export function useProtectedRoute(): Session {
+//     const session = useSupabaseSession();
+//     const router = useRouter();
+//     if (!session) {
+//         let dummySession: Session = {
+//             access_token: '',
+//             refresh_token: '',
+//             expires_in: 0,
+//             token_type: '',
+//             user: {},
+//         };
+//         router.push(Endpoints.ROOT);
+//     }
+//     return session;
+// }

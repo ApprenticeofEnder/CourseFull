@@ -7,16 +7,19 @@ import {
     ModalFooter,
     Input,
 } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
+import { Listbox, Transition } from '@headlessui/react';
 
 import Button from '@/components/Button/Button';
 import ConfirmButton from '@/components/Button/ConfirmButton';
-import { Endpoints, Readable, SemesterStatus } from '@/lib/helpers';
+import DisclosureButton from '@/components/Button/DisclosureButton';
+import { SemesterStatus } from '@/lib/enums';
+import { Readable } from '@/lib/helpers';
 import { SessionProps } from '@/lib/types';
-import { Listbox, Transition } from '@headlessui/react';
-import DisclosureButton from '../Button/DisclosureButton';
 import { createSemester } from '@/services/semesterService';
 
 export default function CreateSemesterModal({ session }: SessionProps) {
+    const router = useRouter();
     const [semesterName, setSemesterName] = useState('');
     const [semesterGoal, setSemesterGoal] = useState('80');
     const [semesterStatus, setSemesterStatus] = useState<SemesterStatus>(
@@ -41,6 +44,7 @@ export default function CreateSemesterModal({ session }: SessionProps) {
             return;
         }
         const semesterData = response?.data;
+        // Redirect to the semester dashboard
     }
 
     return (

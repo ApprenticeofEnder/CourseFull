@@ -1,19 +1,25 @@
 'use client';
 
-import ConfirmButton from '@/components/Button/ConfirmButton';
-import { Endpoints } from '@/lib/helpers';
-import { supabase, useSupabaseSession } from '@/supabase';
 import { Fragment, useState } from 'react';
-import { Input } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
+import { Input } from '@nextui-org/react';
+
+import ConfirmButton from '@/components/Button/ConfirmButton';
+import { Endpoints } from '@/lib/enums';
 import { login } from '@/services/userService';
+import { SessionProps } from '@/lib/types';
+import { useSupabaseSession } from '@/supabase';
 
 export default function Login() {
-    const session = useSupabaseSession();
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    useSupabaseSession((session) => {
+        if (session) {
+            router.push(Endpoints.ROOT);
+        }
+    });
 
     async function handleLogin() {
         setLoading(true);
@@ -25,10 +31,6 @@ export default function Login() {
         if (success) {
             router.push(Endpoints.ROOT);
         }
-    }
-
-    if (session) {
-        router.push(Endpoints.ROOT);
     }
 
     return (

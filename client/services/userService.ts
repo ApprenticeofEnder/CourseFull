@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { supabase } from '@/supabase';
-import { Endpoints, errorHandler } from '@/lib/helpers';
+import { apiErrorHandler, authenticatedApiErrorHandler } from '@/lib/helpers';
+import { Endpoints } from '@/lib/enums';
 import { Session } from '@supabase/supabase-js';
 
 export async function createUser(
@@ -8,9 +9,9 @@ export async function createUser(
     last_name: string,
     email: string,
     password: string,
-    onFailure: (error: unknown) => void
+    onFailure: (error: Error) => void
 ) {
-    return errorHandler(async () => {
+    return apiErrorHandler(async () => {
         const supabaseResponse = await supabase.auth.signUp({
             email,
             password,
@@ -49,9 +50,9 @@ export async function createUser(
 export async function login(
     email: string,
     password: string,
-    onFailure: (error: unknown) => void
+    onFailure: (error: Error) => void
 ) {
-    return errorHandler(async () => {
+    return apiErrorHandler(async () => {
         const { error } = await supabase.auth.signInWithPassword({
             email,
             password,
@@ -65,19 +66,22 @@ export async function login(
 
 export async function getProgress(
     session: Session,
-    onFailure: (error: unknown) => void
+    onFailure: (error: Error) => void
 ) {
-    async function apiCall() {
-        const apiResponse = await axios.get(Endpoints.API_PROGRESS, {
-            headers: {
-                Authorization: `Bearer ${session.access_token}`,
-            },
-        });
+    return authenticatedApiErrorHandler(
+        async (session) => {
+            const apiResponse = await axios.get(Endpoints.API_PROGRESS, {
+                headers: {
+                    Authorization: `Bearer ${session.access_token}`,
+                },
+            });
 
-        if (apiResponse.status !== 201) {
-            throw apiResponse.data;
-        }
-        return apiResponse;
-    }
-    return errorHandler(apiCall, onFailure);
+            if (apiResponse.status !== 200) {
+                throw apiResponse.data;
+            }
+            return apiResponse;
+        },
+        session,
+        onFailure
+    );
 }

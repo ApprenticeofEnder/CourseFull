@@ -6,13 +6,17 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 import ConfirmButton from '@/components/Button/ConfirmButton';
-import { Endpoints } from '@/lib/helpers';
-import { supabase, useSupabaseSession } from '@/supabase';
+import { Endpoints } from '@/lib/enums';
+import { useSupabaseSession } from '@/supabase';
 import { createUser } from '@/services/userService';
 
 export default function Signup() {
-    const session = useSupabaseSession();
     const router = useRouter();
+    useSupabaseSession((session) => {
+        if (session) {
+            router.push(Endpoints.ROOT);
+        }
+    });
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fname, setFname] = useState('');
@@ -34,10 +38,6 @@ export default function Signup() {
         if (success) {
             router.push(Endpoints.EMAIL_VERIFY);
         }
-    }
-
-    if (session) {
-        router.push(Endpoints.ROOT);
     }
 
     return (

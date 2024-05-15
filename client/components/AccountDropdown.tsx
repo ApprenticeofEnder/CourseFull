@@ -3,9 +3,11 @@
 import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
-import { SessionProps } from '@/lib/types';
+
 import Button from '@/components/Button/Button';
-import { classNames, Endpoints } from '@/lib/helpers';
+import { Endpoints } from '@/lib/enums';
+import { classNames } from '@/lib/helpers';
+import { SessionProps } from '@/lib/types';
 
 import { UserMetadata } from '@supabase/supabase-js';
 
@@ -44,7 +46,7 @@ const userIconAnon = (
     <UserCircleIcon className="h-6 w-6 rounded-full"></UserCircleIcon>
 );
 
-const userNameAnon = 'Anon';
+const userNameAnon = 'Guest';
 
 let userIcon = userIconAnon;
 let userName = userNameAnon;

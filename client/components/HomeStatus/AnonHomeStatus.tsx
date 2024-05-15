@@ -3,7 +3,7 @@
 import { Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Endpoints } from '@/lib/helpers';
+import { Endpoints } from '@/lib/enums';
 import LinkButton from '@/components/Button/LinkButton';
 
 export default function AnonHomeStatus() {

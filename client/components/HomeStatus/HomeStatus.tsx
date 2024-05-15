@@ -1,71 +1,66 @@
-import axios from 'axios';
 import { Fragment, useEffect, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import {
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    useDisclosure,
-} from '@nextui-org/react';
+import { Modal, useDisclosure } from '@nextui-org/react';
 
-import { Endpoints } from '@/lib/helpers';
+import { semesterURL } from '@/lib/helpers';
 import { Semester, SemesterProgressType, SessionProps } from '@/lib/types';
 import Progress from '@/components/Card/SemesterProgress';
 import DisclosureButton from '@/components/Button/DisclosureButton';
 import Button from '@/components/Button/Button';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import CreateSemesterModal from '@/components/Modal/CreateSemester';
-import LinkButton from '../Button/LinkButton';
+import LinkButton from '@/components/Button/LinkButton';
+import { getSemesters } from '@/services/semesterService';
+import { getProgress } from '@/services/userService';
 
 export default function HomeStatus({ session }: SessionProps) {
-    const [progress, setProgress] = useState<SemesterProgressType[]>([
-        {
-            semester: 'TEST SEMESTER',
-            semesterId: 'EEEE',
-            average: 78.2,
-            numCourses: 4,
-            goal: 80.0,
-        },
-    ]);
+    const [progress, setProgress] = useState<SemesterProgressType[]>([]);
 
-    const [semesters, setSemesters] = useState<Semester[]>([
-        { name: 'Hello', id: 'AAAA', status: 'active', goal: 80.0 },
-    ]);
+    const [semesters, setSemesters] = useState<Semester[]>([]);
 
     const [selectedSemester, setSelectedSemester] = useState<Semester | null>(
         null
     );
 
+    const [selectedSemesterUrl, setSelectedSemesterUrl] = useState<string>('#');
+
+    const [loading, setLoading] = useState<boolean>(false);
+
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+    function onFailure(error: Error) {
+        alert('Error: ' + error.message);
+    }
+
     useEffect(() => {
-        async function requestProgress() {
-            const { data } = await axios.get(Endpoints.API_PROGRESS, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
-            });
-            setProgress(data);
-        }
+        let mounted = true;
+        getSemesters(session, onFailure)
+            .then((serviceResponse) => {
+                if (mounted) {
+                    setSemesters(serviceResponse.response?.data || null);
+                }
+            })
+            .catch();
 
-        async function requestSemesters() {
-            const { data } = await axios.get(Endpoints.API_SEMESTERS, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
-            });
-            setSemesters(data);
-        }
-
-        requestProgress()
-            .then(requestSemesters)
-            .catch((err) => {
-                alert('Error:' + err.message);
-            });
+        getProgress(session, onFailure)
+            .then((serviceResponse) => {
+                if (mounted) {
+                    setProgress(serviceResponse.response?.data || null);
+                }
+            })
+            .catch();
+        return () => {
+            mounted = false;
+        };
     }, []);
+
+    useEffect(() => {
+        if (!!selectedSemester) {
+            setSelectedSemesterUrl(semesterURL(selectedSemester.id));
+        }
+    }, [selectedSemester]);
+
     return (
         <Fragment>
             <div className="flex flex-row justify-center gap-8 m-5">
@@ -143,7 +138,12 @@ export default function HomeStatus({ session }: SessionProps) {
                     )}
                 </div>
                 {/* Probably going to redirect to the currently selected semester */}
-                <LinkButton confirm href={Endpoints.ROOT} className="my-2">
+                <LinkButton
+                    isDisabled={!selectedSemester}
+                    confirm
+                    href={selectedSemesterUrl}
+                    className="my-2"
+                >
                     Let's go!
                 </LinkButton>
             </div>
