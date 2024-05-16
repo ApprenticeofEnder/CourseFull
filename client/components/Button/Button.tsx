@@ -9,6 +9,7 @@ export interface ButtonProps extends BaseButtonProps {
     buttonSize?: 'sm' | 'md' | 'lg';
 }
 
+//TODO: Maybe convert this to a more general purpose button
 const NDButton = forwardRef<HTMLButtonElement, ButtonProps>(
     ({ children, buttonSize = 'md', className, ...props }, ref) => {
         const sizes = {

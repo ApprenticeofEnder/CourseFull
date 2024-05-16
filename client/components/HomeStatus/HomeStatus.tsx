@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { Modal, useDisclosure } from '@nextui-org/react';
+import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
 
 import { semesterURL } from '@/lib/helpers';
 import { Semester, SemesterProgressType, SessionProps } from '@/lib/types';
@@ -25,7 +25,8 @@ export default function HomeStatus({ session }: SessionProps) {
 
     const [selectedSemesterUrl, setSelectedSemesterUrl] = useState<string>('#');
 
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loadingProgress, setLoadingProgress] = useState<boolean>(false);
+    const [loadingSemesters, setLoadingSemesters] = useState<boolean>(false);
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -35,18 +36,22 @@ export default function HomeStatus({ session }: SessionProps) {
 
     useEffect(() => {
         let mounted = true;
+        setLoadingSemesters(true);
+        setLoadingProgress(true);
         getSemesters(session, onFailure)
-            .then((serviceResponse) => {
+            .then(({ response }) => {
                 if (mounted) {
-                    setSemesters(serviceResponse.response?.data || null);
+                    setSemesters(response?.data || null);
+                    setLoadingSemesters(false);
                 }
             })
             .catch();
 
         getProgress(session, onFailure)
-            .then((serviceResponse) => {
+            .then(({ response }) => {
                 if (mounted) {
-                    setProgress(serviceResponse.response?.data || null);
+                    setProgress(response?.data || null);
+                    setLoadingProgress(false);
                 }
             })
             .catch();
@@ -63,90 +68,105 @@ export default function HomeStatus({ session }: SessionProps) {
 
     return (
         <Fragment>
-            <div className="flex flex-row justify-center gap-8 m-5">
-                {progress?.length ? (
-                    progress.map((semesterProgress: SemesterProgressType) => {
-                        return (
-                            <Progress
-                                {...semesterProgress}
-                                key={semesterProgress.semester}
-                            ></Progress>
-                        );
-                    })
-                ) : (
-                    <p>No progress made.</p>
-                )}
-            </div>
+            {loadingProgress ? (
+                <Spinner label="Loading Progress..." />
+            ) : (
+                <Fragment>
+                    <div className="flex flex-row justify-center gap-8 m-5">
+                        {progress?.length ? (
+                            progress.map(
+                                (semesterProgress: SemesterProgressType) => {
+                                    return (
+                                        <Progress
+                                            {...semesterProgress}
+                                            key={semesterProgress.semester}
+                                        ></Progress>
+                                    );
+                                }
+                            )
+                        ) : (
+                            <p>No progress made.</p>
+                        )}
+                    </div>
+                </Fragment>
+            )}
 
-            <div className="w-full flex justify-center gap-4">
-                <div className="w-3/4">
-                    {semesters.length ? (
-                        <Listbox
-                            value={selectedSemester}
-                            onChange={setSelectedSemester}
+            {loadingSemesters ? (
+                <Spinner label="Loading Semesters..." />
+            ) : (
+                <Fragment>
+                    <div className="w-full flex justify-center gap-4">
+                        <div className="w-3/4">
+                            {semesters.length ? (
+                                <Listbox
+                                    value={selectedSemester}
+                                    onChange={setSelectedSemester}
+                                >
+                                    <Listbox.Button
+                                        as={DisclosureButton}
+                                        className="w-full my-2"
+                                    >
+                                        {selectedSemester?.name ||
+                                            'Select a Semester'}
+                                    </Listbox.Button>
+                                    <Transition
+                                        enter="transition ease-out duration-200"
+                                        enterFrom="opacity-0"
+                                        enterTo="opacity-100"
+                                        leave="transition ease-in duration-200"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                    >
+                                        <Listbox.Options className="w-full flex justify-center">
+                                            <div className="w-3/4">
+                                                {semesters.map((semester) => (
+                                                    <Listbox.Option
+                                                        as={Button}
+                                                        key={semester.id}
+                                                        value={semester}
+                                                        className="w-full my-2 mx-auto"
+                                                    >
+                                                        {semester.name}
+                                                    </Listbox.Option>
+                                                ))}
+                                                <Listbox.Button
+                                                    as={ConfirmButton}
+                                                    endContent={
+                                                        <PlusIcon className="h-6 w-6"></PlusIcon>
+                                                    }
+                                                    className="w-full my-2 mx-auto"
+                                                    onPressEnd={onOpen}
+                                                >
+                                                    Create New Semester
+                                                </Listbox.Button>
+                                            </div>
+                                        </Listbox.Options>
+                                    </Transition>
+                                </Listbox>
+                            ) : (
+                                <ConfirmButton
+                                    endContent={
+                                        <PlusIcon className="h-6 w-6"></PlusIcon>
+                                    }
+                                    className="w-full"
+                                    onPressEnd={onOpen}
+                                >
+                                    Create New Semester
+                                </ConfirmButton>
+                            )}
+                        </div>
+                        <LinkButton
+                            isDisabled={!selectedSemester}
+                            confirm
+                            href={selectedSemesterUrl}
+                            className="my-2"
                         >
-                            <Listbox.Button
-                                as={DisclosureButton}
-                                className="w-full my-2"
-                            >
-                                {selectedSemester?.name || 'Select a Semester'}
-                            </Listbox.Button>
-                            <Transition
-                                enter="transition ease-out duration-200"
-                                enterFrom="opacity-0"
-                                enterTo="opacity-100"
-                                leave="transition ease-in duration-200"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                            >
-                                <Listbox.Options className="w-full flex justify-center">
-                                    <div className="w-3/4">
-                                        {semesters.map((semester) => (
-                                            <Listbox.Option
-                                                as={Button}
-                                                key={semester.id}
-                                                value={semester}
-                                                className="w-full my-2 mx-auto"
-                                            >
-                                                {semester.name}
-                                            </Listbox.Option>
-                                        ))}
-                                        <Listbox.Button
-                                            as={ConfirmButton}
-                                            endContent={
-                                                <PlusIcon className="h-6 w-6"></PlusIcon>
-                                            }
-                                            className="w-full my-2 mx-auto"
-                                            onPressEnd={onOpen}
-                                        >
-                                            Create New Semester
-                                        </Listbox.Button>
-                                    </div>
-                                </Listbox.Options>
-                            </Transition>
-                        </Listbox>
-                    ) : (
-                        <ConfirmButton
-                            endContent={
-                                <PlusIcon className="h-6 w-6"></PlusIcon>
-                            }
-                            className="w-full"
-                            onPressEnd={onOpen}
-                        >
-                            Create New Semester
-                        </ConfirmButton>
-                    )}
-                </div>
-                {/* Probably going to redirect to the currently selected semester */}
-                <LinkButton
-                    isDisabled={!selectedSemester}
-                    confirm
-                    href={selectedSemesterUrl}
-                    className="my-2"
-                >
-                    Let's go!
-                </LinkButton>
-            </div>
+                            Let's go!
+                        </LinkButton>
+                    </div>
+                </Fragment>
+            )}
+
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}

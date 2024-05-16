@@ -7,7 +7,6 @@ import { Endpoints } from '@/lib/enums';
 import LinkButton from '@/components/Button/LinkButton';
 
 export default function AnonHomeStatus() {
-    const router = useRouter();
     return (
         <Fragment>
             <div className="text-2xl p-4 my-5 text-center">

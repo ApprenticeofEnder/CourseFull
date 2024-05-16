@@ -7,15 +7,20 @@ import AnonHomeStatus from '@/components/HomeStatus/AnonHomeStatus';
 import HomeStatus from '@/components/HomeStatus/HomeStatus';
 
 import { useSupabaseSession } from '@/supabase';
+import { useState } from 'react';
+import { Spinner } from '@nextui-org/react';
 
 export default function Home() {
-    const session = useSupabaseSession();
+    const [loading, setLoading] = useState(true);
 
-    let statusScreen = <AnonHomeStatus />;
+    const [statusScreen, setStatusScreen] = useState(<AnonHomeStatus />);
 
-    if (session) {
-        statusScreen = <HomeStatus session={session} />;
-    }
+    const session = useSupabaseSession((session) => {
+        if (session) {
+            setStatusScreen(<HomeStatus session={session} />);
+        }
+        setLoading(false);
+    });
 
     return (
         <main>
@@ -24,7 +29,11 @@ export default function Home() {
                 <div className="relative py-10 flex justify-center h-dvh">
                     <div className="flex flex-col justify-center max-w-full w-1/2">
                         <h1>Hey, friend!</h1>
-                        {statusScreen}
+                        {loading ? (
+                            <Spinner label="One sec..." />
+                        ) : (
+                            statusScreen
+                        )}
                     </div>
                 </div>
             </Spacer>

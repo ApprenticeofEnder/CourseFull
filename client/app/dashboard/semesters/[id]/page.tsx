@@ -30,9 +30,8 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
         getSemester(params.id, session, (error) => {
             alert(error.message);
         })
-            .then((serviceResponse) => {
-                setSemester(serviceResponse.response?.data || null);
-                console.log(serviceResponse.response?.data);
+            .then(({ response }) => {
+                setSemester(response?.data || null);
             })
             .catch();
         return () => {
