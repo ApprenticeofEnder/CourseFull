@@ -23,10 +23,32 @@ interface SemesterProgressType {
 }
 
 interface Semester {
-    name: string;
     id: string;
+    name: string;
+    api_v1_user_id: string;
     status: string;
     goal: number;
+    courses: Course[];
+}
+
+interface Course {
+    id: string;
+    title: string;
+    course_code: string;
+    api_v1_semester_id: string;
+    api_v1_user_id: string;
+    status: string;
+    goal: number;
+    grade: number;
+    deliverable_goal: number;
+    deliverables: Deliverable[];
+}
+
+interface Deliverable {
+    id: string;
+    name: string;
+    weight: number;
+    mark: number;
 }
 
 interface APIServiceResponse {

@@ -7,12 +7,12 @@ class Api::V1::CoursesController < Api::V1::ApplicationController
   def index
     @api_v1_courses = Api::V1::Course.where(api_v1_user_id: @api_v1_user.id)
 
-    render json: @api_v1_courses
+    render json: @api_v1_courses.to_json(:include => :deliverables)
   end
 
   # GET /api/v1/courses/1
   def show
-    render json: @api_v1_course
+    render json: @api_v1_course.to_json(:include => :deliverables)
   end
 
   # POST /api/v1/courses

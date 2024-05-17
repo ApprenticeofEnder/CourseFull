@@ -5,13 +5,16 @@ class Api::V1::SemestersController < Api::V1::ApplicationController
   # GET /api/v1/semesters
   def index
     @api_v1_semesters = Api::V1::Semester.where(api_v1_user_id: @api_v1_user.id)
-
-    render json: @api_v1_semesters
+    # @api_v1_semesters.each do |semester|
+    #   courses = semester.courses.all
+    #   semester.all_courses = courses
+    # end
+    render json: @api_v1_semesters.to_json(:include => :courses)
   end
 
   # GET /api/v1/semesters/1
   def show
-    render json: @api_v1_semester
+    render json: @api_v1_semester.to_json(:include => :courses)
   end
 
   # POST /api/v1/semesters
