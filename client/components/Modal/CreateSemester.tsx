@@ -13,17 +13,17 @@ import { Listbox, Transition } from '@headlessui/react';
 import Button from '@/components/Button/Button';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import DisclosureButton from '@/components/Button/DisclosureButton';
-import { SemesterStatus } from '@/lib/enums';
-import { Readable } from '@/lib/helpers';
-import { SessionProps } from '@/lib/types';
+import { Endpoints, ItemStatus } from '@/lib/enums';
+import { ReadableStatus } from '@/lib/helpers';
+import { Semester, SessionProps } from '@/lib/types';
 import { createSemester } from '@/services/semesterService';
 
 export default function CreateSemesterModal({ session }: SessionProps) {
     const router = useRouter();
     const [semesterName, setSemesterName] = useState('');
     const [semesterGoal, setSemesterGoal] = useState('80');
-    const [semesterStatus, setSemesterStatus] = useState<SemesterStatus>(
-        SemesterStatus.NOT_STARTED
+    const [semesterStatus, setSemesterStatus] = useState<ItemStatus>(
+        ItemStatus.NOT_STARTED
     );
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -43,8 +43,8 @@ export default function CreateSemesterModal({ session }: SessionProps) {
         if (!success) {
             return;
         }
-        const semesterData = response?.data;
-        // Redirect to the semester dashboard
+        const semesterData: Semester = response?.data;
+        router.push(`${Endpoints.SEMESTER_DASHBOARD}/${semesterData.id}`);
     }
 
     return (
@@ -79,8 +79,7 @@ export default function CreateSemesterModal({ session }: SessionProps) {
                                 as={DisclosureButton}
                                 className="w-full my-2"
                             >
-                                Status:{' '}
-                                {Readable<SemesterStatus>(semesterStatus)}
+                                Status: {ReadableStatus(semesterStatus)}
                             </Listbox.Button>
                             <Transition
                                 enter="transition ease-out duration-200"
@@ -93,9 +92,9 @@ export default function CreateSemesterModal({ session }: SessionProps) {
                                 <Listbox.Options className="w-full flex justify-center">
                                     <div className="w-3/4">
                                         {[
-                                            SemesterStatus.NOT_STARTED,
-                                            SemesterStatus.ACTIVE,
-                                            SemesterStatus.COMPLETE,
+                                            ItemStatus.NOT_STARTED,
+                                            ItemStatus.ACTIVE,
+                                            ItemStatus.COMPLETE,
                                         ].map((status) => {
                                             return (
                                                 <Listbox.Option
@@ -103,9 +102,7 @@ export default function CreateSemesterModal({ session }: SessionProps) {
                                                     value={status}
                                                     className="w-full my-2 mx-auto"
                                                 >
-                                                    {Readable<SemesterStatus>(
-                                                        status
-                                                    )}
+                                                    {ReadableStatus(status)}
                                                 </Listbox.Option>
                                             );
                                         })}

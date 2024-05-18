@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { AxiosResponse } from 'axios';
+import { ItemStatus } from './enums';
 
 type ChildrenProps = {
     children: ReactNode;
@@ -26,7 +27,7 @@ interface Semester {
     id: string;
     name: string;
     api_v1_user_id: string;
-    status: string;
+    status: ItemStatus;
     goal: number;
     courses: Course[];
 }
@@ -37,7 +38,7 @@ interface Course {
     course_code: string;
     api_v1_semester_id: string;
     api_v1_user_id: string;
-    status: string;
+    status: ItemStatus;
     goal: number;
     grade: number;
     deliverable_goal: number;

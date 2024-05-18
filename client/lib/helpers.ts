@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 
 import { APIServiceResponse } from '@/lib/types';
-import { SemesterStatus, Endpoints } from '@/lib/enums';
+import { ItemStatus, Endpoints } from '@/lib/enums';
 import { Session } from '@supabase/supabase-js';
 
 /**
@@ -13,10 +13,10 @@ export function classNames(...classes: string[]): string {
     return classes.filter(Boolean).join(' ');
 }
 
-export function Readable<SemesterStatus>(status: SemesterStatus) {
-    if (status === SemesterStatus.NOT_STARTED) return 'Not started';
-    if (status === SemesterStatus.ACTIVE) return 'Active';
-    if (status === SemesterStatus.COMPLETE) return 'Completed';
+export function ReadableStatus(status: ItemStatus) {
+    if (status === ItemStatus.NOT_STARTED) return 'Not started';
+    if (status === ItemStatus.ACTIVE) return 'Active';
+    if (status === ItemStatus.COMPLETE) return 'Completed';
 }
 
 function ensureError(value: unknown): Error {

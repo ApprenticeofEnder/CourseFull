@@ -35,10 +35,7 @@ export async function createUser(
             },
         };
 
-        const apiResponse = await axios.post(
-            Endpoints.API_USER_CREATE,
-            apiPostData
-        );
+        const apiResponse = await axios.post(Endpoints.API_USER, apiPostData);
 
         if (apiResponse.status !== 201) {
             throw apiResponse.data;
