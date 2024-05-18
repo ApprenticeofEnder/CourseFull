@@ -9,6 +9,7 @@ import Progress from '@/components/Card/SemesterProgress';
 import DisclosureButton from '@/components/Button/DisclosureButton';
 import Button from '@/components/Button/Button';
 import ConfirmButton from '@/components/Button/ConfirmButton';
+import DangerButton from '@/components/Button/DangerButton';
 import CreateSemesterModal from '@/components/Modal/CreateSemester';
 import LinkButton from '@/components/Button/LinkButton';
 import { getSemesters } from '@/services/semesterService';

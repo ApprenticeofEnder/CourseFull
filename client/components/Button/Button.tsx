@@ -2,6 +2,7 @@
 
 import { forwardRef } from 'react';
 import { Button, ButtonProps as BaseButtonProps } from '@nextui-org/react';
+import { commonColors, semanticColors } from '@nextui-org/theme';
 
 import { classNames } from '@/lib/helpers';
 
@@ -22,7 +23,8 @@ const NDButton = forwardRef<HTMLButtonElement, ButtonProps>(
             <Button
                 ref={ref}
                 className={classNames(
-                    'button font-bold rounded-lg bg-sky-300 hover:-translate-y-1 active:translate-y-0 active:shadow-none',
+                    'button font-bold rounded-lg hover:-translate-y-1 active:translate-y-0 active:shadow-none',
+                    'bg-primary-800 text-text-50',
                     className || '',
                     sizes[buttonSize]
                 )}
