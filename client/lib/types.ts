@@ -11,19 +11,19 @@ type ModalProps = {
     open: boolean;
 };
 
-interface SessionProps {
+export interface SessionProps {
     session: Session;
 }
 
-interface SemesterProgressType {
+export interface SemesterProgressType {
     semester: string;
     semesterId: string;
     average: number;
-    numCourses: number;
+    num_courses: number;
     goal: number;
 }
 
-interface Semester {
+export interface Semester {
     id: string;
     name: string;
     api_v1_user_id: string;
@@ -32,7 +32,7 @@ interface Semester {
     courses: Course[];
 }
 
-interface Course {
+export interface Course {
     id: string;
     title: string;
     course_code: string;
@@ -45,23 +45,16 @@ interface Course {
     deliverables: Deliverable[];
 }
 
-interface Deliverable {
+export interface Deliverable {
     id: string;
     name: string;
     weight: number;
     mark: number;
 }
 
-interface APIServiceResponse {
+export interface APIServiceResponse {
     response?: AxiosResponse;
     success: boolean;
 }
 
-export type {
-    ChildrenProps,
-    SessionProps,
-    SemesterProgressType,
-    Semester,
-    ModalProps,
-    APIServiceResponse,
-};
+export type { ChildrenProps, ModalProps };

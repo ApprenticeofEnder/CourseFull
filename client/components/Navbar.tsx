@@ -12,10 +12,7 @@ export default function Navbar({ session }: Props) {
         >
             <Spacer>
                 <div className="relative flex h-20 items-center justify-between">
-                    <h1>
-                        <span className="sr-only">CourseFull</span>
-                        CourseFull
-                    </h1>
+                    <h1>CourseFull</h1>
                     <AccountDropdown session={session} />
                 </div>
             </Spacer>

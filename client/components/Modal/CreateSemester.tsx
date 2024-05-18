@@ -14,7 +14,7 @@ import Button from '@/components/Button/Button';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import DisclosureButton from '@/components/Button/DisclosureButton';
 import { Endpoints, ItemStatus } from '@/lib/enums';
-import { ReadableStatus } from '@/lib/helpers';
+import { ReadableStatus, semesterURL } from '@/lib/helpers';
 import { Semester, SessionProps } from '@/lib/types';
 import { createSemester } from '@/services/semesterService';
 
@@ -44,7 +44,7 @@ export default function CreateSemesterModal({ session }: SessionProps) {
             return;
         }
         const semesterData: Semester = response?.data;
-        router.push(`${Endpoints.SEMESTER_DASHBOARD}/${semesterData.id}`);
+        router.push(semesterURL(semesterData.id));
     }
 
     return (

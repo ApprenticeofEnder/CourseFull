@@ -24,7 +24,7 @@ const NDButton = forwardRef<HTMLButtonElement, ButtonProps>(
                 ref={ref}
                 className={classNames(
                     'button font-bold rounded-lg hover:-translate-y-1 active:translate-y-0 active:shadow-none',
-                    'bg-primary-800 text-text-50',
+                    'bg-primary-800 text-text-50 focus:bg-warning-100',
                     className || '',
                     sizes[buttonSize]
                 )}

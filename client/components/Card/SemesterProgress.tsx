@@ -8,11 +8,11 @@ export default function SemesterProgress({
     semester,
     semesterId,
     average,
-    numCourses,
+    num_courses,
     goal,
 }: SemesterProgressType) {
     let gradeColour;
-    if (numCourses === undefined) {
+    if (average === 0 || num_courses === 0) {
         gradeColour = '';
     } else if (average > goal) {
         gradeColour = 'text-success-500';
@@ -34,7 +34,7 @@ export default function SemesterProgress({
                 <div className="text-right">Goal:</div>
                 <div className="text-center font-bold">{goal}</div>
                 <div className="text-right">Courses:</div>
-                <div className="text-center font-bold">{numCourses || 0}</div>
+                <div className="text-center font-bold">{num_courses || 0}</div>
             </div>
         </div>
     );

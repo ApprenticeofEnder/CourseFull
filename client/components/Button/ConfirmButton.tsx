@@ -10,7 +10,7 @@ export default forwardRef<HTMLButtonElement, ButtonProps>(function (
     return (
         <Button
             className={classNames(
-                'button-confirm bg-success-200',
+                'button-confirm bg-success-200 focus:bg-warning-100',
                 className || ''
             )}
             {...props}

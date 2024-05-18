@@ -69,7 +69,7 @@ export async function apiErrorHandler(
 
 export function semesterURL(semesterId: string | undefined): string {
     try {
-        let result = `${Endpoints.DASHBOARD}/semesters/${semesterId}`;
+        let result = `${Endpoints.SEMESTER_DASHBOARD}/${semesterId}`;
         if (!semesterId) {
             throw new Error(`Invalid Semester ID: ${semesterId}`);
         }
@@ -83,7 +83,7 @@ export function semesterURL(semesterId: string | undefined): string {
 
 export function courseURL(courseId: string) {
     try {
-        let result = `${Endpoints.DASHBOARD}/courses/${courseId}`;
+        let result = `${Endpoints.COURSE_DASHBOARD}/${courseId}`;
         if (!courseId) {
             throw new Error(`Invalid Course ID: ${courseId}`);
         }

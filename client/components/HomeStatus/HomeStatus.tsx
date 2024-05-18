@@ -9,7 +9,6 @@ import Progress from '@/components/Card/SemesterProgress';
 import DisclosureButton from '@/components/Button/DisclosureButton';
 import Button from '@/components/Button/Button';
 import ConfirmButton from '@/components/Button/ConfirmButton';
-import DangerButton from '@/components/Button/DangerButton';
 import CreateSemesterModal from '@/components/Modal/CreateSemester';
 import LinkButton from '@/components/Button/LinkButton';
 import { getSemesters } from '@/services/semesterService';
@@ -118,29 +117,27 @@ export default function HomeStatus({ session }: SessionProps) {
                                         leaveFrom="opacity-100"
                                         leaveTo="opacity-0"
                                     >
-                                        <Listbox.Options className="w-full flex justify-center">
-                                            <div className="w-3/4">
-                                                {semesters.map((semester) => (
-                                                    <Listbox.Option
-                                                        as={Button}
-                                                        key={semester.id}
-                                                        value={semester}
-                                                        className="w-full my-2 mx-auto"
-                                                    >
-                                                        {semester.name}
-                                                    </Listbox.Option>
-                                                ))}
-                                                <Listbox.Button
-                                                    as={ConfirmButton}
-                                                    endContent={
-                                                        <PlusIcon className="h-6 w-6"></PlusIcon>
-                                                    }
-                                                    className="w-full my-2 mx-auto"
-                                                    onPressEnd={onOpen}
+                                        <Listbox.Options className="w-3/4">
+                                            {semesters.map((semester) => (
+                                                <Listbox.Option
+                                                    as={Button}
+                                                    key={semester.id}
+                                                    value={semester}
+                                                    className="w-full my-2 mx-auto focus:bg-warning-100"
                                                 >
-                                                    Create New Semester
-                                                </Listbox.Button>
-                                            </div>
+                                                    {semester.name}
+                                                </Listbox.Option>
+                                            ))}
+                                            <Listbox.Button
+                                                as={ConfirmButton}
+                                                endContent={
+                                                    <PlusIcon className="h-6 w-6"></PlusIcon>
+                                                }
+                                                className="w-full my-2 mx-auto focus:bg-warning-100"
+                                                onPressEnd={onOpen}
+                                            >
+                                                Create New Semester
+                                            </Listbox.Button>
                                         </Listbox.Options>
                                     </Transition>
                                 </Listbox>
