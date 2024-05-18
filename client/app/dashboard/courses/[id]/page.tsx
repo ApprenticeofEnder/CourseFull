@@ -10,6 +10,7 @@ import { getCourse } from '@/services/courseService';
 import { Spinner } from '@nextui-org/react';
 import { ReadableStatus } from '@/lib/helpers';
 import ConfirmButton from '@/components/Button/ConfirmButton';
+import DeliverableCard from '@/components/Card/Deliverable';
 
 export default function CourseDashboard({
     params,
@@ -67,7 +68,7 @@ export default function CourseDashboard({
                         </ConfirmButton>
                     </div>
                     {(course?.deliverables.length && (
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="flex flex-col gap-4">
                             {course.deliverables
                                 .sort((a, b) => {
                                     return a.name.localeCompare(b.name);
@@ -77,7 +78,7 @@ export default function CourseDashboard({
                                     //     {...course}
                                     //     key={course.id}
                                     // ></CourseCard>
-                                    <div>{deliverable.name}</div>
+                                    <DeliverableCard {...deliverable} />
                                 ))}
                         </div>
                     )) || <p>No deliverables</p>}

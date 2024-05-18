@@ -50,6 +50,11 @@ export interface Deliverable {
     name: string;
     weight: number;
     mark: number;
+    notes: string;
+    api_v1_course_id: string;
+    api_v1_user_id: string;
+    status: ItemStatus;
+    goal: number;
 }
 
 export interface APIServiceResponse {
