@@ -117,7 +117,7 @@ export default function HomeStatus({ session }: SessionProps) {
                                         leaveFrom="opacity-100"
                                         leaveTo="opacity-0"
                                     >
-                                        <Listbox.Options className="w-3/4">
+                                        <Listbox.Options>
                                             {semesters.map((semester) => (
                                                 <Listbox.Option
                                                     as={Button}
