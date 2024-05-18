@@ -5,7 +5,7 @@ import { Course } from '@/lib/types';
 import LinkButton from '../Button/LinkButton';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Image, Spinner } from '@nextui-org/react';
+import { Image } from '@nextui-org/react';
 
 export default function CourseCard({
     id,

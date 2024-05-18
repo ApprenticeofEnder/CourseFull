@@ -1,14 +1,14 @@
 'use client';
 import axios, { AxiosResponse } from 'axios';
 import { supabase, useSupabaseSession } from '@/supabase';
-import { Endpoints, SemesterStatus } from '@/lib/enums';
+import { Endpoints, ItemStatus } from '@/lib/enums';
 import { authenticatedApiErrorHandler } from '@/lib/helpers';
 import { Session } from '@supabase/supabase-js';
 
 export async function createSemester(
     name: string,
     goal: string,
-    status: SemesterStatus,
+    status: ItemStatus,
     session: Session | null,
     onFailure: (error: Error) => void
 ) {
