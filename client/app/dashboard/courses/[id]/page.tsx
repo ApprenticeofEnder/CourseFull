@@ -68,13 +68,17 @@ export default function CourseDashboard({
                     </div>
                     {(course?.deliverables.length && (
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            {course.deliverables.map((deliverable) => (
-                                // <CourseCard
-                                //     {...course}
-                                //     key={course.id}
-                                // ></CourseCard>
-                                <div>{deliverable.name}</div>
-                            ))}
+                            {course.deliverables
+                                .sort((a, b) => {
+                                    return a.name.localeCompare(b.name);
+                                })
+                                .map((deliverable) => (
+                                    // <CourseCard
+                                    //     {...course}
+                                    //     key={course.id}
+                                    // ></CourseCard>
+                                    <div>{deliverable.name}</div>
+                                ))}
                         </div>
                     )) || <p>No deliverables</p>}
                 </Fragment>
