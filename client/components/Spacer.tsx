@@ -1,3 +1,4 @@
+import { classNames } from '@/lib/helpers';
 import { ChildrenProps } from '@/lib/types';
 
 /**
@@ -5,8 +6,18 @@ import { ChildrenProps } from '@/lib/types';
  * @param children
  * @returns ReactNode
  */
-export default function Spacer({ children }: ChildrenProps) {
+export default function Spacer({
+    children,
+    className,
+}: ChildrenProps & { className?: string }) {
     return (
-        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">{children}</div>
+        <div
+            className={classNames(
+                'mx-auto max-w-7xl px-2 sm:px-6 lg:px-8',
+                className || ''
+            )}
+        >
+            {children}
+        </div>
     );
 }

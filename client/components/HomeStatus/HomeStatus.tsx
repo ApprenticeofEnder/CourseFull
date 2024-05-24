@@ -1,8 +1,39 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
+import {
+    Modal,
+    Spinner,
+    useDisclosure,
+    Table,
+    TableHeader,
+    TableColumn,
+    TableBody,
+    TableRow,
+    TableCell,
+    getKeyValue,
+} from '@nextui-org/react';
 
+// export default function App() {
+//     return (
+// <Table aria-label="Example table with dynamic content">
+//     <TableHeader>
+//         {columns.map((column) => (
+//             <TableColumn key={column.key}>{column.label}</TableColumn>
+//         ))}
+//     </TableHeader>
+//     <TableBody>
+//         {rows.map((row) => (
+//             <TableRow key={row.key}>
+//                 {(columnKey) => (
+//                     <TableCell>{getKeyValue(row, columnKey)}</TableCell>
+//                 )}
+//             </TableRow>
+//         ))}
+//     </TableBody>
+// </Table>
+//     );
+// }
 import { semesterURL } from '@/lib/helpers';
 import { Semester, SemesterProgressType, SessionProps } from '@/lib/types';
 import Progress from '@/components/Card/SemesterProgress';
@@ -41,7 +72,9 @@ export default function HomeStatus({ session }: SessionProps) {
         getSemesters(session, onFailure)
             .then(({ response }) => {
                 if (mounted) {
-                    setSemesters(response?.data || null);
+                    const data: Semester[] = response?.data;
+                    setSemesters(data || []);
+
                     setLoadingSemesters(false);
                 }
             })
@@ -50,7 +83,26 @@ export default function HomeStatus({ session }: SessionProps) {
         getProgress(session, onFailure)
             .then(({ response }) => {
                 if (mounted) {
-                    setProgress(response?.data || null);
+                    const data: SemesterProgressType[] = response?.data;
+
+                    setProgress(
+                        data.map((progressEntry) => {
+                            const { average, num_courses, goal } =
+                                progressEntry;
+                            if (average === 0 || num_courses === 0) {
+                                progressEntry.grade_colour = '';
+                            } else if (average > goal) {
+                                progressEntry.grade_colour = 'text-success-500';
+                            } else if (average == goal) {
+                                progressEntry.grade_colour = 'text-warning-500';
+                            } else {
+                                progressEntry.grade_colour = 'text-danger-400';
+                            }
+                            if (progressEntry.average > progressEntry.goal) {
+                            }
+                            return progressEntry;
+                        }) || []
+                    );
                     setLoadingProgress(false);
                 }
             })
@@ -66,28 +118,49 @@ export default function HomeStatus({ session }: SessionProps) {
         }
     }, [selectedSemester]);
 
+    const columns = [
+        { key: 'semester', label: 'Semester' },
+        { key: 'num_courses', label: 'Courses' },
+        { key: 'average', label: 'Average (%)' },
+        { key: 'goal', label: 'Goal (%)' },
+    ];
+
     return (
         <Fragment>
             {loadingProgress ? (
                 <Spinner label="Loading Progress..." />
             ) : (
                 <Fragment>
-                    <div className="flex flex-row justify-center gap-8 m-5">
-                        {progress?.length ? (
-                            progress.map(
-                                (semesterProgress: SemesterProgressType) => {
-                                    return (
-                                        <Progress
-                                            {...semesterProgress}
-                                            key={semesterProgress.semester}
-                                        ></Progress>
-                                    );
-                                }
-                            )
-                        ) : (
-                            <p>No progress made.</p>
-                        )}
-                    </div>
+                    {progress ? (
+                        <Table
+                            aria-label="Semester progress"
+                            className="my-5 sm:mx-auto sm:w-3/4"
+                        >
+                            <TableHeader>
+                                {columns.map((column) => (
+                                    <TableColumn key={column.key}>
+                                        {column.label}
+                                    </TableColumn>
+                                ))}
+                            </TableHeader>
+                            <TableBody>
+                                {progress.map((progressEntry) => (
+                                    <TableRow key={progressEntry.semesterId}>
+                                        {(columnKey) => (
+                                            <TableCell>
+                                                {getKeyValue(
+                                                    progressEntry,
+                                                    columnKey
+                                                ) || '--'}
+                                            </TableCell>
+                                        )}
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    ) : (
+                        <p>You don't have any active semesters.</p>
+                    )}
                 </Fragment>
             )}
 
@@ -95,8 +168,8 @@ export default function HomeStatus({ session }: SessionProps) {
                 <Spinner label="Loading Semesters..." />
             ) : (
                 <Fragment>
-                    <div className="w-full flex justify-center gap-4">
-                        <div className="w-3/4 my-2">
+                    <div className="w-full sm:mx-auto sm:w-3/4 grid grid-cols-4 gap-2 sm:gap-4">
+                        <div className="col-span-3 my-2">
                             {semesters.length ? (
                                 <Listbox
                                     value={selectedSemester}
@@ -146,7 +219,6 @@ export default function HomeStatus({ session }: SessionProps) {
                                     endContent={
                                         <PlusIcon className="h-6 w-6"></PlusIcon>
                                     }
-                                    className="w-full"
                                     onPressEnd={onOpen}
                                 >
                                     Create New Semester

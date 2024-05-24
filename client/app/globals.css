@@ -12,7 +12,7 @@
 
 @layer base {
     h1 {
-        @apply text-4xl sm:text-6xl text-center;
+        @apply text-4xl lg:text-6xl text-center;
     }
 
     h2 {

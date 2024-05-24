@@ -21,6 +21,7 @@ export interface SemesterProgressType {
     average: number;
     num_courses: number;
     goal: number;
+    grade_colour?: string;
 }
 
 export interface Semester {

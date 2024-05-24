@@ -1,4 +1,3 @@
-import { AxiosResponse } from 'axios';
 import { Fragment, useState } from 'react';
 import {
     ModalContent,
@@ -14,25 +13,34 @@ import Button from '@/components/Button/Button';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import DisclosureButton from '@/components/Button/DisclosureButton';
 import { Endpoints, ItemStatus } from '@/lib/enums';
-import { ReadableStatus, semesterURL } from '@/lib/helpers';
-import { Semester, SessionProps } from '@/lib/types';
-import { createSemester } from '@/services/semesterService';
+import { ReadableStatus, courseURL } from '@/lib/helpers';
+import { Course, SessionProps } from '@/lib/types';
+import { createCourse } from '@/services/courseService';
 
-export default function CreateSemesterModal({ session }: SessionProps) {
-    const [semesterName, setSemesterName] = useState('');
-    const [semesterGoal, setSemesterGoal] = useState('80');
-    const [semesterStatus, setSemesterStatus] = useState<ItemStatus>(
-        ItemStatus.NOT_STARTED
+interface CourseModalProps extends SessionProps {
+    api_v1_semester_id: string;
+}
+
+export default function CreateCourseModal({
+    session,
+    api_v1_semester_id,
+}: CourseModalProps) {
+    const router = useRouter();
+    const [courseTitle, setCourseTitle] = useState('');
+    const [courseCode, setCourseCode] = useState('');
+    const [courseStatus, setCourseStatus] = useState<ItemStatus>(
+        ItemStatus.ACTIVE
     );
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    async function handleCreateSemester(onClose: CallableFunction) {
+    async function handleCreateCourse(onClose: CallableFunction) {
         setIsLoading(true);
-        const { response, success } = await createSemester(
-            semesterName,
-            semesterGoal,
-            semesterStatus,
+        const { response, success } = await createCourse(
+            courseTitle,
+            courseCode,
+            courseStatus,
+            api_v1_semester_id,
             session,
             (error) => {
                 alert(`Something went wrong: ${error}`);
@@ -42,9 +50,9 @@ export default function CreateSemesterModal({ session }: SessionProps) {
         if (!success) {
             return;
         }
-        const semesterData: Semester = response?.data;
+        const courseData: Course = response?.data;
         onClose();
-        location.reload();
+        router.refresh();
     }
 
     return (
@@ -52,34 +60,32 @@ export default function CreateSemesterModal({ session }: SessionProps) {
             {(onClose) => (
                 <Fragment>
                     <ModalHeader className="flex flex-col gap-1">
-                        Create New Semester
+                        Create New Course
                     </ModalHeader>
                     <ModalBody>
                         <Input
                             type="text"
-                            label="Semester Name"
-                            placeholder="Fall 2024..."
-                            value={semesterName}
-                            onValueChange={setSemesterName}
+                            label="Course Title"
+                            placeholder="Introduction to Psychology..."
+                            value={courseTitle}
+                            onValueChange={setCourseTitle}
                         />
                         <Input
-                            type="number"
-                            label="Goal"
-                            placeholder="Semester Goal"
-                            value={semesterGoal}
-                            onValueChange={setSemesterGoal}
-                            min={0}
-                            max={100}
+                            type="text"
+                            label="Course Code"
+                            placeholder="PSYC 1001..."
+                            value={courseCode}
+                            onValueChange={setCourseCode}
                         />
                         <Listbox
-                            value={semesterStatus}
-                            onChange={setSemesterStatus}
+                            value={courseStatus}
+                            onChange={setCourseStatus}
                         >
                             <Listbox.Button
                                 as={DisclosureButton}
                                 className="w-full my-2"
                             >
-                                Status: {ReadableStatus(semesterStatus)}
+                                Status: {ReadableStatus(courseStatus)}
                             </Listbox.Button>
                             <Transition
                                 enter="transition ease-out duration-200"
@@ -92,14 +98,12 @@ export default function CreateSemesterModal({ session }: SessionProps) {
                                 <Listbox.Options className="w-full flex justify-center">
                                     <div className="w-3/4">
                                         {[
-                                            ItemStatus.NOT_STARTED,
                                             ItemStatus.ACTIVE,
                                             ItemStatus.COMPLETE,
                                         ].map((status) => {
                                             return (
                                                 <Listbox.Option
                                                     as={Button}
-                                                    key={status}
                                                     value={status}
                                                     className="w-full my-2 mx-auto"
                                                 >
@@ -116,7 +120,7 @@ export default function CreateSemesterModal({ session }: SessionProps) {
                         <Button onPress={onClose}>Close</Button>
                         <ConfirmButton
                             onPress={() => {
-                                handleCreateSemester(onClose);
+                                handleCreateCourse(onClose);
                             }}
                             isLoading={isLoading}
                         >

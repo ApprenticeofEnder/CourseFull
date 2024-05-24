@@ -1,14 +1,16 @@
 'use client';
 
+import Button from '@/components/Button/Button';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import CourseCard from '@/components/Card/Course';
+import CreateCourseModal from '@/components/Modal/CreateCourse';
 import { Endpoints } from '@/lib/enums';
 import { ReadableStatus } from '@/lib/helpers';
 import { Semester } from '@/lib/types';
 import { getSemester } from '@/services/semesterService';
 import { useSupabaseSession } from '@/supabase';
-import { PlusIcon } from '@heroicons/react/24/outline';
-import { Spinner } from '@nextui-org/react';
+import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useState } from 'react';
 
@@ -27,6 +29,12 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
         }
     });
 
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    function goBack() {
+        router.push(Endpoints.ROOT);
+    }
+
     let mounted = true;
     useEffect(() => {
         if (semester || !session) {
@@ -36,7 +44,9 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
             alert(error.message);
         })
             .then(({ response }) => {
-                setSemester(response?.data || null);
+                if (mounted) {
+                    setSemester(response?.data || null);
+                }
             })
             .catch();
         return () => {
@@ -46,13 +56,19 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
 
     return (
         <Fragment>
-            {semester ? (
+            {session && semester ? (
                 <Fragment>
+                    <Button
+                        startContent={<ArrowLeftIcon className="h-6 w-6" />}
+                        onPressEnd={goBack}
+                        className="my-4"
+                    />
                     <h2 className="text-left font-bold">{semester.name}</h2>
+
                     <div className="flex flex-row gap-4">
                         <h3>{ReadableStatus(semester.status)}</h3>
                         <h3>|</h3>
-                        <h3>Goal: {semester.goal}</h3>
+                        <h3>Goal: {semester.goal}%</h3>
                     </div>
                     <hr className="border-1 border-primary-100/50 my-2" />
                     <div className="my-5">
@@ -60,6 +76,7 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                             endContent={
                                 <PlusIcon className="h-6 w-6"></PlusIcon>
                             }
+                            onPressEnd={onOpen}
                         >
                             Add Course
                         </ConfirmButton>
@@ -74,6 +91,16 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                             ))}
                         </div>
                     )) || <p>No courses</p>}
+                    <Modal
+                        isOpen={isOpen}
+                        onOpenChange={onOpenChange}
+                        className="bg-sky-100"
+                    >
+                        <CreateCourseModal
+                            session={session}
+                            api_v1_semester_id={params.id}
+                        />
+                    </Modal>
                 </Fragment>
             ) : (
                 <div className="flex justify-center">

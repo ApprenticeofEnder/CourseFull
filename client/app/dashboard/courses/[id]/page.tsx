@@ -5,12 +5,13 @@ import { useSupabaseSession } from '@/supabase';
 import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useState } from 'react';
 import { Course } from '@/lib/types';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { getCourse } from '@/services/courseService';
 import { Spinner } from '@nextui-org/react';
-import { ReadableStatus } from '@/lib/helpers';
+import { ReadableStatus, semesterURL } from '@/lib/helpers';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import DeliverableCard from '@/components/Card/Deliverable';
+import Button from '@/components/Button/Button';
 
 export default function CourseDashboard({
     params,
@@ -25,6 +26,10 @@ export default function CourseDashboard({
             return;
         }
     });
+
+    function goBack() {
+        router.push(semesterURL(course?.api_v1_semester_id));
+    }
 
     let mounted = true;
     useEffect(() => {
@@ -46,6 +51,11 @@ export default function CourseDashboard({
         <Fragment>
             {course ? (
                 <Fragment>
+                    <Button
+                        startContent={<ArrowLeftIcon className="h-6 w-6" />}
+                        onPressEnd={goBack}
+                        className="my-4"
+                    />
                     <h2 className="text-left font-bold">
                         {course.course_code}
                     </h2>
@@ -53,9 +63,9 @@ export default function CourseDashboard({
                     <div className="flex flex-row gap-4">
                         <h3>{ReadableStatus(course.status)}</h3>
                         <h3>|</h3>
-                        <h3>Goal: {course.goal}</h3>
+                        <h3>Goal: {course.goal}%</h3>
                         <h3>|</h3>
-                        <h3>Grade: {course.grade}</h3>
+                        <h3>Grade: {course.grade || '--'}%</h3>
                     </div>
                     <hr className="border-1 border-primary-100/50 my-2" />
                     <div className="my-5">
@@ -74,14 +84,10 @@ export default function CourseDashboard({
                                     return a.name.localeCompare(b.name);
                                 })
                                 .map((deliverable) => (
-                                    // <CourseCard
-                                    //     {...course}
-                                    //     key={course.id}
-                                    // ></CourseCard>
                                     <DeliverableCard {...deliverable} />
                                 ))}
                         </div>
-                    )) || <p>No deliverables</p>}
+                    )) || <p>No deliverables yet. Start by adding one!</p>}
                 </Fragment>
             ) : (
                 <div className="flex justify-center">

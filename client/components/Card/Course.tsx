@@ -15,39 +15,39 @@ export default function CourseCard({
     goal,
     grade,
 }: Course) {
-    const [img, setImg] = useState<string>('');
+    // const [img, setImg] = useState<string>('');
 
-    let mounted = true;
-    useEffect(() => {
-        if (img) {
-            return;
-        }
-        console.log('Firing request');
-        axios
-            .get('/random-image')
-            .then((res) => {
-                setImg(res.data.imageURL);
-            })
-            .catch((err) => {
-                alert(err);
-            });
-        return () => {
-            mounted = false;
-        };
-    }, [img]);
+    // let mounted = true;
+    // useEffect(() => {
+    //     if (img) {
+    //         return;
+    //     }
+    //     console.log('Firing request');
+    //     axios
+    //         .get('/random-image')
+    //         .then((res) => {
+    //             setImg(res.data.imageURL);
+    //         })
+    //         .catch((err) => {
+    //             alert(err);
+    //         });
+    //     return () => {
+    //         mounted = false;
+    //     };
+    // }, [img]);
 
     return (
         <div className="rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10">
             <div className="flex justify-between">
-                <h4>Goal: {goal}</h4>
-                <h4>Grade: {grade}</h4>
+                <h4>Goal: {goal}%</h4>
+                <h4>Grade: {grade || '--'}%</h4>
             </div>
             <div className="flex justify-center">
                 <Image
                     width={300}
                     alt="NextUI hero Image"
-                    src={img}
-                    isLoading={!img}
+                    src={''}
+                    // isLoading={true}
                 />
             </div>
 

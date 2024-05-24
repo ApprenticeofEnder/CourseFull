@@ -21,12 +21,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body
-                className={
-                    atkinsonHyperlegible.className +
-                    'bg-sky-200 dark:bg-sky-950 text-foreground dark:text-neutral-50'
-                }
-            >
+            <body className={atkinsonHyperlegible.className}>
                 <NextUIProvider>{children}</NextUIProvider>
             </body>
         </html>
