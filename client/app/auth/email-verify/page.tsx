@@ -6,7 +6,7 @@ export default function EmailVerify() {
     return (
         <Fragment>
             <h2>Email Verification Sent</h2>
-            <p>
+            <p className="text-center">
                 You'll need to verify your email address before you can start
                 using CourseFull.
             </p>

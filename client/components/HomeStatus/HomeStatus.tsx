@@ -96,7 +96,7 @@ export default function HomeStatus({ session }: SessionProps) {
             ) : (
                 <Fragment>
                     <div className="w-full flex justify-center gap-4">
-                        <div className="w-3/4">
+                        <div className="w-3/4 my-2">
                             {semesters.length ? (
                                 <Listbox
                                     value={selectedSemester}
@@ -104,7 +104,7 @@ export default function HomeStatus({ session }: SessionProps) {
                                 >
                                     <Listbox.Button
                                         as={DisclosureButton}
-                                        className="w-full my-2"
+                                        className="w-full mb-2"
                                     >
                                         {selectedSemester?.name ||
                                             'Select a Semester'}
