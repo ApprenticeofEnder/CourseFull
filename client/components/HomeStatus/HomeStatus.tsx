@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import {
@@ -14,27 +14,7 @@ import {
     getKeyValue,
 } from '@nextui-org/react';
 
-// export default function App() {
-//     return (
-// <Table aria-label="Example table with dynamic content">
-//     <TableHeader>
-//         {columns.map((column) => (
-//             <TableColumn key={column.key}>{column.label}</TableColumn>
-//         ))}
-//     </TableHeader>
-//     <TableBody>
-//         {rows.map((row) => (
-//             <TableRow key={row.key}>
-//                 {(columnKey) => (
-//                     <TableCell>{getKeyValue(row, columnKey)}</TableCell>
-//                 )}
-//             </TableRow>
-//         ))}
-//     </TableBody>
-// </Table>
-//     );
-// }
-import { semesterURL } from '@/lib/helpers';
+import { determineGradeColour, semesterURL, classNames } from '@/lib/helpers';
 import { Semester, SemesterProgressType, SessionProps } from '@/lib/types';
 import Progress from '@/components/Card/SemesterProgress';
 import DisclosureButton from '@/components/Button/DisclosureButton';
@@ -65,6 +45,36 @@ export default function HomeStatus({ session }: SessionProps) {
         alert('Error: ' + error.message);
     }
 
+    const renderCell = useCallback(
+        (progressEntry: SemesterProgressType, columnKey: React.Key) => {
+            console.log(progressEntry);
+            const cellValue =
+                progressEntry[columnKey as keyof SemesterProgressType];
+            switch (columnKey) {
+                case 'semester':
+                    return <p className="font-bold">{cellValue}</p>;
+                case 'average':
+                    return (
+                        <p
+                            className={classNames(
+                                'font-bold',
+                                progressEntry.grade_colour || ''
+                            )}
+                        >
+                            {cellValue || '--'}%
+                        </p>
+                    );
+                case 'num_courses':
+                    return cellValue;
+                case 'goal':
+                    return <p>{cellValue}%</p>;
+                default:
+                    return cellValue;
+            }
+        },
+        []
+    );
+
     useEffect(() => {
         let mounted = true;
         setLoadingSemesters(true);
@@ -91,14 +101,9 @@ export default function HomeStatus({ session }: SessionProps) {
                                 progressEntry;
                             if (average === 0 || num_courses === 0) {
                                 progressEntry.grade_colour = '';
-                            } else if (average > goal) {
-                                progressEntry.grade_colour = 'text-success-500';
-                            } else if (average == goal) {
-                                progressEntry.grade_colour = 'text-warning-500';
                             } else {
-                                progressEntry.grade_colour = 'text-danger-400';
-                            }
-                            if (progressEntry.average > progressEntry.goal) {
+                                progressEntry.grade_colour =
+                                    determineGradeColour(goal, average);
                             }
                             return progressEntry;
                         }) || []
@@ -121,8 +126,8 @@ export default function HomeStatus({ session }: SessionProps) {
     const columns = [
         { key: 'semester', label: 'Semester' },
         { key: 'num_courses', label: 'Courses' },
-        { key: 'average', label: 'Average (%)' },
-        { key: 'goal', label: 'Goal (%)' },
+        { key: 'average', label: 'Average' },
+        { key: 'goal', label: 'Goal' },
     ];
 
     return (
@@ -130,38 +135,32 @@ export default function HomeStatus({ session }: SessionProps) {
             {loadingProgress ? (
                 <Spinner label="Loading Progress..." />
             ) : (
-                <Fragment>
-                    {progress ? (
-                        <Table
-                            aria-label="Semester progress"
-                            className="my-5 sm:mx-auto sm:w-3/4"
-                        >
-                            <TableHeader>
-                                {columns.map((column) => (
-                                    <TableColumn key={column.key}>
-                                        {column.label}
-                                    </TableColumn>
-                                ))}
-                            </TableHeader>
-                            <TableBody>
-                                {progress.map((progressEntry) => (
-                                    <TableRow key={progressEntry.semesterId}>
-                                        {(columnKey) => (
-                                            <TableCell>
-                                                {getKeyValue(
-                                                    progressEntry,
-                                                    columnKey
-                                                ) || '--'}
-                                            </TableCell>
-                                        )}
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    ) : (
-                        <p>You don't have any active semesters.</p>
-                    )}
-                </Fragment>
+                <Table
+                    aria-label="Semester progress"
+                    className="my-5 sm:mx-auto sm:w-3/4"
+                >
+                    <TableHeader>
+                        {columns.map((column) => (
+                            <TableColumn key={column.key}>
+                                {column.label}
+                            </TableColumn>
+                        ))}
+                    </TableHeader>
+                    <TableBody
+                        emptyContent="You don't have any active semesters."
+                        items={progress}
+                    >
+                        {progress.map((progressEntry) => (
+                            <TableRow key={progressEntry.semesterId}>
+                                {(columnKey) => (
+                                    <TableCell key={columnKey}>
+                                        {renderCell(progressEntry, columnKey)}
+                                    </TableCell>
+                                )}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
             )}
 
             {loadingSemesters ? (

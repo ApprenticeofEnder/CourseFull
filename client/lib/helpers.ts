@@ -14,9 +14,24 @@ export function classNames(...classes: string[]): string {
 }
 
 export function ReadableStatus(status: ItemStatus) {
-    if (status === ItemStatus.NOT_STARTED) return 'Not started';
-    if (status === ItemStatus.ACTIVE) return 'Active';
-    if (status === ItemStatus.COMPLETE) return 'Completed';
+    switch (status) {
+        case ItemStatus.NOT_STARTED:
+            return 'Not started';
+        case ItemStatus.ACTIVE:
+            return 'Active';
+        case ItemStatus.COMPLETE:
+            return 'Completed';
+    }
+}
+
+export function determineGradeColour(goal: number, grade: number) {
+    if (grade > goal) {
+        return 'text-success-500';
+    } else if (grade == goal) {
+        return 'text-warning-500';
+    } else {
+        return 'text-danger-400';
+    }
 }
 
 function ensureError(value: unknown): Error {
@@ -94,19 +109,3 @@ export function courseURL(courseId: string) {
         return '#';
     }
 }
-
-// export function useProtectedRoute(): Session {
-//     const session = useSupabaseSession();
-//     const router = useRouter();
-//     if (!session) {
-//         let dummySession: Session = {
-//             access_token: '',
-//             refresh_token: '',
-//             expires_in: 0,
-//             token_type: '',
-//             user: {},
-//         };
-//         router.push(Endpoints.ROOT);
-//     }
-//     return session;
-// }
