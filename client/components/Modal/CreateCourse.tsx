@@ -6,7 +6,6 @@ import {
     ModalFooter,
     Input,
 } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
 import { Listbox, Transition } from '@headlessui/react';
 
 import Button from '@/components/Button/Button';
@@ -25,22 +24,21 @@ export default function CreateCourseModal({
     session,
     api_v1_semester_id,
 }: CourseModalProps) {
-    const router = useRouter();
-    const [courseTitle, setCourseTitle] = useState('');
-    const [courseCode, setCourseCode] = useState('');
-    const [courseStatus, setCourseStatus] = useState<ItemStatus>(
-        ItemStatus.ACTIVE
-    );
+    const [title, setTitle] = useState('');
+    const [code, setCode] = useState('');
+    const [status, setStatus] = useState<ItemStatus>(ItemStatus.ACTIVE);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     async function handleCreateCourse(onClose: CallableFunction) {
         setIsLoading(true);
         const { response, success } = await createCourse(
-            courseTitle,
-            courseCode,
-            courseStatus,
-            api_v1_semester_id,
+            {
+                title,
+                course_code: code,
+                status,
+                api_v1_semester_id,
+            },
             session,
             (error) => {
                 alert(`Something went wrong: ${error}`);
@@ -50,9 +48,8 @@ export default function CreateCourseModal({
         if (!success) {
             return;
         }
-        const courseData: Course = response?.data;
         onClose();
-        router.refresh();
+        location.reload();
     }
 
     return (
@@ -67,25 +64,22 @@ export default function CreateCourseModal({
                             type="text"
                             label="Course Title"
                             placeholder="Introduction to Psychology..."
-                            value={courseTitle}
-                            onValueChange={setCourseTitle}
+                            value={title}
+                            onValueChange={setTitle}
                         />
                         <Input
                             type="text"
                             label="Course Code"
                             placeholder="PSYC 1001..."
-                            value={courseCode}
-                            onValueChange={setCourseCode}
+                            value={code}
+                            onValueChange={setCode}
                         />
-                        <Listbox
-                            value={courseStatus}
-                            onChange={setCourseStatus}
-                        >
+                        <Listbox value={status} onChange={setStatus}>
                             <Listbox.Button
                                 as={DisclosureButton}
                                 className="w-full my-2"
                             >
-                                Status: {ReadableStatus(courseStatus)}
+                                Status: {ReadableStatus(status)}
                             </Listbox.Button>
                             <Transition
                                 enter="transition ease-out duration-200"

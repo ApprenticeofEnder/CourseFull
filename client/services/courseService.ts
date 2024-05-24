@@ -1,13 +1,11 @@
 import { Endpoints, ItemStatus } from '@/lib/enums';
 import { authenticatedApiErrorHandler } from '@/lib/helpers';
+import { Course } from '@/lib/types';
 import { Session } from '@supabase/supabase-js';
 import axios from 'axios';
 
 export async function createCourse(
-    title: string,
-    course_code: string,
-    status: ItemStatus,
-    api_v1_semester_id: string,
+    { title, course_code, status, api_v1_semester_id }: Course,
     session: Session | null,
     onFailure: (error: Error) => void
 ) {

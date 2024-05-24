@@ -7,11 +7,12 @@ import { Fragment, useEffect, useState } from 'react';
 import { Course } from '@/lib/types';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { getCourse } from '@/services/courseService';
-import { Spinner } from '@nextui-org/react';
+import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
 import { ReadableStatus, semesterURL } from '@/lib/helpers';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import DeliverableCard from '@/components/Card/Deliverable';
 import Button from '@/components/Button/Button';
+import CreateDeliverableModal from '@/components/Modal/CreateDeliverable';
 
 export default function CourseDashboard({
     params,
@@ -26,6 +27,8 @@ export default function CourseDashboard({
             return;
         }
     });
+
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     function goBack() {
         router.push(semesterURL(course?.api_v1_semester_id));
@@ -49,7 +52,7 @@ export default function CourseDashboard({
     }, [course, session]);
     return (
         <Fragment>
-            {course ? (
+            {session && course ? (
                 <Fragment>
                     <Button
                         startContent={<ArrowLeftIcon className="h-6 w-6" />}
@@ -73,11 +76,12 @@ export default function CourseDashboard({
                             endContent={
                                 <PlusIcon className="h-6 w-6"></PlusIcon>
                             }
+                            onPressEnd={onOpen}
                         >
                             Add Deliverable
                         </ConfirmButton>
                     </div>
-                    {(course?.deliverables.length && (
+                    {(course?.deliverables?.length && (
                         <div className="flex flex-col gap-4">
                             {course.deliverables
                                 .sort((a, b) => {
@@ -88,6 +92,16 @@ export default function CourseDashboard({
                                 ))}
                         </div>
                     )) || <p>No deliverables yet. Start by adding one!</p>}
+                    <Modal
+                        isOpen={isOpen}
+                        onOpenChange={onOpenChange}
+                        className="bg-sky-100"
+                    >
+                        <CreateDeliverableModal
+                            session={session}
+                            api_v1_course_id={params.id}
+                        />
+                    </Modal>
                 </Fragment>
             ) : (
                 <div className="flex justify-center">

@@ -11,6 +11,7 @@ export enum Endpoints {
     API_SEMESTERS = '/api/v1/semesters',
     API_COURSES = '/api/v1/courses',
     API_USER = '/api/v1/users',
+    API_DELIVERABLES = '/api/v1/deliverables',
 }
 
 export enum ItemStatus {

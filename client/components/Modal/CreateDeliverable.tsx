@@ -1,4 +1,3 @@
-import { AxiosResponse } from 'axios';
 import { Fragment, useState } from 'react';
 import {
     ModalContent,
@@ -6,32 +5,51 @@ import {
     ModalBody,
     ModalFooter,
     Input,
+    Textarea,
 } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
 import { Listbox, Transition } from '@headlessui/react';
 
 import Button from '@/components/Button/Button';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import DisclosureButton from '@/components/Button/DisclosureButton';
-import { Endpoints, ItemStatus } from '@/lib/enums';
-import { ReadableStatus, semesterURL } from '@/lib/helpers';
-import { Semester, SessionProps } from '@/lib/types';
-import { createSemester } from '@/services/semesterService';
+import { ItemStatus } from '@/lib/enums';
+import { ReadableStatus } from '@/lib/helpers';
+import { SessionProps } from '@/lib/types';
+import { createDeliverable } from '@/services/deliverableService';
 
-export default function CreateSemesterModal({ session }: SessionProps) {
-    const [name, setName] = useState('');
-    const [goal, setGoal] = useState('80');
-    const [status, setStatus] = useState<ItemStatus>(ItemStatus.NOT_STARTED);
+interface DeliverableModalProps extends SessionProps {
+    api_v1_course_id: string;
+}
+
+export default function CreateDeliverableModal({
+    session,
+    api_v1_course_id,
+}: DeliverableModalProps) {
+    const [name, setName] = useState<string>('');
+    const [status, setStatus] = useState<ItemStatus>(ItemStatus.ACTIVE);
+    const [weight, setWeight] = useState<string>('');
+    const [mark, setMark] = useState<string>('0');
+    const [notes, setNotes] = useState<string>('');
+
+    function statusChanged(newStatus: ItemStatus) {
+        setStatus(newStatus);
+        if (newStatus === ItemStatus.ACTIVE) {
+            setMark('0');
+        }
+    }
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    async function handleCreateSemester(onClose: CallableFunction) {
+    async function handleCreateDeliverable(onClose: CallableFunction) {
         setIsLoading(true);
-        const { success } = await createSemester(
+        const { success } = await createDeliverable(
             {
                 name,
-                goal: parseFloat(goal),
                 status,
+                weight: parseFloat(weight),
+                mark: 0,
+                notes,
+                api_v1_course_id,
             },
             session,
             (error) => {
@@ -51,31 +69,50 @@ export default function CreateSemesterModal({ session }: SessionProps) {
             {(onClose) => (
                 <Fragment>
                     <ModalHeader className="flex flex-col gap-1">
-                        Create New Semester
+                        Create New Deliverable
                     </ModalHeader>
                     <ModalBody>
                         <Input
                             type="text"
-                            label="Semester name"
-                            placeholder="Fall 2024..."
+                            label="Name"
+                            placeholder="What's the name of the deliverable?"
                             value={name}
                             onValueChange={setName}
                         />
                         <Input
                             type="number"
-                            label="goal"
-                            placeholder="Semester goal"
-                            value={goal}
-                            onValueChange={setGoal}
+                            label="Weight (%)"
+                            placeholder="How much is it worth?"
+                            value={weight}
+                            onValueChange={setWeight}
                             min={0}
                             max={100}
                         />
-                        <Listbox value={status} onChange={setStatus}>
+                        {status === ItemStatus.COMPLETE ? (
+                            <Input
+                                type="number"
+                                label="Mark (%)"
+                                placeholder="What was the final grade?"
+                                value={mark}
+                                onValueChange={setMark}
+                                min={0}
+                                max={100}
+                            />
+                        ) : (
+                            <Fragment></Fragment>
+                        )}
+                        <Textarea
+                            label="Notes"
+                            placeholder="What's important about this particular deliverable?"
+                            value={notes}
+                            onValueChange={setNotes}
+                        />
+                        <Listbox value={status} onChange={statusChanged}>
                             <Listbox.Button
                                 as={DisclosureButton}
                                 className="w-full my-2"
                             >
-                                status: {ReadableStatus(status)}
+                                Status: {ReadableStatus(status)}
                             </Listbox.Button>
                             <Transition
                                 enter="transition ease-out duration-200"
@@ -88,14 +125,12 @@ export default function CreateSemesterModal({ session }: SessionProps) {
                                 <Listbox.Options className="w-full flex justify-center">
                                     <div className="w-3/4">
                                         {[
-                                            ItemStatus.NOT_STARTED,
                                             ItemStatus.ACTIVE,
                                             ItemStatus.COMPLETE,
                                         ].map((status) => {
                                             return (
                                                 <Listbox.Option
                                                     as={Button}
-                                                    key={status}
                                                     value={status}
                                                     className="w-full my-2 mx-auto"
                                                 >
@@ -112,7 +147,7 @@ export default function CreateSemesterModal({ session }: SessionProps) {
                         <Button onPress={onClose}>Close</Button>
                         <ConfirmButton
                             onPress={() => {
-                                handleCreateSemester(onClose);
+                                handleCreateDeliverable(onClose);
                             }}
                             isLoading={isLoading}
                         >

@@ -24,38 +24,35 @@ export interface SemesterProgressType {
     grade_colour?: string;
 }
 
-export interface Semester {
-    id: string;
-    name: string;
-    api_v1_user_id: string;
+export interface BaseAcademicItem {
+    id?: string;
+    api_v1_user_id?: string;
     status: ItemStatus;
-    goal: number;
-    courses: Course[];
 }
 
-export interface Course {
-    id: string;
+export interface Semester extends BaseAcademicItem {
+    name: string;
+    goal: number;
+    courses?: Course[];
+}
+
+export interface Course extends BaseAcademicItem {
     title: string;
     course_code: string;
     api_v1_semester_id: string;
-    api_v1_user_id: string;
-    status: ItemStatus;
-    goal: number;
-    grade: number;
-    deliverable_goal: number;
-    deliverables: Deliverable[];
+    goal?: number;
+    grade?: number;
+    deliverable_goal?: number;
+    deliverables?: Deliverable[];
 }
 
-export interface Deliverable {
-    id: string;
+export interface Deliverable extends BaseAcademicItem {
     name: string;
     weight: number;
     mark: number;
     notes: string;
     api_v1_course_id: string;
-    api_v1_user_id: string;
-    status: ItemStatus;
-    goal: number;
+    goal?: number;
 }
 
 export interface APIServiceResponse {
