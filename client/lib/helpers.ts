@@ -96,7 +96,7 @@ export function semesterURL(semesterId: string | undefined): string {
     }
 }
 
-export function courseURL(courseId: string) {
+export function courseURL(courseId: string | undefined) {
     try {
         let result = `${Endpoints.COURSE_DASHBOARD}/${courseId}`;
         if (!courseId) {

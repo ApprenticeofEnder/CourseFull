@@ -15,27 +15,6 @@ export default function CourseCard({
     goal,
     grade,
 }: Course) {
-    // const [img, setImg] = useState<string>('');
-
-    // let mounted = true;
-    // useEffect(() => {
-    //     if (img) {
-    //         return;
-    //     }
-    //     console.log('Firing request');
-    //     axios
-    //         .get('/random-image')
-    //         .then((res) => {
-    //             setImg(res.data.imageURL);
-    //         })
-    //         .catch((err) => {
-    //             alert(err);
-    //         });
-    //     return () => {
-    //         mounted = false;
-    //     };
-    // }, [img]);
-
     return (
         <div className="rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10">
             <div className="flex justify-between">
