@@ -51,7 +51,7 @@ export interface Deliverable extends BaseAcademicItem {
     weight: number;
     mark: number;
     notes: string;
-    api_v1_course_id: string;
+    api_v1_course_id?: string;
     goal?: number;
 }
 

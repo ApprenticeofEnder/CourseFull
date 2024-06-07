@@ -35,6 +35,36 @@ export async function createDeliverable(
     );
 }
 
+export async function updateDeliverable(
+    { id, name, weight, mark, status, notes }: Deliverable,
+    session: Session | null,
+    onFailure: (error: Error) => void
+) {
+    return authenticatedApiErrorHandler(
+        async (session) => {
+            return axios.put(
+                `${Endpoints.API_DELIVERABLES}/${id}`,
+                {
+                    api_v1_deliverable: {
+                        name,
+                        weight,
+                        mark,
+                        status,
+                        notes,
+                    },
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${session.access_token}`,
+                    },
+                }
+            );
+        },
+        session,
+        onFailure
+    );
+}
+
 export async function getDeliverables(
     session: Session | null,
     onFailure: (error: Error) => void

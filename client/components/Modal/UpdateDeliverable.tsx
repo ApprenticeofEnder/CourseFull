@@ -14,43 +14,39 @@ import ConfirmButton from '@/components/Button/ConfirmButton';
 import DisclosureButton from '@/components/Button/DisclosureButton';
 import { ItemStatus } from '@/lib/enums';
 import { ReadableStatus } from '@/lib/helpers';
-import { SessionProps } from '@/lib/types';
-import { createDeliverable } from '@/services/deliverableService';
+import { Deliverable, SessionProps } from '@/lib/types';
+import { updateDeliverable } from '@/services/deliverableService';
 import DeliverableForm from '../Form/DeliverableForm';
 
-interface DeliverableModalProps extends SessionProps {
-    api_v1_course_id: string;
+interface EditDeliverableModalProps extends SessionProps {
+    deliverable: Deliverable | null;
 }
 
-export default function CreateDeliverableModal({
+export default function UpdateDeliverableModal({
     session,
-    api_v1_course_id,
-}: DeliverableModalProps) {
-    const [name, setName] = useState<string>('');
-    const [status, setStatus] = useState<ItemStatus>(ItemStatus.ACTIVE);
-    const [weight, setWeight] = useState<string>('');
-    const [mark, setMark] = useState<string>('0');
-    const [notes, setNotes] = useState<string>('');
-
-    function statusChanged(newStatus: ItemStatus) {
-        setStatus(newStatus);
-        if (newStatus === ItemStatus.ACTIVE) {
-            setMark('0');
-        }
+    deliverable,
+}: EditDeliverableModalProps) {
+    if (!deliverable) {
+        return;
     }
+    const [name, setName] = useState<string>(deliverable.name);
+    const [status, setStatus] = useState<ItemStatus>(deliverable.status);
+    const [weight, setWeight] = useState<string>(deliverable.weight.toString());
+    const [mark, setMark] = useState<string>(deliverable.mark.toString());
+    const [notes, setNotes] = useState<string>(deliverable.notes);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    async function handleCreateDeliverable(onClose: CallableFunction) {
+    async function handleUpdateDeliverable(onClose: CallableFunction) {
         setIsLoading(true);
-        const { success } = await createDeliverable(
+        const { success } = await updateDeliverable(
             {
+                id: deliverable?.id,
                 name,
                 status,
                 weight: parseFloat(weight),
-                mark: 0,
+                mark: parseFloat(mark),
                 notes,
-                api_v1_course_id,
             },
             session,
             (error) => {
@@ -70,9 +66,10 @@ export default function CreateDeliverableModal({
             {(onClose) => (
                 <Fragment>
                     <ModalHeader className="flex flex-col gap-1">
-                        Create New Deliverable
+                        Edit Deliverable
                     </ModalHeader>
                     <ModalBody>
+                        <h3>Goal: {deliverable.goal}</h3>
                         <DeliverableForm
                             name={name}
                             setName={setName}
@@ -90,11 +87,11 @@ export default function CreateDeliverableModal({
                         <Button onPress={onClose}>Close</Button>
                         <ConfirmButton
                             onPress={() => {
-                                handleCreateDeliverable(onClose);
+                                handleUpdateDeliverable(onClose);
                             }}
                             isLoading={isLoading}
                         >
-                            Create!
+                            Save
                         </ConfirmButton>
                     </ModalFooter>
                 </Fragment>

@@ -47,7 +47,6 @@ export default function HomeStatus({ session }: SessionProps) {
 
     const renderCell = useCallback(
         (progressEntry: SemesterProgressType, columnKey: React.Key) => {
-            console.log(progressEntry);
             const cellValue =
                 progressEntry[columnKey as keyof SemesterProgressType];
             switch (columnKey) {
