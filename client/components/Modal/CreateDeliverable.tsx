@@ -32,13 +32,6 @@ export default function CreateDeliverableModal({
     const [mark, setMark] = useState<string>('0');
     const [notes, setNotes] = useState<string>('');
 
-    function statusChanged(newStatus: ItemStatus) {
-        setStatus(newStatus);
-        if (newStatus === ItemStatus.ACTIVE) {
-            setMark('0');
-        }
-    }
-
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     async function handleCreateDeliverable(onClose: CallableFunction) {
