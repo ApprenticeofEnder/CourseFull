@@ -5,4 +5,6 @@ rails db:create RAILS_ENV=test
 rails db:migrate RAILS_ENV=test
 rails db:test:prepare RAILS_ENV=test
 bundle exec rspec
+cd client && pnpm run test
+cd ..
 docker-compose -f docker-compose.test.yml stop

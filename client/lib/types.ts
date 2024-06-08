@@ -17,7 +17,7 @@ export interface SessionProps {
 
 export interface SemesterProgressType {
     semester: string;
-    semesterId: string;
+    semester_id: string;
     average: number;
     num_courses: number;
     goal: number;

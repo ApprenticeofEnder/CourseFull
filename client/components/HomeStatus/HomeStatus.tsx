@@ -93,7 +93,6 @@ export default function HomeStatus({ session }: SessionProps) {
             .then(({ response }) => {
                 if (mounted) {
                     const data: SemesterProgressType[] = response?.data;
-
                     setProgress(
                         data.map((progressEntry) => {
                             const { average, num_courses, goal } =
@@ -150,9 +149,11 @@ export default function HomeStatus({ session }: SessionProps) {
                         items={progress}
                     >
                         {progress.map((progressEntry) => (
-                            <TableRow key={progressEntry.semesterId}>
+                            <TableRow key={progressEntry.semester_id}>
                                 {(columnKey) => (
-                                    <TableCell key={columnKey}>
+                                    <TableCell
+                                        key={`${columnKey}-${progressEntry.semester_id}`}
+                                    >
                                         {renderCell(progressEntry, columnKey)}
                                     </TableCell>
                                 )}
