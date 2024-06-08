@@ -82,7 +82,7 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                         </ConfirmButton>
                     </div>
                     {(semester?.courses?.length && (
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             {semester.courses.map((course) => (
                                 <CourseCard
                                     {...course}

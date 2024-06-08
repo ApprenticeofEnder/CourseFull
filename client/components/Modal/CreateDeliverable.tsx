@@ -48,7 +48,7 @@ export default function CreateDeliverableModal({
                 name,
                 status,
                 weight: parseFloat(weight),
-                mark: 0,
+                mark: parseFloat(mark),
                 notes,
                 api_v1_course_id,
             },

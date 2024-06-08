@@ -74,7 +74,7 @@ export default function CreateSemesterModal({ session }: SessionProps) {
                                 as={DisclosureButton}
                                 className="w-full my-2"
                             >
-                                status: {ReadableStatus(status)}
+                                Status: {ReadableStatus(status)}
                             </Listbox.Button>
                             <Transition
                                 enter="transition ease-out duration-200"
@@ -85,7 +85,7 @@ export default function CreateSemesterModal({ session }: SessionProps) {
                                 leaveTo="opacity-0"
                             >
                                 <Listbox.Options className="w-full flex justify-center">
-                                    <div className="w-3/4">
+                                    <div className="w-full">
                                         {[
                                             ItemStatus.NOT_STARTED,
                                             ItemStatus.ACTIVE,

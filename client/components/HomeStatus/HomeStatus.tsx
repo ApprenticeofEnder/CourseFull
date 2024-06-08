@@ -11,7 +11,6 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    getKeyValue,
 } from '@nextui-org/react';
 
 import { determineGradeColour, semesterURL, classNames } from '@/lib/helpers';
@@ -28,17 +27,7 @@ import { getProgress } from '@/services/userService';
 export default function HomeStatus({ session }: SessionProps) {
     const [progress, setProgress] = useState<SemesterProgressType[]>([]);
 
-    const [semesters, setSemesters] = useState<Semester[]>([]);
-
-    const [selectedSemester, setSelectedSemester] = useState<Semester | null>(
-        null
-    );
-
-    const [selectedSemesterUrl, setSelectedSemesterUrl] = useState<string>('#');
-
     const [loadingProgress, setLoadingProgress] = useState<boolean>(false);
-    const [loadingSemesters, setLoadingSemesters] = useState<boolean>(false);
-
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     function onFailure(error: Error) {
@@ -51,12 +40,19 @@ export default function HomeStatus({ session }: SessionProps) {
                 progressEntry[columnKey as keyof SemesterProgressType];
             switch (columnKey) {
                 case 'semester':
-                    return <p className="font-bold">{cellValue}</p>;
+                    return (
+                        <LinkButton
+                            href={semesterURL(progressEntry.semester_id)}
+                            className="w-full top-1"
+                        >
+                            {cellValue}
+                        </LinkButton>
+                    );
                 case 'average':
                     return (
                         <p
                             className={classNames(
-                                'font-bold',
+                                'font-bold px-3 text-center',
                                 progressEntry.grade_colour || ''
                             )}
                         >
@@ -64,9 +60,8 @@ export default function HomeStatus({ session }: SessionProps) {
                         </p>
                     );
                 case 'num_courses':
-                    return cellValue;
                 case 'goal':
-                    return <p>{cellValue}%</p>;
+                    return <p className="px-3 text-center">{cellValue}</p>;
                 default:
                     return cellValue;
             }
@@ -76,18 +71,7 @@ export default function HomeStatus({ session }: SessionProps) {
 
     useEffect(() => {
         let mounted = true;
-        setLoadingSemesters(true);
         setLoadingProgress(true);
-        getSemesters(session, onFailure)
-            .then(({ response }) => {
-                if (mounted) {
-                    const data: Semester[] = response?.data;
-                    setSemesters(data || []);
-
-                    setLoadingSemesters(false);
-                }
-            })
-            .catch();
 
         getProgress(session, onFailure)
             .then(({ response }) => {
@@ -115,12 +99,6 @@ export default function HomeStatus({ session }: SessionProps) {
         };
     }, []);
 
-    useEffect(() => {
-        if (!!selectedSemester) {
-            setSelectedSemesterUrl(semesterURL(selectedSemester.id));
-        }
-    }, [selectedSemester]);
-
     const columns = [
         { key: 'semester', label: 'Semester' },
         { key: 'num_courses', label: 'Courses' },
@@ -136,10 +114,30 @@ export default function HomeStatus({ session }: SessionProps) {
                 <Table
                     aria-label="Semester progress"
                     className="my-5 sm:mx-auto sm:w-3/4"
+                    classNames={{
+                        table: 'bg-background-900',
+                        th: 'bg-background-800',
+                        td: 'px-0',
+                        wrapper: 'bg-background-900',
+                    }}
+                    bottomContent={
+                        <ConfirmButton
+                            endContent={
+                                <PlusIcon className="h-6 w-6"></PlusIcon>
+                            }
+                            className="w-full my-2 mx-auto focus:bg-warning-100"
+                            onPressEnd={onOpen}
+                        >
+                            Create New Semester
+                        </ConfirmButton>
+                    }
                 >
                     <TableHeader>
                         {columns.map((column) => (
-                            <TableColumn key={column.key}>
+                            <TableColumn
+                                className="text-center"
+                                key={column.key}
+                            >
                                 {column.label}
                             </TableColumn>
                         ))}
@@ -161,79 +159,6 @@ export default function HomeStatus({ session }: SessionProps) {
                         ))}
                     </TableBody>
                 </Table>
-            )}
-
-            {loadingSemesters ? (
-                <Spinner label="Loading Semesters..." />
-            ) : (
-                <Fragment>
-                    <div className="w-full sm:mx-auto sm:w-3/4 grid grid-cols-4 gap-2 sm:gap-4">
-                        <div className="col-span-3 my-2">
-                            {semesters.length ? (
-                                <Listbox
-                                    value={selectedSemester}
-                                    onChange={setSelectedSemester}
-                                >
-                                    <Listbox.Button
-                                        as={DisclosureButton}
-                                        className="w-full mb-2"
-                                    >
-                                        {selectedSemester?.name ||
-                                            'Select a Semester'}
-                                    </Listbox.Button>
-                                    <Transition
-                                        enter="transition ease-out duration-200"
-                                        enterFrom="opacity-0"
-                                        enterTo="opacity-100"
-                                        leave="transition ease-in duration-200"
-                                        leaveFrom="opacity-100"
-                                        leaveTo="opacity-0"
-                                    >
-                                        <Listbox.Options>
-                                            {semesters.map((semester) => (
-                                                <Listbox.Option
-                                                    as={Button}
-                                                    key={semester.id}
-                                                    value={semester}
-                                                    className="w-full my-2 mx-auto focus:bg-warning-100"
-                                                >
-                                                    {semester.name}
-                                                </Listbox.Option>
-                                            ))}
-                                            <Listbox.Button
-                                                as={ConfirmButton}
-                                                endContent={
-                                                    <PlusIcon className="h-6 w-6"></PlusIcon>
-                                                }
-                                                className="w-full my-2 mx-auto focus:bg-warning-100"
-                                                onPressEnd={onOpen}
-                                            >
-                                                Create New Semester
-                                            </Listbox.Button>
-                                        </Listbox.Options>
-                                    </Transition>
-                                </Listbox>
-                            ) : (
-                                <ConfirmButton
-                                    endContent={
-                                        <PlusIcon className="h-6 w-6"></PlusIcon>
-                                    }
-                                    onPressEnd={onOpen}
-                                >
-                                    Create New Semester
-                                </ConfirmButton>
-                            )}
-                        </div>
-                        <LinkButton
-                            isDisabled={!selectedSemester}
-                            confirm
-                            href={selectedSemesterUrl}
-                            className="my-2"
-                        >
-                            Let's go!
-                        </LinkButton>
-                    </div>
-                </Fragment>
             )}
 
             <Modal

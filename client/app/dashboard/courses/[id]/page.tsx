@@ -82,14 +82,14 @@ export default function CourseDashboard({
                         </div>
                     </div>
                     <hr className="border-1 border-primary-100/50 my-2" />
-                    <div className="my-5 flex flex-col-reverse gap-5 sm:flex-row justify-between">
-                        <div className="w-full sm:basis-1/4">
+                    <div className="my-5 sm:my-10 flex flex-col-reverse gap-5 sm:gap-10 sm:flex-row justify-between">
+                        <div className="w-full sm:basis-1/4 my-auto">
                             <ConfirmButton
                                 endContent={
                                     <PlusIcon className="h-6 w-6"></PlusIcon>
                                 }
                                 onPressEnd={createModal.onOpen}
-                                className="w-full"
+                                className="w-full top-1"
                             >
                                 Add Deliverable
                             </ConfirmButton>

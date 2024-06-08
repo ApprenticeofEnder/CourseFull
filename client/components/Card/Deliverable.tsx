@@ -43,9 +43,12 @@ export default function DeliverableCard({
                 </div>
 
                 <div className="flex flex-col justify-between gap-2 w-32">
-                    <h4>
-                        {(status === ItemStatus.COMPLETE && mark) || '--'}% /{' '}
-                        {goal}%
+                    <h4 className="px-2 flex justify-between">
+                        <span>
+                            {(status === ItemStatus.COMPLETE && mark) || '--'}%
+                        </span>
+                        <span>/</span>
+                        <span>{goal}%</span>
                     </h4>
                     <Button
                         endContent={

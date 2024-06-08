@@ -26,9 +26,9 @@ export default function Home() {
         <main>
             <Navbar session={session} />
             <Spacer className="overflow-auto">
-                <div className="relative py-10 flex justify-center h-dvh">
+                <div className="relative sm:mt-20 py-10 flex justify-center h-dvh">
                     <div className="flex flex-col justify-center w-full">
-                        <h1 className="z-30">Hey, friend!</h1>
+                        <h1>Hey, friend!</h1>
                         {loading ? (
                             <Spinner label="One sec..." />
                         ) : (
