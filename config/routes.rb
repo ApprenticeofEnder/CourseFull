@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       resources :courses
       resources :deliverables
       resources :semesters
+      get "products" => "products#index"
       get "users/me/progress" => "users#progress"
       get "users/me" => "users#show"
       put "users/me" => "users#update"

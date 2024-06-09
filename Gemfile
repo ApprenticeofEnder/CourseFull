@@ -39,6 +39,9 @@ gem "jwt"
 gem "uuidtools"
 gem "email_validator"
 
+# Stripe for payment stuff
+gem "stripe", "~> 11.6"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
@@ -56,4 +59,5 @@ end
 group :test do
   gem "database_cleaner-active_record"
   gem "faker"
+  gem "stripe-ruby-mock", "~> 3.1.0", :require => "stripe_mock"
 end

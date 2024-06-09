@@ -45,7 +45,7 @@ RSpec.describe Api::V1::User, type: :model do
     end
 
     it "should validate for all lengths between 2 and 150, inclusive" do
-      [2..151].each do |length|
+      [2..150].each do |length|
         api_v1_user.first_name = Faker::Alphanumeric.alpha(number: length)
         expect(api_v1_user).to be_valid
       end
@@ -64,7 +64,7 @@ RSpec.describe Api::V1::User, type: :model do
     end
 
     it "should validate for all lengths between 2 and 150, inclusive" do
-      [2..151].each do |length|
+      [2..150].each do |length|
         api_v1_user.last_name = Faker::Alphanumeric.alpha(number: length)
         expect(api_v1_user).to be_valid
       end

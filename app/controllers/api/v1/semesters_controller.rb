@@ -5,10 +5,6 @@ class Api::V1::SemestersController < Api::V1::ApplicationController
   # GET /api/v1/semesters
   def index
     @api_v1_semesters = Api::V1::Semester.where(api_v1_user_id: @api_v1_user.id)
-    # @api_v1_semesters.each do |semester|
-    #   courses = semester.courses.all
-    #   semester.all_courses = courses
-    # end
     render json: @api_v1_semesters.to_json(:include => :courses)
   end
 

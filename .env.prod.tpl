@@ -4,3 +4,5 @@ DATABASE_URL=op://CourseFull/CourseFull/DATABASE_URL
 JWT_SECRET=op://CourseFull/CourseFull/JWT_SECRET
 NODE_ENV=production
 RAILS_ENV=production
+STRIPE_PUBLIC_KEY=op://CourseFull/CourseFull/STRIPE_PUBLIC_KEY
+STRIPE_SECRET_KEY=op://CourseFull/CourseFull/STRIPE_SECRET_KEY

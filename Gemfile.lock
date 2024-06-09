@@ -220,6 +220,7 @@ GEM
       rspec-support (~> 3.13)
     rspec-support (3.13.1)
     stringio (3.1.0)
+    stripe (11.6.0)
     thor (1.3.1)
     timeout (0.4.1)
     tzinfo (2.0.6)
@@ -253,6 +254,7 @@ DEPENDENCIES
   rails (~> 7.1.3, >= 7.1.3.2)
   rails-controller-testing
   rspec-rails
+  stripe (~> 11.6)
   tzinfo-data
   uuidtools
 

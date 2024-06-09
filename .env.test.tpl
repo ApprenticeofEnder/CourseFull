@@ -3,3 +3,5 @@ NEXT_PUBLIC_SUPABASE_URL=op://CourseFull/CourseFull/Test/NEXT_PUBLIC_SUPABASE_UR
 DATABASE_URL_TEST=op://CourseFull/CourseFull/Test/DATABASE_URL
 RAILS_ENV=test
 JWT_SECRET=op://CourseFull/CourseFull/Test/JWT_SECRET
+STRIPE_PUBLIC_KEY=op://CourseFull/CourseFull/Test/STRIPE_PUBLIC_KEY
+STRIPE_SECRET_KEY=op://CourseFull/CourseFull/Test/STRIPE_SECRET_KEY
