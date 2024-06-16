@@ -59,5 +59,4 @@ end
 group :test do
   gem "database_cleaner-active_record"
   gem "faker"
-  gem "stripe-ruby-mock", "~> 3.1.0", :require => "stripe_mock"
 end

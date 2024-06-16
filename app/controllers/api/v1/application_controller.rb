@@ -2,12 +2,12 @@ class Api::V1::ApplicationController < ActionController::API
   # before_action :authorized
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
-  rescue_from ArgumentError, with: :render_status_set_error
+  rescue_from ArgumentError, with: :render_invalid_object_error
 
   private
 
-  def render_status_set_error
-    render json: { error: "Invalid status." }, status: :bad_request
+  def render_invalid_object_error
+    render json: { error: "Invalid object passed in." }, status: :bad_request
   end
 
   def render_not_found()

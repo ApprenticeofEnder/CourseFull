@@ -13,4 +13,10 @@ class Api::V1::User < ApplicationRecord
   def init
     self.courses_remaining ||= 3
   end
+
+  def add_courses(amount)
+    Rails.logger.info("Adding %p course ticket(s) to account %p" % [line_item.quantity, metadata.user])
+    self.courses_remaining += amount
+    self.save
+  end
 end

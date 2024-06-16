@@ -5,3 +5,5 @@ RAILS_ENV=test
 JWT_SECRET=op://CourseFull/CourseFull/Test/JWT_SECRET
 STRIPE_PUBLIC_KEY=op://CourseFull/CourseFull/Test/STRIPE_PUBLIC_KEY
 STRIPE_SECRET_KEY=op://CourseFull/CourseFull/Test/STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET=op://CourseFull/CourseFull/Test/STRIPE_WEBHOOK_SECRET
+APP_URL=op://CourseFull/CourseFull/Test/APP_URL

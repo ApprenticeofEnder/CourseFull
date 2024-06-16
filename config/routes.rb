@@ -5,6 +5,8 @@ Rails.application.routes.draw do
       resources :courses
       resources :deliverables
       resources :semesters
+      post "payments/webhook" => "payments#webhook"
+      post "payments" => "payments#create"
       get "products" => "products#index"
       get "users/me/progress" => "users#progress"
       get "users/me" => "users#show"

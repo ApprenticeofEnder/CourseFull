@@ -6,3 +6,5 @@ NODE_ENV=production
 RAILS_ENV=production
 STRIPE_PUBLIC_KEY=op://CourseFull/CourseFull/STRIPE_PUBLIC_KEY
 STRIPE_SECRET_KEY=op://CourseFull/CourseFull/STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET=op://CourseFull/CourseFull/STRIPE_WEBHOOK_SECRET
+APP_URL=op://CourseFull/CourseFull/APP_URL

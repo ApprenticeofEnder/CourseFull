@@ -5,4 +5,6 @@ DATABASE_URL_TEST=op://CourseFull/CourseFull/Test/DATABASE_URL
 JWT_SECRET=op://CourseFull/CourseFull/Dev/JWT_SECRET
 STRIPE_PUBLIC_KEY=op://CourseFull/CourseFull/Dev/STRIPE_PUBLIC_KEY
 STRIPE_SECRET_KEY=op://CourseFull/CourseFull/Dev/STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET=op://CourseFull/CourseFull/Dev/STRIPE_WEBHOOK_SECRET
+APP_URL=op://CourseFull/CourseFull/Dev/APP_URL
 NODE_ENV=development
