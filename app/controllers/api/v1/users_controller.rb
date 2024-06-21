@@ -40,8 +40,12 @@ class Api::V1::UsersController < Api::V1::ApplicationController
       grade_sum = 0.0
 
       semester.courses.find_each do |course|
+        if course.deliverables.complete.length <= 0
+          grade_sum += grade_sum / num_courses
+        else
+          grade_sum += course.grade
+        end
         num_courses += 1
-        grade_sum += course.grade
       end
 
       semester_progress_item = {

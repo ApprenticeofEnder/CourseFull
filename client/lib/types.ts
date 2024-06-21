@@ -60,4 +60,13 @@ export interface APIServiceResponse {
     success: boolean;
 }
 
+export interface User {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    supabase_id: string;
+    courses_remaining: number;
+}
+
 export type { ChildrenProps, ModalProps };

@@ -91,7 +91,7 @@ class Api::V1::PaymentsController < Api::V1::ApplicationController
   def process_line_item(line_item, metadata)
     if line_item.price.product == Product::COURSE_TICKET
       api_v1_user = Api::V1::User.find_by(id: metadata.user)
-      api_v1_user.add_courses(line_item.quantity)
+      api_v1_user.add_course_tickets(line_item.quantity)
     end
   end
 end

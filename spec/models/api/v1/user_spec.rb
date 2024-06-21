@@ -113,4 +113,34 @@ RSpec.describe Api::V1::User, type: :model do
       expect(api_v1_user.courses_remaining).to eq(3)
     end
   end
+
+  context "add_course_tickets" do
+    it "should add courses to the user" do
+      api_v1_user.save
+      api_v1_user.add_course_tickets(3)
+      expect(api_v1_user.courses_remaining).to eq(6)
+    end
+
+    it "should not add negative courses" do
+      api_v1_user.save
+      api_v1_user.add_course_tickets(-3)
+      expect(api_v1_user.courses_remaining).to eq(3)
+    end
+  end
+
+  context "new_course" do
+    it "should decrement courses remaining for the user" do
+      api_v1_user.save
+      api_v1_user.new_course
+      expect(api_v1_user.courses_remaining).to eq(2)
+    end
+
+    it "should not decrement courses remaining when the user is out of tickets" do
+      api_v1_user.save
+      for _ in 0..4
+        api_v1_user.new_course
+      end
+      expect(api_v1_user.courses_remaining).to eq(0)
+    end
+  end
 end

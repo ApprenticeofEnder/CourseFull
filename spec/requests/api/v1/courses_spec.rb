@@ -185,6 +185,34 @@ RSpec.describe "/api/v1/courses", type: :request do
           }.to change(Api::V1::Semester, :count).by(0)
         }
       end
+
+      it "decrements the number of courses a user has remaining" do
+        post "/api/v1/courses",
+             params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+        @user.reload
+        expect(@user.courses_remaining).to eq(2)
+      end
+
+      it "does not create a new course when the user is out of course tickets" do
+        for _ in 0..3
+          post "/api/v1/courses",
+               params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+        end
+        expect {
+          post "/api/v1/courses",
+               params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+        }.to change(Api::V1::Course, :count).by(0)
+      end
+
+      it "returns a 403 when the user is out of course tickets" do
+        for _ in 0..3
+          post "/api/v1/courses",
+               params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+        end
+        post "/api/v1/courses",
+             params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+        expect(response).to have_http_status(:forbidden)
+      end
     end
 
     context "with invalid auth token" do

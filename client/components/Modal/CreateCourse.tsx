@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import {
     ModalContent,
     ModalHeader,
@@ -13,8 +13,9 @@ import ConfirmButton from '@/components/Button/ConfirmButton';
 import DisclosureButton from '@/components/Button/DisclosureButton';
 import { ItemStatus } from '@/lib/enums';
 import { ReadableStatus } from '@/lib/helpers';
-import { SessionProps } from '@/lib/types';
+import { SessionProps, User } from '@/lib/types';
 import { createCourse } from '@/services/courseService';
+import { getUserData } from '@/services/userService';
 
 interface CourseModalProps extends SessionProps {
     api_v1_semester_id: string;
@@ -27,6 +28,8 @@ export default function CreateCourseModal({
     const [title, setTitle] = useState('');
     const [code, setCode] = useState('');
     const [status, setStatus] = useState<ItemStatus>(ItemStatus.ACTIVE);
+
+    const [coursesRemaining, setCoursesRemaining] = useState(0);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -52,6 +55,27 @@ export default function CreateCourseModal({
         location.reload();
     }
 
+    useEffect(() => {
+        let mounted = true;
+        setIsLoading(true);
+
+        getUserData(session, (error) => {
+            alert('Error: ' + error.message);
+        })
+            .then(({ response }) => {
+                if (mounted) {
+                    const user: User = response?.data;
+                    setCoursesRemaining(user.courses_remaining);
+                    setIsLoading(false);
+                }
+            })
+            .catch();
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
     return (
         <ModalContent>
             {(onClose) => (
@@ -60,6 +84,10 @@ export default function CreateCourseModal({
                         Create New Course
                     </ModalHeader>
                     <ModalBody>
+                        <p>
+                            You have {coursesRemaining || '...'} courses
+                            remaining on your account.
+                        </p>
                         <Input
                             type="text"
                             label="Course Title"
@@ -90,7 +118,7 @@ export default function CreateCourseModal({
                                 leaveTo="opacity-0"
                             >
                                 <Listbox.Options className="w-full flex justify-center">
-                                    <div className="w-3/4">
+                                    <div className="w-full">
                                         {[
                                             ItemStatus.ACTIVE,
                                             ItemStatus.COMPLETE,
@@ -99,6 +127,7 @@ export default function CreateCourseModal({
                                                 <Listbox.Option
                                                     as={Button}
                                                     value={status}
+                                                    key={status}
                                                     className="w-full my-2 mx-auto"
                                                 >
                                                     {ReadableStatus(status)}

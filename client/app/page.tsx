@@ -25,8 +25,8 @@ export default function Home() {
     return (
         <main>
             <Navbar session={session} />
-            <Spacer className="overflow-auto">
-                <div className="relative sm:mt-20 py-10 flex justify-center h-dvh">
+            <Spacer className="overflow-auto sm:mt-20">
+                <div className="relative py-10 flex justify-center h-dvh">
                     <div className="flex flex-col justify-center w-full">
                         <h1>Hey, friend!</h1>
                         {loading ? (

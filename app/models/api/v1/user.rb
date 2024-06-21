@@ -14,9 +14,23 @@ class Api::V1::User < ApplicationRecord
     self.courses_remaining ||= 3
   end
 
-  def add_courses(amount)
-    Rails.logger.info("Adding %p course ticket(s) to account %p" % [line_item.quantity, metadata.user])
+  def add_course_tickets(amount)
+    unless amount > 0
+      Rails.logger.fatal("Account %p attempted to add %p tickets, which is a non-positive number." % [self.id, amount])
+      return
+    end
+    Rails.logger.info("Adding %p course ticket(s) to account %p" % [amount, self.id])
     self.courses_remaining += amount
     self.save
+  end
+
+  def new_course()
+    unless self.courses_remaining > 0
+      Rails.logger.error("Account %p attempted to add a course while out of tickets." % [self.id])
+      return
+    end
+    self.courses_remaining -= 1
+    self.save
+    Rails.logger.info("Course added to account %p, 1 ticket spent, %p ticket(s) remaining" % [self.id, self.courses_remaining])
   end
 end

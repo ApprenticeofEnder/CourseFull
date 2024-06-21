@@ -17,6 +17,9 @@ class Api::V1::CoursesController < Api::V1::ApplicationController
 
   # POST /api/v1/courses
   def create
+    unless @api_v1_user.courses_remaining > 0
+      return render json: { error: "No course tickets remaining." }, status: :forbidden
+    end
     @api_v1_course = Api::V1::Course.new(api_v1_course_params)
 
     @api_v1_course.goal = @api_v1_semester.goal
@@ -25,6 +28,7 @@ class Api::V1::CoursesController < Api::V1::ApplicationController
     @api_v1_course.user = @api_v1_user
 
     if @api_v1_course.save
+      @api_v1_user.new_course
       @api_v1_course.update_goal
       render json: @api_v1_course, status: :created, location: @api_v1_course
     else

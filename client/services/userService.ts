@@ -82,3 +82,25 @@ export async function getProgress(
         onFailure
     );
 }
+
+export async function getUserData(
+    session: Session,
+    onFailure: (error: Error) => void
+) {
+    return authenticatedApiErrorHandler(
+        async (session) => {
+            const apiResponse = await axios.get(`${Endpoints.API_USER}/me`, {
+                headers: {
+                    Authorization: `Bearer ${session.access_token}`,
+                },
+            });
+
+            if (apiResponse.status !== 200) {
+                throw apiResponse.data;
+            }
+            return apiResponse;
+        },
+        session,
+        onFailure
+    );
+}

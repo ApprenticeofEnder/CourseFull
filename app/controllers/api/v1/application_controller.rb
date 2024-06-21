@@ -11,7 +11,7 @@ class Api::V1::ApplicationController < ActionController::API
   end
 
   def render_not_found()
-    render json: { message: "Resource not found." }, status: :not_found
+    render json: { error: "Resource not found." }, status: :not_found
   end
 
   def encode_token(payload)
