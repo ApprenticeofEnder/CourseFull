@@ -65,3 +65,13 @@ export function userAccessToken(user: User) {
 export function jwtDecode(token: string) {
     return jwt.decode(token);
 }
+
+export function makeSession(user: User) {
+    return {
+        access_token: userAccessToken(user),
+        refresh_token: 'TEST-TOKEN',
+        expires_in: 3000000000,
+        token_type: 'bearer',
+        user,
+    };
+}

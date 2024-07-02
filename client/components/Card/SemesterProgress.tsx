@@ -6,7 +6,6 @@ import { Fragment } from 'react';
 
 export default function SemesterProgress({
     semester,
-    semesterId,
     average,
     num_courses,
     goal,

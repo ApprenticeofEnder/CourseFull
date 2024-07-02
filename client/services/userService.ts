@@ -23,7 +23,7 @@ export async function createUser(
             },
         });
         if (supabaseResponse.error) {
-            throw supabaseResponse.error.message;
+            throw new Error(supabaseResponse.error.message);
         }
 
         const apiPostData = {

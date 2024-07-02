@@ -25,9 +25,9 @@ export function ReadableStatus(status: ItemStatus) {
 }
 
 export function determineGradeColour(goal: number, grade: number) {
-    if (grade > goal) {
+    if (grade >= goal) {
         return 'text-success-500';
-    } else if (grade == goal) {
+    } else if (goal - grade <= 5) {
         return 'text-warning-500';
     } else {
         return 'text-danger-400';
@@ -109,3 +109,16 @@ export function courseURL(courseId: string | undefined) {
         return '#';
     }
 }
+
+export const validateEmail = (email: string) =>
+    email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+
+export const validatePassword = (password: string) => {
+    return password.match(
+        /^.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&? _"]).*$/i
+    );
+};
+
+export const validateName = (name: string) => {
+    return name.match(/^.{2,150}$/i);
+};
