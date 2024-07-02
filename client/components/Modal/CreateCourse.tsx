@@ -1,4 +1,7 @@
+'use client';
+
 import { Fragment, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
     ModalContent,
     ModalHeader,
@@ -11,7 +14,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import Button from '@/components/Button/Button';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import DisclosureButton from '@/components/Button/DisclosureButton';
-import { ItemStatus } from '@/lib/enums';
+import { Endpoints, ItemStatus } from '@/lib/enums';
 import { ReadableStatus } from '@/lib/helpers';
 import { SessionProps, User } from '@/lib/types';
 import { createCourse } from '@/services/courseService';
@@ -25,6 +28,7 @@ export default function CreateCourseModal({
     session,
     api_v1_semester_id,
 }: CourseModalProps) {
+    const router = useRouter();
     const [title, setTitle] = useState('');
     const [code, setCode] = useState('');
     const [status, setStatus] = useState<ItemStatus>(ItemStatus.ACTIVE);
@@ -44,8 +48,24 @@ export default function CreateCourseModal({
             },
             session,
             (error) => {
-                alert(`Something went wrong: ${error}`);
                 setIsLoading(false);
+                try {
+                    const errorData = JSON.parse(error.message);
+                    const outOfTicketsError =
+                        errorData.status === 403 &&
+                        errorData.data.error === 'No course tickets remaining.';
+                    if (!outOfTicketsError) {
+                        alert(`Something went wrong: ${error}`);
+                    } else {
+                        const buying = confirm(
+                            "Whoops! Looks like you don't have room for any more courses. Buy some tickets to add more!"
+                        );
+                        if (buying) router.push(Endpoints.PRODUCTS);
+                    }
+                    onClose();
+                } catch (err) {
+                    alert(`Something went wrong: ${error}`);
+                }
             }
         );
         if (!success) {
@@ -60,7 +80,7 @@ export default function CreateCourseModal({
         setIsLoading(true);
 
         getUserData(session, (error) => {
-            alert('Error: ' + error.message);
+            alert(`Something went wrong: ${error}`);
         })
             .then(({ response }) => {
                 if (mounted) {
@@ -85,8 +105,8 @@ export default function CreateCourseModal({
                     </ModalHeader>
                     <ModalBody>
                         <p>
-                            You have {coursesRemaining || '...'} courses
-                            remaining on your account.
+                            You have {coursesRemaining} courses remaining on
+                            your account.
                         </p>
                         <Input
                             type="text"

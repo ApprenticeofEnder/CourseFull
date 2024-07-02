@@ -7,6 +7,7 @@ export enum Endpoints {
     DASHBOARD = '/dashboard',
     SEMESTER_DASHBOARD = '/dashboard/semesters',
     COURSE_DASHBOARD = '/dashboard/courses',
+    PRODUCTS = '/products',
     API_PROGRESS = '/api/v1/users/me/progress',
     API_SEMESTERS = '/api/v1/semesters',
     API_COURSES = '/api/v1/courses',
