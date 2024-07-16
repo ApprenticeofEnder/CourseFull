@@ -7,3 +7,11 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+@products = Stripe::Product.list({ active: true })
+
+@products.each do |product|
+  price = Stripe::Price.retrieve(product.default_price)
+  Api::V1::Product
+    .create_with(name: product.name, description: product.description, price: price.unit_amount)
+    .find_or_create_by!(stripe_id: product.id, stripe_price: product.default_price)
+end

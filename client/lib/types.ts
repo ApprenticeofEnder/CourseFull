@@ -69,4 +69,22 @@ export interface User {
     courses_remaining: number;
 }
 
+export interface Product {
+    name: string;
+    description: string;
+    stripe_id: string;
+    stripe_price: string;
+    price: number;
+}
+
+export interface CartItem {
+    stripe_id: string;
+    stripe_price: string;
+    quantity: number;
+}
+
+export interface Cart {
+    products: CartItem[];
+}
+
 export type { ChildrenProps, ModalProps };

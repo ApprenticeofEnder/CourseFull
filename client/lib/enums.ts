@@ -13,6 +13,8 @@ export enum Endpoints {
     API_COURSES = '/api/v1/courses',
     API_USER = '/api/v1/users',
     API_DELIVERABLES = '/api/v1/deliverables',
+    API_PRODUCTS = '/api/v1/products',
+    API_PAYMENTS = '/api/v1/payments',
 }
 
 export enum ItemStatus {

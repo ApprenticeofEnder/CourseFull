@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_05_061316) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_14_191058) do
   create_schema "_analytics"
   create_schema "_realtime"
   create_schema "auth"
@@ -65,6 +65,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_05_061316) do
     t.uuid "api_v1_user_id", null: false
     t.index ["api_v1_course_id"], name: "index_api_v1_deliverables_on_api_v1_course_id"
     t.index ["api_v1_user_id"], name: "index_api_v1_deliverables_on_api_v1_user_id"
+  end
+
+  create_table "api_v1_products", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "stripe_price"
+    t.string "name"
+    t.string "stripe_id"
+    t.string "description"
+    t.integer "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["stripe_id"], name: "index_api_v1_products_on_stripe_id", unique: true
   end
 
   create_table "api_v1_semesters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

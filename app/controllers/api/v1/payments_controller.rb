@@ -4,20 +4,15 @@ class Api::V1::PaymentsController < Api::V1::ApplicationController
   def create
     Rails.logger.debug("Initializing payment.")
 
-    @payment = Api::V1::Payment.new(api_v1_payment_params)
+    @line_items = []
 
-    unless @payment.valid?
-      render json: { errors: @payment.errors }, status: :bad_request
-      return
+    api_v1_payment_params[:products].each do |product|
+      Rails.logger.info("Account %p is attempting to purchase %d items of product %p" % [@api_v1_user.id, product[:quantity], product[:stripe_id]])
+      @line_items.push({ price: product[:stripe_price], quantity: product[:quantity] })
     end
 
-    Rails.logger.debug(@payment.inspect)
-
-    # Figure out if bulk payments make sense or if coupons do
-    # Coupon with minimum order value works!
-
     session = Stripe::Checkout::Session.create({
-      line_items: [@payment.as_json],
+      line_items: @line_items,
       mode: "payment",
       metadata: {
         user: @api_v1_user.id,
@@ -26,9 +21,7 @@ class Api::V1::PaymentsController < Api::V1::ApplicationController
       cancel_url: ENV["APP_URL"] + "/payments/cancel",
     })
 
-    Rails.logger.debug("Session creation complete.")
-
-    render json: { redirect: session.url }, status: :ok
+    render json: { redirect: session.url }, status: :created
   end
 
   def webhook
@@ -72,7 +65,7 @@ class Api::V1::PaymentsController < Api::V1::ApplicationController
   end
 
   def api_v1_payment_params
-    params.require(:payment).permit(:price, :quantity)
+    params.require(:payment).permit(products: [:stripe_id, :stripe_price, :quantity])
   end
 
   def process_checkout_session_complete(checkout_session)
@@ -89,9 +82,13 @@ class Api::V1::PaymentsController < Api::V1::ApplicationController
   end
 
   def process_line_item(line_item, metadata)
-    if line_item.price.product == Product::COURSE_TICKET
+    product = Api::V1::Product.find_by(stripe_id: line_item.price.product)
+    case product.name
+    when "Course Ticket"
       api_v1_user = Api::V1::User.find_by(id: metadata.user)
       api_v1_user.add_course_tickets(line_item.quantity)
+    else
+      return
     end
   end
 end
