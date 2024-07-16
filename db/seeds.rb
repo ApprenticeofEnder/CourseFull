@@ -12,6 +12,6 @@
 @products.each do |product|
   price = Stripe::Price.retrieve(product.default_price)
   Api::V1::Product
-    .create_with(name: product.name, description: product.description, price: price.unit_amount)
-    .find_or_create_by!(stripe_id: product.id, stripe_price: product.default_price)
+    .find_or_initialize_by(stripe_id: product.id)
+    .update!(name: product.name, description: product.description, price: price.unit_amount, stripe_price: product.default_price)
 end

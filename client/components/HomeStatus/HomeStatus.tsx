@@ -1,5 +1,4 @@
 import { Fragment, useCallback, useEffect, useState } from 'react';
-import { Listbox, Transition } from '@headlessui/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import {
     Modal,
@@ -14,14 +13,10 @@ import {
 } from '@nextui-org/react';
 
 import { determineGradeColour, semesterURL, classNames } from '@/lib/helpers';
-import { Semester, SemesterProgressType, SessionProps } from '@/lib/types';
-import Progress from '@/components/Card/SemesterProgress';
-import DisclosureButton from '@/components/Button/DisclosureButton';
-import Button from '@/components/Button/Button';
+import { SemesterProgressType, SessionProps } from '@/lib/types';
 import ConfirmButton from '@/components/Button/ConfirmButton';
 import CreateSemesterModal from '@/components/Modal/CreateSemester';
 import LinkButton from '@/components/Button/LinkButton';
-import { getSemesters } from '@/services/semesterService';
 import { getProgress } from '@/services/userService';
 
 export default function HomeStatus({ session }: SessionProps) {
