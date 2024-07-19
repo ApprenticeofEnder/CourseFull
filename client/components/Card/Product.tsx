@@ -74,6 +74,7 @@ export default function ProductCard({
             >
                 Add to Cart
             </ConfirmButton>
+            {/* TODO: Add a cart system on the front end */}
             <p className="mt-4">*All prices are in Canadian dollars (CAD).</p>
         </div>
     );

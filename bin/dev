@@ -1,4 +1,5 @@
 #!/bin/bash -e
 export $(op inject -i .env.dev.tpl)
 rails db:migrate
+rails db:seed
 foreman start -f Procfile.local

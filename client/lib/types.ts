@@ -78,13 +78,17 @@ export interface Product {
 }
 
 export interface CartItem {
-    stripe_id: string;
-    stripe_price: string;
+    product: Product;
     quantity: number;
 }
 
 export interface Cart {
     products: CartItem[];
 }
+
+export type CartAction =
+    | { type: 'ADD_PRODUCT'; payload: Product }
+    | { type: 'UPDATE_PRODUCT'; payload: CartItem }
+    | { type: 'REMOVE_PRODUCT'; payload: string };
 
 export type { ChildrenProps, ModalProps };
