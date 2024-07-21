@@ -14,7 +14,7 @@ import {
 
 import { determineGradeColour, semesterURL, classNames } from '@/lib/helpers';
 import { SemesterProgressType, SessionProps } from '@/lib/types';
-import ConfirmButton from '@/components/Button/ConfirmButton';
+import Button from '@/components/Button/Button';
 import CreateSemesterModal from '@/components/Modal/CreateSemester';
 import LinkButton from '@/components/Button/LinkButton';
 import { getProgress } from '@/services/userService';
@@ -116,15 +116,16 @@ export default function HomeStatus({ session }: SessionProps) {
                         wrapper: 'bg-background-900',
                     }}
                     bottomContent={
-                        <ConfirmButton
+                        <Button
                             endContent={
                                 <PlusIcon className="h-6 w-6"></PlusIcon>
                             }
                             className="w-full my-2 mx-auto focus:bg-warning-100"
                             onPressEnd={onOpen}
+                            buttonType="confirm"
                         >
                             Create New Semester
-                        </ConfirmButton>
+                        </Button>
                     }
                 >
                     <TableHeader>

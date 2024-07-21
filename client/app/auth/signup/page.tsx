@@ -5,7 +5,7 @@ import { Input } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
-import ConfirmButton from '@/components/Button/ConfirmButton';
+import Button from '@/components/Button/Button';
 import { Endpoints } from '@/lib/enums';
 import { useSupabaseSession } from '@/supabase';
 import { createUser } from '@/services/userService';
@@ -148,14 +148,15 @@ export default function Signup() {
                 onValueChange={setPassword}
             />
 
-            <ConfirmButton
+            <Button
                 className="w-1/2 m-auto my-2"
                 onPressEnd={handleSignUp}
                 isLoading={loading}
                 isDisabled={!validForm}
+                buttonType="confirm"
             >
                 {loading ? 'Signing up...' : 'Sign Up'}
-            </ConfirmButton>
+            </Button>
         </Fragment>
     );
 }

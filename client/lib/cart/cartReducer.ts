@@ -9,10 +9,10 @@ export const cartReducer = (
     action: CartAction
 ): CartState => {
     const newState = { ...state };
+    let existingProduct;
     switch (action.type) {
         case 'ADD_PRODUCT':
-            let stripeId = action.payload.product.stripe_id;
-            let existingProduct = state.items[stripeId];
+            existingProduct = state.items[action.payload.product.stripe_id];
             if (existingProduct) {
                 let newQuantity =
                     existingProduct.quantity + action.payload.quantity;
@@ -20,9 +20,11 @@ export const cartReducer = (
             }
 
             let demoState = {
-                items: { ...state.items, [stripeId]: action.payload },
+                items: {
+                    ...state.items,
+                    [action.payload.product.stripe_id]: action.payload,
+                },
             };
-            console.log(demoState);
             return demoState;
         case 'REMOVE_PRODUCT':
             if (state.items[action.payload]) {
@@ -31,12 +33,17 @@ export const cartReducer = (
             }
             return newState;
         case 'UPDATE_PRODUCT':
-            stripeId = action.payload.product.stripe_id;
-            existingProduct = state.items[stripeId];
+            existingProduct = state.items[action.payload.product.stripe_id];
             if (existingProduct) {
                 existingProduct.quantity = action.payload.quantity;
             }
-            return state;
+
+            return {
+                items: {
+                    ...state.items,
+                    [existingProduct.product.stripe_id]: existingProduct,
+                },
+            };
         case 'INIT_STATE':
             return action.payload;
         default:

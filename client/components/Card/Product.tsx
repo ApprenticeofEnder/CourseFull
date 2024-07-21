@@ -4,9 +4,10 @@ import { Product } from '@/lib/types';
 import { useContext, useState } from 'react';
 import Button from '@/components/Button/Button';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
-import ConfirmButton from '../Button/ConfirmButton';
-import { classNames } from '@/lib/helpers';
-import { CartContext, useCart } from '@/lib/cart/cartContext';
+import { classNames, priceFormatter } from '@/lib/helpers';
+import { useCart } from '@/lib/cart/cartContext';
+import { useRouter } from 'next/navigation';
+import { Endpoints } from '@/lib/enums';
 
 interface ProductCardProps extends Product {
     className: string;
@@ -22,17 +23,18 @@ export default function ProductCard({
     className,
     isCourseTicket,
 }: ProductCardProps) {
+    const router = useRouter();
+
     const [quantity, setQuantity] = useState(0);
 
     const { cart, dispatch } = useCart()!;
 
-    const numberFormatter = new Intl.NumberFormat('en-CA', {
-        style: 'currency',
-        currency: 'CAD',
-    });
-    const displayPrice = numberFormatter.format(price / 100);
+    const displayPrice = priceFormatter.format(price / 100);
+
+    const currentlyInCart = cart.items[stripe_id]?.quantity || 0;
 
     const addToCart = () => {
+        setQuantity(0);
         dispatch({
             type: 'ADD_PRODUCT',
             payload: {
@@ -46,6 +48,7 @@ export default function ProductCard({
                 quantity,
             },
         });
+        router.push(Endpoints.CHECKOUT);
     };
 
     return (
@@ -76,25 +79,41 @@ export default function ProductCard({
                     onPressEnd={() => setQuantity(quantity + 1)}
                 ></Button>
             </div>
+            {currentlyInCart > 0 ? (
+                <h3 className="text-xl sm:text-2xl my-4 font-bold">
+                    You have {currentlyInCart} in your cart!
+                </h3>
+            ) : (
+                <></>
+            )}
             <h3 className="text-xl sm:text-2xl my-4 font-bold">
-                Total: {numberFormatter.format((price * quantity) / 100)}*
+                Total:{' '}
+                {priceFormatter.format(
+                    (price * (currentlyInCart + quantity)) / 100
+                )}
+                *
             </h3>
-            {isCourseTicket && quantity >= 4 ? (
+            {isCourseTicket && currentlyInCart + quantity >= 4 ? (
                 <h3 className="text-lg sm:text-xl my-4 text-success-800 font-bold">
                     Total (With Coupon):{' '}
-                    {numberFormatter.format((price * quantity * 0.8) / 100)}*
+                    {priceFormatter.format(
+                        (price * (currentlyInCart + quantity) * 0.8) / 100
+                    )}
+                    *
                 </h3>
             ) : (
                 <></>
             )}
 
-            <ConfirmButton
+            <Button
                 endContent={<PlusIcon className="h-6 w-6" />}
                 className="w-full mt-4"
                 onPressEnd={addToCart}
+                isDisabled={quantity === 0}
+                buttonType="confirm"
             >
                 Add to Cart
-            </ConfirmButton>
+            </Button>
             <p className="mt-4">*All prices are in Canadian dollars (CAD).</p>
         </div>
     );

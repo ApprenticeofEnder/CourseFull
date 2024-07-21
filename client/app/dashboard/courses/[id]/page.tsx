@@ -9,9 +9,8 @@ import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { getCourse } from '@/services/courseService';
 import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
 import { ReadableStatus, semesterURL } from '@/lib/helpers';
-import ConfirmButton from '@/components/Button/ConfirmButton';
-import DeliverableCard from '@/components/Card/Deliverable';
 import Button from '@/components/Button/Button';
+import DeliverableCard from '@/components/Card/Deliverable';
 import CreateDeliverableModal from '@/components/Modal/CreateDeliverable';
 import UpdateDeliverableModal from '@/components/Modal/UpdateDeliverable';
 
@@ -84,15 +83,16 @@ export default function CourseDashboard({
                     <hr className="border-1 border-primary-100/50 my-2" />
                     <div className="my-5 sm:my-10 flex flex-col-reverse gap-5 sm:gap-10 sm:flex-row justify-between">
                         <div className="w-full sm:basis-1/4 my-auto">
-                            <ConfirmButton
+                            <Button
                                 endContent={
                                     <PlusIcon className="h-6 w-6"></PlusIcon>
                                 }
                                 onPressEnd={createModal.onOpen}
                                 className="w-full top-1"
+                                buttonType="confirm"
                             >
                                 Add Deliverable
-                            </ConfirmButton>
+                            </Button>
                         </div>
 
                         <h3 className="sm:basis-3/4">

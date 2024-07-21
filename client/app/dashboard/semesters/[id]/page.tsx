@@ -1,7 +1,6 @@
 'use client';
 
 import Button from '@/components/Button/Button';
-import ConfirmButton from '@/components/Button/ConfirmButton';
 import CourseCard from '@/components/Card/Course';
 import CreateCourseModal from '@/components/Modal/CreateCourse';
 import { Endpoints } from '@/lib/enums';
@@ -72,14 +71,15 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                     </div>
                     <hr className="border-1 border-primary-100/50 my-2" />
                     <div className="my-5">
-                        <ConfirmButton
+                        <Button
                             endContent={
                                 <PlusIcon className="h-6 w-6"></PlusIcon>
                             }
                             onPressEnd={onOpen}
+                            buttonType="confirm"
                         >
                             Add Course
-                        </ConfirmButton>
+                        </Button>
                     </div>
                     {(semester?.courses?.length && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

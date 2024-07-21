@@ -11,6 +11,7 @@ import { SessionProps } from '@/lib/types';
 
 import { UserMetadata } from '@supabase/supabase-js';
 import { CartContext } from '@/lib/cart/cartContext';
+import LinkButton from './Button/LinkButton';
 
 type MenuItem = {
     href: string;
@@ -69,7 +70,7 @@ export default function AccountDropdown({ session }: SessionProps) {
 
     return (
         <div className="flex">
-            <div>Cart: {cartItems}</div>
+            <LinkButton href={Endpoints.CHECKOUT}>Cart: {cartItems}</LinkButton>
             <Menu as="div" className="relative ml-3">
                 <div>
                     <Menu.Button as={Button} startContent={userIcon}>

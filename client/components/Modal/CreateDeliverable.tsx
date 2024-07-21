@@ -7,7 +7,6 @@ import {
 } from '@nextui-org/react';
 
 import Button from '@/components/Button/Button';
-import ConfirmButton from '@/components/Button/ConfirmButton';
 import { ItemStatus } from '@/lib/enums';
 import { SessionProps } from '@/lib/types';
 import { createDeliverable } from '@/services/deliverableService';
@@ -76,14 +75,15 @@ export default function CreateDeliverableModal({
                     </ModalBody>
                     <ModalFooter>
                         <Button onPress={onClose}>Close</Button>
-                        <ConfirmButton
+                        <Button
                             onPress={() => {
                                 handleCreateDeliverable(onClose);
                             }}
                             isLoading={isLoading}
+                            buttonType="confirm"
                         >
                             Create!
-                        </ConfirmButton>
+                        </Button>
                     </ModalFooter>
                 </Fragment>
             )}

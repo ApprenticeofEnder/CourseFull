@@ -8,15 +8,31 @@ import { classNames } from '@/lib/helpers';
 
 export interface ButtonProps extends BaseButtonProps {
     buttonSize?: 'sm' | 'md' | 'lg';
+    buttonType?: 'default' | 'danger' | 'confirm' | 'warning';
 }
 
-//TODO: Maybe convert this to a more general purpose button
 const NDButton = forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ children, buttonSize = 'md', className, ...props }, ref) => {
+    (
+        {
+            children,
+            buttonSize = 'md',
+            className,
+            buttonType = 'default',
+            ...props
+        },
+        ref
+    ) => {
         const sizes = {
             sm: 'px-2 py-1',
             md: 'px-3 py-2',
             lg: 'px-5 py-3',
+        };
+
+        const types = {
+            default: 'bg-primary-800',
+            danger: 'button-danger bg-danger-200',
+            confirm: 'button-confirm bg-success-200',
+            warning: 'bg-warning-200',
         };
 
         return (
@@ -24,7 +40,8 @@ const NDButton = forwardRef<HTMLButtonElement, ButtonProps>(
                 ref={ref}
                 className={classNames(
                     'button font-bold rounded-lg hover:-translate-y-1 active:translate-y-0 active:shadow-none',
-                    'bg-primary-800 text-text-200 focus:bg-warning-100',
+                    types[buttonType],
+                    'text-text-200 focus:bg-warning-100',
                     className || '',
                     sizes[buttonSize]
                 )}

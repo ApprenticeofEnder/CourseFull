@@ -122,3 +122,8 @@ export const validatePassword = (password: string) => {
 export const validateName = (name: string) => {
     return name.match(/^.{2,150}$/i);
 };
+
+export const priceFormatter = new Intl.NumberFormat('en-CA', {
+    style: 'currency',
+    currency: 'CAD',
+});

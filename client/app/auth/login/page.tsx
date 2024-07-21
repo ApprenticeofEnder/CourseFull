@@ -4,11 +4,11 @@ import { Fragment, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@nextui-org/react';
 
-import ConfirmButton from '@/components/Button/ConfirmButton';
 import { Endpoints } from '@/lib/enums';
 import { login } from '@/services/userService';
 import { SessionProps } from '@/lib/types';
 import { useSupabaseSession } from '@/supabase';
+import Button from '@/components/Button/Button';
 
 export default function Login() {
     const router = useRouter();
@@ -50,13 +50,14 @@ export default function Login() {
                 value={password}
                 onValueChange={setPassword}
             />
-            <ConfirmButton
-                className="button-confirm w-1/2 m-auto my-2"
+            <Button
+                className="w-1/2 m-auto my-2"
                 onClick={handleLogin}
                 isLoading={loading}
+                buttonType="confirm"
             >
                 {loading ? 'Logging in...' : 'Log In'}
-            </ConfirmButton>
+            </Button>
         </Fragment>
     );
 }
