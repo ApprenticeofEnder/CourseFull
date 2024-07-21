@@ -9,7 +9,6 @@ export async function getProducts(
 ) {
     return authenticatedApiErrorHandler(
         async (session) => {
-            console.log(session);
             return axios.get(Endpoints.API_PRODUCTS, {
                 headers: {
                     Authorization: `Bearer ${session.access_token}`,

@@ -1,11 +1,12 @@
 'use client';
 
 import { Product } from '@/lib/types';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Button from '@/components/Button/Button';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import ConfirmButton from '../Button/ConfirmButton';
 import { classNames } from '@/lib/helpers';
+import { CartContext, useCart } from '@/lib/cart/cartContext';
 
 interface ProductCardProps extends Product {
     className: string;
@@ -23,11 +24,30 @@ export default function ProductCard({
 }: ProductCardProps) {
     const [quantity, setQuantity] = useState(0);
 
+    const { cart, dispatch } = useCart()!;
+
     const numberFormatter = new Intl.NumberFormat('en-CA', {
         style: 'currency',
         currency: 'CAD',
     });
     const displayPrice = numberFormatter.format(price / 100);
+
+    const addToCart = () => {
+        dispatch({
+            type: 'ADD_PRODUCT',
+            payload: {
+                product: {
+                    name,
+                    description,
+                    stripe_id,
+                    stripe_price,
+                    price,
+                },
+                quantity,
+            },
+        });
+    };
+
     return (
         <div
             className={classNames(
@@ -71,10 +91,10 @@ export default function ProductCard({
             <ConfirmButton
                 endContent={<PlusIcon className="h-6 w-6" />}
                 className="w-full mt-4"
+                onPressEnd={addToCart}
             >
                 Add to Cart
             </ConfirmButton>
-            {/* TODO: Add a cart system on the front end */}
             <p className="mt-4">*All prices are in Canadian dollars (CAD).</p>
         </div>
     );

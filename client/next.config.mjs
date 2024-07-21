@@ -20,6 +20,7 @@ const nextConfig = {
         ];
         return process.env.NODE_ENV === 'production' ? prodProxies : devProxies;
     },
+    reactStrictMode: false,
 };
 
 export default nextConfig;

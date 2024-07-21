@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Atkinson_Hyperlegible } from 'next/font/google';
 import { NextUIProvider } from '@nextui-org/react';
+import CartProvider from '@/lib/cart/cartContext';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -22,7 +23,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={atkinsonHyperlegible.className}>
-                <NextUIProvider>{children}</NextUIProvider>
+                <CartProvider>
+                    <NextUIProvider>{children}</NextUIProvider>
+                </CartProvider>
             </body>
         </html>
     );

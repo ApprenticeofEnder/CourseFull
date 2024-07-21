@@ -9,6 +9,7 @@ import HomeStatus from '@/components/HomeStatus/HomeStatus';
 import { useSupabaseSession } from '@/supabase';
 import { useState } from 'react';
 import { Spinner } from '@nextui-org/react';
+import CartProvider from '@/lib/cart/cartContext';
 
 export default function Home() {
     const [loading, setLoading] = useState(true);
@@ -24,7 +25,9 @@ export default function Home() {
 
     return (
         <main>
-            <Navbar session={session} />
+            <CartProvider>
+                <Navbar session={session} />
+            </CartProvider>
             <Spacer className="overflow-auto sm:mt-20">
                 <div className="relative py-10 flex justify-center h-dvh">
                     <div className="flex flex-col justify-center w-full">
