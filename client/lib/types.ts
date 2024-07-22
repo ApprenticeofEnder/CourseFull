@@ -86,6 +86,7 @@ export interface CartState {
     items: {
         [stripe_id: string]: CartItem;
     };
+    total?: number;
 }
 
 export type CartAction =

@@ -1,15 +1,25 @@
-import { CartState, CartAction } from '@/lib/types';
+import { CartState, CartAction, CartItem } from '@/lib/types';
 
 export const initialState = {
     items: {},
+    total: 0,
 };
+
+function getCartTotal(state: CartState) {
+    return Object.keys(state.items).reduce(
+        (currentTotal, itemId) =>
+            currentTotal +
+            state.items[itemId].quantity * state.items[itemId].product.price,
+        0
+    );
+}
 
 export const cartReducer = (
     state: CartState,
     action: CartAction
 ): CartState => {
     const newState = { ...state };
-    let existingProduct;
+    let existingProduct: CartItem, tmpState: CartState;
     switch (action.type) {
         case 'ADD_PRODUCT':
             existingProduct = state.items[action.payload.product.stripe_id];
@@ -19,17 +29,17 @@ export const cartReducer = (
                 action.payload = { ...action.payload, quantity: newQuantity };
             }
 
-            let demoState = {
+            tmpState = {
                 items: {
                     ...state.items,
                     [action.payload.product.stripe_id]: action.payload,
                 },
             };
-            return demoState;
+            return { ...tmpState, total: getCartTotal(tmpState) };
         case 'REMOVE_PRODUCT':
             if (state.items[action.payload]) {
                 delete newState.items[action.payload];
-                return newState;
+                return { ...newState, total: getCartTotal(newState) };
             }
             return newState;
         case 'UPDATE_PRODUCT':
@@ -38,11 +48,16 @@ export const cartReducer = (
                 existingProduct.quantity = action.payload.quantity;
             }
 
-            return {
+            tmpState = {
                 items: {
                     ...state.items,
                     [existingProduct.product.stripe_id]: existingProduct,
                 },
+            };
+
+            return {
+                ...tmpState,
+                total: getCartTotal(tmpState),
             };
         case 'INIT_STATE':
             return action.payload;
