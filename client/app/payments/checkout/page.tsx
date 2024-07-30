@@ -5,6 +5,9 @@ import CartItemCard from '@/components/Card/CartItem';
 import { useCart } from '@/lib/cart/cartContext';
 import { CartItem } from '@/lib/types';
 import { priceFormatter } from '@/lib/helpers';
+import Button from '@/components/Button/Button';
+import LinkButton from '@/components/Button/LinkButton';
+import { Endpoints } from '@/lib/enums';
 
 export default function Checkout() {
     const { cart, dispatch } = useCart()!;
@@ -56,6 +59,10 @@ export default function Checkout() {
         );
     };
 
+    const checkout = async () => {
+        // TODO: Implement
+    };
+
     return (
         <div>
             <h1 className="mb-12">Checkout</h1>
@@ -78,7 +85,14 @@ export default function Checkout() {
                         </div>
                     </div>
                 </div>
-                <div>Hello</div>
+                <div>
+                    <LinkButton href={Endpoints.PRODUCTS}>
+                        Continue Shopping
+                    </LinkButton>
+                    <Button buttonType="confirm" onPressEnd={checkout}>
+                        Checkout
+                    </Button>
+                </div>
             </div>
         </div>
     );
