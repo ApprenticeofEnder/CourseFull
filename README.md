@@ -41,7 +41,7 @@ In April, something clicked. I buckled down, trying to learn React and Ruby on R
 - Rspec for API testing
 - Vitest and Playwright for front end testing
 - TailwindCSS for front end styling
-- HeadlessUI and NextUI for front end components
+- HeadlessUI/NextUI for front end components
 - Docker and Docker Compose for consistent, low-hassle deployments
 
 ### "Why XYZ?"
@@ -60,19 +60,29 @@ In April, something clicked. I buckled down, trying to learn React and Ruby on R
 
 **TailwindCSS**: Have used it for ages, didn't want to go without.
 
-**HeadlessUI, NextUI**: Knowing React tends to have you reinvent the wheel on a lot of things, I decided to use common front end components someone else had built already, and then modify them for my own needs.
+**HeadlessUI/NextUI**: Knowing React tends to have you reinvent the wheel on a lot of things, I decided to use common front end components someone else had built already, and then modify them for my own needs.
 
 ## Features
 
 ### Goal Setting Across The Semester
 
+Set a goal and see it reflect in your semester's average throughout the term!
+
 ### No-Frills Progress Tracking
+
+See what deliverables you've completed, and how you did, at a glance!
 
 ### Simple Ticketing System
 
+TODO
+
 ### Secure Stripe Payments
 
+TODO
+
 ### Secure Authentication with Supabase
+
+TODO
 
 ## Local Development
 

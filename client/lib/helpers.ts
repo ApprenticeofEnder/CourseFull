@@ -3,6 +3,7 @@ import { AxiosResponse } from 'axios';
 import { APIServiceResponse } from '@/lib/types';
 import { ItemStatus, Endpoints } from '@/lib/enums';
 import { Session } from '@supabase/supabase-js';
+import { Key } from 'react';
 
 /**
  * @param classes Tailwind CSS class strings as arguments
@@ -24,13 +25,55 @@ export function ReadableStatus(status: ItemStatus) {
     }
 }
 
-export function determineGradeColour(goal: number, grade: number) {
+export function createStatusObjects(statuses: ItemStatus[]) {
+    return statuses.map((status) => ({
+        key: status,
+        label: ReadableStatus(status),
+    }));
+}
+
+/**
+ * Use alongside NextUI's Listbox component.
+ *
+ * @param newStatus a Key that maps to an ItemStatus enum
+ * @param setStatus a function that has a similar interface to the function component of useState
+ */
+export function onStatusChanged(
+    newStatus: Key,
+    setStatus: (status: ItemStatus) => void
+) {
+    switch (newStatus) {
+        case ItemStatus.NOT_STARTED:
+            setStatus(ItemStatus.NOT_STARTED);
+            break;
+        case ItemStatus.ACTIVE:
+            setStatus(ItemStatus.ACTIVE);
+            break;
+        case ItemStatus.COMPLETE:
+            setStatus(ItemStatus.COMPLETE);
+            break;
+        default:
+            break;
+    }
+}
+
+export function determineGradeTextColour(goal: number, grade: number) {
     if (grade >= goal) {
         return 'text-success-500';
     } else if (goal - grade <= 5) {
         return 'text-warning-500';
     } else {
         return 'text-danger-400';
+    }
+}
+
+export function determineGradeBGColour(goal: number, grade: number) {
+    if (grade >= goal) {
+        return 'bg-success-200';
+    } else if (goal - grade <= 5) {
+        return 'bg-warning-200';
+    } else {
+        return 'bg-danger-200';
     }
 }
 

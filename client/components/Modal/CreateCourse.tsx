@@ -7,14 +7,11 @@ import {
     ModalHeader,
     ModalBody,
     ModalFooter,
-    Input,
 } from '@nextui-org/react';
-import { Listbox, Transition } from '@headlessui/react';
 
 import Button from '@/components/Button/Button';
-import DisclosureButton from '@/components/Button/DisclosureButton';
+import CourseForm from '@/components/Form/CourseForm';
 import { Endpoints, ItemStatus } from '@/lib/enums';
-import { ReadableStatus } from '@/lib/helpers';
 import { SessionProps, User } from '@/lib/types';
 import { createCourse } from '@/services/courseService';
 import { getUserData } from '@/services/userService';
@@ -104,59 +101,17 @@ export default function CreateCourseModal({
                     </ModalHeader>
                     <ModalBody>
                         <p>
-                            You have {coursesRemaining} courses remaining on
+                            You have {coursesRemaining} course(s) remaining on
                             your account.
                         </p>
-                        <Input
-                            type="text"
-                            label="Course Title"
-                            placeholder="Introduction to Psychology..."
-                            value={title}
-                            onValueChange={setTitle}
+                        <CourseForm
+                            title={title}
+                            setTitle={setTitle}
+                            code={code}
+                            setCode={setCode}
+                            status={status}
+                            setStatus={setStatus}
                         />
-                        <Input
-                            type="text"
-                            label="Course Code"
-                            placeholder="PSYC 1001..."
-                            value={code}
-                            onValueChange={setCode}
-                        />
-                        <Listbox value={status} onChange={setStatus}>
-                            <Listbox.Button
-                                as={DisclosureButton}
-                                className="w-full my-2"
-                            >
-                                Status: {ReadableStatus(status)}
-                            </Listbox.Button>
-                            <Transition
-                                enter="transition ease-out duration-200"
-                                enterFrom="opacity-0"
-                                enterTo="opacity-100"
-                                leave="transition ease-in duration-200"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                            >
-                                <Listbox.Options className="w-full flex justify-center">
-                                    <div className="w-full">
-                                        {[
-                                            ItemStatus.ACTIVE,
-                                            ItemStatus.COMPLETE,
-                                        ].map((status) => {
-                                            return (
-                                                <Listbox.Option
-                                                    as={Button}
-                                                    value={status}
-                                                    key={status}
-                                                    className="w-full my-2 mx-auto"
-                                                >
-                                                    {ReadableStatus(status)}
-                                                </Listbox.Option>
-                                            );
-                                        })}
-                                    </div>
-                                </Listbox.Options>
-                            </Transition>
-                        </Listbox>
                     </ModalBody>
                     <ModalFooter>
                         <Button onPress={onClose}>Close</Button>

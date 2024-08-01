@@ -12,7 +12,7 @@ import {
     TableCell,
 } from '@nextui-org/react';
 
-import { determineGradeColour, semesterURL, classNames } from '@/lib/helpers';
+import { semesterURL, classNames, determineGradeBGColour } from '@/lib/helpers';
 import { SemesterProgressType, SessionProps } from '@/lib/types';
 import Button from '@/components/Button/Button';
 import CreateSemesterModal from '@/components/Modal/CreateSemester';
@@ -28,6 +28,8 @@ export default function HomeStatus({ session }: SessionProps) {
     function onFailure(error: Error) {
         alert('Error: ' + error.message);
     }
+
+    // TODO: Move from table to maybe more of a highlight card style? If a person only ever has one semester active at a time...
 
     const renderCell = useCallback(
         (progressEntry: SemesterProgressType, columnKey: React.Key) => {
@@ -45,12 +47,7 @@ export default function HomeStatus({ session }: SessionProps) {
                     );
                 case 'average':
                     return (
-                        <p
-                            className={classNames(
-                                'font-bold px-3 text-center',
-                                progressEntry.grade_colour || ''
-                            )}
-                        >
+                        <p className="font-bold px-3 text-center">
                             {cellValue || '--'}%
                         </p>
                     );
@@ -80,7 +77,7 @@ export default function HomeStatus({ session }: SessionProps) {
                                 progressEntry.grade_colour = '';
                             } else {
                                 progressEntry.grade_colour =
-                                    determineGradeColour(goal, average);
+                                    determineGradeBGColour(goal, average);
                             }
                             return progressEntry;
                         }) || []

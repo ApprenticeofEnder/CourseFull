@@ -2,7 +2,11 @@ import { Deliverable } from '@/lib/types';
 import Button from '@/components/Button/Button';
 import { PencilIcon } from '@heroicons/react/24/outline';
 import { ItemStatus } from '@/lib/enums';
-import { ReadableStatus, classNames } from '@/lib/helpers';
+import {
+    ReadableStatus,
+    classNames,
+    determineGradeBGColour,
+} from '@/lib/helpers';
 
 interface DeliverableCardProps extends Deliverable {
     handleEdit: () => void;
@@ -20,12 +24,8 @@ export default function DeliverableCard({
     let bgColour = 'bg-primary-800';
     if (!goal || goal == 0 || status !== ItemStatus.COMPLETE) {
         //mostly so TypeScript doesn't freak out
-    } else if (mark > goal) {
-        bgColour = 'bg-success-200';
-    } else if (mark == goal) {
-        bgColour = 'bg-warning-200';
-    } else if (mark < goal) {
-        bgColour = 'bg-danger-200';
+    } else {
+        bgColour = determineGradeBGColour(goal, mark);
     }
     return (
         <div

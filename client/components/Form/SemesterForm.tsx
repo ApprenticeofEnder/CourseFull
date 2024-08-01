@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Input, Listbox, ListboxItem, Textarea } from '@nextui-org/react';
+import { Input, Listbox, ListboxItem } from '@nextui-org/react';
 
 import { ItemStatus } from '@/lib/enums';
 import {
@@ -8,32 +8,25 @@ import {
     onStatusChanged,
 } from '@/lib/helpers';
 
-interface DeliverableFormProps {
+interface SemesterFormProps {
     name: string;
     setName: (name: string) => void;
     status: ItemStatus;
-    setStatus: (status: ItemStatus) => void;
-    weight: string;
-    setWeight: (weight: string) => void;
-    mark: string;
-    setMark: (mark: string) => void;
-    notes: string;
-    setNotes: (notes: string) => void;
+    setStatus: (name: ItemStatus) => void;
+    goal: string;
+    setGoal: (name: string) => void;
 }
 
-export default function DeliverableForm({
+export default function SemesterForm({
     name,
     setName,
-    weight,
-    setWeight,
+    goal,
+    setGoal,
     status,
     setStatus,
-    mark,
-    setMark,
-    notes,
-    setNotes,
-}: DeliverableFormProps) {
+}: SemesterFormProps) {
     const statusObjects = createStatusObjects([
+        ItemStatus.NOT_STARTED,
         ItemStatus.ACTIVE,
         ItemStatus.COMPLETE,
     ]);
@@ -44,25 +37,19 @@ export default function DeliverableForm({
         <Fragment>
             <Input
                 type="text"
-                label="Name"
-                placeholder="What's the name of the deliverable?"
+                label="Semester Name"
+                placeholder="e.g. Fall 2024..."
                 value={name}
                 onValueChange={setName}
             />
             <Input
                 type="number"
-                label="Weight (%)"
-                placeholder="How much is it worth?"
-                value={weight}
-                onValueChange={setWeight}
+                label="Goal (%)"
+                placeholder="Semester Goal"
+                value={goal}
+                onValueChange={setGoal}
                 min={0}
                 max={100}
-            />
-            <Textarea
-                label="Notes"
-                placeholder="What's important about this particular deliverable?"
-                value={notes}
-                onValueChange={setNotes}
             />
             <Listbox
                 items={statusObjects}
@@ -70,9 +57,6 @@ export default function DeliverableForm({
                 topContent="Status"
                 aria-label="Status"
                 onAction={(newStatus) => {
-                    if (newStatus === ItemStatus.ACTIVE) {
-                        setMark('0');
-                    }
                     onStatusChanged(newStatus, setStatus);
                 }}
             >
@@ -91,23 +75,6 @@ export default function DeliverableForm({
                     </ListboxItem>
                 )}
             </Listbox>
-
-            {status === ItemStatus.ACTIVE ? (
-                <p>
-                    <strong>Hint:</strong> Set the status to "Complete" to set
-                    the mark!
-                </p>
-            ) : (
-                <Input
-                    type="number"
-                    label="Mark (%)"
-                    placeholder="What was the final grade?"
-                    value={mark}
-                    onValueChange={setMark}
-                    min={0}
-                    max={100}
-                />
-            )}
         </Fragment>
     );
 }
