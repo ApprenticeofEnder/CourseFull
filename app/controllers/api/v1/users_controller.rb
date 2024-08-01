@@ -35,7 +35,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   def progress
     semester_progress = []
 
-    @api_v1_user.semesters.active.find_each do |semester|
+    @api_v1_user.semesters.find_each do |semester|
       num_courses = 0
       grade_sum = 0.0
 
@@ -54,6 +54,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
         :average => (grade_sum / num_courses).round(2),
         :num_courses => num_courses,
         :goal => semester.goal,
+        :status => semester.status,
       }
 
       semester_progress.push(semester_progress_item)

@@ -88,34 +88,34 @@ describe('Helper Function', () => {
         });
     });
 
-    describe('determineGradeColour', () => {
+    describe('determineGradeTextColour', () => {
         const GOAL = 80;
         it('Should be green if the goal is met', () => {
-            expect(helpers.determineGradeColour(GOAL, 80)).toEqual(
+            expect(helpers.determineGradeTextColour(GOAL, 80)).toEqual(
                 'text-success-500'
             );
         });
 
         it('Should be green if the goal is exceeded', () => {
-            expect(helpers.determineGradeColour(GOAL, 90)).toEqual(
+            expect(helpers.determineGradeTextColour(GOAL, 90)).toEqual(
                 'text-success-500'
             );
         });
 
         it('Should be yellow if the grade is below the goal, within 5%', () => {
-            expect(helpers.determineGradeColour(GOAL, 77)).toEqual(
+            expect(helpers.determineGradeTextColour(GOAL, 77)).toEqual(
                 'text-warning-500'
             );
-            expect(helpers.determineGradeColour(GOAL, 75)).toEqual(
+            expect(helpers.determineGradeTextColour(GOAL, 75)).toEqual(
                 'text-warning-500'
             );
         });
 
         it('Should be red if the grade is below the goal, beyond 5%', () => {
-            expect(helpers.determineGradeColour(GOAL, 74)).toEqual(
+            expect(helpers.determineGradeTextColour(GOAL, 74)).toEqual(
                 'text-danger-400'
             );
-            expect(helpers.determineGradeColour(GOAL, 60)).toEqual(
+            expect(helpers.determineGradeTextColour(GOAL, 60)).toEqual(
                 'text-danger-400'
             );
         });
