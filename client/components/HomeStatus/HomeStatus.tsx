@@ -75,7 +75,7 @@ export default function HomeStatus({ session }: SessionProps) {
             {loadingProgress ? (
                 <Spinner label="Loading Progress..." />
             ) : (
-                <div className="flex my-5 sm:mx-auto sm:w-3/4 gap-4 lg:h-1/3 flex-col lg:flex-row mb-10">
+                <div className="flex my-5 sm:mx-auto w-full gap-4 lg:h-1/3 flex-col lg:flex-row mb-10">
                     <div className="basis-1/2 border-2 border-primary-500 rounded-lg p-4 flex flex-col justify-between">
                         <h3 className="text-left">Active Semester</h3>
 
@@ -112,6 +112,7 @@ export default function HomeStatus({ session }: SessionProps) {
                                 );
                                 router.push(href);
                             }}
+                            emptyContent="You don't have any active semesters. Start by adding some!"
                         >
                             {(item) => (
                                 <ListboxItem
@@ -119,15 +120,15 @@ export default function HomeStatus({ session }: SessionProps) {
                                     startContent={
                                         <LinkButton
                                             href={semesterURL(item.semester_id)}
-                                            className="basis-1/3 top-1"
+                                            className="basis-1/4 top-1"
                                         >
                                             {item.semester}
                                         </LinkButton>
                                     }
                                     endContent={
-                                        <span className="basis-1/3">
+                                        <div className="basis-1/4">
                                             {ReadableStatus(item.status)}
-                                        </span>
+                                        </div>
                                     }
                                     className={
                                         (item.status === ItemStatus.ACTIVE ||
@@ -141,7 +142,7 @@ export default function HomeStatus({ session }: SessionProps) {
                                             : ''
                                     }
                                 >
-                                    <div className="w-full text-center">
+                                    <div className="w-full text-center text-lg">
                                         {item.average || '--'} / {item.goal} %
                                     </div>
                                 </ListboxItem>

@@ -28,7 +28,16 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
         }
     });
 
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const updateDisclosure = useDisclosure();
+    const createDisclosure = useDisclosure();
+
+    const createIsOpen = createDisclosure.isOpen,
+        createOnOpen = createDisclosure.onOpen,
+        createOnOpenChange = createDisclosure.onOpenChange;
+
+    const updateIsOpen = updateDisclosure.isOpen,
+        updateOnOpen = updateDisclosure.onOpen,
+        updateOnOpenChange = updateDisclosure.onOpenChange;
 
     function goBack() {
         router.push(Endpoints.ROOT);
@@ -61,8 +70,27 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                         startContent={<ArrowLeftIcon className="h-6 w-6" />}
                         onPressEnd={goBack}
                         className="my-4"
-                    />
-                    <h2 className="text-left font-bold">{semester.name}</h2>
+                    >
+                        Go Back
+                    </Button>
+                    <div className="flex mb-2 gap-4">
+                        <h2 className="text-left font-bold">{semester.name}</h2>
+                        {/* <Button
+                            className="top-1"
+                            onPressEnd={updateOnOpen}
+                            isDisabled
+                        >
+                            Edit
+                        </Button>
+                        <Button
+                            className="top-1"
+                            onPressEnd={updateOnOpen}
+                            buttonType="danger"
+                            isDisabled
+                        >
+                            Delete
+                        </Button> */}
+                    </div>
 
                     <div className="flex flex-row gap-4">
                         <h3>{ReadableStatus(semester.status)}</h3>
@@ -75,7 +103,7 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                             endContent={
                                 <PlusIcon className="h-6 w-6"></PlusIcon>
                             }
-                            onPressEnd={onOpen}
+                            onPressEnd={createOnOpen}
                             buttonType="confirm"
                         >
                             Add Course
@@ -92,14 +120,25 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                         </div>
                     )) || <p>No courses</p>}
                     <Modal
-                        isOpen={isOpen}
-                        onOpenChange={onOpenChange}
+                        isOpen={createIsOpen}
+                        onOpenChange={createOnOpenChange}
                         className="bg-sky-100"
                     >
                         <CreateCourseModal
                             session={session}
                             api_v1_semester_id={params.id}
                         />
+                    </Modal>
+                    <Modal
+                        isOpen={updateIsOpen}
+                        onOpenChange={updateOnOpenChange}
+                        className="bg-sky-100"
+                    >
+                        {/* <UpdateCourseModal
+                            session={session}
+                            api_v1_semester_id={params.id}
+                        /> */}
+                        <></>
                     </Modal>
                 </Fragment>
             ) : (
