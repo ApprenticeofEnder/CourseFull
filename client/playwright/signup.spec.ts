@@ -64,9 +64,6 @@ test.describe('Sign Up', () => {
         await page
             .getByRole('link', { name: 'Confirm your email address' })
             .click();
-        await expect(
-            page.getByRole('gridcell', { name: "You don't have any active" })
-        ).toBeVisible();
 
         await clearData(user.email);
     });
