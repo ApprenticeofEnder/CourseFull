@@ -8,9 +8,20 @@ import { priceFormatter } from '@/lib/helpers';
 import Button from '@/components/Button/Button';
 import LinkButton from '@/components/Button/LinkButton';
 import { Endpoints } from '@/lib/enums';
+import { createPayment } from '@/services/paymentsService';
+import { useSupabaseSession } from '@/supabase';
+import { useRouter } from 'next/navigation';
 
 export default function Checkout() {
+    const router = useRouter();
+
     const { cart, dispatch } = useCart()!;
+
+    const session = useSupabaseSession((session) => {
+        if (!session) {
+            router.push(Endpoints.ROOT);
+        }
+    });
 
     const addQuantity = (cartItem: CartItem, quantity: number) => {
         dispatch({
@@ -60,7 +71,19 @@ export default function Checkout() {
     };
 
     const checkout = async () => {
-        // TODO: Implement
+        const { response, success } = await createPayment(
+            Object.values(cart.items),
+            session,
+            (error) => {
+                alert(`${error.message}`);
+            }
+        );
+        if (!success) {
+            console.log(response?.data);
+            return;
+        }
+
+        router.push(response?.data.redirect);
     };
 
     return (
@@ -85,7 +108,7 @@ export default function Checkout() {
                         </div>
                     </div>
                 </div>
-                <div>
+                <div className="flex gap-4">
                     <LinkButton href={Endpoints.PRODUCTS}>
                         Continue Shopping
                     </LinkButton>

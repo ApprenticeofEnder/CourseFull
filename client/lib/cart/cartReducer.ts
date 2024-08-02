@@ -60,6 +60,7 @@ export const cartReducer = (
                 total: getCartTotal(tmpState),
             };
         case 'INIT_STATE':
+            //TODO: Implement localStorage stuff
             return action.payload;
         default:
             return state;

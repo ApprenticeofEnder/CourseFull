@@ -113,6 +113,8 @@ RSpec.describe "/api/v1/users", type: :request do
         expect(response).to be_successful
       end
 
+      # TODO: Make these more robust
+
       it "returns the correct amount of semesters" do
         get "/api/v1/users/me/progress", headers: auth_headers(@user), as: :json
         expect(response.parsed_body.length).to eq(2)

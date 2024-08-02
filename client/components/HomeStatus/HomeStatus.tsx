@@ -60,7 +60,6 @@ export default function HomeStatus({ session }: SessionProps) {
                             )
                             .shift()
                     );
-                    console.info('Active semester set.');
                     setLoadingProgress(false);
                 }
             })
@@ -141,6 +140,7 @@ export default function HomeStatus({ session }: SessionProps) {
                                               )
                                             : ''
                                     }
+                                    textValue={`${item.average} % out of ${item.goal} %`}
                                 >
                                     <div className="w-full text-center text-lg">
                                         {item.average || '--'} / {item.goal} %
