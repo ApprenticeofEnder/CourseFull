@@ -2,9 +2,9 @@
 
 import { Endpoints } from '@/lib/enums';
 import { useSupabaseSession } from '@/supabase';
-import { useRouter } from 'next/navigation';
-import { Fragment, useEffect, useState } from 'react';
-import { Course, Deliverable } from '@/lib/types';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Fragment, useEffect, useState, Suspense } from 'react';
+import { Course, Deliverable, SessionProps } from '@/lib/types';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { getCourse } from '@/services/courseService';
 import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
@@ -14,23 +14,17 @@ import DeliverableCard from '@/components/Card/Deliverable';
 import CreateDeliverableModal from '@/components/Modal/CreateDeliverable';
 import UpdateDeliverableModal from '@/components/Modal/UpdateDeliverable';
 
-export default function CourseDashboard({
-    params,
-}: {
-    params: { id: string };
-}) {
+interface CoursePageProps extends SessionProps {}
+
+function CoursePage({ session }: CoursePageProps) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const courseId = searchParams.get('id') || '';
+
     const [course, setCourse] = useState<Course | null>(null);
     const [currentDeliverable, setCurrentDeliverable] =
         useState<Deliverable | null>(null);
-    const router = useRouter();
-    const session = useSupabaseSession((session) => {
-        if (!session) {
-            router.push(Endpoints.ROOT);
-            return;
-        }
-    });
 
-    // const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const createModal = useDisclosure();
     const updateModal = useDisclosure();
 
@@ -43,7 +37,7 @@ export default function CourseDashboard({
         if (course || !session) {
             return;
         }
-        getCourse(params.id, session, (error) => {
+        getCourse(courseId, session, (error) => {
             alert(error.message);
         })
             .then(({ response }) => {
@@ -125,7 +119,7 @@ export default function CourseDashboard({
                     >
                         <CreateDeliverableModal
                             session={session}
-                            api_v1_course_id={params.id}
+                            api_v1_course_id={courseId}
                         />
                     </Modal>
                     <Modal
@@ -147,5 +141,21 @@ export default function CourseDashboard({
                 </div>
             )}
         </Fragment>
+    );
+}
+
+export default function CourseDashboard() {
+    const router = useRouter();
+    const session = useSupabaseSession((session) => {
+        if (!session) {
+            router.push(Endpoints.ROOT);
+            return;
+        }
+    });
+
+    return (
+        <Suspense>
+            <CoursePage session={session!} />
+        </Suspense>
     );
 }

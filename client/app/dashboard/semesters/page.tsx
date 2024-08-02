@@ -5,50 +5,39 @@ import CourseCard from '@/components/Card/Course';
 import CreateCourseModal from '@/components/Modal/CreateCourse';
 import { Endpoints } from '@/lib/enums';
 import { ReadableStatus } from '@/lib/helpers';
-import { Semester } from '@/lib/types';
+import { Semester, SessionProps } from '@/lib/types';
 import { getSemester } from '@/services/semesterService';
 import { useSupabaseSession } from '@/supabase';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
-import { Fragment, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Fragment, useEffect, useState, Suspense } from 'react';
 
-interface SemesterDashboardProps {
-    params: { id: string };
-}
+interface SemesterPageProps extends SessionProps {}
 
-export default function SemesterDashboard({ params }: SemesterDashboardProps) {
-    const [semester, setSemester] = useState<Semester | null>(null);
-    const [semesters, setSemesters] = useState<Semester[]>([]);
+function SemesterList({ session }: SemesterPageProps) {}
+
+function SemesterPage({ session }: SemesterPageProps) {
     const router = useRouter();
-    const session = useSupabaseSession((session) => {
-        if (!session) {
-            router.push(Endpoints.ROOT);
-            return;
-        }
-    });
+    const searchParams = useSearchParams();
+    const semesterId = searchParams.get('id') || '';
 
-    const updateDisclosure = useDisclosure();
-    const createDisclosure = useDisclosure();
+    const [semester, setSemester] = useState<Semester | null>(null);
 
-    const createIsOpen = createDisclosure.isOpen,
-        createOnOpen = createDisclosure.onOpen,
-        createOnOpenChange = createDisclosure.onOpenChange;
-
-    const updateIsOpen = updateDisclosure.isOpen,
-        updateOnOpen = updateDisclosure.onOpen,
-        updateOnOpenChange = updateDisclosure.onOpenChange;
+    const updateModal = useDisclosure();
+    const createModal = useDisclosure();
 
     function goBack() {
         router.push(Endpoints.ROOT);
     }
 
     let mounted = true;
+
     useEffect(() => {
         if (semester || !session) {
             return;
         }
-        getSemester(params.id, session, (error) => {
+        getSemester(semesterId, session, (error) => {
             alert(error.message);
         })
             .then(({ response }) => {
@@ -76,20 +65,20 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                     <div className="flex mb-2 gap-4">
                         <h2 className="text-left font-bold">{semester.name}</h2>
                         {/* <Button
-                            className="top-1"
-                            onPressEnd={updateOnOpen}
-                            isDisabled
-                        >
-                            Edit
-                        </Button>
-                        <Button
-                            className="top-1"
-                            onPressEnd={updateOnOpen}
-                            buttonType="danger"
-                            isDisabled
-                        >
-                            Delete
-                        </Button> */}
+                    className="top-1"
+                    onPressEnd={updateOnOpen}
+                    isDisabled
+                >
+                    Edit
+                </Button>
+                <Button
+                    className="top-1"
+                    onPressEnd={updateOnOpen}
+                    buttonType="danger"
+                    isDisabled
+                >
+                    Delete
+                </Button> */}
                     </div>
 
                     <div className="flex flex-row gap-4">
@@ -103,7 +92,7 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                             endContent={
                                 <PlusIcon className="h-6 w-6"></PlusIcon>
                             }
-                            onPressEnd={createOnOpen}
+                            onPressEnd={createModal.onOpen}
                             buttonType="confirm"
                         >
                             Add Course
@@ -120,24 +109,24 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                         </div>
                     )) || <p>No courses</p>}
                     <Modal
-                        isOpen={createIsOpen}
-                        onOpenChange={createOnOpenChange}
+                        isOpen={createModal.isOpen}
+                        onOpenChange={createModal.onOpenChange}
                         className="bg-sky-100"
                     >
                         <CreateCourseModal
                             session={session}
-                            api_v1_semester_id={params.id}
+                            api_v1_semester_id={semesterId}
                         />
                     </Modal>
                     <Modal
-                        isOpen={updateIsOpen}
-                        onOpenChange={updateOnOpenChange}
+                        isOpen={updateModal.isOpen}
+                        onOpenChange={updateModal.onOpenChange}
                         className="bg-sky-100"
                     >
                         {/* <UpdateCourseModal
-                            session={session}
-                            api_v1_semester_id={params.id}
-                        /> */}
+                    session={session}
+                    api_v1_semester_id={semesterId}
+                /> */}
                         <></>
                     </Modal>
                 </Fragment>
@@ -149,5 +138,22 @@ export default function SemesterDashboard({ params }: SemesterDashboardProps) {
                 </div>
             )}
         </Fragment>
+    );
+}
+
+export default function SemesterDashboard() {
+    const [semesters, setSemesters] = useState<Semester[]>([]);
+    const router = useRouter();
+    const session = useSupabaseSession((session) => {
+        if (!session) {
+            router.push(Endpoints.ROOT);
+            return;
+        }
+    });
+
+    return (
+        <Suspense>
+            <SemesterPage session={session!} />
+        </Suspense>
     );
 }

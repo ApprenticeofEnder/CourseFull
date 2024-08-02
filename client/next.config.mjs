@@ -21,6 +21,7 @@ const nextConfig = {
         return process.env.NODE_ENV === 'production' ? prodProxies : devProxies;
     },
     reactStrictMode: false,
+    output: 'export',
 };
 
 export default nextConfig;

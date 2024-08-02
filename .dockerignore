@@ -8,6 +8,7 @@
 
 # Ignore all environment files (except templates).
 /.env*
+!/.env*.tpl
 !/.env*.erb
 
 # Ignore all default key files.

@@ -127,7 +127,7 @@ export async function apiErrorHandler(
 
 export function semesterURL(semesterId: string | undefined): string {
     try {
-        let result = `${Endpoints.SEMESTER_DASHBOARD}/${semesterId}`;
+        let result = `${Endpoints.SEMESTER_DASHBOARD}?id=${semesterId}`;
         if (!semesterId) {
             throw new Error(`Invalid Semester ID: ${semesterId}`);
         }
@@ -141,7 +141,7 @@ export function semesterURL(semesterId: string | undefined): string {
 
 export function courseURL(courseId: string | undefined) {
     try {
-        let result = `${Endpoints.COURSE_DASHBOARD}/${courseId}`;
+        let result = `${Endpoints.COURSE_DASHBOARD}?id=${courseId}`;
         if (!courseId) {
             throw new Error(`Invalid Course ID: ${courseId}`);
         }

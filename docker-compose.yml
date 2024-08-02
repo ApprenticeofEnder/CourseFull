@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        - OP_SERVICE_ACCOUNT_TOKEN
+    ports:
+      - 3000:3000
+    environment:
+      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN}
