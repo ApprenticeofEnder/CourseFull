@@ -11,6 +11,11 @@ class Api::V1::PaymentsController < Api::V1::ApplicationController
       @line_items.push({ price: product[:stripe_price], quantity: product[:quantity] })
     end
 
+    unless @line_items.length > 0
+      render json: { error: "You cannot check out with an empty cart!", error_type: "empty_cart" }, status: :bad_request
+      return
+    end
+
     session = Stripe::Checkout::Session.create({
       line_items: @line_items,
       mode: "payment",
@@ -19,6 +24,7 @@ class Api::V1::PaymentsController < Api::V1::ApplicationController
       },
       success_url: ENV["APP_URL"] + "/payments/success",
       cancel_url: ENV["APP_URL"] + "/payments/cancel",
+      allow_promotion_codes: true,
     })
 
     render json: { redirect: session.url }, status: :created

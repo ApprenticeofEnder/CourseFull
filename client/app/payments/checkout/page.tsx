@@ -75,7 +75,16 @@ export default function Checkout() {
             Object.values(cart.items),
             session,
             (error) => {
-                alert(`${error.message}`);
+                try {
+                    const errorData = JSON.parse(error.message);
+                    const noItemsError =
+                        errorData.status === 400 &&
+                        errorData.data.error_type === 'empty_cart';
+                    if (!noItemsError) {
+                    }
+                } catch (err) {
+                    alert(`Something went wrong: ${error.message}`);
+                }
             }
         );
         if (!success) {

@@ -25,6 +25,19 @@ const CartProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return { cart, dispatch };
     }, [cart, dispatch]);
 
+    useEffect(() => {
+        let localCart: CartState = JSON.parse(localStorage.getItem('cart')!);
+        if (localCart) {
+            dispatch({
+                type: 'INIT_STATE',
+                payload: localCart,
+            });
+        }
+    }, []);
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }, [cart]);
+
     return (
         <CartContext.Provider value={contextValue}>
             {children}

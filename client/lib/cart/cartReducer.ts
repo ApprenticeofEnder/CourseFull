@@ -59,8 +59,9 @@ export const cartReducer = (
                 ...tmpState,
                 total: getCartTotal(tmpState),
             };
+        case 'WIPE_CART':
+            return initialState;
         case 'INIT_STATE':
-            //TODO: Implement localStorage stuff
             return action.payload;
         default:
             return state;

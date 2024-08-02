@@ -18,15 +18,26 @@ export async function createPayment(
                     quantity: cartItem.quantity,
                 };
             });
-            return axios.post(
-                Endpoints.API_PAYMENTS,
-                { products },
-                {
-                    headers: {
-                        Authorization: `Bearer ${session.access_token}`,
-                    },
-                }
-            );
+            try {
+                const response = await axios.post(
+                    Endpoints.API_PAYMENTS,
+                    { products },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session.access_token}`,
+                        },
+                    }
+                );
+                return response;
+            } catch (error: any) {
+                const { response }: AxiosError = error;
+                throw new Error(
+                    JSON.stringify({
+                        status: response?.status,
+                        data: response?.data,
+                    })
+                );
+            }
         },
         session,
         onFailure

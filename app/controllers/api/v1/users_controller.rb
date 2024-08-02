@@ -35,6 +35,8 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   def progress
     semester_progress = []
 
+    # TODO: Optimize this with a group by
+
     @api_v1_user.semesters.find_each do |semester|
       @num_courses = 0
       @num_graded_courses = 0
