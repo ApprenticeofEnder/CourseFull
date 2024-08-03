@@ -14,12 +14,20 @@ export default function AnonHomeStatus() {
             </div>
             <div className="grid grid-cols-6 gap-4 text-center">
                 <div className="col-start-2 col-end-4">
-                    <LinkButton href={Endpoints.LOGIN} className="w-full">
+                    <LinkButton
+                        href={Endpoints.LOGIN}
+                        className="w-full"
+                        data-testid="home-login"
+                    >
                         Login
                     </LinkButton>
                 </div>
                 <div className="col-start-4 col-end-6">
-                    <LinkButton href={Endpoints.SIGN_UP} className="w-full">
+                    <LinkButton
+                        href={Endpoints.SIGN_UP}
+                        className="w-full"
+                        data-testid="home-signup"
+                    >
                         Sign Up
                     </LinkButton>
                 </div>

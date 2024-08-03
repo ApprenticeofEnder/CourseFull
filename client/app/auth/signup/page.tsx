@@ -90,7 +90,7 @@ export default function Signup() {
 
     return (
         <Fragment>
-            <h1>Sign up for CourseFull</h1>
+            <h1 data-testid="signup-header">Sign up for CourseFull</h1>
             <Input
                 type="text"
                 label="First Name"
@@ -99,6 +99,7 @@ export default function Signup() {
                 errorMessage="Name should be between 2 and 150 characters long"
                 value={fname}
                 onValueChange={setFname}
+                data-testid="signup-fname"
             />
             <Input
                 type="text"
@@ -108,6 +109,7 @@ export default function Signup() {
                 errorMessage="Name should be between 2 and 150 characters long"
                 value={lname}
                 onValueChange={setLname}
+                data-testid="signup-lname"
             />
             {invalidLastName || !lname ? (
                 <p>
@@ -126,6 +128,7 @@ export default function Signup() {
                 errorMessage="Please enter a valid email"
                 value={email}
                 onValueChange={setEmail}
+                data-testid="signup-email"
             />
             {invalidPassword ? (
                 <div className="text-success-800">
@@ -149,6 +152,7 @@ export default function Signup() {
                 errorMessage="Please enter a valid password"
                 value={password}
                 onValueChange={setPassword}
+                data-testid="signup-password"
             />
 
             <Button
@@ -157,6 +161,7 @@ export default function Signup() {
                 isLoading={loading}
                 isDisabled={!validForm}
                 buttonType="confirm"
+                data-testid="signup-button"
             >
                 {loading ? 'Signing up...' : 'Sign Up'}
             </Button>

@@ -23,6 +23,7 @@ export async function createUser(
             },
         });
         if (supabaseResponse.error) {
+            console.error('Supabase error encountered.');
             throw new Error(supabaseResponse.error.message);
         }
 
@@ -35,9 +36,13 @@ export async function createUser(
             },
         };
 
-        const apiResponse = await axios.post(Endpoints.API_USER, apiPostData);
+        const apiResponse = await axios.post(
+            `${process.env.APP_URL}${Endpoints.API_USER}`,
+            apiPostData
+        );
 
         if (apiResponse.status !== 201) {
+            console.error('Rails API error encountered.');
             throw apiResponse.data;
         }
         return apiResponse;

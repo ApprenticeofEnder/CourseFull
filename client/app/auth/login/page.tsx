@@ -38,13 +38,14 @@ export default function Login() {
 
     return (
         <Fragment>
-            <h1>Log In to CourseFull</h1>
+            <h1 data-testid="login-header">Log In to CourseFull</h1>
             <Input
                 type="email"
                 label="Email"
                 placeholder="Email"
                 value={email}
                 onValueChange={setEmail}
+                data-testid="login-email"
             />
             <Input
                 type="password"
@@ -52,12 +53,14 @@ export default function Login() {
                 placeholder="Password"
                 value={password}
                 onValueChange={setPassword}
+                data-testid="login-password"
             />
             <Button
                 className="w-1/2 m-auto my-2"
                 onClick={handleLogin}
                 isLoading={loading}
                 buttonType="confirm"
+                data-testid="login-button"
             >
                 {loading ? 'Logging in...' : 'Log In'}
             </Button>

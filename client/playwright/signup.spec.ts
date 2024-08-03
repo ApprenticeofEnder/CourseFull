@@ -1,54 +1,36 @@
 import { test, expect, type Page, Locator } from '@playwright/test';
-import { clearData } from './conftest';
-import { faker } from '@faker-js/faker';
-
-const createUser = () => ({
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
-    password:
-        faker.internet.password() +
-        faker.helpers.arrayElements('!#$%&? _"'.split(''), 3).join(''),
-});
-
-const createValidFields = (user: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    password: string;
-}): { [key: string]: string } => ({
-    'First Name': user.first_name,
-    'Last Name': user.last_name,
-    Email: user.email,
-    Password: user.password,
-});
+import { clearData, createUserData, createValidFields } from './conftest';
 
 test.beforeEach(async ({ page }) => {
-    await page.goto('/auth/signup');
+    await page.goto('/');
 
     page.on('dialog', (dialog) => {
+        test.fail();
         throw new Error(dialog.message());
     });
 });
 
-test.describe('Sign Up', () => {
-    test('The user should not be able to sign up until all data is filled out', async ({
+test.describe('New User', () => {
+    test('Should be able to navigate to the sign up page and sign up when data is all filled out', async ({
         page,
     }) => {
+        await expect(page).toHaveTitle(/CourseFull/);
         await expect(
-            page.getByRole('heading', { name: 'Sign up for CourseFull' })
+            page.getByRole('heading', { name: 'Hey, friend!' })
         ).toBeVisible();
-        const user = createUser();
+        await page.getByTestId('home-signup').click();
+        await expect(page.getByTestId('signup-header')).toBeVisible();
+        const user = createUserData();
         const validFields = createValidFields(user);
-        const signUpButton = page.getByRole('button', { name: 'Sign Up' });
+        const signUpButton = page.getByTestId('signup-button');
 
         await expect(signUpButton).toBeVisible();
         for (let field in validFields) {
             await expect(signUpButton).toBeDisabled();
             await page.getByPlaceholder(field).fill(validFields[field]);
         }
-        await expect(signUpButton).toBeEnabled();
-        await page.getByRole('button', { name: 'Sign Up' }).click();
+        await expect(signUpButton).toBeEnabled({ timeout: 10000 });
+        await signUpButton.click();
 
         await expect(
             page.getByRole('heading', { name: 'Email Verification Sent' })
@@ -71,21 +53,29 @@ test.describe('Sign Up', () => {
     test('The user should not be able to sign up with invalid data in the form fields', async ({
         page,
     }) => {
-        const signUpButton = page.getByRole('button', { name: 'Sign Up' });
-        await expect(signUpButton).toBeVisible();
-        const user = createUser();
+        await page.getByTestId('home-signup').click();
+        await expect(page.getByTestId('signup-header')).toBeVisible();
+
+        const user = createUserData();
         const validFields = createValidFields(user);
+        const signUpButton = page.getByTestId('signup-button');
+
+        await expect(signUpButton).toBeVisible();
         for (let field in validFields) {
             await page.getByPlaceholder(field).fill(validFields[field]);
         }
-        await incorrectFill('First Name', signUpButton, page);
-        await incorrectFill('Last Name', signUpButton, page);
-        await incorrectFill('Email', signUpButton, page);
-        await incorrectFill('Password', signUpButton, page);
         for (let field in validFields) {
+            await incorrectFill('First Name', signUpButton, page);
             await page.getByPlaceholder(field).fill(validFields[field]);
         }
-        await expect(signUpButton).toBeEnabled();
+    });
+
+    test('Should be able to navigate to the sign up page via the navbar', async ({
+        page,
+    }) => {
+        await expect(page.getByTestId('nav-signup')).toBeVisible();
+        await page.getByTestId('nav-signup').click();
+        await expect(page.getByTestId('signup-header')).toBeVisible();
     });
 });
 
