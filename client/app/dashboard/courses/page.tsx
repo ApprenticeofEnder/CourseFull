@@ -1,27 +1,119 @@
 'use client';
 
-import { Endpoints } from '@/lib/enums';
-import { useSupabaseSession } from '@/supabase';
+import { Endpoints, ItemStatus } from '@/lib/enums';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, useEffect, useState, Suspense } from 'react';
 import { Course, Deliverable, SessionProps } from '@/lib/types';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { getCourse } from '@/services/courseService';
-import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
+import { Modal, Spinner, Tab, Tabs, useDisclosure } from '@nextui-org/react';
 import { ReadableStatus, semesterURL } from '@/lib/helpers';
 import Button from '@/components/Button/Button';
 import DeliverableCard from '@/components/Card/Deliverable';
 import CreateDeliverableModal from '@/components/Modal/CreateDeliverable';
 import UpdateDeliverableModal from '@/components/Modal/UpdateDeliverable';
+import { useProtectedEndpoint, useSession } from '@/lib/session/sessionContext';
 
 interface CoursePageProps extends SessionProps {}
 
-function CoursePage({ session }: CoursePageProps) {
+interface DeliverableTabsProps {
+    deliverables: Deliverable[];
+    setCurrentDeliverable: (deliverable: Deliverable) => void;
+    updateModal: { onOpen: () => void };
+}
+
+function DeliverableTabs({
+    deliverables,
+    setCurrentDeliverable,
+    updateModal,
+}: DeliverableTabsProps) {
+    const [selected, setSelected] = useState('all');
+
+    const activeDeliverables: Deliverable[] = [];
+    const completeDeliverables: Deliverable[] = [];
+
+    deliverables?.forEach((deliverable) => {
+        switch (deliverable.status) {
+            case ItemStatus.ACTIVE:
+                activeDeliverables.push(deliverable);
+                break;
+            case ItemStatus.COMPLETE:
+                completeDeliverables.push(deliverable);
+                break;
+            default:
+                break;
+        }
+    });
+
+    const deliverableTabs = [
+        {
+            id: 'all',
+            title: 'All Deliverables',
+            deliverableList: deliverables,
+        },
+        {
+            id: 'active',
+            title: 'Active Deliverables',
+            deliverableList: activeDeliverables,
+        },
+        {
+            id: 'completed',
+            title: 'Completed Deliverables',
+            deliverableList: completeDeliverables,
+        },
+    ];
+
+    return (
+        (deliverables.length && (
+            <Tabs
+                aria-label="Deliverables"
+                classNames={{
+                    tabList:
+                        'bg-background-900 gap-6 w-full relative rounded-none p-0 border-b border-divider mb-4',
+                    cursor: 'w-full bg-primary-700',
+                    // tabContent:
+                    //     'group-data-[selected=true]:text-[#06b6d4]',
+                }}
+                fullWidth
+                items={deliverableTabs}
+            >
+                {(item) => (
+                    <Tab key={item.id} title={item.title}>
+                        <div className="flex flex-col gap-4 mb-10 ">
+                            <h2>
+                                {item.title} ({item.deliverableList.length})
+                            </h2>
+                            {item.deliverableList.map(
+                                (deliverable: Deliverable) => (
+                                    <DeliverableCard
+                                        {...deliverable}
+                                        handleEdit={() => {
+                                            setCurrentDeliverable(deliverable);
+                                            updateModal.onOpen();
+                                        }}
+                                        key={deliverable.id}
+                                    />
+                                )
+                            )}
+                        </div>
+                    </Tab>
+                )}
+            </Tabs>
+        )) || <p>No deliverables yet. Start by adding one!</p>
+    );
+}
+
+function CoursePage() {
     const router = useRouter();
+
+    const { session, loadingSession } = useSession()!;
+    useProtectedEndpoint(session, loadingSession, router);
+
     const searchParams = useSearchParams();
     const courseId = searchParams.get('id') || '';
 
     const [course, setCourse] = useState<Course | null>(null);
+    const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
     const [currentDeliverable, setCurrentDeliverable] =
         useState<Deliverable | null>(null);
 
@@ -50,6 +142,15 @@ function CoursePage({ session }: CoursePageProps) {
             mounted = false;
         };
     }, [course, session]);
+
+    useEffect(() => {
+        setDeliverables(
+            course?.deliverables?.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            }) || []
+        );
+    }, [course]);
+
     return (
         <Fragment>
             {session && course ? (
@@ -94,24 +195,11 @@ function CoursePage({ session }: CoursePageProps) {
                             (or better) on each deliverable to reach your goal!
                         </h3>
                     </div>
-                    {(course?.deliverables?.length && (
-                        <div className="flex flex-col gap-4 mb-10">
-                            {course.deliverables
-                                .sort((a, b) => {
-                                    return a.name.localeCompare(b.name);
-                                })
-                                .map((deliverable) => (
-                                    <DeliverableCard
-                                        {...deliverable}
-                                        handleEdit={() => {
-                                            setCurrentDeliverable(deliverable);
-                                            updateModal.onOpen();
-                                        }}
-                                        key={deliverable.id}
-                                    />
-                                ))}
-                        </div>
-                    )) || <p>No deliverables yet. Start by adding one!</p>}
+                    <DeliverableTabs
+                        deliverables={deliverables}
+                        setCurrentDeliverable={setCurrentDeliverable}
+                        updateModal={updateModal}
+                    />
                     <Modal
                         isOpen={createModal.isOpen}
                         onOpenChange={createModal.onOpenChange}
@@ -145,17 +233,9 @@ function CoursePage({ session }: CoursePageProps) {
 }
 
 export default function CourseDashboard() {
-    const router = useRouter();
-    const session = useSupabaseSession((session) => {
-        if (!session) {
-            router.push(Endpoints.ROOT);
-            return;
-        }
-    });
-
     return (
         <Suspense>
-            <CoursePage session={session!} />
+            <CoursePage />
         </Suspense>
     );
 }

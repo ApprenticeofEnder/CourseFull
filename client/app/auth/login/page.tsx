@@ -1,25 +1,28 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@nextui-org/react';
 
 import { Endpoints } from '@/lib/enums';
 import { login } from '@/services/userService';
-import { SessionProps } from '@/lib/types';
-import { useSupabaseSession } from '@/supabase';
 import Button from '@/components/Button/Button';
+import { useSession } from '@/lib/session/sessionContext';
 
 export default function Login() {
     const router = useRouter();
+    const { session, loadingSession } = useSession()!;
+
+    useEffect(() => {
+        if (!loadingSession && session) {
+            router.push(Endpoints.ROOT);
+            return;
+        }
+    }, [session, loadingSession]);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    useSupabaseSession((session) => {
-        if (session) {
-            router.push(Endpoints.ROOT);
-        }
-    });
 
     async function handleLogin() {
         setLoading(true);

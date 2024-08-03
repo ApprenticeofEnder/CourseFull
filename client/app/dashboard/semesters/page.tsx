@@ -5,9 +5,9 @@ import CourseCard from '@/components/Card/Course';
 import CreateCourseModal from '@/components/Modal/CreateCourse';
 import { Endpoints } from '@/lib/enums';
 import { ReadableStatus } from '@/lib/helpers';
+import { useProtectedEndpoint, useSession } from '@/lib/session/sessionContext';
 import { Semester, SessionProps } from '@/lib/types';
 import { getSemester } from '@/services/semesterService';
-import { useSupabaseSession } from '@/supabase';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -15,10 +15,13 @@ import { Fragment, useEffect, useState, Suspense } from 'react';
 
 interface SemesterPageProps extends SessionProps {}
 
-function SemesterList({ session }: SemesterPageProps) {}
+function SemesterList() {}
 
-function SemesterPage({ session }: SemesterPageProps) {
+function SemesterPage() {
     const router = useRouter();
+    const { session, loadingSession } = useSession()!;
+    useProtectedEndpoint(session, loadingSession, router);
+
     const searchParams = useSearchParams();
     const semesterId = searchParams.get('id') || '';
 
@@ -142,18 +145,9 @@ function SemesterPage({ session }: SemesterPageProps) {
 }
 
 export default function SemesterDashboard() {
-    const [semesters, setSemesters] = useState<Semester[]>([]);
-    const router = useRouter();
-    const session = useSupabaseSession((session) => {
-        if (!session) {
-            router.push(Endpoints.ROOT);
-            return;
-        }
-    });
-
     return (
         <Suspense>
-            <SemesterPage session={session!} />
+            <SemesterPage />
         </Suspense>
     );
 }
