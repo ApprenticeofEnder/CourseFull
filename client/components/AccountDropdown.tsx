@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useContext, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 
@@ -12,6 +12,7 @@ import { SessionProps } from '@/lib/types';
 import { UserMetadata } from '@supabase/supabase-js';
 import { CartContext } from '@/lib/cart/cartContext';
 import LinkButton from './Button/LinkButton';
+import { useSession } from '@/lib/session/sessionContext';
 
 type MenuItem = {
     href: string;
@@ -19,10 +20,6 @@ type MenuItem = {
 };
 
 const menuItemsAuth: MenuItem[] = [
-    {
-        href: '#',
-        text: 'Your Profile',
-    },
     {
         href: '#',
         text: 'Settings',
@@ -54,7 +51,9 @@ let userIcon = userIconAnon;
 let userName = userNameAnon;
 let menuItems = menuItemsAnon;
 
-export default function AccountDropdown({ session }: SessionProps) {
+export default function AccountDropdown() {
+    const { session } = useSession()!;
+
     if (session) {
         menuItems = menuItemsAuth;
         const metadata: UserMetadata = session.user.user_metadata;
@@ -70,10 +69,16 @@ export default function AccountDropdown({ session }: SessionProps) {
 
     return (
         <div className="flex">
-            <LinkButton href={Endpoints.CHECKOUT}>Cart: {cartItems}</LinkButton>
+            <LinkButton href={Endpoints.CHECKOUT} className="top-1">
+                Cart: {cartItems}
+            </LinkButton>
             <Menu as="div" className="relative ml-3">
                 <div>
-                    <Menu.Button as={Button} startContent={userIcon}>
+                    <Menu.Button
+                        as={Button}
+                        startContent={userIcon}
+                        className="top-1"
+                    >
                         <span className="sr-only">Open user menu</span>
                         <div className="text-sm">{userName}</div>
                     </Menu.Button>

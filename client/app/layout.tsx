@@ -3,6 +3,9 @@ import { Inter, Atkinson_Hyperlegible } from 'next/font/google';
 import { NextUIProvider } from '@nextui-org/react';
 import CartProvider from '@/lib/cart/cartContext';
 import './globals.css';
+import SessionProvider from '@/lib/session/sessionContext';
+import Navbar from '@/components/Navbar';
+import Spacer from '@/components/Spacer';
 
 const inter = Inter({ subsets: ['latin'] });
 const atkinsonHyperlegible = Atkinson_Hyperlegible({
@@ -23,9 +26,18 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={atkinsonHyperlegible.className}>
-                <CartProvider>
-                    <NextUIProvider>{children}</NextUIProvider>
-                </CartProvider>
+                <SessionProvider>
+                    <CartProvider>
+                        <NextUIProvider>
+                            <main>
+                                <Navbar />
+                                <Spacer className="overflow-auto">
+                                    {children}
+                                </Spacer>
+                            </main>
+                        </NextUIProvider>
+                    </CartProvider>
+                </SessionProvider>
             </body>
         </html>
     );

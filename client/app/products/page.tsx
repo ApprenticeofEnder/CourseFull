@@ -2,29 +2,33 @@
 import ProductCard from '@/components/Card/Product';
 import { Endpoints } from '@/lib/enums';
 import { classNames } from '@/lib/helpers';
+import { useSession } from '@/lib/session/sessionContext';
 import { Product } from '@/lib/types';
 import { getProducts } from '@/services/productsService';
 import { useSupabaseSession } from '@/supabase';
+import { Spinner } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 export default function ProductsPage() {
-    const [loadingProducts, setLoadingProducts] = useState(false);
+    const [loadingProducts, setLoadingProducts] = useState(true);
     const [products, setProducts] = useState<Product[]>([]);
 
     const router = useRouter();
-    const session = useSupabaseSession((session) => {
-        if (!session) {
+
+    const { session, loadingSession } = useSession()!;
+
+    useEffect(() => {
+        if (!loadingSession && !session) {
             router.push(Endpoints.ROOT);
             return;
         }
-    });
+    }, [session]);
 
     useEffect(() => {
         if (!session) {
             return;
         }
         let mounted = true;
-        setLoadingProducts(true);
 
         getProducts(session, (error) => {
             console.error(error.message);
@@ -44,7 +48,11 @@ export default function ProductsPage() {
     return (
         <div className="h-dvh flex flex-col justify-center gap-8">
             <h1>Products</h1>
-
+            {loadingProducts ? (
+                <Spinner label="One sec while we grab what we have..." />
+            ) : (
+                <></>
+            )}
             {products ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                     {products.map((product) => (

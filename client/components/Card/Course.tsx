@@ -1,10 +1,13 @@
 'use client';
 
-import { ReadableStatus, courseURL } from '@/lib/helpers';
+import {
+    ReadableStatus,
+    classNames,
+    courseURL,
+    determineGradeBGColour,
+} from '@/lib/helpers';
 import { Course } from '@/lib/types';
 import LinkButton from '../Button/LinkButton';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Image } from '@nextui-org/react';
 
 export default function CourseCard({
@@ -15,8 +18,19 @@ export default function CourseCard({
     goal,
     grade,
 }: Course) {
+    let bgColour = 'bg-primary-800';
+    if (goal === undefined || grade === undefined || grade === 0) {
+        //mostly so TypeScript doesn't freak out
+    } else {
+        bgColour = determineGradeBGColour(goal, grade);
+    }
     return (
-        <div className="rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10">
+        <div
+            className={classNames(
+                'rounded-lg p-2 border-solid border-2 border-primary-500/10',
+                bgColour
+            )}
+        >
             <div className="flex justify-between">
                 <h4>Goal: {goal}%</h4>
                 <h4>Grade: {grade || '--'}%</h4>

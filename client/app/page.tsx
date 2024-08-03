@@ -7,35 +7,31 @@ import AnonHomeStatus from '@/components/HomeStatus/AnonHomeStatus';
 import HomeStatus from '@/components/HomeStatus/HomeStatus';
 
 import { useSupabaseSession } from '@/supabase';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Spinner } from '@nextui-org/react';
-import CartProvider from '@/lib/cart/cartContext';
+import { useSession } from '@/lib/session/sessionContext';
 
 export default function Home() {
     const [loading, setLoading] = useState(true);
 
-    const [statusScreen, setStatusScreen] = useState(<AnonHomeStatus />);
+    const { session, loadingSession } = useSession()!;
 
-    const session = useSupabaseSession((session) => {
-        if (session) {
-            setStatusScreen(<HomeStatus session={session} />);
-        }
-        setLoading(false);
-    });
+    useEffect(() => {
+        setLoading(loadingSession);
+    }, [session]);
 
     return (
         <main>
-            <CartProvider>
-                <Navbar session={session} />
-            </CartProvider>
-            <Spacer className="overflow-auto sm:mt-20">
-                <div className="relative py-10 flex justify-center h-dvh">
+            <Spacer className="overflow-auto">
+                <div className="relative py-10 flex justify-center mt-4 lg:mt-0 h-dvh">
                     <div className="flex flex-col justify-center w-full">
                         <h1>Hey, friend!</h1>
                         {loading ? (
-                            <Spinner label="One sec..." />
+                            <Spinner label="Good to see you!" />
+                        ) : session ? (
+                            <HomeStatus session={session} />
                         ) : (
-                            statusScreen
+                            <AnonHomeStatus />
                         )}
                     </div>
                 </div>
