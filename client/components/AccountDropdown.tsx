@@ -92,20 +92,21 @@ export default function AccountDropdown() {
                     leaveFrom="transform opacity-100 scale-y-100"
                     leaveTo="transform opacity-0 scale-y-0"
                 >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-background-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         {menuItems.map((menuItem) => (
                             <Menu.Item key={menuItem.text}>
                                 {({ active }) => (
                                     <Link
                                         href={menuItem.href}
                                         className={classNames(
-                                            active ? 'bg-gray-200' : '',
-                                            'block px-4 py-2 text-sm text-gray-700'
+                                            active ? 'bg-primary-600' : '',
+                                            'block px-4 py-2 text-sm'
                                         )}
                                         onClick={(e) => {
                                             e.preventDefault();
                                             router.push(e.currentTarget.href);
                                         }}
+                                        color="foreground"
                                     >
                                         {menuItem.text}
                                     </Link>

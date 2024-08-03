@@ -10,7 +10,8 @@ export default function CourseFullLink({
 
     return (
         <Link
-            onPressEnd={() => {
+            onClick={(e) => {
+                e.preventDefault();
                 router.push(href!);
             }}
             href={href}

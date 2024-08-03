@@ -1,7 +1,6 @@
 'use client';
 
 import CartItemCard from '@/components/Card/CartItem';
-// import LinkButton from '@/components/Button/LinkButton';
 import { useCart } from '@/lib/cart/cartContext';
 import { CartItem } from '@/lib/types';
 import { priceFormatter } from '@/lib/helpers';
@@ -9,19 +8,25 @@ import Button from '@/components/Button/Button';
 import LinkButton from '@/components/Button/LinkButton';
 import { Endpoints } from '@/lib/enums';
 import { createPayment } from '@/services/paymentsService';
-import { useSupabaseSession } from '@/supabase';
 import { useRouter } from 'next/navigation';
+import { useProtectedEndpoint, useSession } from '@/lib/session/sessionContext';
+import { Suspense, useEffect, useState } from 'react';
+import Loading from '@/app/loading';
 
 export default function Checkout() {
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
 
     const { cart, dispatch } = useCart()!;
 
-    const session = useSupabaseSession((session) => {
-        if (!session) {
-            router.push(Endpoints.ROOT);
+    const { session, loadingSession } = useSession()!;
+    useProtectedEndpoint(session, loadingSession, router);
+
+    useEffect(() => {
+        if (!loadingSession && session) {
+            setLoading(false);
         }
-    });
+    }, [session, loadingSession]);
 
     const addQuantity = (cartItem: CartItem, quantity: number) => {
         dispatch({
@@ -66,7 +71,7 @@ export default function Checkout() {
                     });
                 }}
                 key={cartItem.product.stripe_id}
-            ></CartItemCard>
+            />
         );
     };
 
@@ -96,7 +101,7 @@ export default function Checkout() {
     };
 
     return (
-        <div>
+        <Suspense fallback={<Loading />}>
             <h1 className="mb-12">Checkout</h1>
             <div className="grid gap-4">
                 <div>
@@ -126,6 +131,6 @@ export default function Checkout() {
                     </Button>
                 </div>
             </div>
-        </div>
+        </Suspense>
     );
 }
