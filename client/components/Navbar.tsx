@@ -17,28 +17,12 @@ import { Fragment, useEffect, useState } from 'react';
 import Button from '@/components/Button/Button';
 import { useSession } from '@/lib/session/sessionContext';
 
-type NavbarProps = {
-    session: any;
-};
-
 export default function CourseFullNavbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const { session, loadingSession } = useSession()!;
 
     return (
-        // <nav className="flex justify-center">
-        // {/* <Spacer className="fixed z-20 w-full"> */}
-        // {/* <div className="relative flex h-20 items-center justify-between bg-background-900">
-        //         <Link
-        //             href={Endpoints.ROOT}
-        //             color="foreground"
-        //             underline="hover"
-        //         >
-        //             <h1>CourseFull</h1>
-        //         </Link>
-        //         <AccountDropdown session={session} />
-        //     </div> */}
         <Navbar
             onMenuOpenChange={setIsMenuOpen}
             position="sticky"
