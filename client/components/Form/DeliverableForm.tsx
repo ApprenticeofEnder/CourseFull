@@ -60,7 +60,11 @@ export default function DeliverableForm({
             />
             <Textarea
                 label="Notes"
-                placeholder="What's important about this particular deliverable?"
+                placeholder={
+                    status === ItemStatus.COMPLETE
+                        ? "What went well with this deliverable?\n\nIf you didn't get the grade you wanted, what could make future ones go better?"
+                        : "What's important about this particular deliverable?"
+                }
                 value={notes}
                 onValueChange={setNotes}
             />
