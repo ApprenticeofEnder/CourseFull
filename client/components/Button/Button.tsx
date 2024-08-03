@@ -2,7 +2,6 @@
 
 import { forwardRef } from 'react';
 import { Button, ButtonProps as BaseButtonProps } from '@nextui-org/react';
-import { commonColors, semanticColors } from '@nextui-org/theme';
 
 import { classNames } from '@/lib/helpers';
 
@@ -11,7 +10,7 @@ export interface ButtonProps extends BaseButtonProps {
     buttonType?: 'default' | 'danger' | 'confirm' | 'warning';
 }
 
-const NDButton = forwardRef<HTMLButtonElement, ButtonProps>(
+const CourseFullButton = forwardRef<HTMLButtonElement, ButtonProps>(
     (
         {
             children,
@@ -54,6 +53,6 @@ const NDButton = forwardRef<HTMLButtonElement, ButtonProps>(
     }
 );
 
-NDButton.displayName = 'NDButton';
+CourseFullButton.displayName = 'CourseFullButton';
 
-export default NDButton;
+export default CourseFullButton;
