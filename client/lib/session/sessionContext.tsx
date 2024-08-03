@@ -5,20 +5,18 @@ import supabase from '@/supabase/client';
 import {
     FC,
     ReactNode,
-    Dispatch,
-    useReducer,
     createContext,
     useContext,
-    useMemo,
     useEffect,
     useState,
 } from 'react';
-import CartProvider from '../cart/cartContext';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { Endpoints } from '@/lib/enums';
 
 export const SessionContext = createContext<{
     session: Session | null;
     loadingSession: boolean;
-} | null>(null);
+}>({ session: null, loadingSession: true });
 
 const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [session, setSession] = useState<Session | null>(null);
@@ -47,6 +45,19 @@ const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 export function useSession() {
     return useContext(SessionContext);
+}
+
+export function useProtectedEndpoint(
+    session: Session | null,
+    loadingSession: boolean,
+    router: AppRouterInstance
+) {
+    useEffect(() => {
+        if (!loadingSession && !session) {
+            router.push(Endpoints.ROOT);
+            return;
+        }
+    }, [session, loadingSession]);
 }
 
 export default SessionProvider;

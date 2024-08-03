@@ -2,12 +2,11 @@
 import ProductCard from '@/components/Card/Product';
 import { Endpoints } from '@/lib/enums';
 import { classNames } from '@/lib/helpers';
-import { useSession } from '@/lib/session/sessionContext';
+import { useProtectedEndpoint, useSession } from '@/lib/session/sessionContext';
 import { Product } from '@/lib/types';
 import { getProducts } from '@/services/productsService';
-import { useSupabaseSession } from '@/supabase';
 import { Spinner } from '@nextui-org/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 export default function ProductsPage() {
     const [loadingProducts, setLoadingProducts] = useState(true);
@@ -17,12 +16,7 @@ export default function ProductsPage() {
 
     const { session, loadingSession } = useSession()!;
 
-    useEffect(() => {
-        if (!loadingSession && !session) {
-            router.push(Endpoints.ROOT);
-            return;
-        }
-    }, [session]);
+    useProtectedEndpoint(session, loadingSession, router);
 
     useEffect(() => {
         if (!session) {
