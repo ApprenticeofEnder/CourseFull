@@ -16,11 +16,11 @@
     }
 
     h2 {
-        @apply text-3xl sm:text-4xl text-center;
+        @apply text-3xl lg:text-4xl text-center;
     }
 
     h3 {
-        @apply text-2xl sm:text-3xl text-center;
+        @apply text-2xl lg:text-3xl text-center;
     }
 }
 
