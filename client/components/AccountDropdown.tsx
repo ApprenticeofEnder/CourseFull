@@ -1,18 +1,18 @@
 'use client';
 
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { Fragment, useContext } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 
 import Button from '@/components/Button/Button';
 import { Endpoints } from '@/lib/enums';
 import { classNames } from '@/lib/helpers';
-import { SessionProps } from '@/lib/types';
-
 import { UserMetadata } from '@supabase/supabase-js';
-import { CartContext } from '@/lib/cart/cartContext';
-import LinkButton from './Button/LinkButton';
+import { useCart } from '@/lib/cart/cartContext';
+import LinkButton from '@/components/Button/LinkButton';
 import { useSession } from '@/lib/session/sessionContext';
+import Link from '@/components/Link';
+import { useRouter } from 'next/navigation';
 
 type MenuItem = {
     href: string;
@@ -21,7 +21,7 @@ type MenuItem = {
 
 const menuItemsAuth: MenuItem[] = [
     {
-        href: '#',
+        href: Endpoints.SETTINGS,
         text: 'Settings',
     },
     {
@@ -45,22 +45,22 @@ const userIconAnon = (
     <UserCircleIcon className="h-6 w-6 rounded-full"></UserCircleIcon>
 );
 
-const userNameAnon = 'Guest';
+const usernameAnon = 'Guest';
 
 let userIcon = userIconAnon;
-let userName = userNameAnon;
+let username = usernameAnon;
 let menuItems = menuItemsAnon;
 
 export default function AccountDropdown() {
     const { session } = useSession()!;
+    const { cart } = useCart()!;
+    const router = useRouter();
 
     if (session) {
         menuItems = menuItemsAuth;
         const metadata: UserMetadata = session.user.user_metadata;
-        userName = metadata.first_name;
+        username = metadata.first_name;
     }
-
-    const { cart } = useContext(CartContext)!;
 
     const cartItems = Object.keys(cart.items).reduce(
         (items, itemId) => items + cart.items[itemId].quantity,
@@ -80,7 +80,7 @@ export default function AccountDropdown() {
                         className="top-1"
                     >
                         <span className="sr-only">Open user menu</span>
-                        <div className="text-sm">{userName}</div>
+                        <div className="text-sm">{username}</div>
                     </Menu.Button>
                 </div>
                 <Transition
@@ -96,15 +96,19 @@ export default function AccountDropdown() {
                         {menuItems.map((menuItem) => (
                             <Menu.Item key={menuItem.text}>
                                 {({ active }) => (
-                                    <a
+                                    <Link
                                         href={menuItem.href}
                                         className={classNames(
                                             active ? 'bg-gray-200' : '',
                                             'block px-4 py-2 text-sm text-gray-700'
                                         )}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            router.push(e.currentTarget.href);
+                                        }}
                                     >
                                         {menuItem.text}
-                                    </a>
+                                    </Link>
                                 )}
                             </Menu.Item>
                         ))}
