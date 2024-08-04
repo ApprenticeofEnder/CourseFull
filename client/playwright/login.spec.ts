@@ -27,13 +27,13 @@ test.describe('Registered User', () => {
             return;
         }
 
-        const { courseFullUser } = userData;
+        const { courseFullUser, password } = userData;
 
         await page.goto('http://localhost:5100/');
         await page.getByTestId('home-login').click();
         await page.getByTestId('login-email').click();
         await page.getByTestId('login-email').fill(courseFullUser?.email!);
-        await page.getByTestId('login-password').fill(userData?.password!);
+        await page.getByTestId('login-password').fill(password!);
         await page.getByTestId('login-password').press('Tab');
         await page.getByTestId('login-button').click();
 

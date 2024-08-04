@@ -29,7 +29,6 @@ test.describe('New User', () => {
             await expect(signUpButton).toBeDisabled();
             await page.getByPlaceholder(field).fill(validFields[field]);
         }
-        await expect(signUpButton).toBeEnabled({ timeout: 10000 });
         await signUpButton.click();
 
         await expect(

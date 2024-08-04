@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { faker } from '@faker-js/faker';
 import { User } from '@/lib/types';
-import { User as SupabaseUser } from '@supabase/supabase-js';
 import { createUser } from '@/services/userService';
 
 export async function clearData(email: string) {
@@ -51,36 +50,49 @@ export const createValidFields = (user: {
     Password: user.password,
 });
 
-export async function createRegisteredUser(): Promise<{
-    courseFullUser: User;
-    password: string;
-} | null> {
+export async function createRegisteredUser() {
     const userData = createUserData();
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL || '',
         process.env.SUPABASE_SERVICE_KEY || ''
     );
-
-    const { response, success } = await createUser(
-        userData.first_name,
-        userData.last_name,
-        userData.email,
-        userData.password,
-        (error) => {
-            console.error(error.message);
-        }
-    );
-
-    if (!success) {
-        console.error(response?.data);
-        return null;
-    }
-
-    const courseFullUser: User = response?.data;
-
-    supabase.auth.admin.updateUserById(courseFullUser.supabase_id, {
+    let supabaseResponse = await supabase.auth.admin.createUser({
+        email: userData.email,
+        password: userData.password,
+        user_metadata: {
+            first_name: userData.first_name,
+            last_name: userData.last_name,
+        },
         email_confirm: true,
     });
 
-    return { courseFullUser, password: userData.password };
+    if (supabaseResponse.error) {
+        console.error(supabaseResponse.error.message);
+        return null;
+    }
+
+    let date = new Date();
+    let iso_date = date.toISOString();
+
+    const { data, error } = await supabase
+        .from('api_v1_users')
+        .insert({
+            first_name: userData.first_name,
+            last_name: userData.last_name,
+            email: userData.email,
+            supabase_id: supabaseResponse.data.user.id,
+            courses_remaining: 3,
+            created_at: iso_date,
+            updated_at: iso_date,
+        })
+        .select();
+
+    if (error) {
+        console.info('Supabase error encountered during API user creation.');
+        console.error(error.message);
+    }
+
+    const newUser: User = data?.shift();
+
+    return { courseFullUser: newUser, password: userData.password };
 }
