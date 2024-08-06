@@ -39,4 +39,6 @@ test.describe('Registered User', () => {
 
         clearData(courseFullUser?.email!);
     });
+
+    // TODO: Add tests for failing logins, etc.
 });
