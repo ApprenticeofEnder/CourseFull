@@ -1,5 +1,12 @@
-import { test, expect, type Page, Locator } from '@playwright/test';
-import { clearData, createUserData, createValidFields } from './conftest';
+import {
+    clearData,
+    createUserData,
+    createValidFields,
+    test,
+    expect,
+    type Page,
+    Locator,
+} from './conftest';
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -11,15 +18,20 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('New User', () => {
-    test('Should be able to navigate to the sign up page and sign up when data is all filled out', async ({
-        page,
-    }) => {
+    test('Should be able to navigate to the sign up page', async ({ page }) => {
         await expect(page).toHaveTitle(/CourseFull/);
         await expect(
             page.getByRole('heading', { name: 'Hey, friend!' })
         ).toBeVisible();
         await page.getByTestId('home-signup').click();
         await expect(page.getByTestId('signup-header')).toBeVisible();
+    });
+
+    test('Should be able to sign up given all data is correct', async ({
+        signupPage,
+    }) => {
+        const page = signupPage;
+
         const user = createUserData();
         const validFields = createValidFields(user);
         const signUpButton = page.getByTestId('signup-button');
@@ -50,10 +62,9 @@ test.describe('New User', () => {
     });
 
     test('The user should not be able to sign up with invalid data in the form fields', async ({
-        page,
+        signupPage,
     }) => {
-        await page.getByTestId('home-signup').click();
-        await expect(page.getByTestId('signup-header')).toBeVisible();
+        const page = signupPage;
 
         const user = createUserData();
         const validFields = createValidFields(user);

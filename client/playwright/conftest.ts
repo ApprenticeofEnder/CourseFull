@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { faker } from '@faker-js/faker';
+import { test as base, Page, Locator } from '@playwright/test';
 import { User } from '@/lib/types';
-import { createUser } from '@/services/userService';
+import { Endpoints } from '@/lib/enums';
 
 export async function clearData(email: string) {
     const supabase = createClient(
@@ -96,3 +97,35 @@ export async function createRegisteredUser() {
 
     return { courseFullUser: newUser, password: userData.password };
 }
+
+type CourseFullFixtures = {
+    registeredUser: { courseFullUser: User; password: string };
+    homePage: Page;
+    signupPage: Page;
+    loginPage: Page;
+};
+
+export const test = base.extend<CourseFullFixtures>({
+    registeredUser: async ({ page }, use) => {
+        const user = await createRegisteredUser();
+        if (user === null) {
+            return;
+        }
+
+        await use(user);
+    },
+    homePage: async ({ baseURL, page }, use) => {
+        await page.goto(baseURL || '/');
+        await use(page);
+    },
+    signupPage: async ({ baseURL, page }, use) => {
+        await page.goto(`${baseURL || ''}${Endpoints.SIGN_UP}`);
+        await use(page);
+    },
+    loginPage: async ({ baseURL, page }, use) => {
+        await page.goto(`${baseURL || ''}${Endpoints.LOGIN}`);
+        await use(page);
+    },
+});
+
+export { expect, type Page, type Locator } from '@playwright/test';
