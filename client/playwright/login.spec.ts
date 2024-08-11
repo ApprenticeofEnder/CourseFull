@@ -6,44 +6,23 @@
  */
 
 import { Endpoints } from '@/lib/enums';
-import {
-    clearData,
-    createRegisteredUser,
-    test,
-    expect,
-    type Page,
-    Locator,
-} from './conftest';
+import { test, expect, type Page, Locator } from './conftest';
 
-test.describe('Registered User', () => {
+test.describe.serial('Registered User', () => {
     test('Should be able to log in if all information is correct.', async ({
         homePage,
+        registeredUser,
     }) => {
-        const userData = await createRegisteredUser();
-        test.fail(userData === null, 'User creation failed.');
-
-        if (!userData) {
-            return;
-        }
-
-        const { courseFullUser, password } = userData;
-
         const page = homePage;
-
-        page.on('dialog', (dialog) => {
-            throw new Error(dialog.message());
-        });
 
         await page.getByTestId('home-login').click();
         await page.getByTestId('login-email').click();
-        await page.getByTestId('login-email').fill(courseFullUser?.email!);
-        await page.getByTestId('login-password').fill(password!);
-        await page.getByTestId('login-password').press('Tab');
+        await page.getByTestId('login-email').fill(registeredUser.email);
+        await page.getByTestId('login-password').click();
+        await page.getByTestId('login-password').fill('Password1!');
         await page.getByTestId('login-button').click();
 
         await expect(page).toHaveURL(Endpoints.ROOT);
-
-        clearData(courseFullUser?.email!);
     });
 
     // TODO: Add tests for failing logins, etc.

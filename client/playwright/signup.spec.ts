@@ -1,5 +1,5 @@
+import { Endpoints } from '@/lib/enums';
 import {
-    clearData,
     createUserData,
     createValidFields,
     test,
@@ -58,7 +58,9 @@ test.describe('New User', () => {
             .getByRole('link', { name: 'Confirm your email address' })
             .click();
 
-        await clearData(user.email);
+        await expect(page).toHaveURL(
+            /http:\/\/127.0.0.1:5100\/#access_token.*/
+        );
     });
 
     test('The user should not be able to sign up with invalid data in the form fields', async ({

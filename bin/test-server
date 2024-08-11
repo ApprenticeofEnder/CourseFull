@@ -1,0 +1,22 @@
+#!/bin/bash
+export $(op inject -i .env.test.tpl)
+docker-compose -f docker-compose.test.yml up -d
+
+set -exo pipefail
+
+echo "Waiting for Postgres..."
+
+while ! nc -z localhost 5432; do
+	sleep 0.1
+done
+
+echo "Postgres started"
+
+rails db:create RAILS_ENV=test
+rails db:migrate RAILS_ENV=test
+rails db:test:prepare RAILS_ENV=test
+cd client && pnpm run build
+cd ..
+cp -r client/out/* public/
+bin/rails server -p 5100
+docker-compose -f docker-compose.test.yml down

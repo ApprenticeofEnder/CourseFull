@@ -9,3 +9,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres 
       POSTGRES_DB: postgres
+  # test_app:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile.test
+  #   ports:
+  #     - 5100:5100

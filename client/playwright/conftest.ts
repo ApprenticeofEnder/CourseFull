@@ -4,39 +4,16 @@ import { test as base, Page, Locator } from '@playwright/test';
 import { User } from '@/lib/types';
 import { Endpoints } from '@/lib/enums';
 
-export async function clearData(email: string) {
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-        process.env.SUPABASE_SERVICE_KEY || ''
-    );
-
-    const result = await supabase
-        .from('api_v1_users')
-        .select()
-        .eq('email', email);
-
-    const user: {
-        id: string;
-        first_name: string;
-        last_name: string;
-        email: string;
-        supabase_id: string;
-        courses_remaining: number;
-        created_at: string;
-        updated_at: string;
-    } = result?.data?.at(0);
-
-    supabase.from('api_v1_users').delete().eq('id', user.id);
-    supabase.auth.admin.deleteUser(user.supabase_id);
-}
+export const supabaseServiceRole = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_KEY || ''
+);
 
 export const createUserData = () => ({
     first_name: faker.person.firstName(),
     last_name: faker.person.lastName(),
     email: faker.internet.email(),
-    password:
-        faker.internet.password() +
-        faker.helpers.arrayElements('!#$%&? _"'.split(''), 3).join(''),
+    password: 'Password1!',
 });
 
 export const createValidFields = (user: {
@@ -53,11 +30,7 @@ export const createValidFields = (user: {
 
 export async function createRegisteredUser() {
     const userData = createUserData();
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-        process.env.SUPABASE_SERVICE_KEY || ''
-    );
-    let supabaseResponse = await supabase.auth.admin.createUser({
+    let supabaseResponse = await supabaseServiceRole.auth.admin.createUser({
         email: userData.email,
         password: userData.password,
         user_metadata: {
@@ -75,7 +48,7 @@ export async function createRegisteredUser() {
     let date = new Date();
     let iso_date = date.toISOString();
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServiceRole
         .from('api_v1_users')
         .insert({
             first_name: userData.first_name,
@@ -99,18 +72,24 @@ export async function createRegisteredUser() {
 }
 
 type CourseFullFixtures = {
-    registeredUser: { courseFullUser: User; password: string };
+    registeredUser: User;
     homePage: Page;
     signupPage: Page;
     loginPage: Page;
 };
 
 export const test = base.extend<CourseFullFixtures>({
-    registeredUser: async ({ page }, use) => {
-        const user = await createRegisteredUser();
-        if (user === null) {
+    registeredUser: async ({}, use) => {
+        const { data, error } = await supabaseServiceRole
+            .from('api_v1_users')
+            .select()
+            .limit(1);
+
+        if (error) {
+            console.error(error.message);
             return;
         }
+        const user = data.at(0);
 
         await use(user);
     },
