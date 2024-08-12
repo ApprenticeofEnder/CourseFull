@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { faker } from '@faker-js/faker';
 import { test as base, Page, Locator } from '@playwright/test';
-import { connect, DataType } from 'ts-postgres';
+import { Client, connect, DataType } from 'ts-postgres';
 
-import { User } from '@/lib/types';
+import { Product, User } from '@/lib/types';
 import { Endpoints } from '@/lib/enums';
 
 export const supabaseServiceRole = createClient(
@@ -15,26 +15,39 @@ export const TEST_ACCOUNT_EMAIL = 'test@test.com';
 
 // This is only for tests so this should not cause an issue for production
 
-export const createUserData = () => ({
+type BasicUserData = {
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+};
+
+export const createUserData = (): BasicUserData => ({
     first_name: faker.person.firstName(),
     last_name: faker.person.lastName(),
     email: faker.internet.email(),
     password: 'Password1!',
 });
 
-export const createValidFields = (user: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    password: string;
-}): { [key: string]: string } => ({
-    'First Name': user.first_name,
-    'Last Name': user.last_name,
-    Email: user.email,
-    Password: user.password,
+export const createValidFields = ({
+    first_name, last_name, email, password
+}: BasicUserData): { [key: string]: string } => ({
+    'First Name': first_name,
+    'Last Name': last_name,
+    Email: email,
+    Password: password,
 });
 
-export async function createRegisteredUser({ email }: { email?: string }) {
+
+export async function dbConnect(): Promise<Client>{
+    return connect({
+        user: 'postgres',
+        password: 'postgres',
+        database: 'test',
+    });
+}
+
+export async function createRegisteredUser(dbClient: Client, { email }: { email?: string }) {
     const userData = createUserData();
 
     userData.email = email || userData.email;
@@ -76,12 +89,6 @@ export async function createRegisteredUser({ email }: { email?: string }) {
         return null;
     }
 
-    const dbClient = await connect({
-        user: 'postgres',
-        password: 'postgres',
-        database: 'test',
-    });
-
     await dbClient.query(
         `INSERT INTO api_v1_users (first_name, last_name, email, supabase_id, courses_remaining, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
@@ -97,6 +104,54 @@ export async function createRegisteredUser({ email }: { email?: string }) {
     const newUser: User = data?.shift();
 
     return { courseFullUser: newUser, password: userData.password };
+}
+
+export async function loadProducts(dbClient: Client) {
+    const { data, error } = await supabaseServiceRole
+        .from('api_v1_products')
+        .select();
+
+    if (error) {
+        throw new Error(error.message);
+    }
+
+    const products = data.map<Product>((product) => {
+        const { id, created_at, updated_at, ...productData } = product;
+        return productData;
+    });
+
+    await using insertProductStatement = await dbClient.prepare(
+        `INSERT INTO api_v1_products (stripe_id, stripe_price, name, description, price, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
+    );
+
+    for (let product of products) {
+        await insertProductStatement.execute([
+            product.stripe_id,
+            product.stripe_price,
+            product.name,
+            product.description,
+            product.price,
+        ]);
+    }
+}
+
+export async function deleteData(dbClient: Client){
+    const users = (await supabaseServiceRole.auth.admin.listUsers()).data.users;
+    for (let user of users) {
+        const authDeleteRes = await supabaseServiceRole.auth.admin.deleteUser(
+            user.id
+        );
+        const apiDeleteRes = await supabaseServiceRole
+            .from('api_v1_users')
+            .delete()
+            .ilike('email', user.email!);
+    }
+
+    await dbClient.query(`DELETE FROM api_v1_deliverables`);
+    await dbClient.query(`DELETE FROM api_v1_courses`);
+    await dbClient.query(`DELETE FROM api_v1_semesters`);
+    await dbClient.query(`DELETE FROM api_v1_users`);
 }
 
 type CourseFullFixtures = {
@@ -122,7 +177,7 @@ export const test = base.extend<CourseFullFixtures>({
         await use(user);
     },
     homePage: async ({ baseURL, page }, use) => {
-        await page.goto(baseURL || '/');
+        await page.goto(baseURL || Endpoints.ROOT);
         await use(page);
     },
     signupPage: async ({ baseURL, page }, use) => {

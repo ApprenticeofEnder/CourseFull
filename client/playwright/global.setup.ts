@@ -1,9 +1,11 @@
 import { test as setup } from '@playwright/test';
-import { createRegisteredUser, TEST_ACCOUNT_EMAIL } from './conftest';
+import { createRegisteredUser, dbConnect, loadProducts } from './conftest';
 
 setup('create users', async ({}) => {
-    console.log('Setting up database.');
+    console.info('Setting up database.');
+    await using dbClient = await dbConnect();
     for (let i = 0; i < 3; i++) {
-        await createRegisteredUser({});
+        await createRegisteredUser(dbClient, {});
     }
+    await loadProducts(dbClient);
 });

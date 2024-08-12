@@ -3,34 +3,15 @@ import { connect, DataType } from 'ts-postgres';
 
 import {
     createRegisteredUser,
-    supabaseServiceRole,
+    dbConnect,
+    deleteData,
     TEST_ACCOUNT_EMAIL,
 } from './conftest';
 
 teardown('delete database', async ({}) => {
-    console.log('Cleaning up database.');
-    const users = (await supabaseServiceRole.auth.admin.listUsers()).data.users;
-    for (let user of users) {
-        const authDeleteRes = await supabaseServiceRole.auth.admin.deleteUser(
-            user.id
-        );
-        const apiDeleteRes = await supabaseServiceRole
-            .from('api_v1_users')
-            .delete()
-            .ilike('email', user.email!);
-    }
+    console.info('Cleaning up database.');
 
-    const dbClient = await connect({
-        user: 'postgres',
-        password: 'postgres',
-        database: 'test',
-    });
-
-    await dbClient.query(`DELETE FROM api_v1_deliverables`);
-    await dbClient.query(`DELETE FROM api_v1_courses`);
-    await dbClient.query(`DELETE FROM api_v1_semesters`);
-    await dbClient.query(`DELETE FROM api_v1_users`);
-    await dbClient.end();
-
-    await createRegisteredUser({ email: TEST_ACCOUNT_EMAIL });
+    await using dbClient = await dbConnect();
+    await deleteData(dbClient);
+    await createRegisteredUser(dbClient ,{ email: TEST_ACCOUNT_EMAIL });
 });
