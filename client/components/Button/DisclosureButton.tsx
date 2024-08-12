@@ -1,6 +1,6 @@
 import { forwardRef, Fragment } from 'react';
 import { Disclosure } from '@headlessui/react';
-import Button, { ButtonProps } from '@/components/Button/Button';
+import Button, { ButtonProps } from '@components/Button/Button';
 import { ChevronRightIcon } from '@heroicons/react/20/solid';
 
 export interface DisclosureButtonProps extends ButtonProps {}

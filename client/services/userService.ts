@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { supabase } from '@/supabase';
-import { apiErrorHandler, authenticatedApiErrorHandler } from '@/lib/helpers';
+import { supabase } from '@lib/supabase';
+import { apiErrorHandler, authenticatedApiErrorHandler } from '@lib/helpers';
 import { Endpoints } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 

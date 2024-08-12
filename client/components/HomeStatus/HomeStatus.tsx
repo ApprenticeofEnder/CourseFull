@@ -19,12 +19,12 @@ import {
     classNames,
     determineGradeBGColour,
     ReadableStatus,
-} from '@/lib/helpers';
+} from '@lib/helpers';
 // import { SemesterProgressType, SessionProps } from '@coursefull';
-import Button from '@/components/Button/Button';
-import CreateSemesterModal from '@/components/Modal/CreateSemester';
-import LinkButton from '@/components/Button/LinkButton';
-import { getProgress } from '@/services/userService';
+import Button from '@components/Button/Button';
+import CreateSemesterModal from '@components/Modal/CreateSemester';
+import LinkButton from '@components/Button/LinkButton';
+import { getProgress } from '@services/userService';
 import { ItemStatus, SemesterProgressType, SessionProps } from '@coursefull';
 import { useRouter } from 'next/navigation';
 

@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter, Atkinson_Hyperlegible } from 'next/font/google';
 import { NextUIProvider } from '@nextui-org/react';
-import CartProvider from '@/lib/cart/cartContext';
+import CartProvider from '@lib/cart/cartContext';
 import './globals.css';
-import SessionProvider from '@/lib/session/sessionContext';
-import Navbar from '@/components/Navbar';
-import Spacer from '@/components/Spacer';
+import SessionProvider from '@lib/supabase/sessionContext';
+import Navbar from '@components/Navbar';
+import Spacer from '@components/Spacer';
 
 const inter = Inter({ subsets: ['latin'] });
 const atkinsonHyperlegible = Atkinson_Hyperlegible({

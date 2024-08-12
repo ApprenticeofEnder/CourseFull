@@ -5,14 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, useEffect, useState, Suspense } from 'react';
 import { Course, Deliverable, SessionProps } from '@coursefull';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { getCourse } from '@/services/courseService';
+import { getCourse } from '@services/courseService';
 import { Modal, Spinner, Tab, Tabs, useDisclosure } from '@nextui-org/react';
-import { ReadableStatus, semesterURL } from '@/lib/helpers';
-import Button from '@/components/Button/Button';
-import DeliverableCard from '@/components/Card/Deliverable';
-import CreateDeliverableModal from '@/components/Modal/CreateDeliverable';
-import UpdateDeliverableModal from '@/components/Modal/UpdateDeliverable';
-import { useProtectedEndpoint, useSession } from '@/lib/session/sessionContext';
+import { ReadableStatus, semesterURL } from '@lib/helpers';
+import Button from '@components/Button/Button';
+import DeliverableCard from '@components/Card/Deliverable';
+import CreateDeliverableModal from '@components/Modal/CreateDeliverable';
+import UpdateDeliverableModal from '@components/Modal/UpdateDeliverable';
+import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
 
 interface CoursePageProps extends SessionProps {}
 

@@ -6,8 +6,10 @@ set -exo pipefail
 
 echo "Waiting for Postgres..."
 
+sleep 0.5
+
 while ! nc -z localhost 5432; do
-	sleep 0.1
+	sleep 0.5
 done
 
 echo "Postgres started"

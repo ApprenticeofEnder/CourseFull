@@ -2,11 +2,7 @@ import { Fragment } from 'react';
 import { Input, Listbox, ListboxItem, Textarea } from '@nextui-org/react';
 
 import { ItemStatus } from '@coursefull';
-import {
-    classNames,
-    createStatusObjects,
-    onStatusChanged,
-} from '@/lib/helpers';
+import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
 
 interface DeliverableFormProps {
     name: string;

@@ -1,5 +1,5 @@
 import { SpacerProps } from '@coursefull';
-import { classNames } from '@/lib/helpers';
+import { classNames } from '@lib/helpers';
 
 /**
  * A spacer component to be wrapped around page content. Used to keep consistent spacing.

@@ -3,7 +3,7 @@
 import { forwardRef } from 'react';
 import { Button, ButtonProps as BaseButtonProps } from '@nextui-org/react';
 
-import { classNames } from '@/lib/helpers';
+import { classNames } from '@lib/helpers';
 
 export interface ButtonProps extends BaseButtonProps {
     buttonSize?: 'sm' | 'md' | 'lg';

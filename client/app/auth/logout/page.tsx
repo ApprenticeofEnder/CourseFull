@@ -4,8 +4,8 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@nextui-org/react';
 
-import { supabase } from '@/supabase';
-import { useCart } from '@/lib/cart/cartContext';
+import { supabase } from '@lib/supabase';
+import { useCart } from '@lib/cart/cartContext';
 import { Endpoints } from '@coursefull';
 
 export default function Logout() {

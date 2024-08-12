@@ -1,5 +1,5 @@
 import { Deliverable } from '@coursefull';
-import Button from '@/components/Button/Button';
+import Button from '@components/Button/Button';
 import { PencilIcon } from '@heroicons/react/24/outline';
 import { ItemStatus } from '@coursefull';
 import {
@@ -7,7 +7,7 @@ import {
     classNames,
     determineGradeBGColour,
     determineGradeTextColour,
-} from '@/lib/helpers';
+} from '@lib/helpers';
 
 interface DeliverableCardProps extends Deliverable {
     handleEdit: () => void;

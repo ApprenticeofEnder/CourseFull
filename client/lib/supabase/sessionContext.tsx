@@ -1,7 +1,7 @@
 'use client';
 
 import { Session } from '@supabase/supabase-js';
-import supabase from '@/supabase/client';
+import supabase from '@lib/supabase/client';
 import {
     FC,
     ReactNode,

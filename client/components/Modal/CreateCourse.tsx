@@ -9,11 +9,11 @@ import {
     ModalFooter,
 } from '@nextui-org/react';
 
-import Button from '@/components/Button/Button';
-import CourseForm from '@/components/Form/CourseForm';
+import Button from '@components/Button/Button';
+import CourseForm from '@components/Form/CourseForm';
 import { SessionProps, User, Endpoints, ItemStatus } from '@coursefull';
-import { createCourse } from '@/services/courseService';
-import { getUserData } from '@/services/userService';
+import { createCourse } from '@services/courseService';
+import { getUserData } from '@services/userService';
 
 interface CourseModalProps extends SessionProps {
     api_v1_semester_id: string;

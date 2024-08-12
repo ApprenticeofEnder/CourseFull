@@ -1,5 +1,5 @@
 import { Endpoints } from '@coursefull';
-import { authenticatedApiErrorHandler } from '@/lib/helpers';
+import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import axios, { AxiosError } from 'axios';
 

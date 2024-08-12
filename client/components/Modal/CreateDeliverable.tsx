@@ -6,10 +6,10 @@ import {
     ModalFooter,
 } from '@nextui-org/react';
 
-import Button from '@/components/Button/Button';
+import Button from '@components/Button/Button';
 import { ItemStatus, SessionProps } from '@coursefull';
-import { createDeliverable } from '@/services/deliverableService';
-import DeliverableForm from '@/components/Form/DeliverableForm';
+import { createDeliverable } from '@services/deliverableService';
+import DeliverableForm from '@components/Form/DeliverableForm';
 
 interface DeliverableModalProps extends SessionProps {
     api_v1_course_id: string;

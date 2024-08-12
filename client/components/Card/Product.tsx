@@ -2,10 +2,10 @@
 
 import { Product } from '@coursefull';
 import { useContext, useState } from 'react';
-import Button from '@/components/Button/Button';
+import Button from '@components/Button/Button';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { classNames, priceFormatter } from '@/lib/helpers';
-import { useCart } from '@/lib/cart/cartContext';
+import { classNames, priceFormatter } from '@lib/helpers';
+import { useCart } from '@lib/cart/cartContext';
 import { useRouter } from 'next/navigation';
 import { Endpoints } from '@coursefull';
 

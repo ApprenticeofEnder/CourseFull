@@ -7,9 +7,9 @@ import {
     ModalFooter,
 } from '@nextui-org/react';
 
-import Button from '@/components/Button/Button';
+import Button from '@components/Button/Button';
 import { ItemStatus, SessionProps } from '@coursefull';
-import { createSemester } from '@/services/semesterService';
+import { createSemester } from '@services/semesterService';
 import SemesterForm from '../Form/SemesterForm';
 
 export default function CreateSemesterModal({ session }: SessionProps) {

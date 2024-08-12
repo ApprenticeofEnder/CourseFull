@@ -3,7 +3,7 @@
 import { Fragment } from 'react';
 
 import { Endpoints } from '@coursefull';
-import LinkButton from '@/components/Button/LinkButton';
+import LinkButton from '@components/Button/LinkButton';
 
 export default function AnonHomeStatus() {
     return (

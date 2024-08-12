@@ -25,9 +25,10 @@
             }
         ],
         "paths": {
-            "@/*": ["./*"],
+            "@coursefull/*": ["./@coursefull/*"],
             "@coursefull": ["./@coursefull/index.d"],
-            "@coursefull/*": ["./@coursefull/*"]
+            "@/*": ["./*"],
+            "@*": ["./*"]
         }
     },
     "include": [

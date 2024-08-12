@@ -1,11 +1,11 @@
 'use client';
 
-import Button from '@/components/Button/Button';
-import CourseCard from '@/components/Card/Course';
-import CreateCourseModal from '@/components/Modal/CreateCourse';
-import { ReadableStatus } from '@/lib/helpers';
-import { useProtectedEndpoint, useSession } from '@/lib/session/sessionContext';
-import { getSemester } from '@/services/semesterService';
+import Button from '@components/Button/Button';
+import CourseCard from '@components/Card/Course';
+import CreateCourseModal from '@components/Modal/CreateCourse';
+import { ReadableStatus } from '@lib/helpers';
+import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
+import { getSemester } from '@services/semesterService';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';

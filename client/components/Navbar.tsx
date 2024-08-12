@@ -1,6 +1,6 @@
 'use client';
 
-import AccountDropdown from '@/components/AccountDropdown';
+import AccountDropdown from '@components/AccountDropdown';
 import {
     Navbar,
     NavbarBrand,
@@ -13,9 +13,9 @@ import {
 } from '@nextui-org/react';
 import { Endpoints } from '@coursefull';
 import { Fragment, useEffect, useState } from 'react';
-import { useSession } from '@/lib/session/sessionContext';
-import Link from '@/components/Link';
-import LinkButton from '@/components/Button/LinkButton';
+import { useSession } from '@lib/supabase/sessionContext';
+import Link from '@components/Link';
+import LinkButton from '@components/Button/LinkButton';
 
 export default function CourseFullNavbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);

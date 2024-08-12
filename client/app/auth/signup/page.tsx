@@ -4,11 +4,11 @@ import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Input } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
-import Button from '@/components/Button/Button';
+import Button from '@components/Button/Button';
 import { Endpoints } from '@coursefull';
-import { createUser } from '@/services/userService';
-import { validateEmail, validateName, validatePassword } from '@/lib/helpers';
-import { useSession } from '@/lib/session/sessionContext';
+import { createUser } from '@services/userService';
+import { validateEmail, validateName, validatePassword } from '@lib/helpers';
+import { useSession } from '@lib/supabase/sessionContext';
 
 export default function Signup() {
     const router = useRouter();

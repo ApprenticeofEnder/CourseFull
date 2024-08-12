@@ -1,5 +1,5 @@
 import { Endpoints, ItemStatus } from '@coursefull';
-import { authenticatedApiErrorHandler } from '@/lib/helpers';
+import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Deliverable } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 import axios from 'axios';

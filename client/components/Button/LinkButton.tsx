@@ -1,4 +1,4 @@
-import Button, { ButtonProps } from '@/components/Button/Button';
+import Button, { ButtonProps } from '@components/Button/Button';
 import { useRouter } from 'next/navigation';
 import { Fragment, forwardRef } from 'react';
 

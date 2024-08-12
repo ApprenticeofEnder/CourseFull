@@ -8,13 +8,13 @@
 // } from '@nextui-org/react';
 // import { Listbox, Transition } from '@headlessui/react';
 
-// import Button from '@/components/Button/Button';
-// import ConfirmButton from '@/components/Button/ConfirmButton';
-// import DisclosureButton from '@/components/Button/DisclosureButton';
+// import Button from '@components/Button/Button';
+// import ConfirmButton from '@components/Button/ConfirmButton';
+// import DisclosureButton from '@components/Button/DisclosureButton';
 // import { ItemStatus } from '@coursefull';
-// import { ReadableStatus } from '@/lib/helpers';
+// import { ReadableStatus } from '@lib/helpers';
 // import { SessionProps } from '@coursefull';
-// import { createCourse } from '@/services/courseService';
+// import { createCourse } from '@services/courseService';
 
 // interface CourseModalProps extends SessionProps {
 //     api_v1_semester_id: string;

@@ -11,7 +11,7 @@ import {
     useEffect,
 } from 'react';
 import { CartAction, CartState } from '@coursefull';
-import { cartReducer, initialState } from '@/lib/cart/cartReducer';
+import { cartReducer, initialState } from '@lib/cart/cartReducer';
 
 export const CartContext = createContext<{
     cart: CartState;

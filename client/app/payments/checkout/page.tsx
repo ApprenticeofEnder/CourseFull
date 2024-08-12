@@ -3,17 +3,17 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import CartItemCard from '@/components/Card/CartItem';
-import { useCart } from '@/lib/cart/cartContext';
-import { priceFormatter } from '@/lib/helpers';
-import Button from '@/components/Button/Button';
-import LinkButton from '@/components/Button/LinkButton';
+import CartItemCard from '@components/Card/CartItem';
+import { useCart } from '@lib/cart/cartContext';
+import { priceFormatter } from '@lib/helpers';
+import Button from '@components/Button/Button';
+import LinkButton from '@components/Button/LinkButton';
 import { Endpoints, CartItem } from '@coursefull';
-import { createPayment } from '@/services/paymentsService';
+import { createPayment } from '@services/paymentsService';
 
-import { useProtectedEndpoint, useSession } from '@/lib/session/sessionContext';
+import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
 
-import Loading from '@/app/loading';
+import Loading from '@app/loading';
 
 export default function Checkout() {
     const [loading, setLoading] = useState(true);

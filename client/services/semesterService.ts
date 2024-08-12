@@ -1,8 +1,7 @@
 'use client';
 import axios, { AxiosResponse } from 'axios';
-import { supabase, useSupabaseSession } from '@/supabase';
 import { Endpoints, ItemStatus } from '@coursefull';
-import { authenticatedApiErrorHandler } from '@/lib/helpers';
+import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import { Semester } from '@coursefull';
 

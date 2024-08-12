@@ -4,14 +4,14 @@ import { Fragment, useContext } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 
-import Button from '@/components/Button/Button';
+import Button from '@components/Button/Button';
 import { Endpoints } from '@coursefull';
-import { classNames } from '@/lib/helpers';
+import { classNames } from '@lib/helpers';
 import { UserMetadata } from '@supabase/supabase-js';
-import { useCart } from '@/lib/cart/cartContext';
-import LinkButton from '@/components/Button/LinkButton';
-import { useSession } from '@/lib/session/sessionContext';
-import Link from '@/components/Link';
+import { useCart } from '@lib/cart/cartContext';
+import LinkButton from '@components/Button/LinkButton';
+import { useSession } from '@lib/supabase/sessionContext';
+import Link from '@components/Link';
 import { useRouter } from 'next/navigation';
 
 type MenuItem = {

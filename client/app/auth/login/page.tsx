@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@nextui-org/react';
 
 import { Endpoints } from '@coursefull';
-import { login } from '@/services/userService';
-import Button from '@/components/Button/Button';
-import { useSession } from '@/lib/session/sessionContext';
+import { login } from '@services/userService';
+import Button from '@components/Button/Button';
+import { useSession } from '@lib/supabase/sessionContext';
 
 export default function Login() {
     const router = useRouter();
