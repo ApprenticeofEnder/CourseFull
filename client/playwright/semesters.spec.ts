@@ -28,5 +28,9 @@ test.describe('New Semester', () => {
         await page.getByPlaceholder('e.g. Fall').press('Tab');
         await page.getByTestId('semester-status-active').click();
         await page.getByRole('button', { name: 'Create!' }).click();
+
+        await expect(
+            page.getByRole('button', { name: 'Test Semester' })
+        ).toBeVisible();
     });
 });
