@@ -1,7 +1,5 @@
 import { AxiosError, AxiosResponse } from 'axios';
-
-import { APIServiceResponse } from '@/coursefull.d';
-import { ItemStatus, Endpoints } from '@/coursefull.d';
+import { APIServiceResponse, ItemStatus, Endpoints } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 import { Key } from 'react';
 

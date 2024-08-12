@@ -5,7 +5,7 @@
  * - Error handling
  */
 
-import { Endpoints } from '@/coursefull.d';
+import { Endpoints } from '@coursefull';
 import { test, expect, type Page, Locator } from './conftest';
 
 test.describe.serial('Registered User', () => {

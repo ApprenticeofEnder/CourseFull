@@ -1,4 +1,4 @@
-import { SpacerProps } from '@/coursefull.d';
+import { SpacerProps } from '@coursefull';
 import { classNames } from '@/lib/helpers';
 
 /**

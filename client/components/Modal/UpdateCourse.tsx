@@ -11,9 +11,9 @@
 // import Button from '@/components/Button/Button';
 // import ConfirmButton from '@/components/Button/ConfirmButton';
 // import DisclosureButton from '@/components/Button/DisclosureButton';
-// import { ItemStatus } from '@/coursefull.d';
+// import { ItemStatus } from '@coursefull';
 // import { ReadableStatus } from '@/lib/helpers';
-// import { SessionProps } from '@/coursefull.d';
+// import { SessionProps } from '@coursefull';
 // import { createCourse } from '@/services/courseService';
 
 // interface CourseModalProps extends SessionProps {

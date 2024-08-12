@@ -1,4 +1,4 @@
-import { CartState, CartAction, CartItem } from '@/coursefull.d';
+import { CartState, CartAction, CartItem } from '@coursefull';
 
 export const initialState = {
     items: {},

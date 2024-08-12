@@ -1,6 +1,6 @@
-import { Endpoints, ItemStatus } from '@/coursefull.d';
+import { Endpoints, ItemStatus } from '@coursefull';
 import { authenticatedApiErrorHandler } from '@/lib/helpers';
-import { Course } from '@/coursefull.d';
+import { Course } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 import axios, { AxiosError } from 'axios';
 

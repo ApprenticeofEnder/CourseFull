@@ -11,7 +11,7 @@ import {
     NavbarItem,
     Spinner,
 } from '@nextui-org/react';
-import { Endpoints } from '@/coursefull.d';
+import { Endpoints } from '@coursefull';
 import { Fragment, useEffect, useState } from 'react';
 import { useSession } from '@/lib/session/sessionContext';
 import Link from '@/components/Link';

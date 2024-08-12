@@ -1,16 +1,13 @@
 'use client';
 
-import Image from 'next/image';
-import Navbar from '@/components/Navbar';
+import { Suspense, useEffect, useState } from 'react';
+import { UserMetadata } from '@supabase/supabase-js';
+
+import Loading from '@/app/loading';
+import { useSession } from '@/lib/session/sessionContext';
 import Spacer from '@/components/Spacer';
 import AnonHomeStatus from '@/components/HomeStatus/AnonHomeStatus';
 import HomeStatus from '@/components/HomeStatus/HomeStatus';
-
-import { Suspense, useEffect, useState } from 'react';
-import { Spinner } from '@nextui-org/react';
-import { useSession } from '@/lib/session/sessionContext';
-import { UserMetadata } from '@supabase/supabase-js';
-import Loading from '@/app/loading';
 
 export default function Home() {
     const [loading, setLoading] = useState(true);

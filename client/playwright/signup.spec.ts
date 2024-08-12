@@ -1,4 +1,4 @@
-import { Endpoints } from '@/coursefull.d';
+import { Endpoints } from '@coursefull';
 import {
     createUserData,
     createValidFields,

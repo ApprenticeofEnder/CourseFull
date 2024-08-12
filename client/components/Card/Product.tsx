@@ -1,13 +1,13 @@
 'use client';
 
-import { Product } from '@/coursefull.d';
+import { Product } from '@coursefull';
 import { useContext, useState } from 'react';
 import Button from '@/components/Button/Button';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { classNames, priceFormatter } from '@/lib/helpers';
 import { useCart } from '@/lib/cart/cartContext';
 import { useRouter } from 'next/navigation';
-import { Endpoints } from '@/coursefull.d';
+import { Endpoints } from '@coursefull';
 
 interface ProductCardProps extends Product {
     className: string;

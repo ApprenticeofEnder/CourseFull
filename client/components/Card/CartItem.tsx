@@ -2,7 +2,7 @@
 
 import { useCart } from '@/lib/cart/cartContext';
 import { priceFormatter } from '@/lib/helpers';
-import { CartItem } from '@/coursefull.d';
+import { CartItem } from '@coursefull';
 import { useState } from 'react';
 import Button from '@/components/Button/Button';
 import { MinusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';

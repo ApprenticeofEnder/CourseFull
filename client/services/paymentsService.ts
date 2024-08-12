@@ -1,6 +1,6 @@
-import { Endpoints } from '@/coursefull.d';
+import { Endpoints } from '@coursefull';
 import { authenticatedApiErrorHandler } from '@/lib/helpers';
-import { CartItem } from '@/coursefull.d';
+import { CartItem } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 import axios, { AxiosError } from 'axios';
 

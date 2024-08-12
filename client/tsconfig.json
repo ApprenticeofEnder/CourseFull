@@ -12,22 +12,31 @@
         "isolatedModules": true,
         "jsx": "preserve",
         "incremental": true,
+        "typeRoots": [
+            "@coursefull",
+            "node_modules",
+            "node_modules/@types",
+            "node_modules/@eslint"
+        ],
+        "types": [],
         "plugins": [
             {
                 "name": "next"
             }
         ],
         "paths": {
-            "@/*": ["./*"]
+            "@/*": ["./*"],
+            "@coursefull": ["./@coursefull/index.d"],
+            "@coursefull/*": ["./@coursefull/*"]
         }
     },
     "include": [
         "next-env.d.ts",
+        "@coursefull/index.d.ts",
         "**/*.ts",
         "**/*.tsx",
         ".next/types/**/*.ts",
         "components/Disclosure",
-        "app/auth/logout",
         "app/auth/logout"
     ],
     "exclude": ["node_modules"]

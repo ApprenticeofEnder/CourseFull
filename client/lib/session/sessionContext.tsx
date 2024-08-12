@@ -11,7 +11,7 @@ import {
     useState,
 } from 'react';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { Endpoints } from '@/coursefull.d';
+import { Endpoints } from '@coursefull';
 
 export const SessionContext = createContext<{
     session: Session | null;

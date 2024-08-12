@@ -1,8 +1,6 @@
 import { Spinner } from '@nextui-org/react';
 
-interface LoadingProps {
-    message?: string;
-}
+import { LoadingProps } from '@coursefull';
 
 export default function Loading({ message }: LoadingProps) {
     return (

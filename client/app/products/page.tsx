@@ -2,7 +2,7 @@
 import ProductCard from '@/components/Card/Product';
 import { classNames } from '@/lib/helpers';
 import { useProtectedEndpoint, useSession } from '@/lib/session/sessionContext';
-import { Product } from '@/coursefull.d';
+import { Product } from '@coursefull';
 import { getProducts } from '@/services/productsService';
 import { Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
