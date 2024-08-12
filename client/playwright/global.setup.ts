@@ -1,5 +1,5 @@
 import { test as setup } from '@playwright/test';
-import { createRegisteredUser, dbConnect, loadProducts, LOGIN_TEST_EMAIL } from './conftest';
+import { createRegisteredUser, dbConnect, loadProducts, LOGIN_TEST_EMAIL } from '@playwright/conftest';
 
 setup('create users', async ({}) => {
     console.info('Setting up database.');

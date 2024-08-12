@@ -1,4 +1,3 @@
-import { Endpoints } from '@coursefull';
 import {
     createUserData,
     createValidFields,
@@ -6,7 +5,7 @@ import {
     expect,
     type Page,
     Locator,
-} from './conftest';
+} from '@playwright/conftest';
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');

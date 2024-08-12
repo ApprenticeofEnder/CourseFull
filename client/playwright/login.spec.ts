@@ -6,7 +6,7 @@
  */
 
 import { Endpoints } from '@coursefull';
-import { test, expect, type Page, Locator } from './conftest';
+import { test, expect, type Page, Locator } from '@playwright/conftest';
 
 test.describe.serial('Registered User', () => {
     test('Should be able to log in if all information is correct.', async ({

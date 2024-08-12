@@ -10,6 +10,9 @@ export default defineConfig({
     },
     resolve: {
         alias: {
+            '@coursefull': path.resolve(__dirname, '@coursefull', 'index.d'),
+            '@lib': path.resolve(__dirname, 'lib'),
+            '@vitest.setup': path.resolve(__dirname, 'vitest.setup.ts'),
             '@': path.resolve(__dirname),
         },
     },

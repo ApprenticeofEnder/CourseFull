@@ -7,12 +7,12 @@ import {
     supabaseServiceRole,
     createRegisteredUser,
     dbConnect,
-} from './conftest';
+} from '@playwright/conftest';
 import fs from 'fs';
 import path from 'path';
 
 export * from '@playwright/test';
-export * from './conftest';
+export * from '@playwright/conftest';
 export const test = baseTest.extend<{}, { workerStorageState: string }>({
     // Use the same storage state for all tests in this worker.
     storageState: ({ workerStorageState }, use) => use(workerStorageState),

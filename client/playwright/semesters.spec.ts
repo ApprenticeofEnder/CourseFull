@@ -1,4 +1,4 @@
-import { test, expect, type Page, Locator } from './conftest';
+import { test, expect, type Page, Locator } from '@playwright/conftest';
 
 test.describe('New Semester', () => {
     test('User can create a semester with valid values', async ({

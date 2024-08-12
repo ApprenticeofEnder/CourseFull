@@ -1,12 +1,11 @@
 import { test as teardown } from '@playwright/test';
-import { connect, DataType } from 'ts-postgres';
 
 import {
     createRegisteredUser,
     dbConnect,
     deleteData,
     TEST_ACCOUNT_EMAIL,
-} from './conftest';
+} from '@playwright/conftest';
 
 teardown('delete database', async ({}) => {
     console.info('Cleaning up database.');
