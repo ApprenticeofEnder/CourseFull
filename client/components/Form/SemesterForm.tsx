@@ -51,7 +51,6 @@ export default function SemesterForm({
                 onValueChange={setGoal}
                 min={0}
                 max={100}
-                data-testid="semester-goal"
             />
             <Listbox
                 items={statusObjects}
@@ -72,6 +71,7 @@ export default function SemesterForm({
                     >
                         <span
                             className={status === item.key ? 'font-bold' : ''}
+                            data-testid={`semester-status-${item.key}`}
                         >
                             {item.label}
                         </span>

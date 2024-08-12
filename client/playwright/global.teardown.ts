@@ -1,13 +1,15 @@
 import { test as teardown } from '@playwright/test';
 import { connect, DataType } from 'ts-postgres';
 
-import { supabaseServiceRole, TEST_ACCOUNT_EMAIL } from './conftest';
+import {
+    createRegisteredUser,
+    supabaseServiceRole,
+    TEST_ACCOUNT_EMAIL,
+} from './conftest';
 
 teardown('delete database', async ({}) => {
     console.log('Cleaning up database.');
-    const users = (
-        await supabaseServiceRole.auth.admin.listUsers()
-    ).data.users.filter((user) => user.email !== TEST_ACCOUNT_EMAIL);
+    const users = (await supabaseServiceRole.auth.admin.listUsers()).data.users;
     for (let user of users) {
         const authDeleteRes = await supabaseServiceRole.auth.admin.deleteUser(
             user.id
@@ -24,7 +26,11 @@ teardown('delete database', async ({}) => {
         database: 'test',
     });
 
-    await dbClient.query(`DELETE FROM api_v1_users WHERE email != $1`, [
-        TEST_ACCOUNT_EMAIL,
-    ]);
+    await dbClient.query(`DELETE FROM api_v1_deliverables`);
+    await dbClient.query(`DELETE FROM api_v1_courses`);
+    await dbClient.query(`DELETE FROM api_v1_semesters`);
+    await dbClient.query(`DELETE FROM api_v1_users`);
+    await dbClient.end();
+
+    await createRegisteredUser({ email: TEST_ACCOUNT_EMAIL });
 });

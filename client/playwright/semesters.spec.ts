@@ -26,7 +26,7 @@ test.describe('New Semester', () => {
         await page.getByPlaceholder('e.g. Fall').click();
         await page.getByPlaceholder('e.g. Fall').fill('Test Semester');
         await page.getByPlaceholder('e.g. Fall').press('Tab');
-        await page.locator('[id="react-aria5951158593-\\:r12\\:"]').click();
+        await page.getByTestId('semester-status-active').click();
         await page.getByRole('button', { name: 'Create!' }).click();
     });
 });
