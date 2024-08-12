@@ -147,7 +147,11 @@ export default function HomeStatus({ session }: SessionProps) {
                                             href={semesterURL(item.semester_id)}
                                             className="basis-3/4 sm:basis-1/2 top-1"
                                         >
-                                            {item.semester}
+                                            <span
+                                                data-testid={`semester-btn-${item.semester}`}
+                                            >
+                                                {item.semester}
+                                            </span>
                                         </LinkButton>
                                     }
                                     endContent={

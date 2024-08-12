@@ -92,7 +92,7 @@ test.describe('New User', () => {
 });
 
 async function incorrectFill(field: string, signUpButton: Locator, page: Page) {
-    const invalidFields: { [key: string]: string[] } = {
+    const invalidFields: Record<string, string[]> = {
         'First Name': ['A', 'A'.repeat(151)],
         'Last Name': ['A', 'A'.repeat(151)],
         Email: ['test', 'test@'],

@@ -1,10 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import { faker } from '@faker-js/faker';
-import { test as base, Page, Locator } from '@playwright/test';
+import { test as base, Page, Locator, expect } from '@playwright/test';
 import { Client, connect, DataType } from 'ts-postgres';
 
-import { Product, User } from '@/lib/types';
-import { Endpoints } from '@/lib/enums';
+import { Product, Semester, User } from '@/lib/types';
+import { Endpoints, ItemStatus } from '@/lib/enums';
 
 export const supabaseServiceRole = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321',
@@ -12,6 +12,7 @@ export const supabaseServiceRole = createClient(
 );
 
 export const TEST_ACCOUNT_EMAIL = 'test@test.com';
+export const LOGIN_TEST_EMAIL = 'logintest@test.com';
 
 // This is only for tests so this should not cause an issue for production
 
@@ -31,7 +32,7 @@ export const createUserData = (): BasicUserData => ({
 
 export const createValidFields = ({
     first_name, last_name, email, password
-}: BasicUserData): { [key: string]: string } => ({
+}: BasicUserData): Record<string, string> => ({
     'First Name': first_name,
     'Last Name': last_name,
     Email: email,
@@ -155,18 +156,19 @@ export async function deleteData(dbClient: Client){
 }
 
 type CourseFullFixtures = {
-    registeredUser: User;
+    loginUser: User;
     homePage: Page;
     signupPage: Page;
     loginPage: Page;
+    semesterData: Semester;
 };
 
 export const test = base.extend<CourseFullFixtures>({
-    registeredUser: async ({}, use) => {
+    loginUser: async ({}, use) => {
         const { data, error } = await supabaseServiceRole
             .from('api_v1_users')
             .select()
-            .limit(1);
+            .ilike('email', LOGIN_TEST_EMAIL);
 
         if (error) {
             console.error(error.message);
@@ -175,6 +177,14 @@ export const test = base.extend<CourseFullFixtures>({
         const user = data.at(0);
 
         await use(user);
+    },
+    semesterData: async({}, use) => {
+        const data: Semester = {
+            name: faker.lorem.words(2),
+            goal: faker.number.int({ min: 60, max: 100}), 
+            status: ItemStatus.ACTIVE
+        };
+        await use(data);
     },
     homePage: async ({ baseURL, page }, use) => {
         await page.goto(baseURL || Endpoints.ROOT);
