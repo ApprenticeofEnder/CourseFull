@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { faker } from '@faker-js/faker';
 import { test as base, Page, Locator } from '@playwright/test';
+import { connect, DataType } from 'ts-postgres';
+
 import { User } from '@/lib/types';
 import { Endpoints } from '@/lib/enums';
 
@@ -8,6 +10,10 @@ export const supabaseServiceRole = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || '',
     process.env.SUPABASE_SERVICE_KEY || ''
 );
+
+export const TEST_ACCOUNT_EMAIL = 'test@test.com';
+
+// This is only for tests so this should not cause an issue for production
 
 export const createUserData = () => ({
     first_name: faker.person.firstName(),
@@ -28,8 +34,11 @@ export const createValidFields = (user: {
     Password: user.password,
 });
 
-export async function createRegisteredUser() {
+export async function createRegisteredUser({ email }: { email?: string }) {
     const userData = createUserData();
+
+    userData.email = email || userData.email;
+
     let supabaseResponse = await supabaseServiceRole.auth.admin.createUser({
         email: userData.email,
         password: userData.password,
@@ -64,7 +73,26 @@ export async function createRegisteredUser() {
     if (error) {
         console.info('Supabase error encountered during API user creation.');
         console.error(error.message);
+        return null;
     }
+
+    const dbClient = await connect({
+        user: 'postgres',
+        password: 'postgres',
+        database: 'test',
+    });
+
+    await dbClient.query(
+        `INSERT INTO api_v1_users (first_name, last_name, email, supabase_id, courses_remaining, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+        [
+            userData.first_name,
+            userData.last_name,
+            userData.email,
+            supabaseResponse.data.user.id,
+            3,
+        ]
+    );
 
     const newUser: User = data?.shift();
 

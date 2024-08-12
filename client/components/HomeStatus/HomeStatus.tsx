@@ -118,6 +118,7 @@ export default function HomeStatus({ session }: SessionProps) {
                                 className="top-1 focus:bg-warning-100"
                                 onPressEnd={onOpen}
                                 buttonType="confirm"
+                                data-testid="create-semester-button"
                             >
                                 Create New
                             </Button>

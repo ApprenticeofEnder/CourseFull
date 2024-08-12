@@ -41,6 +41,7 @@ export default function SemesterForm({
                 placeholder="e.g. Fall 2024..."
                 value={name}
                 onValueChange={setName}
+                data-testid="semester-name"
             />
             <Input
                 type="number"
@@ -50,6 +51,7 @@ export default function SemesterForm({
                 onValueChange={setGoal}
                 min={0}
                 max={100}
+                data-testid="semester-goal"
             />
             <Listbox
                 items={statusObjects}
@@ -59,6 +61,7 @@ export default function SemesterForm({
                 onAction={(newStatus) => {
                     onStatusChanged(newStatus, setStatus);
                 }}
+                data-testid="semester-status"
             >
                 {(item) => (
                     <ListboxItem

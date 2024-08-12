@@ -99,6 +99,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.3(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
+      ts-postgres:
+        specifier: ^2.0.4
+        version: 2.0.4(@types/node@20.12.7)
       typescript:
         specifier: ^5
         version: 5.4.5
@@ -4253,6 +4256,12 @@ packages:
         optional: true
       '@swc/wasm':
         optional: true
+
+  ts-postgres@2.0.4:
+    resolution: {integrity: sha512-KQL9xd4C2tVJdV+bshA5q9KikMrqfyc1MRQCGYF5QQSBAz+prpK/b4U1wiywOLtIBzgvFfXrvEZULu3Yp7GDsg==}
+    engines: {node: '>=18.0'}
+    peerDependencies:
+      '@types/node': ^20
 
   tsconfig-paths@3.15.0:
     resolution: {integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==}
@@ -10120,6 +10129,10 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optional: true
+
+  ts-postgres@2.0.4(@types/node@20.12.7):
+    dependencies:
+      '@types/node': 20.12.7
 
   tsconfig-paths@3.15.0:
     dependencies:

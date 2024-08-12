@@ -56,7 +56,6 @@ development:
 test:
     <<: *default
     database: api_test
-    url: <%= ENV["DATABASE_URL_TEST"] %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is

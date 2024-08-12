@@ -40,7 +40,9 @@ class Api::V1::ApplicationController < ActionController::API
       supabase_id = decoded_token[0]["sub"]
       # confirmed = decoded_token[0]["user_metadata"]["email_confirmed"]
       # TODO: Confirm whether the dev email confirmed thing is a fluke
+      Rails.logger.debug("Account with Supabase ID %p is attempting to log in." % [supabase_id])
       @api_v1_user = Api::V1::User.find_by(supabase_id: supabase_id)
+      Rails.logger.info("Account with Supabase ID %p has logged in successfully." % [supabase_id])
     end
   end
 
@@ -49,7 +51,10 @@ class Api::V1::ApplicationController < ActionController::API
   end
 
   def authenticated
-    render json: { message: "Please log in" }, status: :unauthorized unless logged_in?
+    unless logged_in?
+      Rails.logger.info("There was an issue finding the account.")
+      render json: { message: "Please log in" }, status: :unauthorized
+    end
   end
 
   def forbidden
