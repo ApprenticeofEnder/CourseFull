@@ -1,9 +1,8 @@
 'use client';
 
 import { Fragment } from 'react';
-import { useRouter } from 'next/navigation';
 
-import { Endpoints } from '@/lib/enums';
+import { Endpoints } from '@/coursefull.d';
 import LinkButton from '@/components/Button/LinkButton';
 
 export default function AnonHomeStatus() {

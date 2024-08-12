@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { supabase } from '@/supabase';
 import { apiErrorHandler, authenticatedApiErrorHandler } from '@/lib/helpers';
-import { Endpoints } from '@/lib/enums';
+import { Endpoints } from '@/coursefull.d';
 import { Session } from '@supabase/supabase-js';
 
 export async function createUser(

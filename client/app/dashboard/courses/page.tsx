@@ -1,9 +1,9 @@
 'use client';
 
-import { Endpoints, ItemStatus } from '@/lib/enums';
+import { Endpoints, ItemStatus } from '@/coursefull.d';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, useEffect, useState, Suspense } from 'react';
-import { Course, Deliverable, SessionProps } from '@/lib/types';
+import { Course, Deliverable, SessionProps } from '@/coursefull.d';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { getCourse } from '@/services/courseService';
 import { Modal, Spinner, Tab, Tabs, useDisclosure } from '@nextui-org/react';

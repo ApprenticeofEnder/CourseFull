@@ -10,7 +10,7 @@ import {
     useMemo,
     useEffect,
 } from 'react';
-import { CartAction, CartState } from '@/lib/types';
+import { CartAction, CartState } from '@/coursefull.d';
 import { cartReducer, initialState } from '@/lib/cart/cartReducer';
 
 export const CartContext = createContext<{

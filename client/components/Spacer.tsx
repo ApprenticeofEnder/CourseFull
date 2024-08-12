@@ -1,15 +1,10 @@
+import { SpacerProps } from '@/coursefull.d';
 import { classNames } from '@/lib/helpers';
-import { ChildrenProps } from '@/lib/types';
 
 /**
  * A spacer component to be wrapped around page content. Used to keep consistent spacing.
- * @param children
- * @returns ReactNode
  */
-export default function Spacer({
-    children,
-    className,
-}: ChildrenProps & { className?: string }) {
+export default function Spacer({ children, className }: SpacerProps) {
     return (
         <div
             className={classNames(

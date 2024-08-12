@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@nextui-org/react';
 
-import { Endpoints } from '@/lib/enums';
+import { Endpoints } from '@/coursefull.d';
 import { login } from '@/services/userService';
 import Button from '@/components/Button/Button';
 import { useSession } from '@/lib/session/sessionContext';

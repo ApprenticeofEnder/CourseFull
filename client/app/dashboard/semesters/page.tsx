@@ -3,10 +3,10 @@
 import Button from '@/components/Button/Button';
 import CourseCard from '@/components/Card/Course';
 import CreateCourseModal from '@/components/Modal/CreateCourse';
-import { Endpoints } from '@/lib/enums';
+import { Endpoints } from '@/coursefull.d';
 import { ReadableStatus } from '@/lib/helpers';
 import { useProtectedEndpoint, useSession } from '@/lib/session/sessionContext';
-import { Semester, SessionProps } from '@/lib/types';
+import { Semester, SessionProps } from '@/coursefull.d';
 import { getSemester } from '@/services/semesterService';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { Modal, Spinner, useDisclosure } from '@nextui-org/react';

@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { Input, Listbox, ListboxItem } from '@nextui-org/react';
 
-import { ItemStatus } from '@/lib/enums';
+import { ItemStatus } from '@/coursefull.d';
 import {
     classNames,
     createStatusObjects,

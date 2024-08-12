@@ -7,8 +7,8 @@ import {
 } from '@nextui-org/react';
 
 import Button from '@/components/Button/Button';
-import { ItemStatus } from '@/lib/enums';
-import { Deliverable, SessionProps } from '@/lib/types';
+import { ItemStatus } from '@/coursefull.d';
+import { Deliverable, SessionProps } from '@/coursefull.d';
 import { updateDeliverable } from '@/services/deliverableService';
 import DeliverableForm from '../Form/DeliverableForm';
 

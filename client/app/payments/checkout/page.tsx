@@ -2,11 +2,11 @@
 
 import CartItemCard from '@/components/Card/CartItem';
 import { useCart } from '@/lib/cart/cartContext';
-import { CartItem } from '@/lib/types';
+import { CartItem } from '@/coursefull.d';
 import { priceFormatter } from '@/lib/helpers';
 import Button from '@/components/Button/Button';
 import LinkButton from '@/components/Button/LinkButton';
-import { Endpoints } from '@/lib/enums';
+import { Endpoints } from '@/coursefull.d';
 import { createPayment } from '@/services/paymentsService';
 import { useRouter } from 'next/navigation';
 import { useProtectedEndpoint, useSession } from '@/lib/session/sessionContext';

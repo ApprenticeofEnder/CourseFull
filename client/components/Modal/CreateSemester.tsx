@@ -8,8 +8,7 @@ import {
 } from '@nextui-org/react';
 
 import Button from '@/components/Button/Button';
-import { ItemStatus } from '@/lib/enums';
-import { SessionProps } from '@/lib/types';
+import { ItemStatus, SessionProps } from '@/coursefull.d';
 import { createSemester } from '@/services/semesterService';
 import SemesterForm from '../Form/SemesterForm';
 

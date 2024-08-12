@@ -13,7 +13,7 @@ import {
 } from 'vitest';
 
 import * as helpers from '@/lib/helpers';
-import { ItemStatus, Endpoints } from '@/lib/enums';
+import { ItemStatus, Endpoints } from '@/coursefull.d';
 import { makeSession, USER1, USER2, jwtDecode } from '@/vitest.setup';
 
 const NEW_USER = {

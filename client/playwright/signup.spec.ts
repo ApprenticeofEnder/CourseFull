@@ -1,4 +1,4 @@
-import { Endpoints } from '@/lib/enums';
+import { Endpoints } from '@/coursefull.d';
 import {
     createUserData,
     createValidFields,

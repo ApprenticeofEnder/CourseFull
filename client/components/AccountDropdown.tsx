@@ -5,7 +5,7 @@ import { Menu, Transition } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 
 import Button from '@/components/Button/Button';
-import { Endpoints } from '@/lib/enums';
+import { Endpoints } from '@/coursefull.d';
 import { classNames } from '@/lib/helpers';
 import { UserMetadata } from '@supabase/supabase-js';
 import { useCart } from '@/lib/cart/cartContext';

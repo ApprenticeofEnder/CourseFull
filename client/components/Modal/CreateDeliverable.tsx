@@ -7,10 +7,9 @@ import {
 } from '@nextui-org/react';
 
 import Button from '@/components/Button/Button';
-import { ItemStatus } from '@/lib/enums';
-import { SessionProps } from '@/lib/types';
+import { ItemStatus, SessionProps } from '@/coursefull.d';
 import { createDeliverable } from '@/services/deliverableService';
-import DeliverableForm from '../Form/DeliverableForm';
+import DeliverableForm from '@/components/Form/DeliverableForm';
 
 interface DeliverableModalProps extends SessionProps {
     api_v1_course_id: string;

@@ -1,4 +1,4 @@
-import { CartState, CartAction, CartItem } from '@/lib/types';
+import { CartState, CartAction, CartItem } from '@/coursefull.d';
 
 export const initialState = {
     items: {},

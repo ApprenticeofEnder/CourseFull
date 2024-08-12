@@ -3,8 +3,7 @@ import { faker } from '@faker-js/faker';
 import { test as base, Page, Locator, expect } from '@playwright/test';
 import { Client, connect, DataType } from 'ts-postgres';
 
-import { Product, Semester, User } from '@/lib/types';
-import { Endpoints, ItemStatus } from '@/lib/enums';
+import { Product, Semester, User, Endpoints, ItemStatus } from '@/coursefull.d';
 
 export const supabaseServiceRole = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321',

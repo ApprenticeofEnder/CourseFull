@@ -1,7 +1,7 @@
-import { Deliverable } from '@/lib/types';
+import { Deliverable } from '@/coursefull.d';
 import Button from '@/components/Button/Button';
 import { PencilIcon } from '@heroicons/react/24/outline';
-import { ItemStatus } from '@/lib/enums';
+import { ItemStatus } from '@/coursefull.d';
 import {
     ReadableStatus,
     classNames,

@@ -11,8 +11,7 @@ import {
 
 import Button from '@/components/Button/Button';
 import CourseForm from '@/components/Form/CourseForm';
-import { Endpoints, ItemStatus } from '@/lib/enums';
-import { SessionProps, User } from '@/lib/types';
+import { SessionProps, User, Endpoints, ItemStatus } from '@/coursefull.d';
 import { createCourse } from '@/services/courseService';
 import { getUserData } from '@/services/userService';
 

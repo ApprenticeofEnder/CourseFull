@@ -20,12 +20,12 @@ import {
     determineGradeBGColour,
     ReadableStatus,
 } from '@/lib/helpers';
-import { SemesterProgressType, SessionProps } from '@/lib/types';
+// import { SemesterProgressType, SessionProps } from '@/coursefull.d';
 import Button from '@/components/Button/Button';
 import CreateSemesterModal from '@/components/Modal/CreateSemester';
 import LinkButton from '@/components/Button/LinkButton';
 import { getProgress } from '@/services/userService';
-import { ItemStatus } from '@/lib/enums';
+import { ItemStatus, SemesterProgressType, SessionProps } from '@/coursefull.d';
 import { useRouter } from 'next/navigation';
 
 export default function HomeStatus({ session }: SessionProps) {

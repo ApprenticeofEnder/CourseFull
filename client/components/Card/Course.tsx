@@ -6,7 +6,7 @@ import {
     courseURL,
     determineGradeBGColour,
 } from '@/lib/helpers';
-import { Course } from '@/lib/types';
+import { Course } from '@/coursefull.d';
 import LinkButton from '../Button/LinkButton';
 import { Image } from '@nextui-org/react';
 

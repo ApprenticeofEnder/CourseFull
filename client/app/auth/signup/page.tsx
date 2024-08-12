@@ -5,7 +5,7 @@ import { Input } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
 import Button from '@/components/Button/Button';
-import { Endpoints } from '@/lib/enums';
+import { Endpoints } from '@/coursefull.d';
 import { createUser } from '@/services/userService';
 import { validateEmail, validateName, validatePassword } from '@/lib/helpers';
 import { useSession } from '@/lib/session/sessionContext';
