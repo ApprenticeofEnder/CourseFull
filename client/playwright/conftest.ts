@@ -138,6 +138,7 @@ export async function loadProducts(dbClient: Client) {
 
 export async function deleteData(dbClient: Client){
     const users = (await supabaseServiceRole.auth.admin.listUsers()).data.users;
+    
     for (let user of users) {
         const authDeleteRes = await supabaseServiceRole.auth.admin.deleteUser(
             user.id
@@ -156,6 +157,7 @@ export async function deleteData(dbClient: Client){
 
 type CourseFullFixtures = {
     loginUser: User;
+    deleteUser: User;
     homePage: Page;
     signupPage: Page;
     loginPage: Page;
@@ -176,6 +178,17 @@ export const test = base.extend<CourseFullFixtures>({
         const user = data.at(0);
 
         await use(user);
+    },
+    deleteUser: async ({}, use) => {
+        await using dbClient = await dbConnect();
+        const userData = await createRegisteredUser(dbClient, {})!;
+
+        if(!userData){
+            console.error("User data is null.")
+            return;
+        }
+
+        await use(userData.courseFullUser);
     },
     semesterData: async({}, use) => {
         const data: Semester = {

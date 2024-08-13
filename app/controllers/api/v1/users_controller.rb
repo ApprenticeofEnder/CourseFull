@@ -28,14 +28,27 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   # DELETE /api/v1/users/me
   def destroy
+    @supabase_id = @api_v1_user.supabase_id
+
+    url = URI(ENV["NEXT_PUBLIC_SUPABASE_URL"])
+
+    headers = { Authorization: "Bearer #{ENV["SUPABASE_SERVICE_KEY"]}" }
+
+    Net::HTTP.start(url.hostname, url.port, :use_ssl => ENV["RAILS_ENV"] == "production") do |http|
+      begin
+        res = http.delete("/auth/v1/admin/users/#{@supabase_id}", headers)
+        res.value
+      rescue Net::HTTPClientException
+        Rails.logger.error("Attempt to delete Supabase User with ID %s failed. Status code: %s" % [@supabase_id, res.code])
+      end
+    end
+
     @api_v1_user.destroy!
   end
 
   # GET /api/v1/users/me/progress
   def progress
     semester_progress = []
-
-    # TODO: Optimize this with a group by
 
     @api_v1_user.semesters.find_each do |semester|
       @num_courses = 0

@@ -106,3 +106,25 @@ export async function getUserData(
         onFailure
     );
 }
+
+export async function deleteUser(
+    session: Session,
+    onFailure: (error: Error) => void
+) {
+    return authenticatedApiErrorHandler(
+        async (session) => {
+            const apiResponse = await axios.delete(`${Endpoints.API_USER}/me`, {
+                headers: {
+                    Authorization: `Bearer ${session.access_token}`,
+                },
+            });
+
+            if (apiResponse.status !== 200) {
+                throw apiResponse.data;
+            }
+            return apiResponse;
+        },
+        session,
+        onFailure
+    );
+}
