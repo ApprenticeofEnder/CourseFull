@@ -27,7 +27,6 @@
         "paths": {
             "@coursefull/*": ["./@coursefull/*"],
             "@coursefull": ["./@coursefull/index.d"],
-            "@/*": ["./*"],
             "@*": ["./*"]
         }
     },

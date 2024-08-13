@@ -8,7 +8,7 @@ export default function Spacer({ children, className }: SpacerProps) {
     return (
         <div
             className={classNames(
-                'mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 bg-background-900',
+                'mx-auto max-w-[1024px] px-6 bg-background-900',
                 className || ''
             )}
         >

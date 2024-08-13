@@ -15,6 +15,7 @@ export default function CourseFullLink({
                 router.push(href!);
             }}
             href={href}
+            rel="noopener noreferrer"
             {...props}
         >
             {children}

@@ -149,7 +149,5 @@ export default function CourseFullNavbar() {
                 })}
             </NavbarMenu>
         </Navbar>
-        // {/* </Spacer> */}
-        // </nav>
     );
 }

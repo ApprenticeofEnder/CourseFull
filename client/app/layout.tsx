@@ -29,12 +29,10 @@ export default function RootLayout({
                 <SessionProvider>
                     <CartProvider>
                         <NextUIProvider>
-                            <main>
-                                <Navbar />
-                                <Spacer className="overflow-auto">
-                                    {children}
-                                </Spacer>
-                            </main>
+                            <Navbar />
+                            <Spacer className="overflow-auto">
+                                {children}
+                            </Spacer>
                         </NextUIProvider>
                     </CartProvider>
                 </SessionProvider>

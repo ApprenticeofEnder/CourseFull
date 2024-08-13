@@ -1,18 +1,27 @@
 'use client';
 
-import { Endpoints, ItemStatus } from '@coursefull';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, useEffect, useState, Suspense } from 'react';
-import { Course, Deliverable, SessionProps } from '@coursefull';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { getCourse } from '@services/courseService';
 import { Modal, Spinner, Tab, Tabs, useDisclosure } from '@nextui-org/react';
-import { ReadableStatus, semesterURL } from '@lib/helpers';
+
+import {
+    Endpoints,
+    ItemStatus,
+    Course,
+    Deliverable,
+    SessionProps,
+} from '@coursefull';
+
 import Button from '@components/Button/Button';
 import DeliverableCard from '@components/Card/Deliverable';
 import CreateDeliverableModal from '@components/Modal/CreateDeliverable';
 import UpdateDeliverableModal from '@components/Modal/UpdateDeliverable';
+
+import { ReadableStatus, semesterURL } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
+
+import { getCourse } from '@services/courseService';
 
 interface CoursePageProps extends SessionProps {}
 
@@ -27,8 +36,6 @@ function DeliverableTabs({
     setCurrentDeliverable,
     updateModal,
 }: DeliverableTabsProps) {
-    const [selected, setSelected] = useState('all');
-
     const activeDeliverables: Deliverable[] = [];
     const completeDeliverables: Deliverable[] = [];
 
