@@ -10,7 +10,7 @@ export async function createDeliverable(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             return axios.post(
                 Endpoints.API_DELIVERABLES,
                 {
@@ -24,9 +24,7 @@ export async function createDeliverable(
                     },
                 },
                 {
-                    headers: {
-                        Authorization: `Bearer ${session.access_token}`,
-                    },
+                    headers,
                 }
             );
         },
@@ -41,7 +39,7 @@ export async function updateDeliverable(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             return axios.put(
                 `${Endpoints.API_DELIVERABLES}/${id}`,
                 {
@@ -54,9 +52,7 @@ export async function updateDeliverable(
                     },
                 },
                 {
-                    headers: {
-                        Authorization: `Bearer ${session.access_token}`,
-                    },
+                    headers,
                 }
             );
         },
@@ -70,11 +66,9 @@ export async function getDeliverables(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             return axios.get(Endpoints.API_DELIVERABLES, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
+                headers,
             });
         },
         session,
@@ -88,11 +82,9 @@ export async function getDeliverable(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             return axios.get(`${Endpoints.API_DELIVERABLES}/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
+                headers,
             });
         },
         session,

@@ -6,12 +6,18 @@ import CreateCourseModal from '@components/Modal/CreateCourse';
 import { ReadableStatus } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
 import { getSemester } from '@services/semesterService';
-import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
+import {
+    ArrowLeftIcon,
+    PlusIcon,
+    TrashIcon,
+    PencilIcon,
+} from '@heroicons/react/24/outline';
 import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, useEffect, useState, Suspense } from 'react';
 
 import { Endpoints, Semester, SessionProps } from '@coursefull';
+import UpdateSemesterModal from '@components/Modal/UpdateSemester';
 
 interface SemesterPageProps extends SessionProps {}
 
@@ -67,21 +73,6 @@ function SemesterPage() {
                     </Button>
                     <div className="flex mb-2 gap-4">
                         <h2 className="text-left font-bold">{semester.name}</h2>
-                        {/* <Button
-                    className="top-1"
-                    onPressEnd={updateOnOpen}
-                    isDisabled
-                >
-                    Edit
-                </Button>
-                <Button
-                    className="top-1"
-                    onPressEnd={updateOnOpen}
-                    buttonType="danger"
-                    isDisabled
-                >
-                    Delete
-                </Button> */}
                     </div>
 
                     <div className="flex flex-row gap-4">
@@ -89,18 +80,34 @@ function SemesterPage() {
                         <h3>|</h3>
                         <h3>Goal: {semester.goal}%</h3>
                     </div>
-                    <hr className="border-1 border-primary-100/50 my-2" />
-                    <div className="my-5">
+                    <div className="my-5 flex gap-4">
                         <Button
-                            endContent={
-                                <PlusIcon className="h-6 w-6"></PlusIcon>
-                            }
+                            className="top-1"
+                            endContent={<PlusIcon className="h-6 w-6" />}
                             onPressEnd={createModal.onOpen}
                             buttonType="confirm"
                         >
                             Add Course
                         </Button>
+                        <Button
+                            className="top-1"
+                            endContent={<PencilIcon className="h-6 w-6" />}
+                            onPressEnd={updateModal.onOpen}
+                        >
+                            Edit Semester
+                        </Button>
+                        <Button
+                            className="top-1"
+                            endContent={<TrashIcon className="h-6 w-6" />}
+                            // onPressEnd={deleteModel.onOpen}
+                            buttonType="danger"
+                            isDisabled
+                        >
+                            Delete Semester
+                        </Button>
                     </div>
+                    <hr className="border-1 border-primary-100/50 my-2" />
+
                     {(semester?.courses?.length && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             {semester.courses.map((course) => (
@@ -126,10 +133,10 @@ function SemesterPage() {
                         onOpenChange={updateModal.onOpenChange}
                         className="bg-sky-100"
                     >
-                        {/* <UpdateCourseModal
-                    session={session}
-                    api_v1_semester_id={semesterId}
-                /> */}
+                        <UpdateSemesterModal
+                            session={session}
+                            semester={semester}
+                        />
                         <></>
                     </Modal>
                 </Fragment>

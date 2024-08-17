@@ -10,7 +10,7 @@ export async function createPayment(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             const products = cart.map((cartItem) => {
                 return {
                     stripe_id: cartItem.product.stripe_id,
@@ -23,9 +23,7 @@ export async function createPayment(
                     Endpoints.API_PAYMENTS,
                     { products },
                     {
-                        headers: {
-                            Authorization: `Bearer ${session.access_token}`,
-                        },
+                        headers,
                     }
                 );
                 return response;

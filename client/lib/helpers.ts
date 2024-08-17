@@ -1,5 +1,10 @@
 import { AxiosError, AxiosResponse } from 'axios';
-import { APIServiceResponse, ItemStatus, Endpoints } from '@coursefull';
+import {
+    APIServiceResponse,
+    ItemStatus,
+    Endpoints,
+    AuthHeaders,
+} from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 import { Key } from 'react';
 
@@ -90,7 +95,10 @@ function ensureError(value: unknown): Error {
 }
 
 export async function authenticatedApiErrorHandler(
-    apiCall: (session: Session) => Promise<AxiosResponse | undefined>,
+    apiCall: (
+        session: Session,
+        headers: Partial<AuthHeaders>
+    ) => Promise<AxiosResponse | undefined>,
     session: Session | null,
     onFailure: (error: Error) => void
 ): Promise<APIServiceResponse> {
@@ -98,7 +106,10 @@ export async function authenticatedApiErrorHandler(
         if (!session) {
             throw new Error('Invalid session.');
         }
-        const apiResponse = await apiCall(session);
+        const headers: Partial<AuthHeaders> = {
+            Authorization: `Bearer ${session.access_token}`,
+        };
+        const apiResponse = await apiCall(session, headers);
         return { response: apiResponse, success: true };
     } catch (err: unknown) {
         const error = ensureError(err);

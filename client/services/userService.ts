@@ -68,11 +68,9 @@ export async function getProgress(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             const apiResponse = await axios.get(Endpoints.API_PROGRESS, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
+                headers,
             });
 
             if (apiResponse.status !== 200) {
@@ -90,11 +88,9 @@ export async function getUserData(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             const apiResponse = await axios.get(`${Endpoints.API_USER}/me`, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
+                headers,
             });
 
             if (apiResponse.status !== 200) {
@@ -115,7 +111,7 @@ export async function updateUserDetails(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             const apiResponse = await axios.put(
                 `${Endpoints.API_USER}/me`,
                 {
@@ -126,9 +122,7 @@ export async function updateUserDetails(
                     },
                 },
                 {
-                    headers: {
-                        Authorization: `Bearer ${session.access_token}`,
-                    },
+                    headers,
                 }
             );
 

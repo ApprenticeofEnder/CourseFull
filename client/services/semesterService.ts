@@ -1,7 +1,7 @@
 'use client';
 import axios, { AxiosResponse } from 'axios';
 import { Endpoints, ItemStatus } from '@coursefull';
-import { authenticatedApiErrorHandler } from '@lib/helpers';
+import { authenticatedApiErrorHandler, semesterURL } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import { Semester } from '@coursefull';
 
@@ -11,7 +11,7 @@ export async function createSemester(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             const apiResponse = await axios.post(
                 Endpoints.API_SEMESTERS,
                 {
@@ -22,9 +22,7 @@ export async function createSemester(
                     },
                 },
                 {
-                    headers: {
-                        Authorization: `Bearer ${session.access_token}`,
-                    },
+                    headers,
                 }
             );
             if (apiResponse.status !== 201) {
@@ -42,11 +40,9 @@ export async function getSemesters(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             return axios.get(Endpoints.API_SEMESTERS, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
+                headers,
             });
         },
         session,
@@ -60,12 +56,65 @@ export async function getSemester(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             return axios.get(`${Endpoints.API_SEMESTERS}/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
+                headers,
             });
+        },
+        session,
+        onFailure
+    );
+}
+
+export async function updateSemester(
+    { id, name, status, goal }: Semester,
+    session: Session | null,
+    onFailure: (error: Error) => void
+) {
+    return authenticatedApiErrorHandler(
+        async (session, headers) => {
+            const apiResponse = await axios.put(
+                `${Endpoints.API_SEMESTERS}/${id}`,
+                {
+                    api_v1_semester: {
+                        name,
+                        status,
+                        goal,
+                    },
+                },
+                {
+                    headers,
+                }
+            );
+
+            if (apiResponse.status !== 200) {
+                throw apiResponse.data;
+            }
+            return apiResponse;
+        },
+        session,
+        onFailure
+    );
+}
+
+export async function deleteSemester(
+    id: string,
+    session: Session | null,
+    onFailure: (error: Error) => void
+) {
+    return authenticatedApiErrorHandler(
+        async (session, headers) => {
+            const apiResponse = await axios.delete(
+                `${Endpoints.API_SEMESTERS}/${id}`,
+                {
+                    headers,
+                }
+            );
+
+            if (apiResponse.status !== 200) {
+                throw apiResponse.data;
+            }
+            return apiResponse;
         },
         session,
         onFailure

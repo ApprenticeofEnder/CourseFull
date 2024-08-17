@@ -10,7 +10,7 @@ export async function createCourse(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             try {
                 const response = await axios.post(
                     Endpoints.API_COURSES,
@@ -23,9 +23,7 @@ export async function createCourse(
                         },
                     },
                     {
-                        headers: {
-                            Authorization: `Bearer ${session.access_token}`,
-                        },
+                        headers,
                     }
                 );
 
@@ -50,11 +48,9 @@ export async function getCourses(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             return axios.get(Endpoints.API_COURSES, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
+                headers,
             });
         },
         session,
@@ -68,11 +64,9 @@ export async function getCourse(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             return axios.get(`${Endpoints.API_COURSES}/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
+                headers,
             });
         },
         session,

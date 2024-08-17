@@ -86,5 +86,9 @@ export interface Product {
     price: number;
 }
 
+export interface AuthHeaders {
+    Authorization: string;
+}
+
 export * from './cart.d';
 export * from './enums.d';

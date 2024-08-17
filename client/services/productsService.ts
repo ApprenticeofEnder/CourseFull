@@ -8,11 +8,9 @@ export async function getProducts(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             return axios.get(Endpoints.API_PRODUCTS, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
+                headers,
             });
         },
         session,
