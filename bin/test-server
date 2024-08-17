@@ -17,8 +17,9 @@ echo "Postgres started"
 rails db:create RAILS_ENV=test
 rails db:migrate RAILS_ENV=test
 rails db:test:prepare RAILS_ENV=test
+rails db:seed RAILS_ENV=test
 cd client && pnpm run build
 cd ..
 cp -r client/out/* public/
-bin/rails server -p 5100
+foreman start -f Procfile.test
 docker-compose -f docker-compose.test.yml down

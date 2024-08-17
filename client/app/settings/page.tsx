@@ -67,6 +67,8 @@ function AccountDetails({ session }: SessionProps) {
     );
     const [email, setEmail] = useState(session.user.email!);
 
+    const updateAccountDetails = async () => {};
+
     return (
         <div className="bg-primary-800 border-2 border-primary-100/15 rounded-lg p-10 flex flex-col gap-4">
             <h3 className="text-left">

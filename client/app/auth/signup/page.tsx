@@ -9,6 +9,7 @@ import { Endpoints } from '@coursefull';
 import { createUser } from '@services/userService';
 import { validateEmail, validateName, validatePassword } from '@lib/helpers';
 import { useSession } from '@lib/supabase/sessionContext';
+import LinkButton from '@components/Button/LinkButton';
 
 export default function Signup() {
     const router = useRouter();
@@ -89,7 +90,7 @@ export default function Signup() {
     }
 
     return (
-        <Fragment>
+        <div className="h-dvh flex flex-col justify-center gap-4 sm:w-3/4 mx-auto">
             <h1 data-testid="signup-header">Sign up for CourseFull</h1>
             <Input
                 type="text"
@@ -112,7 +113,7 @@ export default function Signup() {
                 data-testid="signup-lname"
             />
             {invalidLastName || !lname ? (
-                <p>
+                <p className="text-center">
                     <strong>Hint:</strong> If you don't have 2 separate names,
                     just put in 2 hyphens (--) for the last name field.
                 </p>
@@ -155,16 +156,26 @@ export default function Signup() {
                 data-testid="signup-password"
             />
 
-            <Button
-                className="w-1/2 m-auto my-2"
-                onPressEnd={handleSignUp}
-                isLoading={loading}
-                isDisabled={!validForm}
-                buttonType="confirm"
-                data-testid="signup-button"
-            >
-                {loading ? 'Signing up...' : 'Sign Up'}
-            </Button>
-        </Fragment>
+            <div className="flex gap-4">
+                <LinkButton
+                    className="basis-1/2"
+                    isLoading={loading}
+                    href={Endpoints.LOGIN}
+                    data-testid="signup-nav-button"
+                >
+                    Go to Login
+                </LinkButton>
+                <Button
+                    className="basis-1/2"
+                    onPressEnd={handleSignUp}
+                    isLoading={loading}
+                    isDisabled={!validForm}
+                    buttonType="confirm"
+                    data-testid="signup-button"
+                >
+                    {loading ? 'Signing up...' : 'Sign Up'}
+                </Button>
+            </div>
+        </div>
     );
 }

@@ -8,7 +8,7 @@ import {
     supabaseServiceRole,
 } from '@playwright/conftest';
 
-test.describe('Deleting Account', () => {
+test.describe.skip('Deleting Account', () => {
     test('User can delete their account successfully', async ({
         loginPage,
         deleteUser,

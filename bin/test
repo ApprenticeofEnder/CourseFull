@@ -1,5 +1,8 @@
 #!/bin/bash -e
 export $(op inject -i .env.test.tpl)
+cd client && pnpm run build
+cd ..
+cp -r client/out/* public/
 bundle exec rspec
 cd client && pnpm run test
 cd ..

@@ -113,7 +113,7 @@ RSpec.describe "/api/v1/users", type: :request do
         expect(response).to be_successful
       end
 
-      # TODO: Make these more robust
+      # TODO: Make these more robust, maybe with actual checks for the number of courses in a semester, different cases for completed assignments, etc.
 
       it "returns the correct amount of semesters" do
         get "/api/v1/users/me/progress", headers: auth_headers(@user), as: :json

@@ -107,6 +107,41 @@ export async function getUserData(
     );
 }
 
+export async function updateUserDetails(
+    first_name: string,
+    last_name: string,
+    email: string,
+    session: Session,
+    onFailure: (error: Error) => void
+) {
+    return authenticatedApiErrorHandler(
+        async (session) => {
+            const apiResponse = await axios.put(
+                `${Endpoints.API_USER}/me`,
+                {
+                    api_v1_user: {
+                        first_name,
+                        last_name,
+                        email,
+                    },
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${session.access_token}`,
+                    },
+                }
+            );
+
+            if (apiResponse.status !== 200) {
+                throw apiResponse.data;
+            }
+            return apiResponse;
+        },
+        session,
+        onFailure
+    );
+}
+
 export async function deleteUser(
     session: Session,
     onFailure: (error: Error) => void

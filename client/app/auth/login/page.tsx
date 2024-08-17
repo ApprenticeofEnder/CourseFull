@@ -8,6 +8,7 @@ import { Endpoints } from '@coursefull';
 import { login } from '@services/userService';
 import Button from '@components/Button/Button';
 import { useSession } from '@lib/supabase/sessionContext';
+import LinkButton from '@components/Button/LinkButton';
 
 export default function Login() {
     const router = useRouter();
@@ -37,7 +38,7 @@ export default function Login() {
     }
 
     return (
-        <Fragment>
+        <div className="h-dvh flex flex-col justify-center gap-4 sm:w-3/4 mx-auto">
             <h1 data-testid="login-header">Log In to CourseFull</h1>
             <Input
                 type="email"
@@ -55,15 +56,24 @@ export default function Login() {
                 onValueChange={setPassword}
                 data-testid="login-password"
             />
-            <Button
-                className="w-1/2 m-auto my-2"
-                onClick={handleLogin}
-                isLoading={loading}
-                buttonType="confirm"
-                data-testid="login-button"
-            >
-                {loading ? 'Logging in...' : 'Log In'}
-            </Button>
-        </Fragment>
+            <div className="flex gap-4">
+                <LinkButton
+                    className="basis-1/2 top-1"
+                    href={Endpoints.SIGN_UP}
+                    data-testid="signup-nav-button"
+                >
+                    Go to Signup
+                </LinkButton>
+                <Button
+                    className="basis-1/2 top-1"
+                    onClick={handleLogin}
+                    isLoading={loading}
+                    buttonType="confirm"
+                    data-testid="login-button"
+                >
+                    {loading ? 'Logging in...' : 'Log In'}
+                </Button>
+            </div>
+        </div>
     );
 }

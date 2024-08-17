@@ -143,10 +143,21 @@ export async function deleteData(dbClient: Client){
         const authDeleteRes = await supabaseServiceRole.auth.admin.deleteUser(
             user.id
         );
+    }
+
+    const apiUsersRes = (await supabaseServiceRole
+        .from('api_v1_users')
+        .select());
+
+    if(apiUsersRes.error){
+        return;
+    }
+    
+    for(let user of apiUsersRes.data){
         const apiDeleteRes = await supabaseServiceRole
             .from('api_v1_users')
             .delete()
-            .ilike('email', user.email!);
+            .ilike('email', user.email);
     }
 
     await dbClient.query(`DELETE FROM api_v1_deliverables`);
