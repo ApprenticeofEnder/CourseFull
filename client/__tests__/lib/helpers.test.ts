@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import {
@@ -60,6 +60,14 @@ const server = setupServer(
             created_at: '2024-07-02T18:08:24.914Z',
             updated_at: '2024-07-02T18:08:24.914Z',
         });
+    }),
+    http.post('/404', async () => {
+        return HttpResponse.json(
+            {
+                message: 'Not found.',
+            },
+            { status: 404 }
+        );
     })
 );
 
@@ -125,13 +133,11 @@ describe('Helper Function', () => {
         const session = makeSession(USER1);
         it('Should return axios data for a successful response', async () => {
             const apiResponse = await helpers.authenticatedApiErrorHandler(
-                async (session) => {
+                async (session, headers) => {
                     const apiResponse = await axios.get(
                         Endpoints.API_PROGRESS,
                         {
-                            headers: {
-                                Authorization: `Bearer ${session.access_token}`,
-                            },
+                            headers,
                         }
                     );
                     return apiResponse;
@@ -147,13 +153,11 @@ describe('Helper Function', () => {
 
         it('Should return an unsuccessful response on an invalid session', async () => {
             const apiResponse = await helpers.authenticatedApiErrorHandler(
-                async (session) => {
+                async (session, headers) => {
                     const apiResponse = await axios.get(
                         Endpoints.API_PROGRESS,
                         {
-                            headers: {
-                                Authorization: `Bearer ${session.access_token}`,
-                            },
+                            headers,
                         }
                     );
                     return apiResponse;
@@ -174,6 +178,23 @@ describe('Helper Function', () => {
                 session,
                 (error) => {
                     expect(error.message).toEqual('TEST');
+                    expect(error instanceof AxiosError).toBeFalsy();
+                }
+            );
+            expect(apiResponse.success).toBeFalsy();
+        });
+
+        it('Should throw an AxiosError when Axios encounters a bad status code', async () => {
+            const apiResponse = await helpers.authenticatedApiErrorHandler(
+                async (session, headers) => {
+                    const apiResponse = await axios.get('/404', {
+                        headers,
+                    });
+                    return apiResponse;
+                },
+                session,
+                (error) => {
+                    expect(error instanceof AxiosError).toBeTruthy();
                 }
             );
             expect(apiResponse.success).toBeFalsy();
