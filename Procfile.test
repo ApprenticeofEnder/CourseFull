@@ -1,2 +1,2 @@
 server: bin/rails server -p 5100
-stripe: stripe listen --forward-to localhost:5100/payments/webhook
+stripe: stripe listen --forward-to localhost:5100/api/v1/payments/webhook

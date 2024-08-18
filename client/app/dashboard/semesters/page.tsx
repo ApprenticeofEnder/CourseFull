@@ -1,11 +1,5 @@
 'use client';
 
-import Button from '@components/Button/Button';
-import CourseCard from '@components/Card/Course';
-import CreateCourseModal from '@components/Modal/CreateCourse';
-import { ReadableStatus } from '@lib/helpers';
-import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
-import { deleteSemester, getSemester } from '@services/semesterService';
 import {
     ArrowLeftIcon,
     PlusIcon,
@@ -14,14 +8,73 @@ import {
 } from '@heroicons/react/24/outline';
 import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Fragment, useEffect, useState, Suspense } from 'react';
+import { Fragment, useEffect, useState, Suspense, useMemo } from 'react';
 
-import { Endpoints, Semester, SessionProps } from '@coursefull';
+import { Course, Endpoints, Semester, SessionProps } from '@coursefull';
+import Button from '@components/Button/Button';
+import CourseCard from '@components/Card/Course';
+import CreateCourseModal from '@components/Modal/CreateCourse';
 import UpdateSemesterModal from '@components/Modal/UpdateSemester';
+import UpdateCourseModal from '@components/Modal/UpdateCourse';
+import { ReadableStatus } from '@lib/helpers';
+import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
+import { deleteSemester, getSemester } from '@services/semesterService';
+import { deleteCourse } from '@services/courseService';
 
-interface SemesterPageProps extends SessionProps {}
+interface CoursesProps extends SessionProps {
+    courses: Course[];
+}
 
-function SemesterList() {}
+function Courses({ courses, session }: CoursesProps) {
+    const [currentCourse, setCurrentCourse] = useState<Course | null>(null);
+
+    const updateCourseModal = useDisclosure();
+
+    async function handleDeleteCourse(course: Course) {
+        const confirmDelete = confirm(
+            `Are you sure you want to delete ${course.course_code}? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.`
+        );
+        if (!confirmDelete) {
+            return;
+        }
+        await deleteCourse(course.id!, session, (error) => {
+            alert(`Something went wrong: ${error.message}`);
+        });
+        // We're going to reload both ways regardless, so no need to look for success/fail
+        location.reload();
+    }
+
+    return (
+        <Fragment>
+            {(courses.length && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {courses.map((course) => (
+                        <CourseCard
+                            {...course}
+                            handleEdit={() => {
+                                setCurrentCourse(course);
+                                updateCourseModal.onOpen();
+                            }}
+                            handleDelete={async () => {
+                                await handleDeleteCourse(course);
+                            }}
+                            key={course.id}
+                        />
+                    ))}
+                </div>
+            )) || (
+                <p>Looks like you don't have any courses. Time to add some!</p>
+            )}
+            <Modal
+                isOpen={updateCourseModal.isOpen}
+                onOpenChange={updateCourseModal.onOpenChange}
+                className="bg-sky-100"
+            >
+                <UpdateCourseModal session={session} course={currentCourse} />
+            </Modal>
+        </Fragment>
+    );
+}
 
 function SemesterPage() {
     const router = useRouter();
@@ -32,9 +85,10 @@ function SemesterPage() {
     const semesterId = searchParams.get('id') || '';
 
     const [semester, setSemester] = useState<Semester | null>(null);
+    const [courses, setCourses] = useState<Course[]>([]);
 
-    const updateModal = useDisclosure();
-    const createModal = useDisclosure();
+    const createCourseModal = useDisclosure();
+    const updateSemesterModal = useDisclosure();
 
     function goBack() {
         router.push(Endpoints.ROOT);
@@ -80,10 +134,18 @@ function SemesterPage() {
         };
     }, [semester, session]);
 
+    useMemo(() => {
+        setCourses(
+            semester?.courses?.sort((a, b) => {
+                return a.course_code.localeCompare(b.course_code);
+            }) || []
+        );
+    }, [semester]);
+
     return (
         <Fragment>
             {session && semester ? (
-                <Fragment>
+                <div>
                     <Button
                         startContent={<ArrowLeftIcon className="h-6 w-6" />}
                         onPressEnd={goBack}
@@ -104,7 +166,7 @@ function SemesterPage() {
                         <Button
                             className="top-1"
                             endContent={<PlusIcon className="h-6 w-6" />}
-                            onPressEnd={createModal.onOpen}
+                            onPressEnd={createCourseModal.onOpen}
                             buttonType="confirm"
                         >
                             Add Course
@@ -112,7 +174,7 @@ function SemesterPage() {
                         <Button
                             className="top-1"
                             endContent={<PencilIcon className="h-6 w-6" />}
-                            onPressEnd={updateModal.onOpen}
+                            onPressEnd={updateSemesterModal.onOpen}
                         >
                             Edit Semester
                         </Button>
@@ -126,25 +188,10 @@ function SemesterPage() {
                         </Button>
                     </div>
                     <hr className="border-1 border-primary-100/50 my-2" />
-
-                    {(semester?.courses?.length && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                            {semester.courses.map((course) => (
-                                <CourseCard
-                                    {...course}
-                                    key={course.id}
-                                ></CourseCard>
-                            ))}
-                        </div>
-                    )) || (
-                        <p>
-                            Looks like you don't have any courses. Time to add
-                            some!
-                        </p>
-                    )}
+                    <Courses courses={courses} session={session} />
                     <Modal
-                        isOpen={createModal.isOpen}
-                        onOpenChange={createModal.onOpenChange}
+                        isOpen={createCourseModal.isOpen}
+                        onOpenChange={createCourseModal.onOpenChange}
                         className="bg-sky-100"
                     >
                         <CreateCourseModal
@@ -153,8 +200,8 @@ function SemesterPage() {
                         />
                     </Modal>
                     <Modal
-                        isOpen={updateModal.isOpen}
-                        onOpenChange={updateModal.onOpenChange}
+                        isOpen={updateSemesterModal.isOpen}
+                        onOpenChange={updateSemesterModal.onOpenChange}
                         className="bg-sky-100"
                     >
                         <UpdateSemesterModal
@@ -163,7 +210,7 @@ function SemesterPage() {
                         />
                         <></>
                     </Modal>
-                </Fragment>
+                </div>
             ) : (
                 <div className="flex justify-center">
                     <div className="flex flex-col">

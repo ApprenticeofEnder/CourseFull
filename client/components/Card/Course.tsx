@@ -1,4 +1,11 @@
 'use client';
+import { Image } from '@nextui-org/react';
+
+import { Course, DeletableProps, EditableProps } from '@coursefull';
+
+import LinkButton from '@components/Button/LinkButton';
+import Button from '@components/Button/Button';
+import Link from '@components/Link';
 
 import {
     ReadableStatus,
@@ -6,9 +13,10 @@ import {
     courseURL,
     determineGradeBGColour,
 } from '@lib/helpers';
-import { Course } from '@coursefull';
-import LinkButton from '../Button/LinkButton';
-import { Image } from '@nextui-org/react';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+
+interface CourseCardProps extends Course, DeletableProps, EditableProps {}
 
 export default function CourseCard({
     id,
@@ -17,7 +25,11 @@ export default function CourseCard({
     status,
     goal,
     grade,
-}: Course) {
+    handleEdit,
+    handleDelete,
+}: CourseCardProps) {
+    const [deleteLoading, setDeleteLoading] = useState(false);
+
     let bgColour = 'bg-primary-800';
     if (goal === undefined || grade === undefined || grade === 0) {
         //mostly so TypeScript doesn't freak out
@@ -44,12 +56,33 @@ export default function CourseCard({
                 />
             </div>
 
-            <h3 className="text-left">{course_code}</h3>
+            <Link href={courseURL(id)} color="foreground" underline="hover">
+                <h3 className="text-left">{course_code}</h3>
+            </Link>
             <h4 className="text-left">{title}</h4>
             <h4 className="text-left italic">{ReadableStatus(status)}</h4>
-            <LinkButton className="mt-3 w-full" href={courseURL(id)}>
-                Visit
-            </LinkButton>
+
+            <div className="flex my-2 gap-4">
+                <Button
+                    endContent={<PencilIcon className="h-6 w-6" />}
+                    onPressEnd={handleEdit}
+                    className="top-1 basis-1/2"
+                >
+                    Edit
+                </Button>
+                <Button
+                    className="top-1 basis-1/2"
+                    endContent={<TrashIcon className="h-6 w-6" />}
+                    onPressEnd={() => {
+                        setDeleteLoading(true);
+                        handleDelete();
+                    }}
+                    buttonType="danger"
+                    isLoading={deleteLoading}
+                >
+                    Delete
+                </Button>
+            </div>
         </div>
     );
 }

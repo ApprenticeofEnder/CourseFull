@@ -127,7 +127,7 @@ export default function SettingsPage() {
                                 'bg-background-900 gap-6 relative rounded-none p-4',
                             cursor: 'w-full bg-primary-700 group-data-[details=danger]:bg-danger-200 p-4',
                             tabContent:
-                                'w-full group-data-[details=danger]:text-danger-800 p-4',
+                                'w-full group-data-[details=danger]:text-danger-800 group-data-[selected=true]:text-foreground font-bold text-lg p-4',
                             panel: 'w-full',
                         }}
                         isVertical

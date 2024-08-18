@@ -1,4 +1,4 @@
-import { Deliverable } from '@coursefull';
+import { Deliverable, EditableProps } from '@coursefull';
 import Button from '@components/Button/Button';
 import { PencilIcon } from '@heroicons/react/24/outline';
 import { ItemStatus } from '@coursefull';
@@ -9,9 +9,7 @@ import {
     determineGradeTextColour,
 } from '@lib/helpers';
 
-interface DeliverableCardProps extends Deliverable {
-    handleEdit: () => void;
-}
+interface DeliverableCardProps extends Deliverable, EditableProps {}
 
 export default function DeliverableCard({
     id,
@@ -53,9 +51,7 @@ export default function DeliverableCard({
 
                 <div className="flex flex-col justify-center gap-2 w-32">
                     <Button
-                        endContent={
-                            <PencilIcon className="h-6 w-6"></PencilIcon>
-                        }
+                        endContent={<PencilIcon className="h-6 w-6" />}
                         onPressEnd={handleEdit}
                         className="top-1"
                     >

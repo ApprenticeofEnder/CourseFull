@@ -23,6 +23,14 @@ export interface LoadingProps {
     message?: string;
 }
 
+export interface EditableProps {
+    handleEdit: () => void;
+}
+
+export interface DeletableProps {
+    handleDelete: () => void;
+}
+
 export interface SemesterProgressType {
     semester: string;
     semester_id: string;

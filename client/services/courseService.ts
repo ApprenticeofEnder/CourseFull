@@ -104,3 +104,27 @@ export async function updateCourse(
         onFailure
     );
 }
+
+export async function deleteCourse(
+    id: string,
+    session: Session | null,
+    onFailure: (error: Error) => void
+) {
+    return authenticatedApiErrorHandler(
+        async (session, headers) => {
+            const apiResponse = await axios.delete(
+                `${Endpoints.API_COURSES}/${id}`,
+                {
+                    headers,
+                }
+            );
+
+            if (apiResponse.status !== 204) {
+                throw apiResponse.data;
+            }
+            return apiResponse;
+        },
+        session,
+        onFailure
+    );
+}

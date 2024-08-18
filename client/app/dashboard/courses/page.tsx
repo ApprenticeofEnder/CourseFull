@@ -27,7 +27,7 @@ import UpdateDeliverableModal from '@components/Modal/UpdateDeliverable';
 import { ReadableStatus, semesterURL } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
 
-import { getCourse } from '@services/courseService';
+import { deleteCourse, getCourse } from '@services/courseService';
 
 interface CoursePageProps extends SessionProps {}
 
@@ -84,8 +84,8 @@ function DeliverableTabs({ deliverables, session }: DeliverableTabsProps) {
                         tabList:
                             'bg-background-900 gap-6 w-full relative rounded-none p-0 mb-4',
                         cursor: 'w-full bg-primary-700',
-                        // tabContent:
-                        //     'group-data-[selected=true]:text-[#06b6d4]',
+                        tabContent:
+                            'group-data-[selected=true]:text-foreground font-bold text-lg',
                     }}
                     fullWidth
                     items={deliverableTabs}
@@ -148,6 +148,22 @@ function CoursePage() {
         router.push(semesterURL(course?.api_v1_semester_id));
     }
 
+    async function handleDeleteCourse() {
+        const confirmDelete = confirm(
+            'Are you sure you want to delete this course? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.'
+        );
+        if (!confirmDelete) {
+            return;
+        }
+        const { success } = await deleteCourse(courseId, session, (error) => {
+            alert(`Something went wrong: ${error.message}`);
+        });
+        if (!success) {
+            return;
+        }
+        router.push(Endpoints.ROOT);
+    }
+
     let mounted = true;
     useEffect(() => {
         if (course || !session) {
@@ -181,7 +197,9 @@ function CoursePage() {
                 startContent={<ArrowLeftIcon className="h-6 w-6" />}
                 onPressEnd={goBack}
                 className="my-4"
-            />
+            >
+                Go Back
+            </Button>
             <h2 className="text-left font-bold">{course.course_code}</h2>
             <h2 className="text-left">{course.title}</h2>
             <div className="flex flex-col sm:flex-row sm:justify-between">
@@ -214,7 +232,7 @@ function CoursePage() {
                 <Button
                     className="top-1"
                     endContent={<TrashIcon className="h-6 w-6" />}
-                    // onPressEnd={handleDeleteSemester}
+                    onPressEnd={handleDeleteCourse}
                     buttonType="danger"
                 >
                     Delete Course
