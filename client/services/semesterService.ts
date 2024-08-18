@@ -111,7 +111,7 @@ export async function deleteSemester(
                 }
             );
 
-            if (apiResponse.status !== 200) {
+            if (apiResponse.status !== 204) {
                 throw apiResponse.data;
             }
             return apiResponse;

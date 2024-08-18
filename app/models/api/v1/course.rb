@@ -1,7 +1,7 @@
 class Api::V1::Course < ApplicationRecord
-  has_many :deliverables, foreign_key: "api_v1_course_id"
-  belongs_to :semester, foreign_key: "api_v1_semester_id", dependent: :destroy
-  belongs_to :user, foreign_key: "api_v1_user_id", dependent: :destroy
+  has_many :deliverables, foreign_key: "api_v1_course_id", dependent: :destroy
+  belongs_to :semester, foreign_key: "api_v1_semester_id"
+  belongs_to :user, foreign_key: "api_v1_user_id"
 
   # Scopes
   scope :active, -> { where(status: :active) }

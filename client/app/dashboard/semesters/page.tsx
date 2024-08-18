@@ -5,7 +5,7 @@ import CourseCard from '@components/Card/Course';
 import CreateCourseModal from '@components/Modal/CreateCourse';
 import { ReadableStatus } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
-import { getSemester } from '@services/semesterService';
+import { deleteSemester, getSemester } from '@services/semesterService';
 import {
     ArrowLeftIcon,
     PlusIcon,
@@ -37,6 +37,26 @@ function SemesterPage() {
     const createModal = useDisclosure();
 
     function goBack() {
+        router.push(Endpoints.ROOT);
+    }
+
+    async function handleDeleteSemester() {
+        const confirmDelete = confirm(
+            'Are you sure you want to delete this semester? All of its courses and deliverables will be deleted.'
+        );
+        if (!confirmDelete) {
+            return;
+        }
+        const { success } = await deleteSemester(
+            semesterId,
+            session,
+            (error) => {
+                alert(`Something went wrong: ${error.message}`);
+            }
+        );
+        if (!success) {
+            return;
+        }
         router.push(Endpoints.ROOT);
     }
 
@@ -99,9 +119,8 @@ function SemesterPage() {
                         <Button
                             className="top-1"
                             endContent={<TrashIcon className="h-6 w-6" />}
-                            // onPressEnd={deleteModel.onOpen}
+                            onPressEnd={handleDeleteSemester}
                             buttonType="danger"
-                            isDisabled
                         >
                             Delete Semester
                         </Button>

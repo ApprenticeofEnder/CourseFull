@@ -1,5 +1,5 @@
 class Api::V1::User < ApplicationRecord
-  has_many :semesters, foreign_key: "api_v1_user_id"
+  has_many :semesters, foreign_key: "api_v1_user_id", dependent: :destroy
   after_initialize :init
 
   supabase_id_error = "Invalid Supabase ID. It may be missing or a duplicate. Please try again."
