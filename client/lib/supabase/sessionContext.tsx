@@ -57,7 +57,7 @@ export function useProtectedEndpoint(
             router.push(Endpoints.ROOT);
             return;
         }
-    }, [session, loadingSession]);
+    }, [session, loadingSession, router]);
 }
 
 export default SessionProvider;

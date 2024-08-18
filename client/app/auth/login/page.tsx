@@ -19,7 +19,7 @@ export default function Login() {
             router.push(Endpoints.ROOT);
             return;
         }
-    }, [session, loadingSession]);
+    }, [session, loadingSession, router]);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

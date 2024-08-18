@@ -8,7 +8,14 @@ import {
 } from '@heroicons/react/24/outline';
 import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Fragment, useEffect, useState, Suspense, useMemo } from 'react';
+import {
+    Fragment,
+    useEffect,
+    useState,
+    Suspense,
+    useMemo,
+    useRef,
+} from 'react';
 
 import { Course, Endpoints, Semester, SessionProps } from '@coursefull';
 import Button from '@components/Button/Button';
@@ -63,7 +70,10 @@ function Courses({ courses, session }: CoursesProps) {
                     ))}
                 </div>
             )) || (
-                <p>Looks like you don't have any courses. Time to add some!</p>
+                <p>
+                    Looks like you don&quot;t have any courses. Time to add
+                    some!
+                </p>
             )}
             <Modal
                 isOpen={updateCourseModal.isOpen}
@@ -114,7 +124,7 @@ function SemesterPage() {
         router.push(Endpoints.ROOT);
     }
 
-    let mounted = true;
+    let mounted = useRef(true);
 
     useEffect(() => {
         if (semester || !session) {
@@ -124,15 +134,15 @@ function SemesterPage() {
             alert(error.message);
         })
             .then(({ response }) => {
-                if (mounted) {
+                if (mounted.current) {
                     setSemester(response?.data || null);
                 }
             })
             .catch();
         return () => {
-            mounted = false;
+            mounted.current = false;
         };
-    }, [semester, session]);
+    }, [semester, session, semesterId]);
 
     useMemo(() => {
         setCourses(

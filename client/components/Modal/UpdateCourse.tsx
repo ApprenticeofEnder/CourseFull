@@ -22,12 +22,13 @@ export default function UpdateSemesterModal({
     session,
     course,
 }: EditCourseModalProps) {
-    if (!course) {
-        return;
-    }
-    const [title, setTitle] = useState<string>(course.title);
-    const [courseCode, setCourseCode] = useState<string>(course.course_code);
-    const [status, setStatus] = useState<ItemStatus>(course.status);
+    const [title, setTitle] = useState<string>(course?.title || '');
+    const [courseCode, setCourseCode] = useState<string>(
+        course?.course_code || ''
+    );
+    const [status, setStatus] = useState<ItemStatus>(
+        course?.status || ItemStatus.NOT_STARTED
+    );
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 

@@ -7,7 +7,7 @@ export interface LinkButtonProps extends ButtonProps {
     confirm?: boolean;
 }
 
-export default forwardRef<HTMLButtonElement, LinkButtonProps>(function (
+const LinkButton = forwardRef<HTMLButtonElement, LinkButtonProps>(function (
     { children, href, className, confirm, ...props },
     ref
 ) {
@@ -24,3 +24,7 @@ export default forwardRef<HTMLButtonElement, LinkButtonProps>(function (
         </Button>
     );
 });
+
+LinkButton.displayName = 'LinkButton';
+
+export default LinkButton;

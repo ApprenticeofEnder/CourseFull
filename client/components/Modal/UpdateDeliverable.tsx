@@ -20,14 +20,17 @@ export default function UpdateDeliverableModal({
     session,
     deliverable,
 }: EditDeliverableModalProps) {
-    if (!deliverable) {
-        return;
-    }
-    const [name, setName] = useState<string>(deliverable.name);
-    const [status, setStatus] = useState<ItemStatus>(deliverable.status);
-    const [weight, setWeight] = useState<string>(deliverable.weight.toString());
-    const [mark, setMark] = useState<string>(deliverable.mark.toString());
-    const [notes, setNotes] = useState<string>(deliverable.notes);
+    const [name, setName] = useState<string>(deliverable?.name || '');
+    const [status, setStatus] = useState<ItemStatus>(
+        deliverable?.status || ItemStatus.NOT_STARTED
+    );
+    const [weight, setWeight] = useState<string>(
+        deliverable?.weight.toString() || ''
+    );
+    const [mark, setMark] = useState<string>(
+        deliverable?.mark.toString() || ''
+    );
+    const [notes, setNotes] = useState<string>(deliverable?.notes || '');
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -63,7 +66,7 @@ export default function UpdateDeliverableModal({
                         Edit Deliverable
                     </ModalHeader>
                     <ModalBody>
-                        <h3>Goal: {deliverable.goal}%</h3>
+                        <h3>Goal: {deliverable?.goal}%</h3>
                         <DeliverableForm
                             name={name}
                             setName={setName}

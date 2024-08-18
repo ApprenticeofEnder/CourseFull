@@ -94,8 +94,8 @@ export default function DeliverableForm({
 
             {status === ItemStatus.ACTIVE ? (
                 <p>
-                    <strong>Hint:</strong> Set the status to "Complete" to set
-                    the mark!
+                    <strong>Hint:</strong> Set the status to
+                    &quot;Complete&quot; to set the mark!
                 </p>
             ) : (
                 <Input

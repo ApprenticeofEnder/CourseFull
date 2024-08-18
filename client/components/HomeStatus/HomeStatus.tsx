@@ -67,7 +67,7 @@ export default function HomeStatus({ session }: SessionProps) {
         return () => {
             mounted = false;
         };
-    }, []);
+    }, [session]);
 
     return (
         <Fragment>
@@ -139,7 +139,7 @@ export default function HomeStatus({ session }: SessionProps) {
                             }}
                             emptyContent={
                                 <div className="text-center">
-                                    You don't have any semesters. Start by
+                                    You don&apos;t have any semesters. Start by
                                     adding some!
                                 </div>
                             }

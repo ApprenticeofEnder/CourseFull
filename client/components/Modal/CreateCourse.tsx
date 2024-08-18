@@ -89,7 +89,7 @@ export default function CreateCourseModal({
         return () => {
             mounted = false;
         };
-    }, []);
+    }, [session]);
 
     return (
         <ModalContent>

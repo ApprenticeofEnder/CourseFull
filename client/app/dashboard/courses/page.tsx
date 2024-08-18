@@ -1,6 +1,13 @@
 'use client';
 
-import { Fragment, useEffect, useState, Suspense, useMemo } from 'react';
+import {
+    Fragment,
+    useEffect,
+    useState,
+    Suspense,
+    useMemo,
+    useRef,
+} from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     ArrowLeftIcon,
@@ -164,7 +171,8 @@ function CoursePage() {
         router.push(Endpoints.ROOT);
     }
 
-    let mounted = true;
+    let mounted = useRef(true);
+
     useEffect(() => {
         if (course || !session) {
             return;
@@ -173,15 +181,15 @@ function CoursePage() {
             alert(error.message);
         })
             .then(({ response }) => {
-                if (mounted) {
+                if (mounted.current) {
                     setCourse(response?.data || null);
                 }
             })
             .catch();
         return () => {
-            mounted = false;
+            mounted.current = false;
         };
-    }, [course, session]);
+    }, [course, session, courseId]);
 
     useMemo(() => {
         setDeliverables(

@@ -1,4 +1,4 @@
-import { Axios, AxiosError, AxiosResponse } from 'axios';
+import { Axios, AxiosError, AxiosResponse, isAxiosError } from 'axios';
 import {
     APIServiceResponse,
     ItemStatus,
@@ -100,7 +100,7 @@ export async function authenticatedApiErrorHandler(
         headers: Partial<AuthHeaders>
     ) => Promise<AxiosResponse | undefined>,
     session: Session | null,
-    onFailure: (error: AxiosError | Error) => void
+    onFailure: (error: AxiosError | Error, cameFromAxios: boolean) => void
 ): Promise<APIServiceResponse> {
     try {
         if (!session) {
@@ -113,23 +113,25 @@ export async function authenticatedApiErrorHandler(
         return { response: apiResponse, success: true };
     } catch (err: unknown) {
         const error = ensureError(err);
+        const cameFromAxios = isAxiosError(error);
         console.error(error);
-        onFailure(error);
+        onFailure(error, cameFromAxios);
         return { success: false };
     }
 }
 
 export async function apiErrorHandler(
     apiCall: () => Promise<AxiosResponse | undefined>,
-    onFailure: (error: AxiosError | Error) => void
+    onFailure: (error: AxiosError | Error, cameFromAxios: boolean) => void
 ): Promise<APIServiceResponse> {
     try {
         const apiResponse = await apiCall();
         return { response: apiResponse, success: true };
     } catch (err: unknown) {
         const error = ensureError(err);
+        const cameFromAxios = isAxiosError(error);
         console.error(error);
-        onFailure(error);
+        onFailure(error, cameFromAxios);
         return { success: false };
     }
 }

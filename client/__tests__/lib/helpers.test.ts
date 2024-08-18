@@ -61,6 +61,14 @@ const server = setupServer(
             updated_at: '2024-07-02T18:08:24.914Z',
         });
     }),
+    http.get('/404', async () => {
+        return HttpResponse.json(
+            {
+                message: 'Not found.',
+            },
+            { status: 404 }
+        );
+    }),
     http.post('/404', async () => {
         return HttpResponse.json(
             {
@@ -193,8 +201,9 @@ describe('Helper Function', () => {
                     return apiResponse;
                 },
                 session,
-                (error) => {
+                (error, cameFromAxios) => {
                     expect(error instanceof AxiosError).toBeTruthy();
+                    expect(cameFromAxios).toBeTruthy();
                 }
             );
             expect(apiResponse.success).toBeFalsy();
@@ -241,6 +250,41 @@ describe('Helper Function', () => {
             expect(apiResponse.response?.data.first_name).toEqual(
                 NEW_USER.first_name
             );
+        });
+
+        it('Should throw an AxiosError when Axios encounters a bad status code', async () => {
+            const apiResponse = await helpers.apiErrorHandler(
+                async () => {
+                    const apiResponse = await axios.get('/404', {
+                        validateStatus: (status) => {
+                            return status === 200;
+                        },
+                    });
+                    return apiResponse;
+                },
+                (error, cameFromAxios) => {
+                    expect(error instanceof AxiosError).toBeTruthy();
+                    expect(cameFromAxios).toBeTruthy();
+                }
+            );
+            expect(apiResponse.success).toBeFalsy();
+        });
+
+        it('Should return an unsuccessful response when the api call throws an unconventional error', async () => {
+            const fakeErrorObject = { error: 'Hello' };
+            const apiResponse = await helpers.apiErrorHandler(
+                async () => {
+                    throw fakeErrorObject;
+                },
+                (error) => {
+                    expect(error.message).toEqual(
+                        `This value was thrown as is, not through an Error: ${JSON.stringify(
+                            fakeErrorObject
+                        )}`
+                    );
+                }
+            );
+            expect(apiResponse.success).toBeFalsy();
         });
     });
 

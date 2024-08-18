@@ -20,12 +20,11 @@ export default function UpdateSemesterModal({
     session,
     semester,
 }: EditSemesterModalProps) {
-    if (!semester) {
-        return;
-    }
-    const [name, setName] = useState<string>(semester.name);
-    const [status, setStatus] = useState<ItemStatus>(semester.status);
-    const [goal, setGoal] = useState<string>(semester.goal.toString());
+    const [name, setName] = useState<string>(semester?.name || '');
+    const [status, setStatus] = useState<ItemStatus>(
+        semester?.status || ItemStatus.NOT_STARTED
+    );
+    const [goal, setGoal] = useState<string>(semester?.goal.toString() || '');
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 

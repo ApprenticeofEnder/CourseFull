@@ -20,7 +20,7 @@ export default function Signup() {
             router.push(Endpoints.ROOT);
             return;
         }
-    }, [session, loadingSession]);
+    }, [session, loadingSession, router]);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -114,8 +114,8 @@ export default function Signup() {
             />
             {invalidLastName || !lname ? (
                 <p className="text-center">
-                    <strong>Hint:</strong> If you don't have 2 separate names,
-                    just put in 2 hyphens (--) for the last name field.
+                    <strong>Hint:</strong> If you don&quot;t have 2 separate
+                    names, just put in 2 hyphens (--) for the last name field.
                 </p>
             ) : (
                 <Fragment />
@@ -138,7 +138,7 @@ export default function Signup() {
                         <li>At least 1 uppercase character</li>
                         <li>At least 1 lowercase character</li>
                         <li>At least 1 number</li>
-                        <li>At least 1 of the following: !#$%&? _"</li>
+                        <li>At least 1 of the following: !#$%&? _&quot;</li>
                     </ul>
                     <strong>We also recommend using a password manager!</strong>
                 </div>
