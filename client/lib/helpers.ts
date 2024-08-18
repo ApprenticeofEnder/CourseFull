@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { Axios, AxiosError, AxiosResponse } from 'axios';
 import {
     APIServiceResponse,
     ItemStatus,
@@ -80,7 +80,7 @@ export function determineGradeBGColour(goal: number, grade: number) {
     }
 }
 
-function ensureError(value: unknown): Error {
+function ensureError(value: unknown): AxiosError | Error {
     if (value instanceof Error) return value;
 
     let stringified = '[Unable to stringify the thrown value]';
@@ -100,7 +100,7 @@ export async function authenticatedApiErrorHandler(
         headers: Partial<AuthHeaders>
     ) => Promise<AxiosResponse | undefined>,
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: (error: AxiosError | Error) => void
 ): Promise<APIServiceResponse> {
     try {
         if (!session) {
@@ -121,7 +121,7 @@ export async function authenticatedApiErrorHandler(
 
 export async function apiErrorHandler(
     apiCall: () => Promise<AxiosResponse | undefined>,
-    onFailure: (error: Error) => void
+    onFailure: (error: AxiosError | Error) => void
 ): Promise<APIServiceResponse> {
     try {
         const apiResponse = await apiCall();

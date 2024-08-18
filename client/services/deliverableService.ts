@@ -25,6 +25,9 @@ export async function createDeliverable(
                 },
                 {
                     headers,
+                    validateStatus: (status) => {
+                        return status === 201;
+                    },
                 }
             );
         },
@@ -53,6 +56,9 @@ export async function updateDeliverable(
                 },
                 {
                     headers,
+                    validateStatus: (status) => {
+                        return status === 200;
+                    },
                 }
             );
         },
@@ -69,6 +75,9 @@ export async function getDeliverables(
         async (session, headers) => {
             return axios.get(Endpoints.API_DELIVERABLES, {
                 headers,
+                validateStatus: (status) => {
+                    return status === 200;
+                },
             });
         },
         session,
@@ -85,6 +94,9 @@ export async function getDeliverable(
         async (session, headers) => {
             return axios.get(`${Endpoints.API_DELIVERABLES}/${id}`, {
                 headers,
+                validateStatus: (status) => {
+                    return status === 200;
+                },
             });
         },
         session,

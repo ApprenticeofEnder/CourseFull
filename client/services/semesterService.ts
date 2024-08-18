@@ -23,11 +23,11 @@ export async function createSemester(
                 },
                 {
                     headers,
+                    validateStatus: (status) => {
+                        return status === 201;
+                    },
                 }
             );
-            if (apiResponse.status !== 201) {
-                throw apiResponse.data;
-            }
             return apiResponse;
         },
         session,
@@ -43,6 +43,9 @@ export async function getSemesters(
         async (session, headers) => {
             return axios.get(Endpoints.API_SEMESTERS, {
                 headers,
+                validateStatus: (status) => {
+                    return status === 200;
+                },
             });
         },
         session,
@@ -59,6 +62,9 @@ export async function getSemester(
         async (session, headers) => {
             return axios.get(`${Endpoints.API_SEMESTERS}/${id}`, {
                 headers,
+                validateStatus: (status) => {
+                    return status === 200;
+                },
             });
         },
         session,
@@ -84,12 +90,11 @@ export async function updateSemester(
                 },
                 {
                     headers,
+                    validateStatus: (status) => {
+                        return status === 200;
+                    },
                 }
             );
-
-            if (apiResponse.status !== 200) {
-                throw apiResponse.data;
-            }
             return apiResponse;
         },
         session,
@@ -108,12 +113,11 @@ export async function deleteSemester(
                 `${Endpoints.API_SEMESTERS}/${id}`,
                 {
                     headers,
+                    validateStatus: (status) => {
+                        return status === 204;
+                    },
                 }
             );
-
-            if (apiResponse.status !== 204) {
-                throw apiResponse.data;
-            }
             return apiResponse;
         },
         session,

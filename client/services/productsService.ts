@@ -11,6 +11,9 @@ export async function getProducts(
         async (session, headers) => {
             return axios.get(Endpoints.API_PRODUCTS, {
                 headers,
+                validateStatus: (status) => {
+                    return status === 200;
+                },
             });
         },
         session,

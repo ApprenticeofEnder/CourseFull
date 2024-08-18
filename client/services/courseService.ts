@@ -11,32 +11,35 @@ export async function createCourse(
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            try {
-                const response = await axios.post(
-                    Endpoints.API_COURSES,
-                    {
-                        api_v1_course: {
-                            title,
-                            course_code,
-                            status,
-                            api_v1_semester_id,
-                        },
+            const response = await axios.post(
+                Endpoints.API_COURSES,
+                {
+                    api_v1_course: {
+                        title,
+                        course_code,
+                        status,
+                        api_v1_semester_id,
                     },
-                    {
-                        headers,
-                    }
-                );
+                },
+                {
+                    headers,
+                    validateStatus: (status) => {
+                        return status === 201;
+                    },
+                }
+            );
 
-                return response;
-            } catch (error: any) {
-                const { response }: AxiosError = error;
-                throw new Error(
-                    JSON.stringify({
-                        status: response?.status,
-                        data: response?.data,
-                    })
-                );
-            }
+            return response;
+            // try {
+            // } catch (error: any) {
+            //     const { response }: AxiosError = error;
+            //     throw new Error(
+            //         JSON.stringify({
+            //             status: response?.status,
+            //             data: response?.data,
+            //         })
+            //     );
+            // }
         },
         session,
         onFailure
@@ -51,6 +54,9 @@ export async function getCourses(
         async (session, headers) => {
             return axios.get(Endpoints.API_COURSES, {
                 headers,
+                validateStatus: (status) => {
+                    return status === 200;
+                },
             });
         },
         session,
@@ -67,6 +73,9 @@ export async function getCourse(
         async (session, headers) => {
             return axios.get(`${Endpoints.API_COURSES}/${id}`, {
                 headers,
+                validateStatus: (status) => {
+                    return status === 200;
+                },
             });
         },
         session,
@@ -92,12 +101,11 @@ export async function updateCourse(
                 },
                 {
                     headers,
+                    validateStatus: (status) => {
+                        return status === 200;
+                    },
                 }
             );
-
-            if (apiResponse.status !== 200) {
-                throw apiResponse.data;
-            }
             return apiResponse;
         },
         session,
@@ -116,12 +124,11 @@ export async function deleteCourse(
                 `${Endpoints.API_COURSES}/${id}`,
                 {
                     headers,
+                    validateStatus: (status) => {
+                        return status === 204;
+                    },
                 }
             );
-
-            if (apiResponse.status !== 204) {
-                throw apiResponse.data;
-            }
             return apiResponse;
         },
         session,

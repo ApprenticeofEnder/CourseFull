@@ -18,24 +18,28 @@ export async function createPayment(
                     quantity: cartItem.quantity,
                 };
             });
-            try {
-                const response = await axios.post(
-                    Endpoints.API_PAYMENTS,
-                    { products },
-                    {
-                        headers,
-                    }
-                );
-                return response;
-            } catch (error: any) {
-                const { response }: AxiosError = error;
-                throw new Error(
-                    JSON.stringify({
-                        status: response?.status,
-                        data: response?.data,
-                    })
-                );
-            }
+            const response = await axios.post(
+                Endpoints.API_PAYMENTS,
+                { products },
+                {
+                    headers,
+                    validateStatus: (status) => {
+                        return status === 200;
+                    },
+                }
+            );
+            return response;
+            // try {
+
+            // } catch (error: any) {
+            //     const { response }: AxiosError = error;
+            //     throw new Error(
+            //         JSON.stringify({
+            //             status: response?.status,
+            //             data: response?.data,
+            //         })
+            //     );
+            // }
         },
         session,
         onFailure

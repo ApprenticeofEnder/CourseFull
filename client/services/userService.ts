@@ -1,8 +1,9 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { supabase } from '@lib/supabase';
 import { apiErrorHandler, authenticatedApiErrorHandler } from '@lib/helpers';
 import { Endpoints } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
+import { error } from 'console';
 
 export async function createUser(
     first_name: string,
@@ -36,12 +37,17 @@ export async function createUser(
             },
         };
 
-        const apiResponse = await axios.post(Endpoints.API_USER, apiPostData);
-
-        if (apiResponse.status !== 201) {
-            console.error('Rails API error encountered.');
-            throw apiResponse.data;
-        }
+        const apiResponse = await axios
+            .post(Endpoints.API_USER, apiPostData, {
+                validateStatus: (status) => {
+                    return status === 201;
+                },
+            })
+            .catch((error: AxiosError) => {
+                console.error('Rails API error encountered.');
+                console.error(error.toJSON());
+                throw error;
+            });
         return apiResponse;
     }, onFailure);
 }
@@ -57,7 +63,7 @@ export async function login(
             password,
         });
         if (error) {
-            throw error.message;
+            throw new Error(error.message);
         }
         return undefined;
     }, onFailure);
@@ -71,11 +77,10 @@ export async function getProgress(
         async (session, headers) => {
             const apiResponse = await axios.get(Endpoints.API_PROGRESS, {
                 headers,
+                validateStatus: (status) => {
+                    return status === 200;
+                },
             });
-
-            if (apiResponse.status !== 200) {
-                throw apiResponse.data;
-            }
             return apiResponse;
         },
         session,
@@ -91,11 +96,10 @@ export async function getUserData(
         async (session, headers) => {
             const apiResponse = await axios.get(`${Endpoints.API_USER}/me`, {
                 headers,
+                validateStatus: (status) => {
+                    return status === 200;
+                },
             });
-
-            if (apiResponse.status !== 200) {
-                throw apiResponse.data;
-            }
             return apiResponse;
         },
         session,
@@ -123,12 +127,11 @@ export async function updateUserDetails(
                 },
                 {
                     headers,
+                    validateStatus: (status) => {
+                        return status === 200;
+                    },
                 }
             );
-
-            if (apiResponse.status !== 200) {
-                throw apiResponse.data;
-            }
             return apiResponse;
         },
         session,
@@ -141,16 +144,13 @@ export async function deleteUser(
     onFailure: (error: Error) => void
 ) {
     return authenticatedApiErrorHandler(
-        async (session) => {
+        async (session, headers) => {
             const apiResponse = await axios.delete(`${Endpoints.API_USER}/me`, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
+                headers,
+                validateStatus: (status) => {
+                    return status === 204;
                 },
             });
-
-            if (apiResponse.status !== 200) {
-                throw apiResponse.data;
-            }
             return apiResponse;
         },
         session,
