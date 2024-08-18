@@ -1,8 +1,13 @@
 'use client';
 
-import { Fragment, useEffect, useState, Suspense } from 'react';
+import { Fragment, useEffect, useState, Suspense, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
+import {
+    ArrowLeftIcon,
+    PencilIcon,
+    PlusIcon,
+    TrashIcon,
+} from '@heroicons/react/24/outline';
 import { Modal, Spinner, Tab, Tabs, useDisclosure } from '@nextui-org/react';
 
 import {
@@ -16,6 +21,7 @@ import {
 import Button from '@components/Button/Button';
 import DeliverableCard from '@components/Card/Deliverable';
 import CreateDeliverableModal from '@components/Modal/CreateDeliverable';
+import UpdateCourseModal from '@components/Modal/UpdateCourse';
 import UpdateDeliverableModal from '@components/Modal/UpdateDeliverable';
 
 import { ReadableStatus, semesterURL } from '@lib/helpers';
@@ -25,17 +31,16 @@ import { getCourse } from '@services/courseService';
 
 interface CoursePageProps extends SessionProps {}
 
-interface DeliverableTabsProps {
+interface DeliverableTabsProps extends SessionProps {
     deliverables: Deliverable[];
-    setCurrentDeliverable: (deliverable: Deliverable) => void;
-    updateModal: { onOpen: () => void };
 }
 
-function DeliverableTabs({
-    deliverables,
-    setCurrentDeliverable,
-    updateModal,
-}: DeliverableTabsProps) {
+function DeliverableTabs({ deliverables, session }: DeliverableTabsProps) {
+    const [currentDeliverable, setCurrentDeliverable] =
+        useState<Deliverable | null>(null);
+
+    const updateDeliverableModal = useDisclosure();
+
     const activeDeliverables: Deliverable[] = [];
     const completeDeliverables: Deliverable[] = [];
 
@@ -71,42 +76,56 @@ function DeliverableTabs({
     ];
 
     return (
-        (deliverables.length && (
-            <Tabs
-                aria-label="Deliverables"
-                classNames={{
-                    tabList:
-                        'bg-background-900 gap-6 w-full relative rounded-none p-0 border-b border-divider mb-4',
-                    cursor: 'w-full bg-primary-700',
-                    // tabContent:
-                    //     'group-data-[selected=true]:text-[#06b6d4]',
-                }}
-                fullWidth
-                items={deliverableTabs}
+        <Fragment>
+            {(deliverables.length && (
+                <Tabs
+                    aria-label="Deliverables"
+                    classNames={{
+                        tabList:
+                            'bg-background-900 gap-6 w-full relative rounded-none p-0 mb-4',
+                        cursor: 'w-full bg-primary-700',
+                        // tabContent:
+                        //     'group-data-[selected=true]:text-[#06b6d4]',
+                    }}
+                    fullWidth
+                    items={deliverableTabs}
+                >
+                    {(item) => (
+                        <Tab key={item.id} title={item.title}>
+                            <div className="flex flex-col gap-4 mb-10 ">
+                                <h2>
+                                    {item.title} ({item.deliverableList.length})
+                                </h2>
+                                {item.deliverableList.map(
+                                    (deliverable: Deliverable) => (
+                                        <DeliverableCard
+                                            {...deliverable}
+                                            handleEdit={() => {
+                                                setCurrentDeliverable(
+                                                    deliverable
+                                                );
+                                                updateDeliverableModal.onOpen();
+                                            }}
+                                            key={deliverable.id}
+                                        />
+                                    )
+                                )}
+                            </div>
+                        </Tab>
+                    )}
+                </Tabs>
+            )) || <p>No deliverables yet. Start by adding one!</p>}
+            <Modal
+                isOpen={updateDeliverableModal.isOpen}
+                onOpenChange={updateDeliverableModal.onOpenChange}
+                className="bg-sky-100"
             >
-                {(item) => (
-                    <Tab key={item.id} title={item.title}>
-                        <div className="flex flex-col gap-4 mb-10 ">
-                            <h2>
-                                {item.title} ({item.deliverableList.length})
-                            </h2>
-                            {item.deliverableList.map(
-                                (deliverable: Deliverable) => (
-                                    <DeliverableCard
-                                        {...deliverable}
-                                        handleEdit={() => {
-                                            setCurrentDeliverable(deliverable);
-                                            updateModal.onOpen();
-                                        }}
-                                        key={deliverable.id}
-                                    />
-                                )
-                            )}
-                        </div>
-                    </Tab>
-                )}
-            </Tabs>
-        )) || <p>No deliverables yet. Start by adding one!</p>
+                <UpdateDeliverableModal
+                    session={session}
+                    deliverable={currentDeliverable}
+                />
+            </Modal>
+        </Fragment>
     );
 }
 
@@ -121,11 +140,9 @@ function CoursePage() {
 
     const [course, setCourse] = useState<Course | null>(null);
     const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
-    const [currentDeliverable, setCurrentDeliverable] =
-        useState<Deliverable | null>(null);
 
-    const createModal = useDisclosure();
-    const updateModal = useDisclosure();
+    const createDeliverableModal = useDisclosure();
+    const updateCourseModal = useDisclosure();
 
     function goBack() {
         router.push(semesterURL(course?.api_v1_semester_id));
@@ -150,7 +167,7 @@ function CoursePage() {
         };
     }, [course, session]);
 
-    useEffect(() => {
+    useMemo(() => {
         setDeliverables(
             course?.deliverables?.sort((a, b) => {
                 return a.name.localeCompare(b.name);
@@ -158,84 +175,81 @@ function CoursePage() {
         );
     }, [course]);
 
-    return (
+    return session && course ? (
         <Fragment>
-            {session && course ? (
-                <Fragment>
-                    <Button
-                        startContent={<ArrowLeftIcon className="h-6 w-6" />}
-                        onPressEnd={goBack}
-                        className="my-4"
-                    />
-                    <h2 className="text-left font-bold">
-                        {course.course_code}
-                    </h2>
-                    <h2 className="text-left">{course.title}</h2>
-                    <div className="flex flex-col sm:flex-row sm:justify-between">
-                        <h3 className="text-left basis-1/2">
-                            {ReadableStatus(course.status)}
-                        </h3>
-                        <div className="flex basis-1/2 justify-between gap-8 sm:justify-end">
-                            <h3 className="text-left">
-                                Grade: {course.grade || '--'}%
-                            </h3>
-                            <h3 className="text-right">Goal: {course.goal}%</h3>
-                        </div>
-                    </div>
-                    <hr className="border-1 border-primary-100/50 my-2" />
-                    <div className="my-5 sm:my-10 flex flex-col-reverse gap-5 sm:gap-10 sm:flex-row justify-between">
-                        <div className="w-full sm:basis-1/4 my-auto">
-                            <Button
-                                endContent={
-                                    <PlusIcon className="h-6 w-6"></PlusIcon>
-                                }
-                                onPressEnd={createModal.onOpen}
-                                className="w-full top-1"
-                                buttonType="confirm"
-                            >
-                                Add Deliverable
-                            </Button>
-                        </div>
-
-                        <h3 className="sm:basis-3/4">
-                            You need <strong>{course.deliverable_goal}%</strong>{' '}
-                            (or better) on each deliverable to reach your goal!
-                        </h3>
-                    </div>
-                    <DeliverableTabs
-                        deliverables={deliverables}
-                        setCurrentDeliverable={setCurrentDeliverable}
-                        updateModal={updateModal}
-                    />
-                    <Modal
-                        isOpen={createModal.isOpen}
-                        onOpenChange={createModal.onOpenChange}
-                        className="bg-sky-100"
-                    >
-                        <CreateDeliverableModal
-                            session={session}
-                            api_v1_course_id={courseId}
-                        />
-                    </Modal>
-                    <Modal
-                        isOpen={updateModal.isOpen}
-                        onOpenChange={updateModal.onOpenChange}
-                        className="bg-sky-100"
-                    >
-                        <UpdateDeliverableModal
-                            session={session}
-                            deliverable={currentDeliverable}
-                        />
-                    </Modal>
-                </Fragment>
-            ) : (
-                <div className="flex justify-center">
-                    <div className="flex flex-col">
-                        <Spinner label="Loading..." size="lg" />
-                    </div>
+            <Button
+                startContent={<ArrowLeftIcon className="h-6 w-6" />}
+                onPressEnd={goBack}
+                className="my-4"
+            />
+            <h2 className="text-left font-bold">{course.course_code}</h2>
+            <h2 className="text-left">{course.title}</h2>
+            <div className="flex flex-col sm:flex-row sm:justify-between">
+                <h3 className="text-left basis-1/2">
+                    {ReadableStatus(course.status)}
+                </h3>
+                <div className="flex basis-1/2 justify-between gap-8 sm:justify-end">
+                    <h3 className="text-left">
+                        Grade: {course.grade || '--'}%
+                    </h3>
+                    <h3 className="text-right">Goal: {course.goal}%</h3>
                 </div>
-            )}
+            </div>
+            <div className="my-5 flex gap-4">
+                <Button
+                    className="top-1"
+                    endContent={<PlusIcon className="h-6 w-6" />}
+                    onPressEnd={createDeliverableModal.onOpen}
+                    buttonType="confirm"
+                >
+                    Add Deliverable
+                </Button>
+                <Button
+                    className="top-1"
+                    endContent={<PencilIcon className="h-6 w-6" />}
+                    onPressEnd={updateCourseModal.onOpen}
+                >
+                    Edit Course
+                </Button>
+                <Button
+                    className="top-1"
+                    endContent={<TrashIcon className="h-6 w-6" />}
+                    // onPressEnd={handleDeleteSemester}
+                    buttonType="danger"
+                >
+                    Delete Course
+                </Button>
+            </div>
+            <hr className="border-1 border-primary-100/50 my-2" />
+            <h3 className="my-5 sm:my-10">
+                You need <strong>{course.deliverable_goal}%</strong> (or better)
+                on each deliverable to reach your goal!
+            </h3>
+            <DeliverableTabs deliverables={deliverables} session={session} />
+            <Modal
+                isOpen={createDeliverableModal.isOpen}
+                onOpenChange={createDeliverableModal.onOpenChange}
+                className="bg-sky-100"
+            >
+                <CreateDeliverableModal
+                    session={session}
+                    api_v1_course_id={courseId}
+                />
+            </Modal>
+            <Modal
+                isOpen={updateCourseModal.isOpen}
+                onOpenChange={updateCourseModal.onOpenChange}
+                className="bg-sky-100"
+            >
+                <UpdateCourseModal session={session} course={course} />
+            </Modal>
         </Fragment>
+    ) : (
+        <div className="flex justify-center">
+            <div className="flex flex-col">
+                <Spinner label="Loading..." size="lg" />
+            </div>
+        </div>
     );
 }
 

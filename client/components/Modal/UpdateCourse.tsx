@@ -1,128 +1,89 @@
-// import { Fragment, useState } from 'react';
-// import {
-//     ModalContent,
-//     ModalHeader,
-//     ModalBody,
-//     ModalFooter,
-//     Input,
-// } from '@nextui-org/react';
-// import { Listbox, Transition } from '@headlessui/react';
+import { Fragment, useState } from 'react';
+import {
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+} from '@nextui-org/react';
 
-// import Button from '@components/Button/Button';
-// import ConfirmButton from '@components/Button/ConfirmButton';
-// import DisclosureButton from '@components/Button/DisclosureButton';
-// import { ItemStatus } from '@coursefull';
-// import { ReadableStatus } from '@lib/helpers';
-// import { SessionProps } from '@coursefull';
-// import { createCourse } from '@services/courseService';
+import Button from '@components/Button/Button';
+import { Course, ItemStatus, Semester } from '@coursefull';
+import { SessionProps } from '@coursefull';
+import SemesterForm from '../Form/SemesterForm';
+import { updateSemester } from '@services/semesterService';
+import CourseForm from '@components/Form/CourseForm';
+import { updateCourse } from '@services/courseService';
 
-// interface CourseModalProps extends SessionProps {
-//     api_v1_semester_id: string;
-// }
+interface EditCourseModalProps extends SessionProps {
+    course: Course | null;
+}
 
-// export default function CreateCourseModal({
-//     session,
-//     api_v1_semester_id,
-// }: CourseModalProps) {
-//     const [title, setTitle] = useState('');
-//     const [code, setCode] = useState('');
-//     const [status, setStatus] = useState<ItemStatus>(ItemStatus.ACTIVE);
+export default function UpdateSemesterModal({
+    session,
+    course,
+}: EditCourseModalProps) {
+    if (!course) {
+        return;
+    }
+    const [title, setTitle] = useState<string>(course.title);
+    const [courseCode, setCourseCode] = useState<string>(course.course_code);
+    const [status, setStatus] = useState<ItemStatus>(course.status);
 
-//     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-//     async function handleCreateCourse(onClose: CallableFunction) {
-//         setIsLoading(true);
-//         const { response, success } = await createCourse(
-//             {
-//                 title,
-//                 course_code: code,
-//                 status,
-//                 api_v1_semester_id,
-//             },
-//             session,
-//             (error) => {
-//                 alert(`Something went wrong: ${error}`);
-//                 setIsLoading(false);
-//             }
-//         );
-//         if (!success) {
-//             return;
-//         }
-//         onClose();
-//         location.reload();
-//     }
+    async function handleUpdateCourse(onClose: CallableFunction) {
+        setIsLoading(true);
+        const { success } = await updateCourse(
+            {
+                id: course?.id,
+                title,
+                course_code: courseCode,
+                status,
+            },
+            session,
+            (error) => {
+                alert(`Something went wrong: ${error}`);
+                setIsLoading(false);
+            }
+        );
+        if (!success) {
+            return;
+        }
+        onClose();
+        location.reload();
+    }
 
-//     return (
-//         <ModalContent>
-//             {(onClose) => (
-//                 <Fragment>
-//                     <ModalHeader className="flex flex-col gap-1">
-//                         Create New Course
-//                     </ModalHeader>
-//                     <ModalBody>
-//                         <Input
-//                             type="text"
-//                             label="Course Title"
-//                             placeholder="Introduction to Psychology..."
-//                             value={title}
-//                             onValueChange={setTitle}
-//                         />
-//                         <Input
-//                             type="text"
-//                             label="Course Code"
-//                             placeholder="PSYC 1001..."
-//                             value={code}
-//                             onValueChange={setCode}
-//                         />
-//                         <Listbox value={status} onChange={setStatus}>
-//                             <Listbox.Button
-//                                 as={DisclosureButton}
-//                                 className="w-full my-2"
-//                             >
-//                                 Status: {ReadableStatus(status)}
-//                             </Listbox.Button>
-//                             <Transition
-//                                 enter="transition ease-out duration-200"
-//                                 enterFrom="opacity-0"
-//                                 enterTo="opacity-100"
-//                                 leave="transition ease-in duration-200"
-//                                 leaveFrom="opacity-100"
-//                                 leaveTo="opacity-0"
-//                             >
-//                                 <Listbox.Options className="w-full flex justify-center">
-//                                     <div className="w-3/4">
-//                                         {[
-//                                             ItemStatus.ACTIVE,
-//                                             ItemStatus.COMPLETE,
-//                                         ].map((status) => {
-//                                             return (
-//                                                 <Listbox.Option
-//                                                     as={Button}
-//                                                     value={status}
-//                                                     className="w-full my-2 mx-auto"
-//                                                 >
-//                                                     {ReadableStatus(status)}
-//                                                 </Listbox.Option>
-//                                             );
-//                                         })}
-//                                     </div>
-//                                 </Listbox.Options>
-//                             </Transition>
-//                         </Listbox>
-//                     </ModalBody>
-//                     <ModalFooter>
-//                         <Button onPress={onClose}>Close</Button>
-//                         <ConfirmButton
-//                             onPress={() => {
-//                                 handleCreateCourse(onClose);
-//                             }}
-//                             isLoading={isLoading}
-//                         >
-//                             Create!
-//                         </ConfirmButton>
-//                     </ModalFooter>
-//                 </Fragment>
-//             )}
-//         </ModalContent>
-//     );
-// }
+    return (
+        <ModalContent>
+            {(onClose) => (
+                <Fragment>
+                    <ModalHeader className="flex flex-col gap-1">
+                        Edit Course
+                    </ModalHeader>
+                    <ModalBody>
+                        <CourseForm
+                            title={title}
+                            setTitle={setTitle}
+                            code={courseCode}
+                            setCode={setCourseCode}
+                            status={status}
+                            setStatus={setStatus}
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button onPress={onClose}>Close</Button>
+                        <Button
+                            buttonType="confirm"
+                            onPress={() => {
+                                handleUpdateCourse(onClose);
+                            }}
+                            isLoading={isLoading}
+                        >
+                            Save
+                        </Button>
+                    </ModalFooter>
+                </Fragment>
+            )}
+        </ModalContent>
+    );
+}

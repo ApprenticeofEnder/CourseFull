@@ -73,3 +73,34 @@ export async function getCourse(
         onFailure
     );
 }
+
+export async function updateCourse(
+    { id, title, course_code, status }: Partial<Course>,
+    session: Session | null,
+    onFailure: (error: Error) => void
+) {
+    return authenticatedApiErrorHandler(
+        async (session, headers) => {
+            const apiResponse = await axios.put(
+                `${Endpoints.API_COURSES}/${id}`,
+                {
+                    api_v1_course: {
+                        title,
+                        course_code,
+                        status,
+                    },
+                },
+                {
+                    headers,
+                }
+            );
+
+            if (apiResponse.status !== 200) {
+                throw apiResponse.data;
+            }
+            return apiResponse;
+        },
+        session,
+        onFailure
+    );
+}

@@ -136,7 +136,12 @@ function SemesterPage() {
                                 ></CourseCard>
                             ))}
                         </div>
-                    )) || <p>No courses</p>}
+                    )) || (
+                        <p>
+                            Looks like you don't have any courses. Time to add
+                            some!
+                        </p>
+                    )}
                     <Modal
                         isOpen={createModal.isOpen}
                         onOpenChange={createModal.onOpenChange}

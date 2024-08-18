@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { AxiosResponse } from 'axios';
-import { ItemStatus } from '@/enums.d';
+import { ItemStatus } from '@coursefull/enums.d';
 
 export interface ChildrenProps {
     children: ReactNode;
