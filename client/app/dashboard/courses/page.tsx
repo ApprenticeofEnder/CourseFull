@@ -98,7 +98,11 @@ function DeliverableTabs({ deliverables, session }: DeliverableTabsProps) {
                     items={deliverableTabs}
                 >
                     {(item) => (
-                        <Tab key={item.id} title={item.title}>
+                        <Tab
+                            key={item.id}
+                            title={item.title}
+                            textValue={item.title}
+                        >
                             <div className="flex flex-col gap-4 mb-10 ">
                                 <h2>
                                     {item.title} ({item.deliverableList.length})
@@ -174,6 +178,7 @@ function CoursePage() {
     let mounted = useRef(true);
 
     useEffect(() => {
+        mounted.current = true;
         if (course || !session) {
             return;
         }

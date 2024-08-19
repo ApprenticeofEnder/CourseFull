@@ -37,20 +37,6 @@ function Courses({ courses, session }: CoursesProps) {
 
     const updateCourseModal = useDisclosure();
 
-    async function handleDeleteCourse(course: Course) {
-        const confirmDelete = confirm(
-            `Are you sure you want to delete ${course.course_code}? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.`
-        );
-        if (!confirmDelete) {
-            return;
-        }
-        await deleteCourse(course.id!, session, (error) => {
-            alert(`Something went wrong: ${error.message}`);
-        });
-        // We're going to reload both ways regardless, so no need to look for success/fail
-        location.reload();
-    }
-
     return (
         <Fragment>
             {(courses.length && (
@@ -62,9 +48,10 @@ function Courses({ courses, session }: CoursesProps) {
                                 setCurrentCourse(course);
                                 updateCourseModal.onOpen();
                             }}
-                            handleDelete={async () => {
-                                await handleDeleteCourse(course);
+                            handleDelete={() => {
+                                location.reload();
                             }}
+                            session={session}
                             key={course.id}
                         />
                     ))}
@@ -127,6 +114,7 @@ function SemesterPage() {
     let mounted = useRef(true);
 
     useEffect(() => {
+        mounted.current = true;
         if (semester || !session) {
             return;
         }

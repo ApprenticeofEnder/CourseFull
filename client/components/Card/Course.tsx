@@ -1,7 +1,12 @@
 'use client';
 import { Image } from '@nextui-org/react';
 
-import { Course, DeletableProps, EditableProps } from '@coursefull';
+import {
+    Course,
+    DeletableProps,
+    EditableProps,
+    SessionProps,
+} from '@coursefull';
 
 import LinkButton from '@components/Button/LinkButton';
 import Button from '@components/Button/Button';
@@ -15,8 +20,13 @@ import {
 } from '@lib/helpers';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { deleteCourse } from '@services/courseService';
 
-interface CourseCardProps extends Course, DeletableProps, EditableProps {}
+interface CourseCardProps
+    extends Course,
+        DeletableProps,
+        EditableProps,
+        SessionProps {}
 
 export default function CourseCard({
     id,
@@ -25,10 +35,25 @@ export default function CourseCard({
     status,
     goal,
     grade,
+    session,
     handleEdit,
     handleDelete,
 }: CourseCardProps) {
     const [deleteLoading, setDeleteLoading] = useState(false);
+
+    async function handleDeleteCourse() {
+        const confirmDelete = confirm(
+            `Are you sure you want to delete ${course_code}? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.`
+        );
+        if (!confirmDelete) {
+            return;
+        }
+        setDeleteLoading(true);
+        await deleteCourse(id!, session, (error) => {
+            alert(`Something went wrong: ${error.message}`);
+        });
+        handleDelete();
+    }
 
     let bgColour = 'bg-primary-800';
     if (goal === undefined || grade === undefined || grade === 0) {
@@ -73,10 +98,7 @@ export default function CourseCard({
                 <Button
                     className="top-1 basis-1/2"
                     endContent={<TrashIcon className="h-6 w-6" />}
-                    onPressEnd={() => {
-                        setDeleteLoading(true);
-                        handleDelete();
-                    }}
+                    onPressEnd={handleDeleteCourse}
                     buttonType="danger"
                     isLoading={deleteLoading}
                 >
