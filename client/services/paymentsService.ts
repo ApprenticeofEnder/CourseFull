@@ -1,13 +1,13 @@
-import { Endpoints } from '@coursefull';
+import { APIOnFailure, Endpoints } from '@coursefull';
 import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { CartItem } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 export async function createPayment(
     cart: CartItem[],
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
@@ -29,17 +29,6 @@ export async function createPayment(
                 }
             );
             return response;
-            // try {
-
-            // } catch (error: any) {
-            //     const { response }: AxiosError = error;
-            //     throw new Error(
-            //         JSON.stringify({
-            //             status: response?.status,
-            //             data: response?.data,
-            //         })
-            //     );
-            // }
         },
         session,
         onFailure

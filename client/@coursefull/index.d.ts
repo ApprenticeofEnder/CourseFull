@@ -98,5 +98,10 @@ export interface AuthHeaders {
     Authorization: string;
 }
 
+export type APIOnFailure = (
+    error: AxiosError | Error,
+    cameFromAxios: boolean
+) => void;
+
 export * from './cart.d';
 export * from './enums.d';

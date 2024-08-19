@@ -1,6 +1,11 @@
-import { Deliverable, EditableProps } from '@coursefull';
+import {
+    DeletableProps,
+    Deliverable,
+    EditableProps,
+    SessionProps,
+} from '@coursefull';
 import Button from '@components/Button/Button';
-import { PencilIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { ItemStatus } from '@coursefull';
 import {
     ReadableStatus,
@@ -8,8 +13,13 @@ import {
     determineGradeBGColour,
     determineGradeTextColour,
 } from '@lib/helpers';
+import { deleteDeliverable } from '@services/deliverableService';
 
-interface DeliverableCardProps extends Deliverable, EditableProps {}
+interface DeliverableCardProps
+    extends Deliverable,
+        DeletableProps,
+        EditableProps,
+        SessionProps {}
 
 export default function DeliverableCard({
     id,
@@ -18,7 +28,9 @@ export default function DeliverableCard({
     weight,
     status,
     goal,
+    session,
     handleEdit,
+    handleDelete,
 }: DeliverableCardProps) {
     let bgColour = 'bg-primary-800';
     let textColour = '';
@@ -28,6 +40,23 @@ export default function DeliverableCard({
         bgColour = determineGradeBGColour(goal, mark);
         textColour = determineGradeTextColour(goal, mark);
     }
+
+    async function handleDeleteDeliverable() {
+        const confirmDelete = confirm(
+            `Are you sure you want to delete ${name}?`
+        );
+        if (!confirmDelete) {
+            return;
+        }
+        const { success } = await deleteDeliverable(id!, session, (error) => {
+            alert(`Something went wrong: ${error.message}`);
+        });
+        if (!success) {
+            return;
+        }
+        handleDelete();
+    }
+
     return (
         <div
             className={classNames(
@@ -49,14 +78,24 @@ export default function DeliverableCard({
                     </div>
                 </div>
 
-                <div className="flex flex-col justify-center gap-2 w-32">
-                    <Button
-                        endContent={<PencilIcon className="h-6 w-6" />}
-                        onPressEnd={handleEdit}
-                        className="top-1"
-                    >
-                        Edit
-                    </Button>
+                <div className="flex flex-col justify-center">
+                    <div className="flex flex-col sm:flex-row gap-2">
+                        <Button
+                            endContent={<PencilIcon className="h-6 w-6" />}
+                            onPressEnd={handleEdit}
+                            className="top-1"
+                        >
+                            <span className="hidden sm:inline">Edit</span>
+                        </Button>
+                        <Button
+                            endContent={<TrashIcon className="h-6 w-6" />}
+                            onPressEnd={handleDeleteDeliverable}
+                            className="top-1"
+                            buttonType="danger"
+                        >
+                            <span className="hidden sm:inline">Delete</span>
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

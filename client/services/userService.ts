@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { supabase } from '@lib/supabase';
 import { apiErrorHandler, authenticatedApiErrorHandler } from '@lib/helpers';
-import { Endpoints } from '@coursefull';
+import { APIOnFailure, Endpoints } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 import { error } from 'console';
 
@@ -10,7 +10,7 @@ export async function createUser(
     last_name: string,
     email: string,
     password: string,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return apiErrorHandler(async () => {
         const supabaseResponse = await supabase.auth.signUp({
@@ -55,7 +55,7 @@ export async function createUser(
 export async function login(
     email: string,
     password: string,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return apiErrorHandler(async () => {
         const { error } = await supabase.auth.signInWithPassword({
@@ -69,10 +69,7 @@ export async function login(
     }, onFailure);
 }
 
-export async function getProgress(
-    session: Session,
-    onFailure: (error: Error) => void
-) {
+export async function getProgress(session: Session, onFailure: APIOnFailure) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.get(Endpoints.API_PROGRESS, {
@@ -88,10 +85,7 @@ export async function getProgress(
     );
 }
 
-export async function getUserData(
-    session: Session,
-    onFailure: (error: Error) => void
-) {
+export async function getUserData(session: Session, onFailure: APIOnFailure) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.get(`${Endpoints.API_USER}/me`, {
@@ -112,7 +106,7 @@ export async function updateUserDetails(
     last_name: string,
     email: string,
     session: Session,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
@@ -139,10 +133,7 @@ export async function updateUserDetails(
     );
 }
 
-export async function deleteUser(
-    session: Session,
-    onFailure: (error: Error) => void
-) {
+export async function deleteUser(session: Session, onFailure: APIOnFailure) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.delete(`${Endpoints.API_USER}/me`, {

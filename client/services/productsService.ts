@@ -1,11 +1,11 @@
-import { Endpoints } from '@coursefull';
+import { APIOnFailure, Endpoints } from '@coursefull';
 import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 export async function getProducts(
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {

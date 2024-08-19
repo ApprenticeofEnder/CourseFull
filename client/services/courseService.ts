@@ -1,4 +1,4 @@
-import { Endpoints, ItemStatus } from '@coursefull';
+import { APIOnFailure, Endpoints, ItemStatus } from '@coursefull';
 import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Course } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
@@ -7,7 +7,7 @@ import axios, { AxiosError } from 'axios';
 export async function createCourse(
     { title, course_code, status, api_v1_semester_id }: Course,
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
@@ -30,16 +30,6 @@ export async function createCourse(
             );
 
             return response;
-            // try {
-            // } catch (error: any) {
-            //     const { response }: AxiosError = error;
-            //     throw new Error(
-            //         JSON.stringify({
-            //             status: response?.status,
-            //             data: response?.data,
-            //         })
-            //     );
-            // }
         },
         session,
         onFailure
@@ -48,7 +38,7 @@ export async function createCourse(
 
 export async function getCourses(
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
@@ -67,7 +57,7 @@ export async function getCourses(
 export async function getCourse(
     id: string,
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
@@ -86,7 +76,7 @@ export async function getCourse(
 export async function updateCourse(
     { id, title, course_code, status }: Partial<Course>,
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
@@ -116,7 +106,7 @@ export async function updateCourse(
 export async function deleteCourse(
     id: string,
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {

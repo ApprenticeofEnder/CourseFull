@@ -111,11 +111,15 @@ function DeliverableTabs({ deliverables, session }: DeliverableTabsProps) {
                                     (deliverable: Deliverable) => (
                                         <DeliverableCard
                                             {...deliverable}
+                                            session={session}
                                             handleEdit={() => {
                                                 setCurrentDeliverable(
                                                     deliverable
                                                 );
                                                 updateDeliverableModal.onOpen();
+                                            }}
+                                            handleDelete={() => {
+                                                location.reload();
                                             }}
                                             key={deliverable.id}
                                         />

@@ -4,6 +4,7 @@ import {
     ItemStatus,
     Endpoints,
     AuthHeaders,
+    APIOnFailure,
 } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 import { Key } from 'react';
@@ -100,7 +101,7 @@ export async function authenticatedApiErrorHandler(
         headers: Partial<AuthHeaders>
     ) => Promise<AxiosResponse | undefined>,
     session: Session | null,
-    onFailure: (error: AxiosError | Error, cameFromAxios: boolean) => void
+    onFailure: APIOnFailure
 ): Promise<APIServiceResponse> {
     try {
         if (!session) {
@@ -122,7 +123,7 @@ export async function authenticatedApiErrorHandler(
 
 export async function apiErrorHandler(
     apiCall: () => Promise<AxiosResponse | undefined>,
-    onFailure: (error: AxiosError | Error, cameFromAxios: boolean) => void
+    onFailure: APIOnFailure
 ): Promise<APIServiceResponse> {
     try {
         const apiResponse = await apiCall();

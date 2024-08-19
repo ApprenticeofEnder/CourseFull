@@ -1,6 +1,6 @@
 'use client';
 import axios, { AxiosResponse } from 'axios';
-import { Endpoints, ItemStatus } from '@coursefull';
+import { APIOnFailure, Endpoints, ItemStatus } from '@coursefull';
 import { authenticatedApiErrorHandler, semesterURL } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import { Semester } from '@coursefull';
@@ -8,7 +8,7 @@ import { Semester } from '@coursefull';
 export async function createSemester(
     { name, status, goal }: Semester,
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
@@ -37,7 +37,7 @@ export async function createSemester(
 
 export async function getSemesters(
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
@@ -56,7 +56,7 @@ export async function getSemesters(
 export async function getSemester(
     id: string,
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
@@ -75,7 +75,7 @@ export async function getSemester(
 export async function updateSemester(
     { id, name, status, goal }: Semester,
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
@@ -105,7 +105,7 @@ export async function updateSemester(
 export async function deleteSemester(
     id: string,
     session: Session | null,
-    onFailure: (error: Error) => void
+    onFailure: APIOnFailure
 ) {
     return authenticatedApiErrorHandler(
         async (session, headers) => {

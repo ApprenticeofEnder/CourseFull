@@ -80,7 +80,9 @@ export default function AccountDropdown() {
                         className="top-1"
                     >
                         <span className="sr-only">Open user menu</span>
-                        <div className="text-sm">{username}</div>
+                        <div className="text-sm hidden md:inline">
+                            {username}
+                        </div>
                     </Menu.Button>
                 </div>
                 <Transition
