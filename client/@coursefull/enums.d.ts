@@ -10,6 +10,7 @@ export enum Endpoints {
     PRODUCTS = '/products',
     CHECKOUT = '/payments/checkout',
     SETTINGS = '/settings',
+    CONTACT = '/contact',
     API_PROGRESS = '/api/v1/users/me/progress',
     API_SEMESTERS = '/api/v1/semesters',
     API_COURSES = '/api/v1/courses',

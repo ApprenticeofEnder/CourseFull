@@ -34,7 +34,7 @@ export default function CourseFullNavbar() {
             color: 'foreground',
         },
         {
-            label: 'Guides (Coming Soon!)',
+            label: 'Guides',
             href: '#',
             disabled: true,
             color: 'foreground',
@@ -55,7 +55,7 @@ export default function CourseFullNavbar() {
             <NavbarContent>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-                    className="sm:hidden"
+                    className="md:hidden"
                 />
                 <NavbarBrand>
                     <p className="font-bold text-inherit sm:hidden">
@@ -78,7 +78,7 @@ export default function CourseFullNavbar() {
             </NavbarContent>
             {session && (
                 <NavbarContent
-                    className="hidden sm:flex gap-4"
+                    className="hidden md:flex gap-4"
                     justify="center"
                 >
                     <NavbarItem>
@@ -90,14 +90,18 @@ export default function CourseFullNavbar() {
                             Home
                         </Link>
                     </NavbarItem>
-                    <NavbarItem>
-                        <Link color="foreground" href="#" isDisabled>
-                            Guides (Coming Soon!)
-                        </Link>
-                    </NavbarItem>
                     <NavbarItem isActive>
                         <Link href={Endpoints.PRODUCTS} underline="hover">
                             Products
+                        </Link>
+                    </NavbarItem>
+                    <NavbarItem>
+                        <Link
+                            color="foreground"
+                            href={Endpoints.CONTACT}
+                            underline="hover"
+                        >
+                            Contact Us
                         </Link>
                     </NavbarItem>
                 </NavbarContent>

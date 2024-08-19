@@ -26,6 +26,7 @@ export default function ProductCard({
     const router = useRouter();
 
     const [quantity, setQuantity] = useState(0);
+    const [cardLoading, setCardLoading] = useState(false);
 
     const { cart, dispatch } = useCart()!;
 
@@ -35,6 +36,7 @@ export default function ProductCard({
 
     const addToCart = () => {
         setQuantity(0);
+        setCardLoading(true);
         dispatch({
             type: 'ADD_PRODUCT',
             payload: {
@@ -110,6 +112,7 @@ export default function ProductCard({
                 className="w-full mt-4"
                 onPressEnd={addToCart}
                 isDisabled={quantity === 0}
+                isLoading={cardLoading}
                 buttonType="confirm"
             >
                 Add to Cart
