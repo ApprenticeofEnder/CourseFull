@@ -8,7 +8,6 @@ import {
     SessionProps,
 } from '@coursefull';
 
-import LinkButton from '@components/Button/LinkButton';
 import Button from '@components/Button/Button';
 import Link from '@components/Link';
 
@@ -21,6 +20,7 @@ import {
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { deleteCourse } from '@services/courseService';
+import { useRouter } from 'next/navigation';
 
 interface CourseCardProps
     extends Course,
@@ -39,6 +39,8 @@ export default function CourseCard({
     handleEdit,
     handleDelete,
 }: CourseCardProps) {
+    const router = useRouter();
+
     const [deleteLoading, setDeleteLoading] = useState(false);
 
     async function handleDeleteCourse() {
@@ -61,12 +63,18 @@ export default function CourseCard({
     } else {
         bgColour = determineGradeBGColour(goal, grade);
     }
+
+    const href = courseURL(id);
+
     return (
         <div
             className={classNames(
-                'rounded-lg p-2 border-solid border-2 border-primary-500/10',
+                'rounded-lg p-2 border-solid border-2 border-primary-500/10 hover:bg-primary-900 hover:cursor-pointer transition-colors',
                 bgColour
             )}
+            onClick={() => {
+                router.push(href);
+            }}
         >
             <div className="flex justify-between">
                 <h4>Goal: {goal}%</h4>
@@ -81,7 +89,7 @@ export default function CourseCard({
                 />
             </div>
 
-            <Link href={courseURL(id)} color="foreground" underline="hover">
+            <Link href={href} color="foreground" underline="hover">
                 <h3 className="text-left">{course_code}</h3>
             </Link>
             <h4 className="text-left">{title}</h4>

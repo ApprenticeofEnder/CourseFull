@@ -11,11 +11,22 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     ArrowLeftIcon,
+    CogIcon,
     PencilIcon,
     PlusIcon,
     TrashIcon,
 } from '@heroicons/react/24/outline';
-import { Modal, Spinner, Tab, Tabs, useDisclosure } from '@nextui-org/react';
+import {
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Modal,
+    Spinner,
+    Tab,
+    Tabs,
+    useDisclosure,
+} from '@nextui-org/react';
 
 import {
     Endpoints,
@@ -217,7 +228,43 @@ function CoursePage() {
             >
                 Go Back
             </Button>
-            <h2 className="text-left font-bold">{course.course_code}</h2>
+            <div className="flex gap-4 justify-between">
+                <h2 className="text-left font-bold">{course.course_code}</h2>
+                <Dropdown>
+                    <DropdownTrigger>
+                        <Button
+                            className="top-1"
+                            endContent={<CogIcon className="h-6 w-6" />}
+                        >
+                            <span className="sr-only">
+                                Open semester options
+                            </span>
+                        </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                        aria-label="Semester options"
+                        itemClasses={{ base: ['p-4'] }}
+                    >
+                        <DropdownItem
+                            key="edit"
+                            endContent={<PencilIcon className="h-6 w-6" />}
+                            className="bg-primary-800 data-[hover=true]:bg-primary-700"
+                            onPressEnd={updateCourseModal.onOpen}
+                        >
+                            Edit Semester
+                        </DropdownItem>
+                        <DropdownItem
+                            key="delete"
+                            endContent={<TrashIcon className="h-6 w-6" />}
+                            className="text-danger-800 bg-danger-100 data-[hover=true]:bg-danger-200"
+                            onPressEnd={handleDeleteCourse}
+                        >
+                            Delete Semester
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            </div>
+
             <h2 className="text-left">{course.title}</h2>
             <div className="flex flex-col sm:flex-row sm:justify-between">
                 <h3 className="text-left basis-1/2">
@@ -230,36 +277,23 @@ function CoursePage() {
                     <h3 className="text-right">Goal: {course.goal}%</h3>
                 </div>
             </div>
-            <div className="my-5 flex gap-4">
+
+            <hr className="border-1 border-primary-100/50 my-2" />
+            <div className="my-5 sm:my-10 flex flex-col sm:flex-row gap-4">
                 <Button
-                    className="top-1"
+                    className="top-1 sm:basis-1/2"
                     endContent={<PlusIcon className="h-6 w-6" />}
                     onPressEnd={createDeliverableModal.onOpen}
                     buttonType="confirm"
                 >
                     Add Deliverable
                 </Button>
-                <Button
-                    className="top-1"
-                    endContent={<PencilIcon className="h-6 w-6" />}
-                    onPressEnd={updateCourseModal.onOpen}
-                >
-                    Edit Course
-                </Button>
-                <Button
-                    className="top-1"
-                    endContent={<TrashIcon className="h-6 w-6" />}
-                    onPressEnd={handleDeleteCourse}
-                    buttonType="danger"
-                >
-                    Delete Course
-                </Button>
+                <h3>
+                    You need <strong>{course.deliverable_goal}%</strong> (or
+                    better) on each deliverable to reach your goal!
+                </h3>
             </div>
-            <hr className="border-1 border-primary-100/50 my-2" />
-            <h3 className="my-5 sm:my-10">
-                You need <strong>{course.deliverable_goal}%</strong> (or better)
-                on each deliverable to reach your goal!
-            </h3>
+
             <DeliverableTabs deliverables={deliverables} session={session} />
             <Modal
                 isOpen={createDeliverableModal.isOpen}

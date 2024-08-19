@@ -57,6 +57,7 @@ export default function SemesterForm({
                     onStatusChanged(newStatus, setStatus);
                 }}
                 data-testid="semester-status"
+                itemClasses={{ base: 'data-[hover=true]:bg-primary-700 p-4' }}
             >
                 {(item) => (
                     <ListboxItem

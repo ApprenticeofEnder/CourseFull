@@ -75,6 +75,7 @@ export default function DeliverableForm({
                     }
                     onStatusChanged(newStatus, setStatus);
                 }}
+                itemClasses={{ base: 'data-[hover=true]:bg-primary-700 p-4' }}
             >
                 {(item) => (
                     <ListboxItem

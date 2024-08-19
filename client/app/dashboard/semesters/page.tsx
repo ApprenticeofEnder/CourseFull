@@ -5,8 +5,17 @@ import {
     PlusIcon,
     TrashIcon,
     PencilIcon,
+    CogIcon,
 } from '@heroicons/react/24/outline';
-import { Modal, Spinner, useDisclosure } from '@nextui-org/react';
+import {
+    Modal,
+    Spinner,
+    useDisclosure,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+} from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Fragment,
@@ -26,7 +35,6 @@ import UpdateCourseModal from '@components/Modal/UpdateCourse';
 import { ReadableStatus } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
 import { deleteSemester, getSemester } from '@services/semesterService';
-import { deleteCourse } from '@services/courseService';
 
 interface CoursesProps extends SessionProps {
     courses: Course[];
@@ -151,8 +159,45 @@ function SemesterPage() {
                     >
                         Go Back
                     </Button>
-                    <div className="flex mb-2 gap-4">
+                    <div className="flex mb-2 gap-4 justify-between">
                         <h2 className="text-left font-bold">{semester.name}</h2>
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button
+                                    className="top-1"
+                                    endContent={<CogIcon className="h-6 w-6" />}
+                                >
+                                    <span className="sr-only">
+                                        Open semester options
+                                    </span>
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                aria-label="Semester options"
+                                itemClasses={{ base: ['p-4'] }}
+                            >
+                                <DropdownItem
+                                    key="edit"
+                                    endContent={
+                                        <PencilIcon className="h-6 w-6" />
+                                    }
+                                    className="bg-primary-800 data-[hover=true]:bg-primary-700"
+                                    onPressEnd={updateSemesterModal.onOpen}
+                                >
+                                    Edit Semester
+                                </DropdownItem>
+                                <DropdownItem
+                                    key="delete"
+                                    endContent={
+                                        <TrashIcon className="h-6 w-6" />
+                                    }
+                                    className="text-danger-800 bg-danger-100 data-[hover=true]:bg-danger-200"
+                                    onPressEnd={handleDeleteSemester}
+                                >
+                                    Delete Semester
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </div>
 
                     <div className="flex flex-row gap-4">
@@ -160,6 +205,7 @@ function SemesterPage() {
                         <h3>|</h3>
                         <h3>Goal: {semester.goal}%</h3>
                     </div>
+                    <hr className="border-1 border-primary-100/50 my-2" />
                     <div className="my-5 flex gap-4">
                         <Button
                             className="top-1"
@@ -169,23 +215,7 @@ function SemesterPage() {
                         >
                             Add Course
                         </Button>
-                        <Button
-                            className="top-1"
-                            endContent={<PencilIcon className="h-6 w-6" />}
-                            onPressEnd={updateSemesterModal.onOpen}
-                        >
-                            Edit Semester
-                        </Button>
-                        <Button
-                            className="top-1"
-                            endContent={<TrashIcon className="h-6 w-6" />}
-                            onPressEnd={handleDeleteSemester}
-                            buttonType="danger"
-                        >
-                            Delete Semester
-                        </Button>
                     </div>
-                    <hr className="border-1 border-primary-100/50 my-2" />
                     <Courses courses={courses} session={session} />
                     <Modal
                         isOpen={createCourseModal.isOpen}
