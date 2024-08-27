@@ -1,6 +1,6 @@
-import { defineConfig, configDefaults } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
     plugins: [react()],
@@ -13,6 +13,8 @@ export default defineConfig({
             '@coursefull': path.resolve(__dirname, '@coursefull', 'index.d'),
             '@lib': path.resolve(__dirname, 'lib'),
             '@vitest.setup': path.resolve(__dirname, 'vitest.setup.ts'),
+            '@playwright': path.resolve(__dirname, 'playwright'),
+            '@services': path.resolve(__dirname, 'services'),
             '@': path.resolve(__dirname),
         },
     },

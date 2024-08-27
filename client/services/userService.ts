@@ -1,9 +1,8 @@
-import axios, { AxiosError } from 'axios';
-import { supabase } from '@lib/supabase';
+import { APIOnFailure, APIServiceResponse, Endpoints } from '@coursefull';
 import { apiErrorHandler, authenticatedApiErrorHandler } from '@lib/helpers';
-import { APIOnFailure, Endpoints } from '@coursefull';
+import { supabase } from '@lib/supabase';
 import { Session } from '@supabase/supabase-js';
-import { error } from 'console';
+import axios, { AxiosError } from 'axios';
 
 export async function createUser(
     first_name: string,
@@ -11,7 +10,7 @@ export async function createUser(
     email: string,
     password: string,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return apiErrorHandler(async () => {
         const supabaseResponse = await supabase.auth.signUp({
             email,
@@ -56,7 +55,7 @@ export async function login(
     email: string,
     password: string,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return apiErrorHandler(async () => {
         const { error } = await supabase.auth.signInWithPassword({
             email,
@@ -69,7 +68,10 @@ export async function login(
     }, onFailure);
 }
 
-export async function getProgress(session: Session, onFailure: APIOnFailure) {
+export async function getProgress(
+    session: Session,
+    onFailure: APIOnFailure
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.get(Endpoints.API_PROGRESS, {
@@ -85,7 +87,10 @@ export async function getProgress(session: Session, onFailure: APIOnFailure) {
     );
 }
 
-export async function getUserData(session: Session, onFailure: APIOnFailure) {
+export async function getUserData(
+    session: Session,
+    onFailure: APIOnFailure
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.get(`${Endpoints.API_USER}/me`, {
@@ -107,7 +112,7 @@ export async function updateUserDetails(
     email: string,
     session: Session,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.put(
@@ -133,7 +138,10 @@ export async function updateUserDetails(
     );
 }
 
-export async function deleteUser(session: Session, onFailure: APIOnFailure) {
+export async function deleteUser(
+    session: Session,
+    onFailure: APIOnFailure
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.delete(`${Endpoints.API_USER}/me`, {

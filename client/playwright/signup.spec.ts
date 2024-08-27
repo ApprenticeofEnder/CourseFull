@@ -1,11 +1,5 @@
-import {
-    createUserData,
-    createValidFields,
-    test,
-    expect,
-    type Page,
-    Locator,
-} from '@playwright/conftest';
+import { createUserData, createValidFields } from '@lib/test-helpers';
+import { expect, Locator, test, type Page } from '@playwright/conftest';
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');

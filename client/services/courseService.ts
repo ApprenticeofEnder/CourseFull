@@ -1,14 +1,18 @@
-import { APIOnFailure, Endpoints, ItemStatus } from '@coursefull';
+import {
+    APIOnFailure,
+    APIServiceResponse,
+    Course,
+    Endpoints,
+} from '@coursefull';
 import { authenticatedApiErrorHandler } from '@lib/helpers';
-import { Course } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 export async function createCourse(
     { title, course_code, status, api_v1_semester_id }: Course,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const response = await axios.post(
@@ -39,7 +43,7 @@ export async function createCourse(
 export async function getCourses(
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             return axios.get(Endpoints.API_COURSES, {
@@ -58,7 +62,7 @@ export async function getCourse(
     id: string,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             return axios.get(`${Endpoints.API_COURSES}/${id}`, {
@@ -77,7 +81,7 @@ export async function updateCourse(
     { id, title, course_code, status }: Partial<Course>,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.put(
@@ -107,7 +111,7 @@ export async function deleteCourse(
     id: string,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.delete(

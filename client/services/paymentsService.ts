@@ -1,6 +1,10 @@
-import { APIOnFailure, Endpoints } from '@coursefull';
+import {
+    APIOnFailure,
+    APIServiceResponse,
+    CartItem,
+    Endpoints,
+} from '@coursefull';
 import { authenticatedApiErrorHandler } from '@lib/helpers';
-import { CartItem } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 import axios from 'axios';
 
@@ -8,7 +12,7 @@ export async function createPayment(
     cart: CartItem[],
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const products = cart.map((cartItem) => {

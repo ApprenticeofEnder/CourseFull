@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import { ItemStatus } from '@coursefull/enums.d';
 import { Session } from '@supabase/supabase-js';
 import { AxiosResponse } from 'axios';
-import { ItemStatus } from '@coursefull/enums.d';
+import { ReactNode } from 'react';
 
 export interface ChildrenProps {
     children: ReactNode;
@@ -84,6 +84,13 @@ export interface User {
     email: string;
     supabase_id: string;
     courses_remaining: number;
+}
+
+export interface BasicUserData {
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
 }
 
 export interface Product {

@@ -1,6 +1,10 @@
-import { APIOnFailure, Endpoints, ItemStatus } from '@coursefull';
+import {
+    APIOnFailure,
+    APIServiceResponse,
+    Deliverable,
+    Endpoints,
+} from '@coursefull';
 import { authenticatedApiErrorHandler } from '@lib/helpers';
-import { Deliverable } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 import axios from 'axios';
 
@@ -8,7 +12,7 @@ export async function createDeliverable(
     { name, weight, mark, status, notes, api_v1_course_id }: Deliverable,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             return axios.post(
@@ -40,7 +44,7 @@ export async function updateDeliverable(
     { id, name, weight, mark, status, notes }: Deliverable,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             return axios.put(
@@ -70,7 +74,7 @@ export async function updateDeliverable(
 export async function getDeliverables(
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             return axios.get(Endpoints.API_DELIVERABLES, {
@@ -89,7 +93,7 @@ export async function getDeliverable(
     id: string,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             return axios.get(`${Endpoints.API_DELIVERABLES}/${id}`, {
@@ -108,7 +112,7 @@ export async function deleteDeliverable(
     id: string,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.delete(

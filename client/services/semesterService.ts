@@ -1,15 +1,19 @@
 'use client';
-import axios, { AxiosResponse } from 'axios';
-import { APIOnFailure, Endpoints, ItemStatus } from '@coursefull';
-import { authenticatedApiErrorHandler, semesterURL } from '@lib/helpers';
+import {
+    APIOnFailure,
+    APIServiceResponse,
+    Endpoints,
+    Semester,
+} from '@coursefull';
+import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
-import { Semester } from '@coursefull';
+import axios from 'axios';
 
 export async function createSemester(
     { name, status, goal }: Semester,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.post(
@@ -38,7 +42,7 @@ export async function createSemester(
 export async function getSemesters(
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             return axios.get(Endpoints.API_SEMESTERS, {
@@ -57,7 +61,7 @@ export async function getSemester(
     id: string,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             return axios.get(`${Endpoints.API_SEMESTERS}/${id}`, {
@@ -76,7 +80,7 @@ export async function updateSemester(
     { id, name, status, goal }: Semester,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.put(
@@ -106,7 +110,7 @@ export async function deleteSemester(
     id: string,
     session: Session | null,
     onFailure: APIOnFailure
-) {
+): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
             const apiResponse = await axios.delete(

@@ -7,7 +7,8 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "test": "vitest run && pnpm exec playwright test --trace on"
+        "test": "vitest run && pnpm exec playwright test --trace on",
+        "populate": "pnpm exec vitest run populate.spec.ts"
     },
     "dependencies": {
         "@headlessui/react": "^1.7.19",

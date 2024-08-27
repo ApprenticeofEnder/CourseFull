@@ -1,14 +1,13 @@
-import { Endpoints } from '@coursefull'
+import { Endpoints } from '@coursefull';
+import { createRegisteredUser, dbConnect } from '@lib/test-helpers';
 import {
     test as baseTest,
-    createRegisteredUser,
-    dbConnect,
 } from '@playwright/conftest';
 import fs from 'fs';
 import path from 'path';
 
-export * from '@playwright/test';
 export * from '@playwright/conftest';
+export * from '@playwright/test';
 export const test = baseTest.extend<{}, { workerStorageState: string }>({
     // Use the same storage state for all tests in this worker.
     storageState: ({ workerStorageState }, use) => use(workerStorageState),

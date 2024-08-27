@@ -1,6 +1,7 @@
 import { User } from '@supabase/supabase-js';
 import * as jwt from 'jsonwebtoken';
 import { randomUUID } from 'node:crypto';
+import { BasicUserData } from './@coursefull';
 
 const USER1_ID = randomUUID();
 export const USER1: User = {
@@ -75,3 +76,10 @@ export function makeSession(user: User) {
         user,
     };
 }
+
+export const DEMO_ACCOUNT_DATA: BasicUserData = {
+    email: 'jasoncook@gmail.com',
+    first_name: 'Jason',
+    last_name: 'Cook',
+    password: 'Password1!',
+};
