@@ -1,5 +1,5 @@
-import { Fragment } from 'react';
 import { Input, Listbox, ListboxItem, Textarea } from '@nextui-org/react';
+import { Fragment } from 'react';
 
 import { ItemStatus } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
@@ -53,6 +53,7 @@ export default function DeliverableForm({
                 onValueChange={setWeight}
                 min={0}
                 max={100}
+                step={0.1}
             />
             <Textarea
                 label="Notes"
@@ -107,6 +108,7 @@ export default function DeliverableForm({
                     onValueChange={setMark}
                     min={0}
                     max={100}
+                    step={0.1}
                 />
             )}
         </Fragment>

@@ -198,6 +198,8 @@ RSpec.describe "/api/v1/deliverables", type: :request do
   end
 
   # TODO: Add test for updating goals
+  # TODO: Add tests for what happens when you create already-completed deliverables
+  # TODO: Add tests to make sure that courses don't auto-complete
 
   describe "PATCH /api/v1/deliverables/:id" do
     context "with valid auth token" do

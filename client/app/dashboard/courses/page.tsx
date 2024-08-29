@@ -1,15 +1,6 @@
 'use client';
 
 import {
-    Fragment,
-    useEffect,
-    useState,
-    Suspense,
-    useMemo,
-    useRef,
-} from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import {
     ArrowLeftIcon,
     CogIcon,
     PencilIcon,
@@ -27,12 +18,21 @@ import {
     Tabs,
     useDisclosure,
 } from '@nextui-org/react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import {
+    Fragment,
+    Suspense,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
 import {
-    Endpoints,
-    ItemStatus,
     Course,
     Deliverable,
+    Endpoints,
+    ItemStatus,
     SessionProps,
 } from '@coursefull';
 
@@ -203,6 +203,7 @@ function CoursePage() {
             .then(({ response }) => {
                 if (mounted.current) {
                     setCourse(response?.data || null);
+                    console.log(response?.data);
                 }
             })
             .catch();

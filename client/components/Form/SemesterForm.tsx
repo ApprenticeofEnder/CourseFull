@@ -1,5 +1,5 @@
-import { Fragment } from 'react';
 import { Input, Listbox, ListboxItem } from '@nextui-org/react';
+import { Fragment } from 'react';
 
 import { ItemStatus } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
@@ -47,6 +47,7 @@ export default function SemesterForm({
                 onValueChange={setGoal}
                 min={0}
                 max={100}
+                step={0.5}
             />
             <Listbox
                 items={statusObjects}

@@ -25,10 +25,6 @@ class Api::V1::Course < ApplicationRecord
   end
 
   def set_goal(goal)
-    if self.complete?
-      return
-    end
-
     self.goal = goal
     goal_calculator = GoalCalculator.new(goal)
     self.deliverables.complete.each do |deliverable|
@@ -38,9 +34,9 @@ class Api::V1::Course < ApplicationRecord
     self.deliverable_goal = goal_calculator.deliverable_goal
     self.grade = goal_calculator.grade
 
-    if goal_calculator.complete?
-      self.status = :complete
-    end
+    # if goal_calculator.complete?
+    #   self.status = :complete
+    # end
 
     self.save
     self.deliverables.active.update_all(goal: self.deliverable_goal)

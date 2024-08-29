@@ -85,17 +85,20 @@ export async function createRegisteredUser(
         return null;
     }
 
-    await dbClient.query(
-        `INSERT INTO api_v1_users (first_name, last_name, email, supabase_id, courses_remaining, created_at, updated_at)
-            VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
-        [
-            userData.first_name,
-            userData.last_name,
-            userData.email,
-            supabaseResponse.data.user.id,
-            3,
-        ]
-    );
+    // This is to counteract the "Populate" script potentially duplicating users in Supabase
+    if (process.env.NODE_ENV === 'test') {
+        await dbClient.query(
+            `INSERT INTO api_v1_users (first_name, last_name, email, supabase_id, courses_remaining, created_at, updated_at)
+                VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+            [
+                userData.first_name,
+                userData.last_name,
+                userData.email,
+                supabaseResponse.data.user.id,
+                3,
+            ]
+        );
+    }
 
     const newUser: User = data?.shift();
 
@@ -148,12 +151,7 @@ export async function deleteData(dbClient: Client) {
         throw apiUsersRes.error;
     }
 
-    for (let user of apiUsersRes.data) {
-        const apiDeleteRes = await supabaseServiceRole
-            .from('api_v1_users')
-            .delete()
-            .ilike('email', user.email);
-    }
+    console.log(apiUsersRes.data);
 
     const tables = [
         'api_v1_deliverables',
@@ -163,6 +161,10 @@ export async function deleteData(dbClient: Client) {
     ];
 
     for (let table of tables) {
+        const apiDeleteRes = await supabaseServiceRole
+            .from(table)
+            .delete()
+            .neq('id', null);
         //Yes this is an SQL injection technically, no it doesn't have any user-controlled input.
         await dbClient.query(`DELETE FROM ${table}`);
     }
@@ -173,17 +175,22 @@ export async function deleteData(dbClient: Client) {
         'Supabase Auth users table not empty.'
     );
 
+    const numSupabaseUsers = (
+        await supabaseServiceRole.from('api_v1_users').select()
+    ).data?.length;
+
     console.assert(
-        (await supabaseServiceRole.from('api_v1_users').select()).data
-            ?.length === 0,
-        'Supabase DB users table not empty.'
+        numSupabaseUsers === 0,
+        'Supabase DB users table not empty, length %s.',
+        numSupabaseUsers
     );
 
     for (let table of tables) {
         //See above.
         console.assert(
             (await dbClient.query(`SELECT * FROM ${table}`)).rows.length === 0,
-            'Test DB users table not empty.'
+            'Test DB table %s not empty.',
+            table
         );
     }
 }

@@ -23,6 +23,7 @@ class Api::V1::DeliverablesController < Api::V1::ApplicationController
     @api_v1_deliverable.user = @api_v1_user
 
     if @api_v1_deliverable.save
+      @api_v1_deliverable.course.update_goal
       render json: @api_v1_deliverable, status: :created, location: @api_v1_deliverable
     else
       render json: @api_v1_deliverable.errors, status: :unprocessable_entity
