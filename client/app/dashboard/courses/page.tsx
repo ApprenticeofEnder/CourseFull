@@ -19,14 +19,7 @@ import {
     useDisclosure,
 } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-    Fragment,
-    Suspense,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import { Fragment, Suspense, useEffect, useRef, useState } from 'react';
 
 import {
     Course,
@@ -202,8 +195,9 @@ function CoursePage() {
         })
             .then(({ response }) => {
                 if (mounted.current) {
-                    setCourse(response?.data || null);
-                    console.log(response?.data);
+                    const courseData: Course = response?.data;
+                    setCourse(courseData || null);
+                    setDeliverables(courseData?.deliverables || []);
                 }
             })
             .catch();
@@ -211,14 +205,6 @@ function CoursePage() {
             mounted.current = false;
         };
     }, [course, session, courseId]);
-
-    useMemo(() => {
-        setDeliverables(
-            course?.deliverables?.sort((a, b) => {
-                return a.name.localeCompare(b.name);
-            }) || []
-        );
-    }, [course]);
 
     return session && course ? (
         <Fragment>
@@ -273,7 +259,8 @@ function CoursePage() {
                 </h3>
                 <div className="flex basis-1/2 justify-between gap-8 sm:justify-end">
                     <h3 className="text-left">
-                        Grade: {course.grade || '--'}%
+                        Grade:{' '}
+                        {(course.grade && Math.round(course.grade)) || '--'}%
                     </h3>
                     <h3 className="text-right">Goal: {course.goal}%</h3>
                 </div>
@@ -290,8 +277,13 @@ function CoursePage() {
                     Add Deliverable
                 </Button>
                 <h3>
-                    You need <strong>{course.deliverable_goal}%</strong> (or
-                    better) on each deliverable to reach your goal!
+                    You need{' '}
+                    <strong>
+                        {course.deliverable_goal &&
+                            course.deliverable_goal.toFixed(1)}
+                        %
+                    </strong>{' '}
+                    (or better) on each deliverable to reach your goal!
                 </h3>
             </div>
 

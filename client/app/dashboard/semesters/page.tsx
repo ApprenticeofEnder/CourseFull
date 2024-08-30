@@ -2,36 +2,29 @@
 
 import {
     ArrowLeftIcon,
+    CogIcon,
+    PencilIcon,
     PlusIcon,
     TrashIcon,
-    PencilIcon,
-    CogIcon,
 } from '@heroicons/react/24/outline';
 import {
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
     Modal,
     Spinner,
     useDisclosure,
-    Dropdown,
-    DropdownTrigger,
-    DropdownMenu,
-    DropdownItem,
 } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-    Fragment,
-    useEffect,
-    useState,
-    Suspense,
-    useMemo,
-    useRef,
-} from 'react';
+import { Fragment, Suspense, useEffect, useRef, useState } from 'react';
 
-import { Course, Endpoints, Semester, SessionProps } from '@coursefull';
 import Button from '@components/Button/Button';
 import CourseCard from '@components/Card/Course';
 import CreateCourseModal from '@components/Modal/CreateCourse';
-import UpdateSemesterModal from '@components/Modal/UpdateSemester';
 import UpdateCourseModal from '@components/Modal/UpdateCourse';
+import UpdateSemesterModal from '@components/Modal/UpdateSemester';
+import { Course, Endpoints, Semester, SessionProps } from '@coursefull';
 import { ReadableStatus } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
 import { deleteSemester, getSemester } from '@services/semesterService';
@@ -131,7 +124,9 @@ function SemesterPage() {
         })
             .then(({ response }) => {
                 if (mounted.current) {
-                    setSemester(response?.data || null);
+                    const semesterData: Semester = response?.data;
+                    setSemester(semesterData || null);
+                    setCourses(semesterData.courses || []);
                 }
             })
             .catch();
@@ -139,14 +134,6 @@ function SemesterPage() {
             mounted.current = false;
         };
     }, [semester, session, semesterId]);
-
-    useMemo(() => {
-        setCourses(
-            semester?.courses?.sort((a, b) => {
-                return a.course_code.localeCompare(b.course_code);
-            }) || []
-        );
-    }, [semester]);
 
     return (
         <Fragment>

@@ -11,16 +11,16 @@ import {
 import Button from '@components/Button/Button';
 import Link from '@components/Link';
 
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
     ReadableStatus,
     classNames,
     courseURL,
     determineGradeBGColour,
 } from '@lib/helpers';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
 import { deleteCourse } from '@services/courseService';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface CourseCardProps
     extends Course,
@@ -78,7 +78,7 @@ export default function CourseCard({
         >
             <div className="flex justify-between">
                 <h4>Goal: {goal}%</h4>
-                <h4>Grade: {grade || '--'}%</h4>
+                <h4>Grade: {(grade && Math.round(grade)) || '--'}%</h4>
             </div>
             <div className="flex justify-center">
                 <Image

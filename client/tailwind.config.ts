@@ -1,5 +1,5 @@
-import type { Config } from 'tailwindcss';
 import { nextui } from '@nextui-org/react';
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
     content: [
@@ -97,6 +97,7 @@ const config: Config = {
                     700: '#037421',
                     800: '#004611',
                     900: '#001900',
+                    DEFAULT: '#15d03f',
                 },
                 warning: {
                     50: '#fffbdb',
@@ -161,6 +162,13 @@ const config: Config = {
                             800: '#9fddf9',
                             900: '#cfeefc',
                             DEFAULT: '#0ea9f1',
+                        },
+                        success: {
+                            foreground: '#ffffff',
+                        },
+                        default: {
+                            foreground: '#0a0d4f',
+                            DEFAULT: '#ceeafd',
                         },
                         focus: '#0ea9f1',
                     },

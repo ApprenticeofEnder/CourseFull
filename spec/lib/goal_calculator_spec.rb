@@ -54,7 +54,7 @@ RSpec.describe GoalCalculator do
     end
 
     it "should have a goal of 82.55% for remaining coursework" do
-      expect(@calculator.deliverable_goal).to eq(82.55)
+      expect(@calculator.deliverable_goal).to eq(82.5)
     end
 
     it "should have 40 points remaining" do
@@ -101,7 +101,7 @@ RSpec.describe GoalCalculator do
     end
 
     it "should have a grade of 85" do
-      expect(@calculator.grade).to eq(85.00)
+      expect(@calculator.grade).to eq(85.0)
     end
   end
 end

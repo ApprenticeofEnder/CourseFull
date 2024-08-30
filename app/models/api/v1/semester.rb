@@ -1,6 +1,6 @@
 class Api::V1::Semester < ApplicationRecord
   # Relationships
-  has_many :courses, foreign_key: "api_v1_semester_id", dependent: :destroy
+  has_many :courses, -> { order("course_code ASC") }, foreign_key: "api_v1_semester_id", dependent: :destroy
   belongs_to :user, foreign_key: "api_v1_user_id"
 
   # Scopes

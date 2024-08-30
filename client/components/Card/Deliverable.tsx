@@ -1,12 +1,12 @@
+import Button from '@components/Button/Button';
 import {
     DeletableProps,
     Deliverable,
     EditableProps,
+    ItemStatus,
     SessionProps,
 } from '@coursefull';
-import Button from '@components/Button/Button';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { ItemStatus } from '@coursefull';
 import {
     ReadableStatus,
     classNames,
@@ -67,12 +67,15 @@ export default function DeliverableCard({
             <div className="flex justify-between">
                 <div className="flex flex-col justify-between basis-1/2">
                     <h3 className="text-lg text-left font-bold">
-                        {name} ({weight}%)
+                        {name} ({weight && weight.toFixed(1)}%)
                     </h3>
                     <div className="flex flex-col gap-4">
                         <h4 className="font-bold basis-3/4">
-                            {(status === ItemStatus.COMPLETE && mark) || '--'} /{' '}
-                            {goal} %
+                            {(status === ItemStatus.COMPLETE &&
+                                mark &&
+                                mark.toFixed(1)) ||
+                                '--'}{' '}
+                            / {goal} %
                         </h4>
                         <h4 className="italic">{ReadableStatus(status)}</h4>
                     </div>

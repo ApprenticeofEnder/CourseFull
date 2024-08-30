@@ -288,7 +288,6 @@ it(
             { name: 'Fall 2023', goal: 90, status: ItemStatus.COMPLETE },
             { name: 'Winter 2024', goal: 90, status: ItemStatus.COMPLETE },
             { name: 'Fall 2024', goal: 90, status: ItemStatus.ACTIVE },
-            { name: 'Winter 2025', goal: 90, status: ItemStatus.NOT_STARTED },
         ];
 
         try {

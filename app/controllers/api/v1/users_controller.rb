@@ -50,12 +50,12 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   def progress
     semester_progress = []
 
-    @api_v1_user.semesters.find_each do |semester|
+    @api_v1_user.semesters.each do |semester|
       @num_courses = 0
       @num_graded_courses = 0
       @grade_sum = 0.0
 
-      semester.courses.find_each do |course|
+      semester.courses.each do |course|
         if course.deliverables.complete.length > 0
           @num_graded_courses += 1
           @grade_sum += course.grade

@@ -1,31 +1,26 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import {
+    Chip,
+    Listbox,
+    ListboxItem,
     Modal,
     Spinner,
     useDisclosure,
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-    Listbox,
-    ListboxItem,
 } from '@nextui-org/react';
+import { Fragment, useEffect, useState } from 'react';
 
 import {
-    semesterURL,
     classNames,
     determineGradeBGColour,
     ReadableStatus,
+    semesterURL,
 } from '@lib/helpers';
 // import { SemesterProgressType, SessionProps } from '@coursefull';
 import Button from '@components/Button/Button';
-import CreateSemesterModal from '@components/Modal/CreateSemester';
 import LinkButton from '@components/Button/LinkButton';
-import { getProgress } from '@services/userService';
+import CreateSemesterModal from '@components/Modal/CreateSemester';
 import { ItemStatus, SemesterProgressType, SessionProps } from '@coursefull';
+import { getProgress } from '@services/userService';
 import { useRouter } from 'next/navigation';
 
 export default function HomeStatus({ session }: SessionProps) {
@@ -39,6 +34,17 @@ export default function HomeStatus({ session }: SessionProps) {
 
     function onFailure(error: Error) {
         alert('Error: ' + error.message);
+    }
+
+    function getChipColour(status: ItemStatus) {
+        switch (status) {
+            case ItemStatus.NOT_STARTED:
+                return 'default';
+            case ItemStatus.ACTIVE:
+                return 'primary';
+            case ItemStatus.COMPLETE:
+                return 'success';
+        }
     }
 
     const router = useRouter();
@@ -96,8 +102,8 @@ export default function HomeStatus({ session }: SessionProps) {
                             <div>
                                 <strong>Average vs. Goal</strong>
                                 <h2>
-                                    {activeSemester?.average || '--'} /{' '}
-                                    {activeSemester?.goal} %
+                                    {activeSemester?.average.toFixed(1) || '--'}{' '}
+                                    / {activeSemester?.goal} %
                                 </h2>
                             </div>
                             <div className="text-right">
@@ -162,7 +168,9 @@ export default function HomeStatus({ session }: SessionProps) {
                                     endContent={
                                         <div className="sm:text-lg basis-1/4 text-right flex flex-col sm:flex-row sm:gap-1 sm:justify-end">
                                             <div className="text-center">
-                                                {item.average || '--'} /
+                                                {item.average?.toFixed(1) ||
+                                                    '--'}{' '}
+                                                /
                                             </div>
                                             <div className="text-center">
                                                 {item.goal}
@@ -182,8 +190,16 @@ export default function HomeStatus({ session }: SessionProps) {
                                     }
                                     textValue={`${item.average} % out of ${item.goal} %`}
                                 >
-                                    <div className="hidden md:flex md:justify-center text-center">
-                                        {ReadableStatus(item.status)}
+                                    <div className="hidden md:flex md:justify-center">
+                                        <Chip
+                                            classNames={{
+                                                content: 'font-bold',
+                                            }}
+                                            color={getChipColour(item.status)}
+                                            variant="solid"
+                                        >
+                                            {ReadableStatus(item.status)}
+                                        </Chip>
                                     </div>
                                 </ListboxItem>
                             )}

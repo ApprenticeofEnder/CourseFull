@@ -37,13 +37,13 @@ class GoalCalculator
   def deliverable_goal
     if self.weight_remaining?
       raw_result = 100 * @points_remaining / @weight_remaining
-      return raw_result.round(2)
+      return raw_result.round(1)
     end
     return 0
   end
 
   def grade
     raw_result = 100 * @earned_points / @weight_completed
-    return raw_result.round(2)
+    return raw_result.round(1)
   end
 end
