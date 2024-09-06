@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
-import { Inter, Atkinson_Hyperlegible } from 'next/font/google';
-import { NextUIProvider } from '@nextui-org/react';
-import CartProvider from '@lib/cart/cartContext';
-import './globals.css';
-import SessionProvider from '@lib/supabase/sessionContext';
 import Navbar from '@components/Navbar';
 import Spacer from '@components/Spacer';
+import CartProvider from '@lib/cart/cartContext';
+import SessionProvider from '@lib/supabase/sessionContext';
+import { NextUIProvider } from '@nextui-org/react';
+import type { Metadata } from 'next';
+import { Atkinson_Hyperlegible, Inter } from 'next/font/google';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 const atkinsonHyperlegible = Atkinson_Hyperlegible({
@@ -15,7 +15,7 @@ const atkinsonHyperlegible = Atkinson_Hyperlegible({
 
 export const metadata: Metadata = {
     title: 'CourseFull',
-    description: 'Final exam grade calculations? Leave it to us.',
+    description: 'Live your education to the fullest.',
 };
 
 export default function RootLayout({

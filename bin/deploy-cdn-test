@@ -1,0 +1,6 @@
+#!/bin/bash
+export COURSEFULL_ENV=Prod
+export $(op inject -i secrets/.env.tpl)
+docker stack rm cdn-test
+docker ps | awk '/cdn-test_/{print $1}' | xargs docker kill
+docker stack deploy -c docker-compose.yml cdn-test

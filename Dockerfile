@@ -3,7 +3,7 @@
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
 ARG RUBY_VERSION=3.3.1
-FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
+FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim AS base
 
 # Rails app lives here
 WORKDIR /rails
@@ -16,7 +16,7 @@ ENV RAILS_ENV="production" \
     SHELL="bash"
 
 # Throw-away build stage to reduce size of final image
-FROM base as build
+FROM base AS build
 
 # Install packages needed to build gems and node modules
 RUN apt-get update -qq && \
@@ -24,7 +24,7 @@ RUN apt-get update -qq && \
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle install && \
+RUN bundle install --without development test && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
@@ -34,34 +34,8 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
-# Install client dependencies
-FROM node:20-slim AS client-build
-
-RUN apt-get update && apt-get install -y ca-certificates
-
-# Install client dependencies
-WORKDIR /rails/client
-
-RUN mkdir -p /rails/public
-
-RUN npm install -g pnpm
-
-COPY client/package.json client/pnpm-lock.yaml ./
-
-RUN pnpm install
-
-COPY client .
-
-COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
-
-COPY .env.prod.tpl .
-
-ARG OP_SERVICE_ACCOUNT_TOKEN
-
-RUN export OP_SERVICE_ACCOUNT_TOKEN=$OP_SERVICE_ACCOUNT_TOKEN && op run --env-file='.env.prod.tpl' pnpm run build
-
 # Final stage for app image
-FROM base
+FROM base AS final
 
 WORKDIR /rails
 
@@ -73,19 +47,18 @@ RUN apt-get update -qq && \
 # Copy 1password binary
 COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
 
-# Copy built artifacts: gems, application
+# Copy built artifacts: gems, application, client
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
-COPY --from=client-build /rails/client/out /rails/public
+
+RUN ls -l /rails/public
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
 USER rails:rails
 
+EXPOSE 3000
+
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
-
-# Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
-CMD ["op", "run", "--env-file='.env.prod.tpl'", "./bin/rails", "server"]

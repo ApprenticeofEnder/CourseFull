@@ -8,7 +8,8 @@
         "start": "next start",
         "lint": "next lint",
         "test": "vitest run && pnpm exec playwright test --trace on",
-        "populate": "pnpm exec vitest run populate.spec.ts"
+        "populate": "pnpm exec vitest run populate.spec.ts",
+        "upload-assets": "tsx scripts/asset-upload.ts"
     },
     "dependencies": {
         "@headlessui/react": "^1.7.19",
@@ -44,6 +45,7 @@
         "postcss": "^8",
         "tailwindcss": "^3.4.1",
         "ts-postgres": "^2.0.4",
+        "tsx": "^4.19.0",
         "typescript": "^5",
         "vitest": "^1.6.0"
     }

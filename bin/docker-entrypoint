@@ -1,8 +1,8 @@
 #!/bin/bash -e
-
-# If running the rails server then create or migrate existing database
-if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
+export COURSEFULL_ENV=Prod
+OP_SERVICE_ACCOUNT_TOKEN=$(cat /run/secrets/OP_SERVICE_ACCOUNT_TOKEN) \
+  op run --env-file='/secrets/.env.tpl' -- \
   ./bin/rails db:prepare
-fi
-
-exec "${@}"
+OP_SERVICE_ACCOUNT_TOKEN=$(cat /run/secrets/OP_SERVICE_ACCOUNT_TOKEN) \
+  op run --env-file='/secrets/.env.tpl' -- \
+  ./bin/rails server

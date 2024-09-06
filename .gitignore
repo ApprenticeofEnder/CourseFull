@@ -36,3 +36,8 @@
 # Ignore anything in public except for robots.txt
 public/*
 !public/robots.txt
+
+# Ignore anything in secrets except for template files
+secrets/*
+!secrets/*.tpl
+

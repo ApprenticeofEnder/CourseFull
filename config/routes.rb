@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  # Remaining APIs are pretty much as is?
   namespace :api do
     namespace :v1 do
       resources :courses

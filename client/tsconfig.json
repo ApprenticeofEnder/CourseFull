@@ -39,5 +39,5 @@
         "components/Disclosure",
         "app/auth/logout"
     ],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules", "scripts"]
 }

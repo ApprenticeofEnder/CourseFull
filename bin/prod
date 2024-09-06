@@ -1,0 +1,9 @@
+#!/bin/bash 
+export COURSEFULL_ENV=Prod
+export $(op inject -i secrets/.env.tpl)
+cd client && pnpm build && pnpm upload-assets
+cd ..
+docker build \
+    -t registry.digitalocean.com/robertbabaev/coursefull-app \
+    .
+docker push registry.digitalocean.com/robertbabaev/coursefull-app

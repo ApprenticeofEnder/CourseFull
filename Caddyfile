@@ -1,0 +1,49 @@
+{
+    # Global options
+    admin off
+
+    log {
+        output stderr
+        format console
+    }
+}
+
+http://dev.coursefull.app {
+    # Enable automatic HTTPS
+    # tls internal
+
+    handle_path /_next/* {
+        redirect {$ASSET_URL}/storage/v1/object/public/coursefull-static/_next{uri}
+    }
+
+    handle {
+        reverse_proxy * app:3000
+    }
+
+    # Enable logging
+    log {
+        output stderr
+        format console
+    }
+
+    # Gzip compression for better performance
+    encode gzip
+
+    # # Basic security headers
+    # header {
+    #     # Enable HTTP Strict Transport Security (HSTS)
+    #     Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    #     # Prevent clickjacking attacks
+    #     X-Frame-Options "DENY"
+    #     # Disable MIME type sniffing
+    #     X-Content-Type-Options "nosniff"
+    #     # Enable XSS filter
+    #     X-XSS-Protection "1; mode=block"
+    #     # Referrer policy
+    #     Referrer-Policy "strict-origin-when-cross-origin"
+    # }
+
+    handle_errors {
+        respond "{err.status_code} {err.status_text} {$ASSET_URL}"
+    }
+}

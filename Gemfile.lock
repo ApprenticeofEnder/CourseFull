@@ -103,6 +103,7 @@ GEM
       railties (>= 5.0.0)
     faker (3.3.1)
       i18n (>= 1.8.11, < 2)
+    foreman (0.88.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
     i18n (1.14.4)
@@ -247,6 +248,7 @@ DEPENDENCIES
   email_validator
   factory_bot_rails
   faker
+  foreman
   jwt
   pg (~> 1.1)
   puma (>= 5.0)

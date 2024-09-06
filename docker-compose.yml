@@ -2,11 +2,31 @@ version: '3'
 
 services:
   app:
-    build:
-      context: .
-      args:
-        - OP_SERVICE_ACCOUNT_TOKEN
+    image: registry.digitalocean.com/robertbabaev/coursefull-app:latest
     ports:
       - 3000:3000
+    secrets:
+      - OP_SERVICE_ACCOUNT_TOKEN
+    
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy-logs:/var/log/caddy/:rw
+      - caddy_data:/data
+      - caddy_config:/config
     environment:
-      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN}
+      - ASSET_URL=${ASSET_URL}
+    # depends_on:
+    #   - app
+
+secrets:
+  op_service_account_token:
+    external: true
+
+volumes:
+  caddy_data:
+  caddy_config:
