@@ -1,3 +1,4 @@
 #!/bin/bash -e
-export $(op inject -i .env.dev.tpl)
+export COURSEFULL_ENV=Dev
+export $(op inject -i .env.tpl)
 cd client && pnpm populate

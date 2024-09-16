@@ -1,5 +1,6 @@
 #!/bin/bash -e
-export $(op inject -i .env.test.tpl)
+export COURSEFULL_ENV=Test
+export $(op inject -i .env.tpl)
 cd client && pnpm run build
 cd ..
 cp -r client/out/* public/

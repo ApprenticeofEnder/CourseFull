@@ -13,18 +13,18 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./caddy-logs:/var/log/caddy/:rw
       - caddy_data:/data
       - caddy_config:/config
     environment:
       - ASSET_URL=${ASSET_URL}
-    # depends_on:
-    #   - app
+    depends_on:
+      - app
 
 secrets:
-  op_service_account_token:
+  OP_SERVICE_ACCOUNT_TOKEN:
     external: true
 
 volumes:

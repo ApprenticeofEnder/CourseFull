@@ -1,3 +1,0 @@
-#!/bin/bash -e
-export $(op inject -i .env.dev.tpl)
-bash -i

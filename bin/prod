@@ -1,6 +1,6 @@
 #!/bin/bash 
 export COURSEFULL_ENV=Prod
-export $(op inject -i secrets/.env.tpl)
+export $(op inject -i .env.tpl)
 cd client && pnpm build && pnpm upload-assets
 cd ..
 docker build \

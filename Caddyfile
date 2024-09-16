@@ -6,18 +6,20 @@
         output stderr
         format console
     }
+
+	auto_https off
 }
 
-http://dev.coursefull.app {
+http://dev.coursefull.app:8080 {
     # Enable automatic HTTPS
     # tls internal
 
-    handle_path /_next/* {
-        redirect {$ASSET_URL}/storage/v1/object/public/coursefull-static/_next{uri}
+    handle /_next/* {
+        reverse_proxy * {$ASSET_URL}/storage/v1/object/public/coursefull-static{uri}
     }
 
     handle {
-        reverse_proxy * app:3000
+        reverse_proxy * http://app:3000
     }
 
     # Enable logging
@@ -44,6 +46,6 @@ http://dev.coursefull.app {
     # }
 
     handle_errors {
-        respond "{err.status_code} {err.status_text} {$ASSET_URL}"
+        respond "{err.status_code} {err.status_text}"
     }
 }

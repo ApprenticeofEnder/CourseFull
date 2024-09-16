@@ -1,0 +1,6 @@
+#!/bin/bash
+docker stack rm coursefull
+echo "Shutdown. Deploying..."
+sleep 30
+docker stack deploy -c docker-compose.yml coursefull
+echo "Deployed."
