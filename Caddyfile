@@ -6,14 +6,11 @@
         output stderr
         format console
     }
-
-	auto_https off
+    
+    acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
 
-http://dev.coursefull.app:8080 {
-    # Enable automatic HTTPS
-    # tls internal
-
+coursefull.app {
     handle /_next/* {
         reverse_proxy * {$ASSET_URL}/storage/v1/object/public/coursefull-static{uri}
     }
@@ -46,6 +43,6 @@ http://dev.coursefull.app:8080 {
     # }
 
     handle_errors {
-        respond "{err.status_code} {err.status_text}"
+        respond "Oops! Sorry about that. {err.status_code} {err.status_text}"
     }
 }
