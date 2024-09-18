@@ -1,8 +1,8 @@
 #!/bin/bash -e
 export COURSEFULL_ENV=Prod
-OP_SERVICE_ACCOUNT_TOKEN=$(cat /run/secrets/OP_SERVICE_ACCOUNT_TOKEN) \
+OP_SERVICE_ACCOUNT_TOKEN=$(cat /run/secrets/op_service_account_token) \
   op run --env-file='.env.tpl' -- \
   ./bin/rails db:prepare
-OP_SERVICE_ACCOUNT_TOKEN=$(cat /run/secrets/OP_SERVICE_ACCOUNT_TOKEN) \
+OP_SERVICE_ACCOUNT_TOKEN=$(cat /run/secrets/op_service_account_token) \
   op run --env-file='.env.tpl' -- \
   ./bin/rails server

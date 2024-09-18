@@ -1,12 +1,16 @@
 version: '3'
 
+# Using this with Docker Compose until I can get DO's container registry stuff up and running
+
 services:
   app:
-    image: registry.digitalocean.com/robertbabaev/coursefull-app:latest
+    # image: registry.digitalocean.com/robertbabaev/coursefull-app:latest
+    build:
+      context: .
     ports:
       - 3000:3000
     secrets:
-      - OP_SERVICE_ACCOUNT_TOKEN
+      - op_service_account_token
     
   caddy:
     image: caddy:2
@@ -23,8 +27,8 @@ services:
       - app
 
 secrets:
-  OP_SERVICE_ACCOUNT_TOKEN:
-    external: true
+  op_service_account_token:
+    environment: OP_SERVICE_ACCOUNT_TOKEN
 
 volumes:
   caddy_data:
