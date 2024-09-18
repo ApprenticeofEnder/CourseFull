@@ -1,3 +1,8 @@
 #!/bin/bash
-op run --env-file=secrets/deploy.env.tpl -- docker compose down
-op run --env-file=secrets/deploy.env.tpl -- docker compose up --build -d
+alias secure-run='op run --env-file=secrets/deploy.env.tpl --'
+secure-run docker compose down
+cd client
+secure-run pnpm build 
+secure-run pnpm upload-assets
+cd ..
+secure-run docker compose up --build -d
