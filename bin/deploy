@@ -1,5 +1,9 @@
 #!/bin/bash
-alias secure-run='op run --env-file=secrets/deploy.env.tpl --'
+
+function secure-run () {
+    op run --env-file=secrets/deploy.env.tpl -- $1
+}
+
 secure-run docker compose down
 cd client
 secure-run pnpm build 
