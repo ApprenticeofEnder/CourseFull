@@ -1,6 +1,3 @@
 #!/bin/bash
-docker stack rm coursefull
-echo "Shutdown. Deploying..."
-sleep 30
-docker stack deploy -c docker-compose.yml coursefull
-echo "Deployed."
+op run --env-file=secrets/deploy.env.tpl -- docker compose down
+op run --env-file=secrets/deploy.env.tpl -- docker compose up --build -d
