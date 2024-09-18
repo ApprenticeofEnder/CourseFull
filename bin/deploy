@@ -1,14 +1,20 @@
 #!/bin/bash
+export COURSEFULL_ENV=Prod
 
-ENV_FILE=$PWD/secrets/deploy.env.tpl
+DEPLOY_ENV_FILE=$PWD/secrets/deploy.env.tpl
+BUILD_ENV_FILE=$PWD/.env.tpl
 
-function secure-run () {
-    op run --env-file=$ENV_FILE -- "$@"
+function docker-compose-run () {
+    op run --env-file=$DEPLOY_ENV_FILE -- docker compose "$@"
 }
 
-secure-run docker compose down
+function pnpm-run() {
+    op run --env-file=$BUILD_ENV_FILE -- pnpm "$@"
+}
+
+docker-compose-run down
 cd client
-secure-run pnpm build 
-secure-run pnpm upload-assets
+pnpm-run build 
+pnpm-run upload-assets
 cd ..
-secure-run docker compose up --build -d
+docker-compose-run up --build -d
