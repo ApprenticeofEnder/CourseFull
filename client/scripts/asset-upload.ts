@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { Dirent } from 'fs';
 import { copyFile, mkdir, readdir, readFile, rm } from 'fs/promises';
+import mime from 'mime';
 import { dirname, join, resolve } from 'path';
 
 const supabase = createClient(
@@ -32,9 +33,13 @@ async function uploadAsset(file: Dirent) {
 
     const fileContents = await readFile(fullPath);
 
+    const mimeType = mime.getType(fullPath);
+
     const { data, error } = await supabase.storage
         .from(process.env.ASSET_BUCKET || '')
-        .upload(uploadPath, fileContents);
+        .upload(uploadPath, fileContents, {
+            contentType: mimeType || undefined,
+        });
     if (error) {
         console.error(`${uploadId}: ${error.message}`);
     } else {
