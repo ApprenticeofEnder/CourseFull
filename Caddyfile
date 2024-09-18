@@ -11,9 +11,11 @@
 }
 
 coursefull.app {
-	reverse_proxy /_next/* {$ASSET_URL} {
-		header_up Host {upstream_hostport}
+	handle /_next/* {
 		rewrite * /storage/v1/object/public/coursefull-static{path}
+		reverse_proxy * {$ASSET_URL} {
+			header_up Host {upstream_hostport}
+		}
 	}
 	reverse_proxy * http://app:3000
 
