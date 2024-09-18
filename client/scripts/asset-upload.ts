@@ -59,8 +59,6 @@ async function uploadAsset(file: Dirent) {
         withFileTypes: true,
     });
 
-    console.log('YEET');
-
     for (let publicFile of publicFiles) {
         const { name, path } = publicFile;
         if (name === 'robots.txt') {
