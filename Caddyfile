@@ -17,7 +17,12 @@ coursefull.app {
 			header_up Host {upstream_hostport}
 		}
 	}
-	reverse_proxy * http://app:3000
+    handle * {
+        reverse_proxy * http://app:3000 {
+            header_up Host {upstream_hostport}
+        }
+    }
+	
 
 	# Enable logging
 	log {
