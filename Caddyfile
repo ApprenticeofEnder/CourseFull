@@ -6,8 +6,6 @@
 		output stderr
 		format console
 	}
-
-	acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
 
 coursefull.app {
@@ -17,7 +15,7 @@ coursefull.app {
 	# 		header_up Host {upstream_hostport}
 	# 	}
 	# }
-	
+
     handle * {
         reverse_proxy * http://app:3000 {
             header_up Host {upstream_hostport}
