@@ -15,6 +15,7 @@ function pnpm-run() {
 docker-compose-run down
 cd client
 pnpm-run build 
-pnpm-run upload-assets
+cp -r out/* ../public
+# pnpm-run upload-assets Figure out what's wrong with Supabase
 cd ..
 docker-compose-run up --build -d
