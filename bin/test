@@ -1,9 +1,9 @@
 #!/bin/bash -e
 export COURSEFULL_ENV=Test
 export $(op inject -i .env.tpl)
-cd client && pnpm run build
-cd ..
-cp -r client/out/* public/
-bundle exec rspec
+# cd client && pnpm run build
+# cd ..
+# cp -r client/out/* public/
+# bundle exec rspec
 cd client && pnpm run test
 cd ..

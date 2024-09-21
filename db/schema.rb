@@ -29,14 +29,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_14_191058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_graphql"
-  enable_extension "pg_net"
-  enable_extension "pg_stat_statements"
-  enable_extension "pgcrypto"
-  enable_extension "pgjwt"
-  enable_extension "pgsodium"
   enable_extension "plpgsql"
-  enable_extension "supabase_vault"
-  enable_extension "uuid-ossp"
 
   create_table "api_v1_courses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "title"

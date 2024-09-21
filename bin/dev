@@ -1,6 +1,6 @@
 #!/bin/bash -e
 export COURSEFULL_ENV=Dev
 export $(op inject -i .env.tpl)
-rails db:migrate
+rails db:prepare
 rails db:seed
 foreman start -f Procfile.local
