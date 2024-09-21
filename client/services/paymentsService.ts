@@ -28,7 +28,7 @@ export async function createPayment(
                 {
                     headers,
                     validateStatus: (status) => {
-                        return status === 200;
+                        return status === 201;
                     },
                 }
             );

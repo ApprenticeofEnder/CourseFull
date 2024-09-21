@@ -80,7 +80,7 @@ export default function HomeStatus({ session }: SessionProps) {
             {loadingProgress ? (
                 <Spinner label="Loading Progress..." />
             ) : (
-                <div className="flex my-5 sm:mx-auto w-full gap-8 lg:h-1/3 flex-col sm:flex-row mb-10">
+                <div className="flex my-5 sm:mx-auto w-full gap-8 lg:h-1/2 lg:max-h-64 flex-col sm:flex-row mb-10">
                     <div
                         className={classNames(
                             'basis-1/2 border-2 border-primary-600/15 rounded-lg p-4 flex flex-col justify-between gap-4',

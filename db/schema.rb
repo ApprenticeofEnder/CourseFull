@@ -13,6 +13,7 @@
 ActiveRecord::Schema[7.1].define(version: 2024_07_14_191058) do
   create_schema "_analytics"
   create_schema "_realtime"
+  create_schema "_supavisor"
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
