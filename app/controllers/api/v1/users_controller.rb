@@ -51,9 +51,10 @@ class Api::V1::UsersController < Api::V1::ApplicationController
     semester_progress = []
 
     @api_v1_user.semesters.each do |semester|
-      @num_courses = 0
+      @num_courses = semester.courses.length
       @num_graded_courses = 0
       @grade_sum = 0.0
+      @average = 0
 
       semester.courses.each do |course|
         if course.deliverables.complete.length > 0
@@ -63,12 +64,14 @@ class Api::V1::UsersController < Api::V1::ApplicationController
         @num_courses += 1
       end
 
-      @average = (@grade_sum / @num_graded_courses).round(2)
+      if @num_graded_courses == 0
+        @average = (@grade_sum / @num_graded_courses).round(2)
+      end
 
       semester_progress_item = {
         :semester => semester.name,
         :semester_id => semester.id,
-        :average => @average,
+        :average => 0,
         :num_courses => @num_courses,
         :goal => semester.goal,
         :status => semester.status,
