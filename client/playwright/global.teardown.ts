@@ -4,7 +4,7 @@ import {
     createRegisteredUser,
     dbConnect,
     deleteData,
-    TEST_ACCOUNT_EMAIL
+    TEST_ACCOUNT_EMAIL,
 } from '@lib/test-helpers';
 
 teardown('delete database', async ({}) => {

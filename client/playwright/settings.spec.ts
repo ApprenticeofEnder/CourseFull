@@ -1,9 +1,6 @@
 import { Endpoints } from '@coursefull';
 import { dbConnect, supabaseServiceRole } from '@lib/test-helpers';
-import {
-    expect,
-    test
-} from '@playwright/conftest';
+import { expect, test } from '@playwright/conftest';
 
 test.describe.skip('Deleting Account', () => {
     test('User can delete their account successfully', async ({
@@ -29,9 +26,11 @@ test.describe.skip('Deleting Account', () => {
 
         await page.goto(Endpoints.SETTINGS);
 
-        await page.getByTestId('delete-account').click({clickCount: 5});
+        await page.getByTestId('delete-account').click({ clickCount: 5 });
 
-        await expect(page.getByTestId('delete-heading')).toBeVisible({timeout: 10000});
+        await expect(page.getByTestId('delete-heading')).toBeVisible({
+            timeout: 10000,
+        });
 
         await page.getByTestId('delete-confirmation').click();
         await page.getByTestId('delete-confirmation').fill('DELETE');
@@ -41,11 +40,14 @@ test.describe.skip('Deleting Account', () => {
 
         await using dbClient = await dbConnect();
 
-        let remainingAccounts = await dbClient.query(`SELECT id FROM api_v1_users WHERE email ILIKE $1`, [
-            `%${deleteUser.email}%`
-        ]);
+        let remainingAccounts = await dbClient.query(
+            `SELECT id FROM api_v1_users WHERE email ILIKE $1`,
+            [`%${deleteUser.email}%`]
+        );
 
-        const response = await supabaseServiceRole.auth.admin.getUserById(deleteUser.supabase_id);
+        const response = await supabaseServiceRole.auth.admin.getUserById(
+            deleteUser.supabase_id
+        );
 
         expect(response.error?.status).toBe(404);
 
