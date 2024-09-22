@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
-  factory :api_v1_user, class: "Api::V1::User" do
+  factory :api_v1_user, class: 'Api::V1::User' do
     first_name { Faker::Name.unique.first_name }
     last_name { Faker::Name.unique.last_name }
     email { Faker::Internet.unique.email }

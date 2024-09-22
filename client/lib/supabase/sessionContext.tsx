@@ -19,9 +19,33 @@ export const SessionContext = createContext<{
 }>({ session: null, loadingSession: true });
 
 const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
+    function loadSession(): Session | null {
+        let authTokenData = window.localStorage.getItem(
+            'sb-coursefull-auth-token'
+        );
+        if (authTokenData === null) {
+            return null;
+        }
+
+        const session: Session = JSON.parse(authTokenData);
+        return session;
+    }
+
     const [session, setSession] = useState<Session | null>(null);
     const [loadingSession, setLoadingSession] = useState(true);
     useEffect(() => {
+        // supabase.auth.setSession()
+        console.log('Attempting to load session from local storage:');
+        const loadedSession = loadSession();
+        if (loadedSession !== null) {
+            const { access_token, refresh_token } = loadedSession;
+            console.log('Session loaded from local storage.');
+            supabase.auth.setSession({
+                access_token,
+                refresh_token,
+            });
+        }
+
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
             setLoadingSession(false);
@@ -30,6 +54,7 @@ const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log('Session exists: ', session !== null);
             setSession(session);
         });
 

@@ -1,11 +1,8 @@
 import { Endpoints } from '@coursefull';
+import { dbConnect, supabaseServiceRole } from '@lib/test-helpers';
 import {
-    test,
     expect,
-    type Page,
-    Locator,
-    dbConnect,
-    supabaseServiceRole,
+    test
 } from '@playwright/conftest';
 
 test.describe.skip('Deleting Account', () => {

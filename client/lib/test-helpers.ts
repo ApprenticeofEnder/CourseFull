@@ -2,10 +2,16 @@ import { BasicUserData, Product, User } from '@coursefull';
 import { faker } from '@faker-js/faker';
 import { createClient } from '@supabase/supabase-js';
 import { Client, connect } from 'ts-postgres';
+import { NIL as nilUUID } from 'uuid';
 
 export const supabaseServiceRole = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321',
-    process.env.SUPABASE_SERVICE_KEY || ''
+    process.env.SUPABASE_SERVICE_KEY || '',
+    {
+        auth: {
+            storageKey: 'sb-coursefull-auth-token',
+        },
+    }
 );
 
 export const TEST_ACCOUNT_EMAIL = 'test@test.com';
@@ -106,6 +112,7 @@ export async function createRegisteredUser(
 }
 
 export async function loadProducts(dbClient: Client) {
+    console.log(process.env.NEXT_PUBLIC_SUPABASE_URL);
     const { data, error } = await supabaseServiceRole
         .from('api_v1_products')
         .select();
@@ -140,9 +147,12 @@ export async function deleteData(dbClient: Client) {
     const users = (await supabaseServiceRole.auth.admin.listUsers()).data.users;
 
     for (let user of users) {
-        const authDeleteRes = await supabaseServiceRole.auth.admin.deleteUser(
+        const { error, data } = await supabaseServiceRole.auth.admin.deleteUser(
             user.id
         );
+        if (error) {
+            throw new Error(error.message);
+        }
     }
 
     const apiUsersRes = await supabaseServiceRole.from('api_v1_users').select();
@@ -150,8 +160,6 @@ export async function deleteData(dbClient: Client) {
     if (apiUsersRes.error) {
         throw apiUsersRes.error;
     }
-
-    console.log(apiUsersRes.data);
 
     const tables = [
         'api_v1_deliverables',
@@ -164,7 +172,11 @@ export async function deleteData(dbClient: Client) {
         const apiDeleteRes = await supabaseServiceRole
             .from(table)
             .delete()
-            .neq('id', null);
+            .neq('id', nilUUID)
+            .select();
+        if (apiDeleteRes.error) {
+            throw apiDeleteRes.error;
+        }
         //Yes this is an SQL injection technically, no it doesn't have any user-controlled input.
         await dbClient.query(`DELETE FROM ${table}`);
     }

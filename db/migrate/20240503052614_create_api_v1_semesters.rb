@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateApiV1Semesters < ActiveRecord::Migration[7.1]
   def change
     create_table :api_v1_semesters, id: :uuid do |t|

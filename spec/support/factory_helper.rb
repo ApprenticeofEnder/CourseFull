@@ -1,8 +1,10 @@
-require "factory_bot"
-require "faker"
+# frozen_string_literal: true
+
+require 'factory_bot'
+require 'faker'
 
 RSpec.configure do |config|
-  config.before(:each) do
+  config.before do
     Faker::Name.unique.clear
   end
 

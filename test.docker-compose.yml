@@ -1,0 +1,20 @@
+services:
+    testdb:
+        image: "supabase/postgres:15.1.0.147"
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+        volumes:
+            - testdb_data:/var/lib/postgresql/data
+    # test_app:
+    #   build:
+    #     context: .
+    #     dockerfile: Dockerfile.test
+    #   ports:
+    #     - 5100:5100
+
+volumes:
+    testdb_data:

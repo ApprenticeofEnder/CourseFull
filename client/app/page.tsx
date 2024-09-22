@@ -1,12 +1,12 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
 import { UserMetadata } from '@supabase/supabase-js';
+import { Suspense, useEffect, useState } from 'react';
 
 import Loading from '@app/loading';
-import { useSession } from '@lib/supabase/sessionContext';
 import AnonHomeStatus from '@components/HomeStatus/AnonHomeStatus';
 import HomeStatus from '@components/HomeStatus/HomeStatus';
+import { useSession } from '@lib/supabase/sessionContext';
 
 export default function Home() {
     const [loading, setLoading] = useState(true);
@@ -14,7 +14,6 @@ export default function Home() {
     const { session, loadingSession } = useSession()!;
 
     const [username, setUsername] = useState('friend');
-
     useEffect(() => {
         setLoading(loadingSession);
         if (!session) {

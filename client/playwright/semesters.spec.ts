@@ -1,28 +1,28 @@
-import { test, expect, type Page, Locator } from '@playwright/conftest';
+import { Endpoints } from '@coursefull';
+import { AUTH_TOKEN_STORAGE_KEY } from '@lib/supabase/client';
+import { expect, test } from '@playwright/authenticated.fixtures';
 
 test.describe('New Semester', () => {
     test('User can create a semester with valid values', async ({
-        loginPage,
-        loginUser,
+        authenticatedPage,
         semesterData,
     }) => {
-        const page = loginPage;
+        const page = authenticatedPage;
 
         page.on('dialog', (dialog) => {
             test.fail();
             throw new Error(dialog.message());
         });
 
-        await page.getByTestId('login-email').click();
-        await page.getByTestId('login-email').fill(loginUser.email);
-        await page.getByTestId('login-password').click();
-        await page.getByTestId('login-password').fill('Password1!');
-        await page.getByTestId('login-button').click();
+        await page.goto(Endpoints.ROOT);
+
+        await expect(page).toHaveURL(Endpoints.ROOT);
 
         await expect(
-            page.getByText(`Hey, ${loginUser.first_name}!`)
-        ).toBeVisible();
-
+            page.getByRole('heading', {
+                name: `Hey, friend!`,
+            })
+        ).toBeHidden();
         await page.getByTestId('create-semester-button').click();
         await page.getByPlaceholder('e.g. Fall').click();
         await page.getByPlaceholder('e.g. Fall').fill(semesterData.name);

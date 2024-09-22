@@ -1,3 +1,3 @@
-api: bin/rails server -p 8080
-client: sh -c 'cd ./client && pnpm run dev'
+coursefull_api: bin/rails server -p 8080
+coursefull_client: sh -c 'cd ./client && pnpm run dev'
 stripe: stripe listen --forward-to localhost:5100/api/v1/payments/webhook

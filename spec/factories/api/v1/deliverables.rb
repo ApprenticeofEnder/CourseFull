@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
-  factory :api_v1_deliverable, class: "Api::V1::Deliverable" do
+  factory :api_v1_deliverable, class: 'Api::V1::Deliverable' do
     mark { 0.0 }
-    status { "active" }
+    status { 'active' }
     notes { Faker::Lorem.paragraph }
     goal { 80.0 }
     course factory: :api_v1_course
@@ -12,7 +14,7 @@ FactoryBot.define do
       weight { 6.0 }
 
       factory :api_v1_completed_assignment do
-        status { "complete" }
+        status { 'complete' }
         mark { Faker::Number.between(from: 0.0, to: 100.0) }
       end
     end
@@ -22,17 +24,17 @@ FactoryBot.define do
       weight { 30.0 }
 
       factory :api_v1_completed_midterm do
-        status { "complete" }
+        status { 'complete' }
         mark { Faker::Number.between(from: 0.0, to: 100.0) }
       end
     end
 
     factory :api_v1_exam do
-      name { "Exam" }
+      name { 'Exam' }
       weight { 40.0 }
 
       factory :api_v1_completed_exam do
-        status { "complete" }
+        status { 'complete' }
         mark { Faker::Number.between(from: 0.0, to: 100.0) }
       end
     end
