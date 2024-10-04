@@ -61,7 +61,6 @@ class Api::V1::UsersController < Api::V1::ApplicationController
           @num_graded_courses += 1
           @grade_sum += course.grade
         end
-        @num_courses += 1
       end
 
       if @num_graded_courses == 0
@@ -73,6 +72,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
         :semester_id => semester.id,
         :average => 0,
         :num_courses => @num_courses,
+        :num_graded_courses => @num_graded_courses,
         :goal => semester.goal,
         :status => semester.status,
       }
