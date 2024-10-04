@@ -35,15 +35,17 @@ const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [loadingSession, setLoadingSession] = useState(true);
     useEffect(() => {
         // supabase.auth.setSession()
-        console.log('Attempting to load session from local storage:');
+        console.info('Attempting to load session from local storage...');
         const loadedSession = loadSession();
         if (loadedSession !== null) {
             const { access_token, refresh_token } = loadedSession;
-            console.log('Session loaded from local storage.');
+            console.info('Session loaded from local storage.');
             supabase.auth.setSession({
                 access_token,
                 refresh_token,
             });
+        } else {
+            console.info('No local session found.');
         }
 
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -54,7 +56,6 @@ const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
-            console.log('Session exists: ', session !== null);
             setSession(session);
         });
 

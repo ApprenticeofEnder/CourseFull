@@ -10,12 +10,16 @@ import {
     NavbarContent,
     NavbarItem,
     Spinner,
+    Spacer,
 } from '@nextui-org/react';
 import { Endpoints } from '@coursefull';
 import { Fragment, useEffect, useState } from 'react';
 import { useSession } from '@lib/supabase/sessionContext';
 import Link from '@components/Link';
 import LinkButton from '@components/Button/LinkButton';
+import { GitHubLogoIcon } from '@radix-ui/react-icons';
+
+const GITHUB_LINK: string = 'https://github.com/ApprenticeofEnder/CourseFull';
 
 export default function CourseFullNavbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,15 +38,14 @@ export default function CourseFullNavbar() {
             color: 'foreground',
         },
         {
-            label: 'Guides',
-            href: '#',
-            disabled: true,
-            color: 'foreground',
-        },
-        {
             label: 'Products',
             href: Endpoints.PRODUCTS,
             color: 'primary',
+        },
+        {
+            label: 'Contact Us',
+            href: Endpoints.CONTACT,
+            color: 'foreground',
         },
     ];
 
@@ -74,6 +77,19 @@ export default function CourseFullNavbar() {
                             CourseFull
                         </h2>
                     </Link>
+
+                    <div className="hidden md:flex">
+                        <Spacer x={2} />
+
+                        <a
+                            color="foreground"
+                            href={GITHUB_LINK}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <GitHubLogoIcon className="h-6 w-6" />
+                        </a>
+                    </div>
                 </NavbarBrand>
             </NavbarContent>
             {session && (
@@ -116,6 +132,7 @@ export default function CourseFullNavbar() {
                     <Fragment>
                         <NavbarItem className="hidden lg:flex">
                             <Link
+                                className="top-1"
                                 href={Endpoints.LOGIN}
                                 data-testid="nav-login"
                             >
@@ -145,12 +162,37 @@ export default function CourseFullNavbar() {
                                 href={item.href}
                                 size="lg"
                                 color={item.color}
+                                onClick={() => {
+                                    setIsMenuOpen(false);
+                                }}
                             >
                                 {item.label}
                             </Link>
                         </NavbarMenuItem>
                     );
                 })}
+                <Spacer y={4} />
+
+                <hr className="border-1 border-primary-700/50 my-2" />
+
+                <NavbarMenuItem
+                    key="github"
+                    onClick={() => {
+                        setIsMenuOpen(false);
+                    }}
+                >
+                    <a
+                        className="w-full flex"
+                        href={GITHUB_LINK}
+                        color="foreground"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <GitHubLogoIcon className="h-6 w-6" />
+                        <Spacer x={2} />
+                        Github
+                    </a>
+                </NavbarMenuItem>
             </NavbarMenu>
         </Navbar>
     );

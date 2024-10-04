@@ -66,6 +66,7 @@ export default function SemesterForm({
                         className={classNames(
                             status === item.key ? 'bg-primary-600' : ''
                         )}
+                        textValue={item.label}
                     >
                         <span
                             className={status === item.key ? 'font-bold' : ''}

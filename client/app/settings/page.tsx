@@ -2,21 +2,29 @@
 import { Fragment, Suspense, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input, Tab, Tabs } from '@nextui-org/react';
+
 import { SessionProps } from '@coursefull';
-
 import Loading from '@app/loading';
-
 import Button from '@components/Button/Button';
-
 import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
+import { useToast } from '@lib/use-toast';
 import { deleteUser } from '@services/userService';
+import { supabase } from '@lib/supabase';
 
 function DeleteAccount({ session }: SessionProps) {
     const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
+    const { toast } = useToast();
+
     const deleteAccount = async () => {
+        console.info('That should have produced a pop up...');
         await deleteUser(session, (error) => {
             console.error(error.message);
+            toast({
+                title: 'Error',
+                description: error.message,
+                variant: 'destructive',
+            });
         });
     };
 
@@ -59,6 +67,8 @@ function DeleteAccount({ session }: SessionProps) {
 }
 
 function AccountDetails({ session }: SessionProps) {
+    const { toast } = useToast();
+
     const [firstName, setFirstName] = useState(
         session.user.user_metadata.first_name
     );
@@ -67,7 +77,61 @@ function AccountDetails({ session }: SessionProps) {
     );
     const [email, setEmail] = useState(session.user.email!);
 
-    const updateAccountDetails = async () => {};
+    async function updateAccountDetails() {
+        const nameUpdateSuccessful = await updateName();
+        if (!nameUpdateSuccessful) {
+            return;
+        }
+        const emailUpdateSuccessful = await updateEmail();
+        if (!emailUpdateSuccessful) {
+            return;
+        }
+    }
+
+    async function updateName() {
+        const { data, error } = await supabase.auth.updateUser({
+            data: {
+                first_name: firstName,
+                last_name: lastName,
+            },
+        });
+        if (error) {
+            toast({
+                title: 'Error',
+                description: error.message,
+                variant: 'destructive',
+            });
+            return false;
+        }
+        return true;
+    }
+
+    async function updateEmail() {
+        const { data, error } = await supabase.auth.updateUser({
+            email,
+        });
+
+        if (error) {
+            alert(error.message);
+            return false;
+        }
+
+        toast({
+            title: 'Email Updated',
+            description:
+                "Please check your inboxes! You'll need to accept the change with both your old and new email.",
+            action: (
+                <Button
+                    onClick={() => {
+                        location.reload();
+                    }}
+                >
+                    Ok
+                </Button>
+            ),
+        });
+        return true;
+    }
 
     return (
         <div className="bg-primary-800 border-2 border-primary-100/15 rounded-lg p-10 flex flex-col gap-4">
@@ -87,15 +151,20 @@ function AccountDetails({ session }: SessionProps) {
                     label="Last Name"
                 />
             </div>
+
             <Input value={email} onValueChange={setEmail} label="Email" />
-            <Button buttonType="confirm">Save Changes</Button>
+
+            <Button buttonType="confirm" onClick={updateAccountDetails}>
+                Save Changes
+            </Button>
         </div>
     );
 }
 
-function Security({ session }: SessionProps) {
+function Security() {
     return (
         <div className="flex flex-col gap-4">
+            <h3 className="text-left">Security and Passwords</h3>
             <div className="bg-primary-800 border-2 border-primary-100/15 rounded-lg p-10 flex flex-col gap-4">
                 <h3 className="text-left">Change Password</h3>
                 <p>Coming soon!</p>
@@ -114,29 +183,31 @@ export default function SettingsPage() {
 
     useProtectedEndpoint(session, loadingSession, router);
     return (
-        <div>
+        <div className="mt-20 sm:mt-32">
             <div className="my-4">
                 <h1>Settings</h1>
+
+                <hr className="border-1 border-primary-100/50 my-2" />
             </div>
             <Suspense fallback={<Loading />}>
                 {!loadingSession && session ? (
                     <Tabs
                         aria-label="Deliverables"
+                        className="w-full lg:justify-center"
                         classNames={{
                             tabList:
-                                'bg-background-900 gap-6 relative rounded-none p-4',
+                                'bg-background-900 gap-6 relative rounded-none p-4 w-full lg:w-fit flex-col lg:flex-row h-fit',
                             cursor: 'w-full bg-primary-700 group-data-[details=danger]:bg-danger-200 p-4',
                             tabContent:
                                 'w-full group-data-[details=danger]:text-danger-800 group-data-[selected=true]:text-foreground font-bold text-lg p-4',
                             panel: 'w-full',
                         }}
-                        isVertical
                     >
                         <Tab title="Account Details">
                             <AccountDetails session={session} />
                         </Tab>
                         <Tab title="Security and Passwords">
-                            <Security session={session}></Security>
+                            <Security></Security>
                         </Tab>
                         <Tab
                             title="Delete Your Account"

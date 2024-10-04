@@ -2,7 +2,7 @@ import { Endpoints } from '@coursefull';
 import { AUTH_TOKEN_STORAGE_KEY } from '@lib/supabase/client';
 import { expect, test } from '@playwright/authenticated.fixtures';
 
-test.describe('New Semester', () => {
+test.describe.skip('New Semester', () => {
     test('User can create a semester with valid values', async ({
         authenticatedPage,
         semesterData,

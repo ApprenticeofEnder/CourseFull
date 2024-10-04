@@ -5,8 +5,8 @@ import { EnvelopeIcon } from '@heroicons/react/24/outline';
 
 export default function ContactPage() {
     return (
-        <div className="flex flex-col sm:flex-row justify-center h-full my-14 gap-4">
-            <div className="basis-1/2 flex flex-col gap-10 p-8 rounded-lg">
+        <div className="flex flex-col sm:flex-row sm:justify-center h-4/5 sm:h-fit mt-20 sm:mt-32 sm:gap-4">
+            <div className="sm:basis-1/2 flex flex-col gap-10 p-8 rounded-lg">
                 <h1 className="text-left">Contact Us</h1>
                 <ul className="list-disc text-xl">
                     <li>App not working right?</li>

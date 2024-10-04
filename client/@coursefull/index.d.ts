@@ -15,6 +15,10 @@ export interface SessionProps {
     session: Session;
 }
 
+export interface UserDataProps {
+    userData: User | null;
+}
+
 export interface SpacerProps extends ChildrenProps {
     className?: string;
 }
@@ -36,9 +40,28 @@ export interface SemesterProgressType {
     semester_id: string;
     average: number;
     num_courses: number;
+    num_graded_courses: number;
     goal: number;
     status: ItemStatus;
     grade_colour?: string;
+}
+
+export interface SemesterFormProps {
+    name: string;
+    setName: (name: string) => void;
+    status: ItemStatus;
+    setStatus: (name: ItemStatus) => void;
+    goal: string;
+    setGoal: (name: string) => void;
+}
+
+export interface CourseMultiCreateProps {
+    courses: Partial<Course[]>;
+    setCourses: (courses: Partial<Course[]>) => void;
+    coursesRemaining: number;
+    setCoursesRemaining: (coursesRemaining: number) => void;
+    userData: User;
+    loadingUserData: boolean;
 }
 
 export interface BaseAcademicItem {
@@ -56,7 +79,7 @@ export interface Semester extends BaseAcademicItem {
 export interface Course extends BaseAcademicItem {
     title: string;
     course_code: string;
-    api_v1_semester_id: string;
+    api_v1_semester_id?: string;
     goal?: number;
     grade?: number;
     deliverable_goal?: number;

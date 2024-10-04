@@ -22,6 +22,9 @@
     h3 {
         @apply text-2xl lg:text-3xl text-center;
     }
+  :root {
+        --radius: 0.5rem;
+    }
 }
 
 @layer components {

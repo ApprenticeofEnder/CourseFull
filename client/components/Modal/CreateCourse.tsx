@@ -57,9 +57,10 @@ export default function CreateCourseModal({
                         );
                         if (buying) router.push(Endpoints.PRODUCTS);
                     }
-                    onClose();
                 } catch (err) {
                     alert(`Something went wrong: ${error}`);
+                } finally {
+                    onClose();
                 }
             }
         );

@@ -1,5 +1,6 @@
 import Navbar from '@components/Navbar';
 import Spacer from '@components/Spacer';
+import { Toaster } from '@components/Toast/Toaster';
 import CartProvider from '@lib/cart/cartContext';
 import SessionProvider from '@lib/supabase/sessionContext';
 import { NextUIProvider } from '@nextui-org/react';
@@ -33,6 +34,7 @@ export default function RootLayout({
                             <Spacer className="overflow-auto">
                                 {children}
                             </Spacer>
+                            <Toaster />
                         </NextUIProvider>
                     </CartProvider>
                 </SessionProvider>

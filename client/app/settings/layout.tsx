@@ -4,5 +4,5 @@ export const metadata = {
     title: 'Settings',
 };
 export default function SettingsLayout({ children }: ChildrenProps) {
-    return children;
+    return <div className="h-4/5">{children}</div>;
 }
