@@ -2,11 +2,11 @@ current-dir := invocation_directory()
 
 alias test := _test-all
 
-dev:
-    #!/usr/bin/env bash
-    set -euxo pipefail
-    export COURSEFULL_ENV=Dev
-    export $(op inject -i .env.tpl)
+dev $COURSEFULL_ENV='Dev':
+    op run --env-file={{current-dir}}/.env.tpl \
+        just _dev
+
+_dev:
     rails db:prepare
     rails db:seed
     foreman start -f Procfile.local
@@ -47,6 +47,9 @@ _setup-test-database:
 _teardown-test-database:
     docker compose -f test.docker-compose.yml down
 
+test-server $COURSEFULL_ENV='Test': _setup-test-database && _teardown-test-database
+    op run --env-file={{current-dir}}/.env.tpl -- just _test-server
+
 _test-server:
     echo "Waiting for Postgres..."
     sleep 3
@@ -62,6 +65,3 @@ _test-server:
     cd ..
     cp -r client/out/* public/
     foreman start -f Procfile.test
-
-test-server $COURSEFULL_ENV='Test': _setup-test-database && _teardown-test-database
-    op run --env-file={{current-dir}}/.env.tpl -- just _test-server
