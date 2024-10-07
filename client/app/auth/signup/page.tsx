@@ -90,7 +90,7 @@ export default function Signup() {
     }
 
     return (
-        <div className="h-dvh flex flex-col justify-center gap-4 sm:w-3/4 mx-auto">
+        <Fragment>
             <h1 data-testid="signup-header">Sign up for CourseFull</h1>
             <Input
                 type="text"
@@ -138,7 +138,7 @@ export default function Signup() {
                         <li>At least 1 uppercase character</li>
                         <li>At least 1 lowercase character</li>
                         <li>At least 1 number</li>
-                        <li>At least 1 of the following: !#$%&? _&quot;</li>
+                        <li>10 Characters or more</li>
                     </ul>
                     <strong>We also recommend using a password manager!</strong>
                 </div>
@@ -176,6 +176,6 @@ export default function Signup() {
                     {loading ? 'Signing up...' : 'Sign Up'}
                 </Button>
             </div>
-        </div>
+        </Fragment>
     );
 }

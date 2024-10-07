@@ -170,7 +170,7 @@ export const validateEmail = (email: string) =>
 
 export const validatePassword = (password: string) => {
     return password.match(
-        /^.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&? _"]).*$/i
+        /^.*(?=.{10,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/i
     );
 };
 

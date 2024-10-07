@@ -38,7 +38,7 @@ export default function Login() {
     }
 
     return (
-        <div className="h-dvh flex flex-col justify-center gap-4 sm:w-3/4 mx-auto">
+        <Fragment>
             <h1 data-testid="login-header">Log In to CourseFull</h1>
             <Input
                 type="email"
@@ -74,6 +74,6 @@ export default function Login() {
                     {loading ? 'Logging in...' : 'Log In'}
                 </Button>
             </div>
-        </div>
+        </Fragment>
     );
 }
