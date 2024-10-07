@@ -16,7 +16,7 @@ populate:
         op run --env-file={{current-dir}}/.env.tpl \
         -- pnpm populate
 
-test-frontend-single test-name $COURSEFULL_ENV='test':
+test-playwright-single test-name $COURSEFULL_ENV='test':
     cd client && \
         op run --env-file={{current-dir}}/.env.tpl \
         -- pnpm exec playwright test {{test-name}}.spec.ts --trace on
