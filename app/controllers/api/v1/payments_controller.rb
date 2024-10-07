@@ -93,10 +93,12 @@ module Api
 
       def process_line_item(line_item, metadata)
         product = Api::V1::Product.find_by(stripe_id: line_item.price.product)
+        Rails.logger.info(product.name)
         case product.name
         when 'Course Ticket'
           api_v1_user = Api::V1::User.find_by(id: metadata.user)
           api_v1_user.add_course_tickets(line_item.quantity)
+          Rails.logger.info(format('Added %p tickets to account %p.', line_item.quantity, api_v1_user.id))
         end
       end
     end
