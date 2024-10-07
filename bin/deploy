@@ -12,11 +12,11 @@ function pnpm-run() {
     op run --env-file=$BUILD_ENV_FILE -- pnpm "$@"
 }
 
-docker-compose-run down
 cd client
 pnpm i
 pnpm-run build
 cp -r out/* ../public
 # pnpm-run upload-assets Figure out what's wrong with Supabase
 cd ..
+docker-compose-run down
 docker-compose-run up --build -d
