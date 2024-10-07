@@ -27,9 +27,6 @@ export async function createPayment(
                 { products },
                 {
                     headers,
-                    validateStatus: (status) => {
-                        return status === 201;
-                    },
                 }
             );
             return response;
