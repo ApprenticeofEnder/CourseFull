@@ -88,9 +88,10 @@ export default function Checkout() {
                         errorData.status === 400 &&
                         errorData.data.error_type === 'empty_cart';
                     if (!noItemsError) {
+                        throw error;
                     }
                 } catch (err) {
-                    alert(`Something went wrong: ${error.message}`);
+                    alert(`Something went wrong: ${err}`);
                 }
             }
         );
