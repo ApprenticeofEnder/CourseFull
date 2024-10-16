@@ -2,6 +2,7 @@
 
 import { UserMetadata } from '@supabase/supabase-js';
 import { Suspense, useEffect, useState } from 'react';
+import { ScrollShadow } from '@nextui-org/react';
 
 import Loading from '@app/loading';
 import AnonHomeStatus from '@components/HomeStatus/AnonHomeStatus';
@@ -25,7 +26,7 @@ export default function Home() {
 
     return (
         <main>
-            <div className="relative py-10 flex justify-center mt-4 lg:mt-0 h-dvh">
+            <ScrollShadow className="relative py-10 flex justify-center mt-4 lg:mt-0 h-dvh">
                 <div className="flex flex-col justify-center w-full">
                     <h1>Hey, {username}!</h1>
                     <Suspense fallback={<Loading message="Good to see you!" />}>
@@ -38,7 +39,7 @@ export default function Home() {
                         )}
                     </Suspense>
                 </div>
-            </div>
+            </ScrollShadow>
         </main>
     );
 }
