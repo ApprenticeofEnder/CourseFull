@@ -188,6 +188,10 @@ RSpec.describe '/api/v1/deliverables', type: :request do
           end.not_to change(Api::V1::Semester, :count)
         end
       end
+
+      it 'updates goals for a completed deliverable' do
+        pending "ADD THIS TEST"
+      end
     end
 
     context 'with invalid auth token' do
@@ -247,6 +251,10 @@ RSpec.describe '/api/v1/deliverables', type: :request do
               params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
         expect(response).to have_http_status(:forbidden)
       end
+
+      it 'updates goals for a completed deliverable' do
+        pending "ADD THIS TEST"
+      end
     end
 
     context 'with invalid auth token' do
@@ -281,6 +289,10 @@ RSpec.describe '/api/v1/deliverables', type: :request do
       it 'renders a 403 forbidden response for a nonexistent ID' do
         delete "/api/v1/deliverables/#{SecureRandom.uuid}", headers: auth_headers(@user), as: :json
         expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'updates goals for the course' do
+        pending "ADD THIS TEST"
       end
     end
 
