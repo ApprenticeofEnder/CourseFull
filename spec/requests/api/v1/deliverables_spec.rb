@@ -25,6 +25,16 @@ RSpec.describe '/api/v1/deliverables', type: :request do
     attributes
   end
 
+  def valid_attributes_completed(course)
+    attributes = attributes_for(
+      :api_v1_completed_assignment,
+      user: nil,
+      goal: nil
+    )
+    attributes[:api_v1_course_id] = course.id
+    attributes
+  end
+
   def invalid_attributes(is_updating = false)
     attributes_hash = valid_attributes(@user).dup
 
@@ -189,8 +199,8 @@ RSpec.describe '/api/v1/deliverables', type: :request do
         end
       end
 
-      it 'updates goals for a completed deliverable' do
-        pending "ADD THIS TEST"
+      xit 'updates goals for a completed deliverable' do
+        pending "ADD THIS TEST  #{__FILE__}"
       end
     end
 
@@ -252,8 +262,8 @@ RSpec.describe '/api/v1/deliverables', type: :request do
         expect(response).to have_http_status(:forbidden)
       end
 
-      it 'updates goals for a completed deliverable' do
-        pending "ADD THIS TEST"
+      xit 'updates goals for a completed deliverable' do
+        pending "ADD THIS TEST #{__FILE__}"
       end
     end
 
@@ -291,8 +301,16 @@ RSpec.describe '/api/v1/deliverables', type: :request do
         expect(response).to have_http_status(:forbidden)
       end
 
-      it 'updates goals for the course' do
-        pending "ADD THIS TEST"
+      xit 'updates goals for the course' do
+        delete "/api/v1/deliverables/#{@deliverable_id}", headers: auth_headers(@user), as: :json
+        post '/api/v1/deliverables',
+             params: { api_v1_deliverable: valid_attributes_completed(@course) }, headers: auth_headers(@user), as: :json
+        post '/api/v1/deliverables',
+             params: { api_v1_deliverable: valid_attributes_completed(@course) }, headers: auth_headers(@user), as: :json
+        get "/api/v1/deliverables", headers: auth_headers(@user), as: :json
+        response.parsed_body.each do |deliverable|
+          puts(deliverable)
+        end
       end
     end
 

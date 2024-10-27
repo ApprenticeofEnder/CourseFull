@@ -1,7 +1,6 @@
 #!/bin/bash
 export COURSEFULL_ENV=Test
 export $(op inject -i .env.tpl)
-docker-compose -f docker-compose.test.yml up -d
 
 set -exo pipefail
 
@@ -23,4 +22,3 @@ cd client && pnpm run build
 cd ..
 cp -r client/out/* public/
 foreman start -f Procfile.test
-docker-compose -f docker-compose.test.yml down

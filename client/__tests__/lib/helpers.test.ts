@@ -302,8 +302,10 @@ describe('Helper Function', () => {
                 'Password11',
             ];
 
-            for (let password of invalidPasswords) {
-                expect(helpers.validatePassword(password)).toBeFalsy();
+            for (let password in invalidPasswords) {
+                const result = helpers.validatePassword(password);
+                console.log(password, result);
+                expect(result).toBeFalsy();
             }
         });
 

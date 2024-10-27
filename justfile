@@ -3,13 +3,7 @@ current-dir := invocation_directory()
 alias test := _test-all
 
 dev $COURSEFULL_ENV='Dev':
-    op run --env-file={{current-dir}}/.env.tpl \
-        just _dev
-
-_dev:
-    rails db:prepare
-    rails db:seed
-    foreman start -f Procfile.local
+    bin/dev
 
 populate:
     cd client && \
@@ -34,9 +28,7 @@ test-backend $COURSEFULL_ENV='Test': _check-test-server
     op run --env-file={{current-dir}}/.env.tpl \
         -- bundle exec rspec
 
-_test-all: _check-test-server
-    just test-backend
-    just test-frontend
+_test-all: _check-test-server test-backend test-frontend
 
 _check-test-server:
     nc -z localhost 5100
@@ -47,8 +39,8 @@ _setup-test-database:
 _teardown-test-database:
     docker compose -f test.docker-compose.yml down
 
-test-server $COURSEFULL_ENV='Test': _setup-test-database && _teardown-test-database
-    op run --env-file={{current-dir}}/.env.tpl -- just _test-server
+test-server: _setup-test-database && _teardown-test-database
+    bin/test-server
 
 _test-server:
     echo "Waiting for Postgres..."
