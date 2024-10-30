@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_14_191058) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_30_185909) do
   create_schema "_analytics"
   create_schema "_realtime"
   create_schema "_supavisor"
@@ -89,6 +89,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_14_191058) do
     t.integer "courses_remaining"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "subscribed"
   end
 
   add_foreign_key "api_v1_courses", "api_v1_semesters"
