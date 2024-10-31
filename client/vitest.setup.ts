@@ -82,4 +82,5 @@ export const DEMO_ACCOUNT_DATA: BasicUserData = {
     first_name: 'Jason',
     last_name: 'Cook',
     password: 'Password1!',
+    subscribed: false,
 };

@@ -32,6 +32,7 @@ export const createUserData = (
     last_name: data?.last_name || faker.person.lastName(),
     email: data?.email || faker.internet.email(),
     password: 'Password1!',
+    subscribed: data?.subscribed || false,
 });
 
 export const createValidFields = ({

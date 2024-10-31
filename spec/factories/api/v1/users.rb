@@ -7,5 +7,6 @@ FactoryBot.define do
     email { Faker::Internet.unique.email }
     supabase_id { SecureRandom.uuid }
     courses_remaining { 3 }
+    subscribed { Faker::Base.sample([true, false]) }
   end
 end

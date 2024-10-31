@@ -14,6 +14,7 @@ module Api
                         uniqueness: { message: 'That email address already exists. Please reset your password through the web app.' }, email: true
       validates :supabase_id, presence: { message: supabase_id_error }, uniqueness: { message: supabase_id_error }
       validates :courses_remaining, numericality: { greater_than_or_equal_to: 0 }
+      validates :subscribed, inclusion: [true, false]
 
       def init
         self.courses_remaining ||= 3
@@ -21,7 +22,7 @@ module Api
 
       def add_course_tickets(amount)
         unless amount.positive?
-          Rails.logger.fatal(format('Account %p attempted to add %p tickets, which is a non-positive number.', id,
+          Rails.logger.error(format('Account %p attempted to add %p tickets, which is a non-positive number.', id,
                                     amount))
           return
         end

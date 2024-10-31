@@ -107,6 +107,7 @@ export interface User {
     email: string;
     supabase_id: string;
     courses_remaining: number;
+    subscribed: boolean;
 }
 
 export interface BasicUserData {
@@ -114,6 +115,7 @@ export interface BasicUserData {
     last_name: string;
     email: string;
     password: string;
+    subscribed: boolean;
 }
 
 export interface Product {

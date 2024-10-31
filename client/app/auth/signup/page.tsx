@@ -1,7 +1,7 @@
 'use client';
 
 import { Fragment, useEffect, useMemo, useState } from 'react';
-import { Input } from '@nextui-org/react';
+import { Input, Checkbox } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
 import Button from '@components/Button/Button';
@@ -26,6 +26,7 @@ export default function Signup() {
     const [password, setPassword] = useState('');
     const [fname, setFname] = useState('');
     const [lname, setLname] = useState('');
+    const [subscribed, setSubscribed] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const invalidEmail = useMemo(() => {
@@ -75,10 +76,13 @@ export default function Signup() {
     async function handleSignUp() {
         setLoading(true);
         const { success } = await createUser(
-            fname,
-            lname,
-            email,
-            password,
+            {
+                first_name: fname,
+                last_name: lname,
+                email,
+                password,
+                subscribed,
+            },
             (error) => {
                 alert(`Something went wrong: ${error}`);
                 setLoading(false);
@@ -155,6 +159,15 @@ export default function Signup() {
                 onValueChange={setPassword}
                 data-testid="signup-password"
             />
+
+            <Checkbox
+                isSelected={subscribed}
+                onValueChange={setSubscribed}
+                data-testid="signup-subscribe"
+            >
+                I want to get emails from CourseFull, including resources for
+                academic success, product updates, and promotional offers.
+            </Checkbox>
 
             <div className="flex gap-4">
                 <LinkButton

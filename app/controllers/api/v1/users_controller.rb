@@ -40,6 +40,8 @@ class Api::V1::UsersController < Api::V1::ApplicationController
         res.value
       rescue Net::HTTPClientException
         Rails.logger.error("Attempt to delete Supabase User with ID %s failed. Status code: %s" % [@supabase_id, res.code])
+        Rails.logger.error("Deletion details: %s" % [res.body])
+        return render json: {:error => "Failed to delete user."}, status: res.code
       end
     end
 
@@ -87,6 +89,6 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   # Only allow a list of trusted parameters through.
   def api_v1_user_params
-    params.require(:api_v1_user).permit(:first_name, :last_name, :email, :supabase_id)
+    params.require(:api_v1_user).permit(:first_name, :last_name, :email, :supabase_id, :subscribed)
   end
 end

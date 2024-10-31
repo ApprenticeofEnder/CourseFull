@@ -46,6 +46,8 @@ gem 'stripe', '~> 11.6'
 
 gem 'foreman'
 
+gem 'logstash-logger'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[mri windows]
@@ -69,4 +71,5 @@ end
 group :test do
   gem 'database_cleaner-active_record'
   gem 'faker'
+  gem 'webmock'
 end

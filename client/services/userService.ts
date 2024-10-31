@@ -1,14 +1,16 @@
-import { APIOnFailure, APIServiceResponse, Endpoints } from '@coursefull';
+import {
+    APIOnFailure,
+    APIServiceResponse,
+    Endpoints,
+    BasicUserData,
+} from '@coursefull';
 import { apiErrorHandler, authenticatedApiErrorHandler } from '@lib/helpers';
 import { supabase } from '@lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import axios, { AxiosError } from 'axios';
 
 export async function createUser(
-    first_name: string,
-    last_name: string,
-    email: string,
-    password: string,
+    { first_name, last_name, email, password, subscribed }: BasicUserData,
     onFailure: APIOnFailure
 ): Promise<APIServiceResponse> {
     return apiErrorHandler(async () => {
@@ -33,6 +35,7 @@ export async function createUser(
                 last_name,
                 email,
                 supabase_id: supabaseResponse.data.user?.id,
+                subscribed,
             },
         };
 
