@@ -10,12 +10,15 @@ But if you're doing that to know what you need at the last minute, why not do it
 
 Making a spreadsheet for that is a lot of work. **That's what CourseFull is for.**
 
+[coursefull.app](https://coursefull.app)
+
 ## Contents
 
 - [About This Project](#about-this-project)
-- [Tech Stack](#tech-stack)
 - [Features](#features)
-- [Local Development](#local-development)
+- [Tech Stack](#tech-stack)
+- [Contributing](#contributing)
+- [Special Thanks](#special-thanks)
 
 ## About This Project
 
@@ -32,6 +35,28 @@ Eventually the project fizzled out. My teammates moved onto other things. But Co
 I had tried starting the project back up in November 2023, but school priorities took over, and I wasn't about to commit to a Java and Angular app for who knew how long.
 
 In April, something clicked. I buckled down, trying to learn React and Ruby on Rails alongside my summer internship where I was doing zero full stack web dev. 3 months later at the time of writing, here we are.
+
+## Features
+
+### Goal Setting Across The Semester
+
+Set a goal and see it reflect in your semester's average throughout the term!
+
+### No-Frills Progress Tracking
+
+See what deliverables you've completed, and how you did, at a glance!
+
+### Credits, Not Subscriptions
+
+You buy a course credit, you get it until you spend it. Once you spend it, the course is yours so long as you have an account. No subscriptions, no rentals, plain and simple.
+
+### Secure Stripe Payments
+
+Stripe handles all of our payment processing, making your experience as smooth and peaceful as can be.
+
+### Secure Authentication with Supabase
+
+Supabase handles processing your account, CourseFull just checks if your requests are valid. SSO (Google, Microsoft, Github) logins coming soon!
 
 ## Tech Stack
 
@@ -62,28 +87,10 @@ In April, something clicked. I buckled down, trying to learn React and Ruby on R
 
 **HeadlessUI/NextUI**: Knowing React tends to have you reinvent the wheel on a lot of things, I decided to use common front end components someone else had built already, and then modify them for my own needs.
 
-## Features
+## Contributing
 
-### Goal Setting Across The Semester
+We're not open for pull request contributions just yet, but please submit an issue if you run into any problems!
 
-Set a goal and see it reflect in your semester's average throughout the term!
+## Special Thanks
 
-### No-Frills Progress Tracking
-
-See what deliverables you've completed, and how you did, at a glance!
-
-### Simple Ticketing System
-
-TODO
-
-### Secure Stripe Payments
-
-TODO
-
-### Secure Authentication with Supabase
-
-TODO
-
-## Local Development
-
-This section will become available when the project officially launches and an open source license is available. Sit tight!
+- Srdjan Grbic for leading the charge on CourseFull 0.1 during cuHacking 2021
