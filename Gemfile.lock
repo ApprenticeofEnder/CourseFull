@@ -80,7 +80,7 @@ GEM
     ast (2.4.2)
     base64 (0.2.0)
     bigdecimal (3.1.7)
-    bootsnap (1.18.3)
+    bootsnap (1.18.4)
       msgpack (~> 1.2)
     builder (3.2.4)
     concurrent-ruby (1.2.3)
@@ -137,7 +137,7 @@ GEM
     marcel (1.0.4)
     mini_mime (1.1.5)
     minitest (5.22.3)
-    msgpack (1.7.2)
+    msgpack (1.7.5)
     mutex_m (0.2.0)
     net-imap (0.4.10)
       date
