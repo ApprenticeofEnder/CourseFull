@@ -9,7 +9,7 @@ require File.expand_path('config/application', __dir__)
 Rails.application.load_tasks
 Rake::Task['test'].clear
 
-task :test do
+task test: :environment do
   Rake::Task['spec'].invoke
 end
 
