@@ -30,19 +30,18 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   def destroy
     @supabase_id = @api_v1_user.supabase_id
 
-    url = URI(ENV["NEXT_PUBLIC_SUPABASE_URL"])
+    url = URI(ENV['NEXT_PUBLIC_SUPABASE_URL'])
 
-    headers = { Authorization: "Bearer #{ENV["SUPABASE_SERVICE_KEY"]}" }
+    headers = { Authorization: "Bearer #{ENV['SUPABASE_SERVICE_KEY']}" }
 
-    Net::HTTP.start(url.hostname, url.port, :use_ssl => ENV["RAILS_ENV"] == "production") do |http|
-      begin
-        res = http.delete("/auth/v1/admin/users/#{@supabase_id}", headers)
-        res.value
-      rescue Net::HTTPClientException
-        Rails.logger.error("Attempt to delete Supabase User with ID %s failed. Status code: %s" % [@supabase_id, res.code])
-        Rails.logger.error("Deletion details: %s" % [res.body])
-        return render json: {:error => "Failed to delete user."}, status: res.code
-      end
+    Net::HTTP.start(url.hostname, url.port, use_ssl: ENV['RAILS_ENV'] == 'production') do |http|
+      res = http.delete("/auth/v1/admin/users/#{@supabase_id}", headers)
+      res.value
+    rescue Net::HTTPClientException
+      Rails.logger.error(format('Attempt to delete Supabase User with ID %s failed. Status code: %s', @supabase_id,
+                                res.code))
+      Rails.logger.error(format('Deletion details: %s', res.body))
+      return render json: { error: 'Failed to delete user.' }, status: res.code
     end
 
     @api_v1_user.destroy!
@@ -50,36 +49,32 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   # GET /api/v1/users/me/progress
   def progress
-    semester_progress = []
+    select_statements = [
+      'api_v1_semesters.name AS semester',
+      'api_v1_semesters.id AS semester_id',
+      'ROUND(AVG(CASE WHEN api_v1_deliverables.status = 1 THEN CAST(api_v1_courses.grade AS numeric) ELSE NULL END), 2) AS average',
+      'COUNT(DISTINCT api_v1_courses.id) AS num_courses',
+      'COUNT(DISTINCT CASE WHEN api_v1_deliverables.status = 1 THEN api_v1_courses.id ELSE NULL END) AS num_graded_courses',
+      'api_v1_semesters.goal AS goal',
+      'api_v1_semesters.status AS status'
+    ]
 
-    @api_v1_user.semesters.each do |semester|
-      @num_courses = semester.courses.length
-      @num_graded_courses = 0
-      @grade_sum = 0.0
-      @average = 0
+    group_by_clauses = [
+      'api_v1_semesters.id', 'api_v1_semesters.name', 'api_v1_semesters.goal', 'api_v1_semesters.status'
+    ]
 
-      semester.courses.each do |course|
-        if course.deliverables.complete.length > 0
-          @num_graded_courses += 1
-          @grade_sum += course.grade
-        end
-      end
+    attempted_semester_progress = @api_v1_user.semesters
+                                              .joins(courses: :deliverables)
+                                              .select(
+                                                *select_statements
+                                              )
+                                              .group(*group_by_clauses)
+                                              .order('api_v1_semesters.id')
 
-      if @num_graded_courses == 0
-        @average = (@grade_sum / @num_graded_courses).round(2)
-      end
-
-      semester_progress_item = {
-        :semester => semester.name,
-        :semester_id => semester.id,
-        :average => 0,
-        :num_courses => @num_courses,
-        :num_graded_courses => @num_graded_courses,
-        :goal => semester.goal,
-        :status => semester.status,
-      }
-
-      semester_progress.push(semester_progress_item)
+    semester_progress = attempted_semester_progress.map do |current_progress|
+      current_progress_hash = current_progress.as_json
+      current_progress_hash['average'] = current_progress_hash['average'].to_f
+      current_progress_hash
     end
 
     render json: semester_progress

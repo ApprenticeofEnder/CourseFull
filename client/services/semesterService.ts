@@ -8,6 +8,7 @@ import {
 import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import axios from 'axios';
+import { api } from '@services';
 
 export async function createSemester(
     { name, status, goal }: Semester,
@@ -16,7 +17,7 @@ export async function createSemester(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const apiResponse = await axios.post(
+            const apiResponse = await api.post(
                 Endpoints.API_SEMESTERS,
                 {
                     api_v1_semester: {
@@ -45,7 +46,7 @@ export async function getSemesters(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            return axios.get(Endpoints.API_SEMESTERS, {
+            return api.get(Endpoints.API_SEMESTERS, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
@@ -64,7 +65,7 @@ export async function getSemester(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            return axios.get(`${Endpoints.API_SEMESTERS}/${id}`, {
+            return api.get(`${Endpoints.API_SEMESTERS}/${id}`, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
@@ -83,7 +84,7 @@ export async function updateSemester(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const apiResponse = await axios.put(
+            const apiResponse = await api.put(
                 `${Endpoints.API_SEMESTERS}/${id}`,
                 {
                     api_v1_semester: {
@@ -113,7 +114,7 @@ export async function deleteSemester(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const apiResponse = await axios.delete(
+            const apiResponse = await api.delete(
                 `${Endpoints.API_SEMESTERS}/${id}`,
                 {
                     headers,

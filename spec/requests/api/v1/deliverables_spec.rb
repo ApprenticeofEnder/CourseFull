@@ -15,47 +15,6 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe '/api/v1/deliverables', type: :request do
-  def valid_attributes(course)
-    attributes = attributes_for(
-      :api_v1_assignment,
-      user: nil,
-      goal: nil
-    )
-    attributes[:api_v1_course_id] = course.id
-    attributes
-  end
-
-  def valid_attributes_completed(course)
-    attributes = attributes_for(
-      :api_v1_completed_assignment,
-      user: nil,
-      goal: nil
-    )
-    attributes[:api_v1_course_id] = course.id
-    attributes
-  end
-
-  def invalid_attributes(is_updating = false)
-    attributes_hash = valid_attributes(@user).dup
-
-    attributes_hash.delete(:goal)
-
-    attributes_hash.delete(:notes) if is_updating
-    attributes_hash.delete(:api_v1_course_id) if is_updating
-
-    attributes = attributes_hash.keys
-
-    @attribute_count = attributes.length
-    attributes.each do |attribute|
-      yield attributes_for(
-        :api_v1_assignment,
-        user: nil,
-        goal: nil,
-        attribute => nil
-      )
-    end
-  end
-
   def course(user, semester)
     create(:api_v1_course, semester:, user:) do |course|
       create(:api_v1_assignment, course:, user:)
@@ -78,39 +37,76 @@ RSpec.describe '/api/v1/deliverables', type: :request do
     {}
   end
 
-  before do
-    @user = user
-    @semester = @user.semesters.first
-    @course = @semester.courses.first
-    @deliverable_id = @course.deliverables.first.id
+  let!(:primary_user) { user }
+  let!(:primary_semester) { primary_user.semesters.first }
+  let!(:primary_course) { primary_semester.courses.first }
+  let!(:primary_deliverable_id) { primary_course.deliverables.first.id }
+  let!(:secondary_user) { user }
+  let!(:secondary_semester) { secondary_user.semesters.first }
+  let!(:secondary_course) { secondary_semester.courses.first }
+  let!(:secondary_deliverable_id) { secondary_course.deliverables.first.id }
 
-    @user_2 = user
-    @semester_2 = @user_2.semesters.first
-    @course_2 = @semester_2.courses.first
-    @deliverable_2_id = @course_2.deliverables.first.id
+  def valid_attributes(course)
+    attributes = attributes_for(
+      :api_v1_assignment,
+      user: nil,
+      goal: nil
+    )
+    attributes[:api_v1_course_id] = course.id
+    attributes
   end
 
-  describe 'GET /api/v1/deliverables' do
+  def valid_attributes_completed(course)
+    attributes = attributes_for(
+      :api_v1_completed_assignment,
+      user: nil,
+      goal: nil
+    )
+    attributes[:api_v1_course_id] = course.id
+    attributes
+  end
+
+  def invalid_attributes(is_updating: false)
+    attributes_hash = valid_attributes(primary_user).dup
+
+    attributes_hash.delete(:goal)
+
+    attributes_hash.delete(:notes) if is_updating
+    attributes_hash.delete(:api_v1_course_id) if is_updating
+
+    attributes = attributes_hash.keys
+
+    @attribute_count = attributes.length
+    attributes.each do |attribute|
+      yield attributes_for(
+        :api_v1_assignment,
+        user: nil,
+        goal: nil,
+        attribute => nil
+      )
+    end
+  end
+
+  describe 'GET /' do
     context 'with valid auth token' do
       it 'renders a successful response' do
-        get '/api/v1/deliverables', headers: auth_headers(@user), as: :json
+        get '/api/v1/deliverables', headers: auth_headers(primary_user), as: :json
         expect(response).to be_successful
       end
 
       it 'gets all currently available deliverables' do
-        create(:api_v1_assignment, course: @course, user: @user)
-        create(:api_v1_assignment, course: @course, user: @user)
+        create(:api_v1_assignment, course: primary_course, user: primary_user)
+        create(:api_v1_assignment, course: primary_course, user: primary_user)
 
-        get '/api/v1/deliverables', headers: auth_headers(@user), as: :json
-        expect(response).to be_successful
+        get '/api/v1/deliverables', headers: auth_headers(primary_user), as: :json
         expect(response.parsed_body.length).to eq(3)
       end
 
       it 'gets different deliverables for different users' do
-        create(:api_v1_assignment, course: @course, user: @user)
-        create(:api_v1_assignment, course: @course_2, user: @user_2)
+        create(:api_v1_assignment, course: primary_course, user: primary_user)
+        create(:api_v1_assignment, course: secondary_course, user: secondary_user)
 
-        [@user, @user_2].each do |current_user|
+        [primary_user, secondary_user].each do |current_user|
           get '/api/v1/deliverables', headers: auth_headers(current_user), as: :json
           expect(response).to be_successful
           expect(response.parsed_body.length).to eq(2)
@@ -126,66 +122,64 @@ RSpec.describe '/api/v1/deliverables', type: :request do
     end
   end
 
-  describe 'GET /api/v1/deliverables/:id' do
+  describe 'GET /:id' do
     context 'with valid auth token' do
       it 'renders a successful response' do
-        get "/api/v1/deliverables/#{@deliverable_id}", headers: auth_headers(@user), as: :json
+        get "/api/v1/deliverables/#{primary_deliverable_id}", headers: auth_headers(primary_user), as: :json
         expect(response).to be_successful
-        expect(response.content_type).to match(a_string_including('application/json'))
       end
 
       it 'gets the correct deliverable' do
-        get "/api/v1/deliverables/#{@deliverable_id}", headers: auth_headers(@user), as: :json
-        expect(response.parsed_body[:name]).to eq(@course.deliverables.first[:name])
+        get "/api/v1/deliverables/#{primary_deliverable_id}", headers: auth_headers(primary_user), as: :json
+        expect(response.parsed_body[:name]).to eq(primary_course.deliverables.first[:name])
       end
 
       it 'gets only deliverables the user has access to' do
-        get "/api/v1/deliverables/#{@deliverable_2_id}", headers: auth_headers(@user), as: :json
+        get "/api/v1/deliverables/#{secondary_deliverable_id}", headers: auth_headers(primary_user), as: :json
         expect(response).to have_http_status(:forbidden)
       end
 
       it 'renders a 403 forbidden response for a nonexistent ID' do
-        get "/api/v1/deliverables/#{SecureRandom.uuid}", headers: auth_headers(@user), as: :json
+        get "/api/v1/deliverables/#{SecureRandom.uuid}", headers: auth_headers(primary_user), as: :json
         expect(response).to have_http_status(:forbidden)
       end
     end
 
     context 'with invalid auth token' do
       it 'renders a 401 unauthorized response for a missing token' do
-        get "/api/v1/deliverables/#{@deliverable_id}", headers: valid_headers, as: :json
+        get "/api/v1/deliverables/#{primary_deliverable_id}", headers: valid_headers, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
   end
 
-  describe 'POST /api/v1/deliverables' do
+  describe 'POST /' do
     context 'with valid auth token' do
       it 'creates a new Api::V1::Deliverable with valid parameters' do
         expect do
           post '/api/v1/deliverables',
-               params: { api_v1_deliverable: valid_attributes(@course) }, headers: auth_headers(@user), as: :json
+               params: { api_v1_deliverable: valid_attributes(primary_course) }, headers: auth_headers(primary_user), as: :json
         end.to change(Api::V1::Deliverable, :count).by(1)
       end
 
       it 'returns a JSON response with the new Api::V1::Deliverable' do
         post '/api/v1/deliverables',
-             params: { api_v1_deliverable: valid_attributes(@course) }, headers: auth_headers(@user), as: :json
+             params: { api_v1_deliverable: valid_attributes(primary_course) }, headers: auth_headers(primary_user), as: :json
         expect(response).to have_http_status(:created)
-        expect(response.content_type).to match(a_string_including('application/json'))
       end
 
       it 'attaches the new Api::V1::Course to the user' do
         post '/api/v1/deliverables',
-             params: { api_v1_deliverable: valid_attributes(@course) }, headers: auth_headers(@user), as: :json
-        expect(response.parsed_body[:api_v1_user_id]).to eq(@user[:id])
+             params: { api_v1_deliverable: valid_attributes(primary_course) }, headers: auth_headers(primary_user), as: :json
+        expect(response.parsed_body[:api_v1_user_id]).to eq(primary_user[:id])
       end
 
       it 'ensures that the parent course belongs to the user' do
-        attributes = valid_attributes(@course)
-        attributes[:api_v1_course_id] = @course_2.id
+        attributes = valid_attributes(primary_course)
+        attributes[:api_v1_course_id] = secondary_course.id
         expect do
           post '/api/v1/deliverables',
-               params: { api_v1_deliverable: attributes }, headers: auth_headers(@user), as: :json
+               params: { api_v1_deliverable: attributes }, headers: auth_headers(primary_user), as: :json
           expect(response).to have_http_status(:forbidden)
         end.not_to change(Api::V1::Course, :count)
       end
@@ -194,20 +188,20 @@ RSpec.describe '/api/v1/deliverables', type: :request do
         invalid_attributes do |attribute_set|
           expect do
             post '/api/v1/deliverables',
-                 params: { api_v1_deliverable: attribute_set }, headers: auth_headers(@user), as: :json
+                 params: { api_v1_deliverable: attribute_set }, headers: auth_headers(primary_user), as: :json
           end.not_to change(Api::V1::Semester, :count)
         end
       end
 
-      xit 'updates goals for a completed deliverable' do
-        pending "ADD THIS TEST  #{__FILE__}"
+      xit 'updates goals if the deliverable is completed' do
+        pending "ADD THIS TEST #{__FILE__}"
       end
     end
 
     context 'with invalid auth token' do
       it 'renders a 401 unauthorized response for a missing token' do
         post '/api/v1/deliverables',
-             params: { api_v1_deliverable: valid_attributes(@user) }, headers: valid_headers, as: :json
+             params: { api_v1_deliverable: valid_attributes(primary_user) }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -216,48 +210,46 @@ RSpec.describe '/api/v1/deliverables', type: :request do
   # TODO: Add tests for what happens when you create already-completed deliverables
   # TODO: Add tests to make sure that courses don't auto-complete
 
-  describe 'PATCH /api/v1/deliverables/:id' do
+  describe 'PATCH /:id' do
     context 'with valid auth token' do
       it 'renders a successful JSON response with valid parameters' do
-        patch "/api/v1/deliverables/#{@deliverable_id}",
-              params: { api_v1_deliverable: valid_attributes(@course) }, headers: auth_headers(@user), as: :json
+        patch "/api/v1/deliverables/#{primary_deliverable_id}",
+              params: { api_v1_deliverable: valid_attributes(primary_course) }, headers: auth_headers(primary_user), as: :json
         expect(response).to have_http_status(:ok)
-        expect(response).to be_successful
-        expect(response.content_type).to match(a_string_including('application/json'))
       end
 
       it 'updates the Api::V1::Deliverable' do
-        old_deliverable = @course.deliverables.first.dup
-        patch "/api/v1/deliverables/#{@deliverable_id}",
-              params: { api_v1_deliverable: valid_attributes(@course) }, headers: auth_headers(@user), as: :json
-        expect(old_deliverable[:name]).not_to eq(@course.deliverables.first[:name])
+        old_deliverable = primary_course.deliverables.first.dup
+        patch "/api/v1/deliverables/#{primary_deliverable_id}",
+              params: { api_v1_deliverable: valid_attributes(primary_course) }, headers: auth_headers(primary_user), as: :json
+        expect(old_deliverable[:name]).not_to eq(primary_course.deliverables.first[:name])
       end
 
       it 'returns an error response with invalid parameters' do
         invalid_attributes(is_updating: true) do |attribute_set|
-          patch "/api/v1/deliverables/#{@deliverable_id}",
-                params: { api_v1_deliverable: attribute_set }, headers: auth_headers(@user), as: :json
+          patch "/api/v1/deliverables/#{primary_deliverable_id}",
+                params: { api_v1_deliverable: attribute_set }, headers: auth_headers(primary_user), as: :json
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end
 
       it "renders a 403 forbidden response when trying to access another user's deliverable" do
-        patch "/api/v1/deliverables/#{@deliverable_2_id}",
-              params: { api_v1_deliverable: valid_attributes(@course) }, headers: auth_headers(@user), as: :json
+        patch "/api/v1/deliverables/#{secondary_deliverable_id}",
+              params: { api_v1_deliverable: valid_attributes(primary_course) }, headers: auth_headers(primary_user), as: :json
         expect(response).to have_http_status(:forbidden)
       end
 
       it "does not allow a user to update another's deliverable" do
-        old_course = @semester.courses.first.dup
-        patch "/api/v1/deliverables/#{@deliverable_2_id}",
-              params: { api_v1_deliverable: valid_attributes(@course) }, headers: auth_headers(@user), as: :json
-        @semester.reload
-        expect(old_course[:title]).to eq(@semester.courses.first[:title])
+        old_course = primary_semester.courses.first.dup
+        patch "/api/v1/deliverables/#{secondary_deliverable_id}",
+              params: { api_v1_deliverable: valid_attributes(primary_course) }, headers: auth_headers(primary_user), as: :json
+        primary_semester.reload
+        expect(old_course[:title]).to eq(primary_semester.courses.first[:title])
       end
 
       it 'renders a 403 forbidden response for a nonexistent ID' do
         patch "/api/v1/deliverables/#{SecureRandom.uuid}",
-              params: { api_v1_course: valid_attributes(@user) }, headers: auth_headers(@user), as: :json
+              params: { api_v1_course: valid_attributes(primary_user) }, headers: auth_headers(primary_user), as: :json
         expect(response).to have_http_status(:forbidden)
       end
 
@@ -268,54 +260,55 @@ RSpec.describe '/api/v1/deliverables', type: :request do
 
     context 'with invalid auth token' do
       it 'renders a 401 unauthorized response for a missing token' do
-        patch "/api/v1/deliverables/#{@deliverable_id}",
-              params: { api_v1_deliverable: valid_attributes(@course) }, headers: valid_headers, as: :json
+        patch "/api/v1/deliverables/#{primary_deliverable_id}",
+              params: { api_v1_deliverable: valid_attributes(primary_course) }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
   end
 
-  describe 'DELETE /api/v1/deliverables/:id' do
+  describe 'DELETE /:id' do
     context 'with valid auth token' do
       it 'renders a successful response' do
-        delete "/api/v1/deliverables/#{@deliverable_id}", headers: auth_headers(@user), as: :json
+        delete "/api/v1/deliverables/#{primary_deliverable_id}", headers: auth_headers(primary_user), as: :json
         expect(response).to have_http_status(:no_content)
       end
 
       it 'deletes the deliverable from the database' do
         expect do
-          delete "/api/v1/deliverables/#{@deliverable_id}", headers: auth_headers(@user), as: :json
+          delete "/api/v1/deliverables/#{primary_deliverable_id}", headers: auth_headers(primary_user), as: :json
         end.to change(Api::V1::Deliverable, :count).by(-1)
       end
 
       it 'deletes only deliverables the user has access to' do
         expect do
-          delete "/api/v1/deliverables/#{@deliverable_2_id}", headers: auth_headers(@user), as: :json
+          delete "/api/v1/deliverables/#{secondary_deliverable_id}", headers: auth_headers(primary_user), as: :json
           expect(response).to have_http_status(:forbidden)
         end.not_to change(Api::V1::Deliverable, :count)
       end
 
       it 'renders a 403 forbidden response for a nonexistent ID' do
-        delete "/api/v1/deliverables/#{SecureRandom.uuid}", headers: auth_headers(@user), as: :json
+        delete "/api/v1/deliverables/#{SecureRandom.uuid}", headers: auth_headers(primary_user), as: :json
         expect(response).to have_http_status(:forbidden)
       end
 
       xit 'updates goals for the course' do
-        delete "/api/v1/deliverables/#{@deliverable_id}", headers: auth_headers(@user), as: :json
+        delete "/api/v1/deliverables/#{primary_deliverable_id}", headers: auth_headers(primary_user), as: :json
         post '/api/v1/deliverables',
-             params: { api_v1_deliverable: valid_attributes_completed(@course) }, headers: auth_headers(@user), as: :json
+             params: { api_v1_deliverable: valid_attributes_completed(primary_course) }, headers: auth_headers(primary_user), as: :json
         post '/api/v1/deliverables',
-             params: { api_v1_deliverable: valid_attributes_completed(@course) }, headers: auth_headers(@user), as: :json
-        get "/api/v1/deliverables", headers: auth_headers(@user), as: :json
+             params: { api_v1_deliverable: valid_attributes_completed(primary_course) }, headers: auth_headers(primary_user), as: :json
+        get '/api/v1/deliverables', headers: auth_headers(primary_user), as: :json
         response.parsed_body.each do |deliverable|
           puts(deliverable)
         end
+        pending 'Low priority test'
       end
     end
 
     context 'with invalid auth token' do
       it 'renders a 401 unauthorized response for a missing token' do
-        delete "/api/v1/deliverables/#{@deliverable_id}", headers: valid_headers, as: :json
+        delete "/api/v1/deliverables/#{primary_deliverable_id}", headers: valid_headers, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end

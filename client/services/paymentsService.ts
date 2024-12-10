@@ -7,6 +7,7 @@ import {
 import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import axios from 'axios';
+import { api } from '@services';
 
 export async function createPayment(
     cart: CartItem[],
@@ -22,7 +23,7 @@ export async function createPayment(
                     quantity: cartItem.quantity,
                 };
             });
-            const response = await axios.post(
+            const response = await api.post(
                 Endpoints.API_PAYMENTS,
                 { products },
                 {

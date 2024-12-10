@@ -13,6 +13,7 @@ import { DEMO_ACCOUNT_DATA } from '@vitest.setup';
 import axios, { AxiosRequestConfig } from 'axios';
 import { connect } from 'ts-postgres';
 import { it } from 'vitest';
+import { api } from '@services';
 
 const COURSE_DATA = [
     { title: 'Introduction to Computer Science', course_code: 'CS101' },
@@ -72,8 +73,8 @@ async function populateSemester(
         const postData = {
             api_v1_course: course,
         };
-        const response = await axios.post(
-            `${process.env.APP_URL}${Endpoints.API_COURSES}`,
+        const response = await api.post(
+            Endpoints.API_COURSES,
             postData,
             axiosCreateOptions
         );
@@ -172,8 +173,8 @@ async function populateCourse(
         const postData = {
             api_v1_deliverable: deliverable,
         };
-        const response = await axios.post(
-            `${process.env.APP_URL}${Endpoints.API_DELIVERABLES}`,
+        const response = await api.post(
+            Endpoints.API_DELIVERABLES,
             postData,
             axiosCreateOptions
         );
@@ -299,8 +300,8 @@ it(
                 const postData = {
                     api_v1_semester: semester,
                 };
-                const response = await axios.post(
-                    `${process.env.APP_URL}${Endpoints.API_SEMESTERS}`,
+                const response = await api.post(
+                    Endpoints.API_SEMESTERS,
                     postData,
                     axiosCreateOptions
                 );

@@ -33,6 +33,7 @@ module Api
       # PATCH/PUT /api/v1/semesters/1
       def update
         if @api_v1_semester.update(api_v1_semester_params)
+          @api_v1_semester.update_goal
           render json: @api_v1_semester
         else
           render json: @api_v1_semester.errors, status: :unprocessable_entity
