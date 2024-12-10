@@ -49,7 +49,7 @@ module Api
         @course = @api_v1_deliverable.course
         @api_v1_deliverable.destroy!
         @course.update_goal
-        Rails.logger.info("Deleted course.")
+        Rails.logger.info("Deleted deliverable #{@api_v1_deliverable.id}.")
       end
 
       private
