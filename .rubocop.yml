@@ -12,3 +12,6 @@ RSpec/ExampleLength:
 
 RSpec/MultipleExpectations:
   Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false

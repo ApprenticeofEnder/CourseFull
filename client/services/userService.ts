@@ -8,6 +8,7 @@ import { apiErrorHandler, authenticatedApiErrorHandler } from '@lib/helpers';
 import { supabase } from '@lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import axios, { AxiosError } from 'axios';
+import { api } from '@services';
 
 export async function createUser(
     { first_name, last_name, email, password, subscribed }: BasicUserData,
@@ -39,7 +40,7 @@ export async function createUser(
             },
         };
 
-        const apiResponse = await axios
+        const apiResponse = await api
             .post(Endpoints.API_USER, apiPostData, {
                 validateStatus: (status) => {
                     return status === 201;
@@ -77,7 +78,7 @@ export async function getProgress(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const apiResponse = await axios.get(Endpoints.API_PROGRESS, {
+            const apiResponse = await api.get(Endpoints.API_PROGRESS, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
@@ -96,7 +97,7 @@ export async function getUserData(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const apiResponse = await axios.get(`${Endpoints.API_USER}/me`, {
+            const apiResponse = await api.get(`${Endpoints.API_USER}/me`, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
@@ -118,7 +119,7 @@ export async function updateUserDetails(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const apiResponse = await axios.put(
+            const apiResponse = await api.put(
                 `${Endpoints.API_USER}/me`,
                 {
                     api_v1_user: {
@@ -147,7 +148,7 @@ export async function deleteUser(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const apiResponse = await axios.delete(`${Endpoints.API_USER}/me`, {
+            const apiResponse = await api.delete(`${Endpoints.API_USER}/me`, {
                 headers,
                 validateStatus: (status) => {
                     return status === 204;

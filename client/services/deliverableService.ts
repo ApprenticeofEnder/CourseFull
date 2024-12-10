@@ -7,6 +7,7 @@ import {
 import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import axios from 'axios';
+import { api } from '@services';
 
 export async function createDeliverable(
     { name, weight, mark, status, notes, api_v1_course_id }: Deliverable,
@@ -15,7 +16,7 @@ export async function createDeliverable(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            return axios.post(
+            return api.post(
                 Endpoints.API_DELIVERABLES,
                 {
                     api_v1_deliverable: {
@@ -47,7 +48,7 @@ export async function updateDeliverable(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            return axios.put(
+            return api.put(
                 `${Endpoints.API_DELIVERABLES}/${id}`,
                 {
                     api_v1_deliverable: {
@@ -77,7 +78,7 @@ export async function getDeliverables(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            return axios.get(Endpoints.API_DELIVERABLES, {
+            return api.get(Endpoints.API_DELIVERABLES, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
@@ -96,7 +97,7 @@ export async function getDeliverable(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            return axios.get(`${Endpoints.API_DELIVERABLES}/${id}`, {
+            return api.get(`${Endpoints.API_DELIVERABLES}/${id}`, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
@@ -115,7 +116,7 @@ export async function deleteDeliverable(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const apiResponse = await axios.delete(
+            const apiResponse = await api.delete(
                 `${Endpoints.API_DELIVERABLES}/${id}`,
                 {
                     headers,

@@ -7,6 +7,7 @@ import {
 import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import axios from 'axios';
+import { api } from '@services';
 
 export async function createCourse(
     { title, course_code, status, api_v1_semester_id }: Course,
@@ -15,7 +16,7 @@ export async function createCourse(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const response = await axios.post(
+            const response = await api.post(
                 Endpoints.API_COURSES,
                 {
                     api_v1_course: {
@@ -46,7 +47,7 @@ export async function getCourses(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            return axios.get(Endpoints.API_COURSES, {
+            return api.get(Endpoints.API_COURSES, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
@@ -65,7 +66,7 @@ export async function getCourse(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            return axios.get(`${Endpoints.API_COURSES}/${id}`, {
+            return api.get(`${Endpoints.API_COURSES}/${id}`, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
@@ -84,7 +85,7 @@ export async function updateCourse(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const apiResponse = await axios.put(
+            const apiResponse = await api.put(
                 `${Endpoints.API_COURSES}/${id}`,
                 {
                     api_v1_course: {
@@ -114,7 +115,7 @@ export async function deleteCourse(
 ): Promise<APIServiceResponse> {
     return authenticatedApiErrorHandler(
         async (session, headers) => {
-            const apiResponse = await axios.delete(
+            const apiResponse = await api.delete(
                 `${Endpoints.API_COURSES}/${id}`,
                 {
                     headers,
