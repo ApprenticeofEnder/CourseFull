@@ -25,6 +25,8 @@ services:
       - ASSET_URL=${ASSET_URL}
     depends_on:
       - app
+    security_opt:
+      - no-new-privileges:true
 
 secrets:
   op_service_account_token:
