@@ -98,7 +98,7 @@ function renderSemester(item: SemesterProgressType) {
     );
 }
 
-export default function HomeStatus({ session }: SessionProps) {
+export default function Home({ session }: SessionProps) {
     const [progress, setProgress] = useState<SemesterProgressType[]>([]);
     const [userData, setUserData] = useState<User | null>(null);
 
@@ -159,7 +159,8 @@ export default function HomeStatus({ session }: SessionProps) {
     }, [session]);
 
     return (
-        <Fragment>
+        <div>
+            <h1>Hey, {session.user.user_metadata.first_name}!</h1>
             {loadingProgress ? (
                 <Spinner label="Loading Progress..." />
             ) : (
@@ -252,6 +253,6 @@ export default function HomeStatus({ session }: SessionProps) {
                     loadingUserData={loadingUserData}
                 />
             </Modal>
-        </Fragment>
+        </div>
     );
 }

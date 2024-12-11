@@ -132,7 +132,6 @@ export default function CourseFullNavbar() {
                     <Fragment>
                         <NavbarItem className="hidden lg:flex">
                             <Link
-                                className="top-1"
                                 href={Endpoints.LOGIN}
                                 data-testid="nav-login"
                             >

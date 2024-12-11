@@ -5,11 +5,11 @@ import { Suspense, useEffect, useState } from 'react';
 import { ScrollShadow } from '@nextui-org/react';
 
 import Loading from '@app/loading';
-import AnonHomeStatus from '@components/HomeStatus/AnonHomeStatus';
-import HomeStatus from '@components/HomeStatus/HomeStatus';
+import AnonHome from '@components/Home/AnonHome';
+import Home from '@components/Home/Home';
 import { useSession } from '@lib/supabase/sessionContext';
 
-export default function Home() {
+export default function HomePage() {
     const [loading, setLoading] = useState(true);
 
     const { session, loadingSession } = useSession()!;
@@ -28,14 +28,13 @@ export default function Home() {
         <main>
             <ScrollShadow className="relative py-10 flex justify-center mt-4 lg:mt-0 h-dvh">
                 <div className="flex flex-col justify-center w-full">
-                    <h1>Hey, {username}!</h1>
                     <Suspense fallback={<Loading message="Good to see you!" />}>
                         {loading ? (
                             <Loading message="Good to see you!" />
                         ) : session ? (
-                            <HomeStatus session={session} />
+                            <Home session={session} />
                         ) : (
-                            <AnonHomeStatus />
+                            <AnonHome />
                         )}
                     </Suspense>
                 </div>
