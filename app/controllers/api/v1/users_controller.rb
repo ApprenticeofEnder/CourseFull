@@ -59,12 +59,17 @@ class Api::V1::UsersController < Api::V1::ApplicationController
       'api_v1_semesters.status AS status'
     ]
 
+    joins = [
+      'LEFT JOIN "api_v1_courses" ON "api_v1_courses"."api_v1_semester_id" = "api_v1_semesters"."id"',
+      'LEFT JOIN "api_v1_deliverables" ON "api_v1_deliverables"."api_v1_course_id" = "api_v1_courses"."id"'
+    ]
+
     group_by_clauses = [
       'api_v1_semesters.id', 'api_v1_semesters.name', 'api_v1_semesters.goal', 'api_v1_semesters.status'
     ]
 
     attempted_semester_progress = @api_v1_user.semesters
-                                              .joins(courses: :deliverables)
+                                              .joins(joins)
                                               .select(
                                                 *select_statements
                                               )
