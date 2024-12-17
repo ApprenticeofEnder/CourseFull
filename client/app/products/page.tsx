@@ -39,7 +39,7 @@ export default function ProductsPage() {
         };
     }, [session]);
     return (
-        <div className="h-dvh flex flex-col justify-center gap-8">
+        <div className="flex flex-col justify-start gap-8">
             <h1>Products</h1>
             {loadingProducts ? (
                 <Spinner label="One sec while we grab what we have..." />

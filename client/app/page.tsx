@@ -25,20 +25,16 @@ export default function HomePage() {
     }, [session, loadingSession]);
 
     return (
-        <main>
-            <ScrollShadow className="relative py-10 flex justify-center mt-4 lg:mt-0 h-dvh">
-                <div className="flex flex-col justify-center w-full">
-                    <Suspense fallback={<Loading message="Good to see you!" />}>
-                        {loading ? (
-                            <Loading message="Good to see you!" />
-                        ) : session ? (
-                            <Home session={session} />
-                        ) : (
-                            <AnonHome />
-                        )}
-                    </Suspense>
-                </div>
-            </ScrollShadow>
-        </main>
+        <div className="flex flex-col justify-center w-full">
+            <Suspense fallback={<Loading message="Good to see you!" />}>
+                {loading ? (
+                    <Loading message="Good to see you!" />
+                ) : session ? (
+                    <Home session={session} />
+                ) : (
+                    <AnonHome />
+                )}
+            </Suspense>
+        </div>
     );
 }

@@ -5,7 +5,7 @@ export const metadata = {
 };
 export default function SettingsLayout({ children }: ChildrenProps) {
     return (
-        <div className="h-dvh flex flex-col justify-center gap-4 sm:w-3/4 mx-auto">
+        <div className="flex flex-col justify-start gap-4 sm:w-3/4 mx-auto">
             {children}
         </div>
     );

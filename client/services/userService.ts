@@ -10,6 +10,10 @@ import { Session } from '@supabase/supabase-js';
 import axios, { AxiosError } from 'axios';
 import { api } from '@services';
 
+class UserService {
+    
+}
+
 export async function createUser(
     { first_name, last_name, email, password, subscribed }: BasicUserData,
     onFailure: APIOnFailure

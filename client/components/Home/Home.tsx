@@ -159,7 +159,7 @@ export default function Home({ session }: SessionProps) {
     }, [session]);
 
     return (
-        <div>
+        <div className='h-full'>
             <h1>Hey, {session.user.user_metadata.first_name}!</h1>
             {loadingProgress ? (
                 <Spinner label="Loading Progress..." />

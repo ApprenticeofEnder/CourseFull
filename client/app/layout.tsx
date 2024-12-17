@@ -1,11 +1,13 @@
+import { NextUIProvider, ScrollShadow } from '@nextui-org/react';
+import { MotionConfig } from 'motion/react';
+import { Atkinson_Hyperlegible, Inter } from 'next/font/google';
+import type { Metadata } from 'next';
+
 import Navbar from '@components/Navbar';
 import Spacer from '@components/Spacer';
 import { Toaster } from '@components/Toast/Toaster';
 import CartProvider from '@lib/cart/cartContext';
 import SessionProvider from '@lib/supabase/sessionContext';
-import { NextUIProvider } from '@nextui-org/react';
-import type { Metadata } from 'next';
-import { Atkinson_Hyperlegible, Inter } from 'next/font/google';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -30,11 +32,17 @@ export default function RootLayout({
                 <SessionProvider>
                     <CartProvider>
                         <NextUIProvider>
-                            <Navbar />
-                            <Spacer className="overflow-auto">
-                                {children}
-                            </Spacer>
-                            <Toaster />
+                            <MotionConfig reducedMotion="user">
+                                <Navbar />
+                                <ScrollShadow className="relative flex justify-center">
+                                    <Spacer>
+                                        <main className="mt-10 mb-10 w-full px-6">
+                                            {children}
+                                        </main>
+                                    </Spacer>
+                                </ScrollShadow>
+                                <Toaster />
+                            </MotionConfig>
                         </NextUIProvider>
                     </CartProvider>
                 </SessionProvider>

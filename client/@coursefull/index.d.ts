@@ -64,6 +64,10 @@ export interface CourseMultiCreateProps {
     loadingUserData: boolean;
 }
 
+export interface AnimateOnScrollProps extends ChildrenProps {
+    delay: number;
+}
+
 export interface BaseAcademicItem {
     id?: string;
     api_v1_user_id?: string;

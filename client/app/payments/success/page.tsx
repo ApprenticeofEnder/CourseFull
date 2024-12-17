@@ -8,7 +8,7 @@ export default function SuccessfulPayment() {
 
     dispatch({ type: 'WIPE_CART' });
     return (
-        <div className="h-dvh flex flex-col justify-center gap-8">
+        <div className="flex flex-col justify-start gap-8">
             <h1>Payment Successful!</h1>
             <p className="text-center text-lg">
                 Thank you so much for your purchase! You should be receiving an
