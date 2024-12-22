@@ -33,8 +33,8 @@ export default function CourseFullNavbar() {
         disabled?: boolean;
     }[] = [
         {
-            label: 'Home',
-            href: Endpoints.ROOT,
+            label: 'Dashboard',
+            href: Endpoints.DASHBOARD,
             color: 'foreground',
         },
         {
@@ -97,29 +97,17 @@ export default function CourseFullNavbar() {
                     className="hidden md:flex gap-4"
                     justify="center"
                 >
-                    <NavbarItem>
-                        <Link
-                            color="foreground"
-                            href={Endpoints.ROOT}
-                            underline="hover"
-                        >
-                            Home
-                        </Link>
-                    </NavbarItem>
-                    <NavbarItem isActive>
-                        <Link href={Endpoints.PRODUCTS} underline="hover">
-                            Products
-                        </Link>
-                    </NavbarItem>
-                    <NavbarItem>
-                        <Link
-                            color="foreground"
-                            href={Endpoints.CONTACT}
-                            underline="hover"
-                        >
-                            Contact Us
-                        </Link>
-                    </NavbarItem>
+                    {menuItems.map((menuItem) => (
+                        <NavbarItem isActive={menuItem.color == 'primary'}>
+                            <Link
+                                color={menuItem.color}
+                                href={menuItem.href}
+                                underline="hover"
+                            >
+                                {menuItem.label}
+                            </Link>
+                        </NavbarItem>
+                    ))}
                 </NavbarContent>
             )}
 

@@ -16,7 +16,7 @@ export default function Login() {
 
     useEffect(() => {
         if (!loadingSession && session) {
-            router.push(Endpoints.ROOT);
+            router.push(Endpoints.DASHBOARD);
             return;
         }
     }, [session, loadingSession, router]);
