@@ -1,6 +1,11 @@
 'use client';
 
-import { motion, type Variants } from 'motion/react';
+import {
+    motion,
+    type Variants,
+    useMotionValueEvent,
+    useScroll,
+} from 'motion/react';
 import { ClipboardIcon, UserIcon } from '@heroicons/react/24/solid';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
@@ -9,29 +14,48 @@ import LinkButton from '@components/Button/LinkButton';
 import Button from '@components/Button/Button';
 
 export default function Hero() {
-    const headerVariants: Variants = {
+
+    const basicVariants: Variants = {
         offscreen: {
             opacity: 0,
-            x: '-100%',
             filter: 'blur(5px)',
         },
         onscreen: {
             opacity: 1,
-            x: '0%',
             filter: 'blur(0)',
+        },
+    };
+
+    const headerVariants: Variants = {
+        offscreen: {
+            ...basicVariants.offscreen,
+            x: '-100%',
+        },
+        onscreen: {
+            ...basicVariants.onscreen,
+            x: '0%',
         },
     };
 
     const heroVariants: Variants = {
         offscreen: {
-            opacity: 0,
+            ...basicVariants.offscreen,
             y: '100%',
-            filter: 'blur(5px)',
         },
         onscreen: {
-            opacity: 1,
+            ...basicVariants.onscreen,
             y: '0%',
-            filter: 'blur(0)',
+        },
+    };
+
+    const quoteVariants: Variants = {
+        offscreen: {
+            ...heroVariants.offscreen,
+            className: 'hidden sm:visible',
+        },
+        onscreen: {
+            ...heroVariants.onscreen,
+            className: 'hidden sm:visible',
         },
     };
 
@@ -57,7 +81,7 @@ export default function Hero() {
     ];
 
     return (
-        <div className="flex flex-col sm:flex-row justify-between sm:px-16">
+        <div className="flex flex-col sm:flex-row items-center justify-between sm:px-16">
             <div className="basis-1/2">
                 <motion.h1
                     initial="offscreen"
@@ -92,7 +116,7 @@ export default function Hero() {
                 <motion.blockquote
                     initial="offscreen"
                     whileInView="onscreen"
-                    variants={heroVariants}
+                    variants={quoteVariants}
                     transition={{
                         ...heroTransition,
                         delay: heroDelay + 0.1,
@@ -108,7 +132,7 @@ export default function Hero() {
                     <p>~ Tony Robbins</p>
                 </motion.blockquote>
             </div>
-            <div className="basis-1/2 flex flex-col gap-8 justify-center">
+            <div className="basis-1/2 flex flex-col gap-8">
                 {heroLinkButtons.map((button, index) => (
                     <motion.div
                         key={`herobutton-${index}`}
@@ -140,6 +164,7 @@ export default function Hero() {
                         ...heroTransition,
                         delay: heroButtonDelay + 0.1 * heroLinkButtons.length,
                     }}
+                    viewport={{ once: true }}
                     className="w-full sm:w-3/4 ms-auto me-2"
                 >
                     <Button

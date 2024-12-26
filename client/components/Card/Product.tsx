@@ -56,7 +56,7 @@ export default function ProductCard({
     return (
         <div
             className={classNames(
-                'rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10',
+                'card-primary',
                 className
             )}
         >

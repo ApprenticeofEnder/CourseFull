@@ -1,6 +1,9 @@
 'use client';
 
+import dynamic from "next/dynamic";
 import Hero from "@components/Home/Hero";
+
+const MechanicsInfo = dynamic(() => import('@components/Home/MechanicsInfo'));
 
 /**
  * Header:
@@ -18,8 +21,9 @@ import Hero from "@components/Home/Hero";
 export default function AnonHome() {
 
     return (
-        <div>
+        <div className="flex flex-col gap-4 sm:gap-8 lg:gap-16">
             <Hero />
+            <MechanicsInfo />
         </div>
     );
 }

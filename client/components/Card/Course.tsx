@@ -69,7 +69,7 @@ export default function CourseCard({
     return (
         <div
             className={classNames(
-                'rounded-lg p-2 border-solid border-2 border-primary-500/10 hover:bg-primary-900 hover:cursor-pointer transition-colors',
+                'card-primary hover:bg-primary-900 hover:cursor-pointer transition-colors',
                 bgColour
             )}
             onClick={() => {

@@ -80,4 +80,12 @@
             0 theme('spacing.button-shadow-hover')
                 theme('spacing.button-shadow-hover') 0 rgba(0, 0, 0, 0.4);
     }
+
+    .card-primary {
+        @apply rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10
+    }
+
+    .card-secondary {
+        @apply rounded-lg bg-secondary-800 p-2 border-solid border-2 border-secondary-500/10
+    }
 }

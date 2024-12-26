@@ -6,7 +6,9 @@ import { useSession, useProtectedEndpoint } from '@lib/supabase/sessionContext';
 
 import Loading from '@app/loading';
 
-const Dashboard = dynamic(() => import('@components/Dashboard/Dashboard'), {loading: () => <Loading message="Good to see you!" />});
+const Dashboard = dynamic(() => import('@components/Dashboard/Dashboard'), {
+    loading: () => <Loading message="Good to see you!" />,
+});
 
 export default function DashboardPage() {
     const router = useRouter();

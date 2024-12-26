@@ -21,7 +21,7 @@ export default function CartItemCard({
     removeItem,
 }: CartItemProps) {
     return (
-        <div className="grid grid-cols-5 gap-4 rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10">
+        <div className="grid grid-cols-5 gap-4 card-primary">
             <div className="col-span-5 lg:col-span-2 p-4">
                 <h3 className="text-left">{product.name}</h3>
                 <p>{product.description}</p>

@@ -16,7 +16,7 @@ export default function HomePage() {
             return;
         }
         router.push(Endpoints.DASHBOARD)
-    }, [session, loadingSession]);
+    }, [session, loadingSession, router]);
 
     return (
         <div className="flex flex-col justify-center w-full">

@@ -60,8 +60,8 @@ export default function DeliverableCard({
     return (
         <div
             className={classNames(
-                bgColour,
-                'rounded-lg p-2 border-solid border-2 border-primary-500/10'
+                'card-primary',
+                bgColour
             )}
         >
             <div className="flex justify-between">
