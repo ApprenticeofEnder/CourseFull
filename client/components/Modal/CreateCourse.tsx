@@ -32,9 +32,31 @@ export default function CreateCourseModal({
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    // (error) => {
+    //     setIsLoading(false);
+    //     try {
+    //         const errorData = JSON.parse(error.message);
+    //         const outOfTicketsError =
+    //             errorData.status === 403 &&
+    //             errorData.data.error === 'No course tickets remaining.';
+    //         if (!outOfTicketsError) {
+    //             alert(`Something went wrong: ${error}`);
+    //         } else {
+    //             const buying = confirm(
+    //                 "Whoops! Looks like you don't have room for any more courses. Buy some tickets to add more!"
+    //             );
+    //             if (buying) router.push(Endpoints.PRODUCTS);
+    //         }
+    //     } catch (err) {
+    //         alert(`Something went wrong: ${error}`);
+    //     } finally {
+    //         onClose();
+    //     }
+    // }
+
     async function handleCreateCourse(onClose: CallableFunction) {
         setIsLoading(true);
-        const { response, success } = await createCourse(
+        const course = await createCourse(
             {
                 title,
                 course_code: code,
@@ -42,31 +64,7 @@ export default function CreateCourseModal({
                 api_v1_semester_id,
             },
             session,
-            (error) => {
-                setIsLoading(false);
-                try {
-                    const errorData = JSON.parse(error.message);
-                    const outOfTicketsError =
-                        errorData.status === 403 &&
-                        errorData.data.error === 'No course tickets remaining.';
-                    if (!outOfTicketsError) {
-                        alert(`Something went wrong: ${error}`);
-                    } else {
-                        const buying = confirm(
-                            "Whoops! Looks like you don't have room for any more courses. Buy some tickets to add more!"
-                        );
-                        if (buying) router.push(Endpoints.PRODUCTS);
-                    }
-                } catch (err) {
-                    alert(`Something went wrong: ${error}`);
-                } finally {
-                    onClose();
-                }
-            }
         );
-        if (!success) {
-            return;
-        }
         onClose();
         location.reload();
     }
@@ -75,12 +73,9 @@ export default function CreateCourseModal({
         let mounted = true;
         setIsLoading(true);
 
-        getUserData(session, (error) => {
-            alert(`Something went wrong: ${error}`);
-        })
-            .then(({ response }) => {
+        getUserData(session)
+            .then((user) => {
                 if (mounted) {
-                    const user: User = response?.data;
                     setCoursesRemaining(user.courses_remaining);
                     setIsLoading(false);
                 }

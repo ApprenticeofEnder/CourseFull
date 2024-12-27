@@ -1,13 +1,13 @@
 import {
-    APIOnFailure,
-    APIServiceResponse,
     Deliverable,
+    DeliverableDto,
     Endpoints,
     Updated,
 } from '@coursefull';
-import { authenticatedApiErrorHandler } from '@lib/helpers';
+import { authenticatedApiHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import { api } from '@services';
+import { convertDeliverableDto } from '@lib/dto';
 
 export async function createDeliverable(
     {
@@ -20,12 +20,11 @@ export async function createDeliverable(
         deadline,
         api_v1_course_id,
     }: Deliverable,
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<Deliverable | null> {
+    const res = await authenticatedApiHandler<DeliverableDto>(
         async (session, headers) => {
-            return api.post(
+            return api.post<DeliverableDto>(
                 Endpoints.API_DELIVERABLES,
                 {
                     api_v1_deliverable: {
@@ -47,9 +46,10 @@ export async function createDeliverable(
                 }
             );
         },
-        session,
-        onFailure
+        session
     );
+    const {data} = res;
+    return convertDeliverableDto(data);
 }
 
 export async function updateDeliverable(
@@ -63,12 +63,11 @@ export async function updateDeliverable(
         start_date,
         deadline,
     }: Updated<Deliverable>,
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<Deliverable> {
+    const res = await authenticatedApiHandler<DeliverableDto>(
         async (session, headers) => {
-            return api.put(
+            return api.put<DeliverableDto>(
                 `${Endpoints.API_DELIVERABLES}/${id}`,
                 {
                     api_v1_deliverable: {
@@ -77,8 +76,8 @@ export async function updateDeliverable(
                         mark,
                         status,
                         notes,
-                        start_date,
-                        deadline,
+                        start_date: start_date.toString(),
+                        deadline: deadline.toString(),
                     },
                 },
                 {
@@ -89,35 +88,37 @@ export async function updateDeliverable(
                 }
             );
         },
-        session,
-        onFailure
+        session
     );
+    const {data} = res;
+    return convertDeliverableDto(data);
 }
 
 export async function getDeliverables(
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<Deliverable[] | null> {
+    const res = await authenticatedApiHandler<DeliverableDto[]>(
         async (session, headers) => {
-            return api.get(Endpoints.API_DELIVERABLES, {
+            return api.get<DeliverableDto[]>(Endpoints.API_DELIVERABLES, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
                 },
             });
         },
-        session,
-        onFailure
+        session
     );
+
+    const { data } = res;
+    const deliverables: Deliverable[] = data.map(convertDeliverableDto);
+    return deliverables;
 }
 
 export async function getDeliverable(
     id: string,
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<Deliverable> {
+    const res = await authenticatedApiHandler(
         async (session, headers) => {
             return api.get(`${Endpoints.API_DELIVERABLES}/${id}`, {
                 headers,
@@ -126,19 +127,20 @@ export async function getDeliverable(
                 },
             });
         },
-        session,
-        onFailure
+        session
     );
+    const { data } = res;
+    const deliverable = convertDeliverableDto(data);
+    return deliverable;
 }
 
 export async function deleteDeliverable(
     id: string,
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<null> {
+    const res = await authenticatedApiHandler<null>(
         async (session, headers) => {
-            const apiResponse = await api.delete(
+            const apiResponse = await api.delete<null>(
                 `${Endpoints.API_DELIVERABLES}/${id}`,
                 {
                     headers,
@@ -149,7 +151,7 @@ export async function deleteDeliverable(
             );
             return apiResponse;
         },
-        session,
-        onFailure
+        session
     );
+    return res.data;
 }

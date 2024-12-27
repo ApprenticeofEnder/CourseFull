@@ -1,10 +1,8 @@
-import { Axios, AxiosError, AxiosResponse, isAxiosError } from 'axios';
+import { AxiosError, AxiosResponse, isAxiosError } from 'axios';
 import {
-    APIServiceResponse,
     ItemStatus,
     Endpoints,
     AuthHeaders,
-    APIOnFailure,
 } from '@coursefull';
 import { Session } from '@supabase/supabase-js';
 import { Key } from 'react';
@@ -95,14 +93,13 @@ function ensureError(value: unknown): AxiosError | Error {
     return error;
 }
 
-export async function authenticatedApiErrorHandler(
+export async function authenticatedApiHandler<T>(
     apiCall: (
         session: Session,
         headers: Partial<AuthHeaders>
-    ) => Promise<AxiosResponse | undefined>,
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
+    ) => Promise<AxiosResponse<T, any>>,
+    session: Session | null
+): Promise<AxiosResponse<T, any>> {
     try {
         if (!session) {
             throw new Error('Invalid session.');
@@ -111,29 +108,22 @@ export async function authenticatedApiErrorHandler(
             Authorization: `Bearer ${session.access_token}`,
         };
         const apiResponse = await apiCall(session, headers);
-        return { response: apiResponse, success: true };
+        return apiResponse;
     } catch (err: unknown) {
         const error = ensureError(err);
-        const cameFromAxios = isAxiosError(error);
-        console.error(error);
-        onFailure(error, cameFromAxios);
-        return { success: false };
+        return Promise.reject(error);
     }
 }
 
-export async function apiErrorHandler(
-    apiCall: () => Promise<AxiosResponse | undefined>,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
+export async function apiHandler<T>(
+    apiCall: () => Promise<AxiosResponse<T, any>>
+): Promise<AxiosResponse<T, any>> {
     try {
         const apiResponse = await apiCall();
-        return { response: apiResponse, success: true };
+        return apiResponse;
     } catch (err: unknown) {
         const error = ensureError(err);
-        const cameFromAxios = isAxiosError(error);
-        console.error(error);
-        onFailure(error, cameFromAxios);
-        return { success: false };
+        return Promise.reject(error);
     }
 }
 
@@ -169,9 +159,7 @@ export const validateEmail = (email: string) =>
     email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
 
 export const validatePassword = (password: string) => {
-    return password.match(
-        /^.*(?=.{10,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/i
-    );
+    return password.match(/^.*(?=.{10,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/i);
 };
 
 export const validateName = (name: string) => {

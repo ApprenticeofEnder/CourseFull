@@ -34,22 +34,15 @@ export default function UpdateSemesterModal({
 
     async function handleUpdateCourse(onClose: CallableFunction) {
         setIsLoading(true);
-        const { success } = await updateCourse(
+        await updateCourse(
             {
                 id: course?.id,
                 title,
                 course_code: courseCode,
                 status,
             },
-            session,
-            (error) => {
-                alert(`Something went wrong: ${error}`);
-                setIsLoading(false);
-            }
+            session
         );
-        if (!success) {
-            return;
-        }
         onClose();
         location.reload();
     }

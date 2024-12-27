@@ -40,7 +40,7 @@ export default function SettingsPage() {
                             <AccountDetails session={session} />
                         </Tab>
                         <Tab title="Security and Passwords">
-                            <Security></Security>
+                            <Security />
                         </Tab>
                         <Tab
                             title="Delete Your Account"

@@ -41,7 +41,7 @@ function Courses({ courses, session }: CoursesProps) {
     return (
         <Fragment>
             {(courses.length && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                     {courses.map((course) => (
                         <CourseCard
                             {...course}
@@ -85,6 +85,8 @@ function SemesterPage() {
     const [semester, setSemester] = useState<Semester | null>(null);
     const [courses, setCourses] = useState<Course[]>([]);
 
+    const [error, setError] = useState<any>(null);
+
     const createCourseModal = useDisclosure();
     const updateSemesterModal = useDisclosure();
 
@@ -99,41 +101,41 @@ function SemesterPage() {
         if (!confirmDelete) {
             return;
         }
-        const { success } = await deleteSemester(
+        await deleteSemester(
             semesterId,
-            session,
-            (error) => {
-                alert(`Something went wrong: ${error.message}`);
-            }
+            session
         );
-        if (!success) {
-            return;
-        }
         router.push(Endpoints.ROOT);
     }
 
     let mounted = useRef(true);
 
     useEffect(() => {
-        mounted.current = true;
-        if (semester || !session) {
+        if (semester || !session || !mounted.current) {
             return;
         }
-        getSemester(semesterId, session, (error) => {
-            alert(error.message);
-        })
-            .then(({ response }) => {
-                if (mounted.current) {
-                    const semesterData: Semester = response?.data;
-                    setSemester(semesterData || null);
-                    setCourses(semesterData.courses || []);
-                }
-            })
-            .catch();
+
+        async function getData(){
+            const semesterData = await getSemester(semesterId, session);
+            setSemester(semesterData);
+            setCourses(semesterData.courses || []);
+        }
+
+        try {
+            getData()
+        }
+        catch(err){
+            setError(err);
+        }
+
         return () => {
             mounted.current = false;
         };
     }, [semester, session, semesterId]);
+
+    if(error){
+        throw error;
+    }
 
     return (
         <Fragment>

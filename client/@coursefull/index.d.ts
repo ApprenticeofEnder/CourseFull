@@ -1,10 +1,9 @@
-import { AxiosResponse } from 'axios';
-
 import { ItemStatus } from './enums.d';
 
 export * from './cart.d';
-export * from './enums.d';
 export * from './data.d';
+export * from './dto.d';
+export * from './enums.d';
 export * from './props.d';
 
 export interface SemesterProgressType {
@@ -18,11 +17,6 @@ export interface SemesterProgressType {
     grade_colour?: string;
 }
 
-export interface APIServiceResponse {
-    response?: AxiosResponse;
-    success: boolean;
-}
-
 export interface BasicUserData {
     first_name: string;
     last_name: string;
@@ -34,8 +28,3 @@ export interface BasicUserData {
 export interface AuthHeaders {
     Authorization: string;
 }
-
-export type APIOnFailure = (
-    error: AxiosError | Error,
-    cameFromAxios: boolean
-) => void;

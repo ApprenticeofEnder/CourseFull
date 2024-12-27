@@ -51,9 +51,7 @@ export default function CourseCard({
             return;
         }
         setDeleteLoading(true);
-        await deleteCourse(id!, session, (error) => {
-            alert(`Something went wrong: ${error.message}`);
-        });
+        await deleteCourse(id!, session);
         handleDelete();
     }
 

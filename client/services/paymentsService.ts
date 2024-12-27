@@ -1,20 +1,18 @@
 import {
-    APIOnFailure,
-    APIServiceResponse,
     CartItem,
     Endpoints,
+    PaymentLinkDto,
 } from '@coursefull';
-import { authenticatedApiErrorHandler } from '@lib/helpers';
+import { authenticatedApiHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import axios from 'axios';
 import { api } from '@services';
 
 export async function createPayment(
     cart: CartItem[],
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<PaymentLinkDto> {
+    const { data } = await authenticatedApiHandler<PaymentLinkDto>(
         async (session, headers) => {
             const products = cart.map((cartItem) => {
                 return {
@@ -23,7 +21,7 @@ export async function createPayment(
                     quantity: cartItem.quantity,
                 };
             });
-            const response = await api.post(
+            const response = await api.post<PaymentLinkDto>(
                 Endpoints.API_PAYMENTS,
                 { products },
                 {
@@ -32,7 +30,7 @@ export async function createPayment(
             );
             return response;
         },
-        session,
-        onFailure
+        session
     );
+    return data;
 }

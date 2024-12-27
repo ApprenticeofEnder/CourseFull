@@ -40,8 +40,6 @@ import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
 
 import { deleteCourse, getCourse } from '@services/courseService';
 
-interface CoursePageProps extends SessionProps {}
-
 interface DeliverableTabsProps extends SessionProps {
     deliverables: Deliverable[];
 }
@@ -138,6 +136,7 @@ function DeliverableTabs({ deliverables, session }: DeliverableTabsProps) {
                 isOpen={updateDeliverableModal.isOpen}
                 onOpenChange={updateDeliverableModal.onOpenChange}
                 className="bg-sky-100"
+                scrollBehavior='inside'
             >
                 <UpdateDeliverableModal
                     session={session}
@@ -160,6 +159,8 @@ function CoursePage() {
     const [course, setCourse] = useState<Course | null>(null);
     const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
 
+    const [error, setError] = useState<any>(null);
+
     const createDeliverableModal = useDisclosure();
     const updateCourseModal = useDisclosure();
 
@@ -174,33 +175,37 @@ function CoursePage() {
         if (!confirmDelete) {
             return;
         }
-        const { success } = await deleteCourse(courseId, session, (error) => {
-            alert(`Something went wrong: ${error.message}`);
-        });
-        if (!success) {
-            return;
+        try {
+            await deleteCourse(courseId, session);
+            router.push(Endpoints.ROOT);
+        } catch (err) {
+            setError(err);
         }
-        router.push(Endpoints.ROOT);
+    }
+
+    if (error) {
+        throw error;
     }
 
     let mounted = useRef(true);
 
     useEffect(() => {
-        mounted.current = true;
-        if (course || !session) {
+        if (course || !session || !mounted.current) {
             return;
         }
-        getCourse(courseId, session, (error) => {
-            alert(error.message);
-        })
-            .then(({ response }) => {
-                if (mounted.current) {
-                    const courseData: Course = response?.data;
-                    setCourse(courseData || null);
-                    setDeliverables(courseData?.deliverables || []);
-                }
-            })
-            .catch();
+
+        async function getData(){
+            const courseData = await getCourse(courseId, session);
+            setCourse(courseData);
+            setDeliverables(courseData.deliverables || []);
+        }
+
+        try {
+            getData()
+        }
+        catch(err){
+            setError(err);
+        }
         return () => {
             mounted.current = false;
         };
@@ -292,6 +297,7 @@ function CoursePage() {
                 isOpen={createDeliverableModal.isOpen}
                 onOpenChange={createDeliverableModal.onOpenChange}
                 className="bg-sky-100"
+                scrollBehavior='inside'
             >
                 <CreateDeliverableModal
                     session={session}
@@ -302,6 +308,7 @@ function CoursePage() {
                 isOpen={updateCourseModal.isOpen}
                 onOpenChange={updateCourseModal.onOpenChange}
                 className="bg-sky-100"
+                scrollBehavior='inside'
             >
                 <UpdateCourseModal session={session} course={course} />
             </Modal>

@@ -30,22 +30,15 @@ export default function UpdateSemesterModal({
 
     async function handleUpdateSemester(onClose: CallableFunction) {
         setIsLoading(true);
-        const { success } = await updateSemester(
+        await updateSemester(
             {
                 id: semester?.id,
                 name,
                 status,
                 goal: parseFloat(goal),
             },
-            session,
-            (error) => {
-                alert(`Something went wrong: ${error}`);
-                setIsLoading(false);
-            }
+            session
         );
-        if (!success) {
-            return;
-        }
         onClose();
         location.reload();
     }

@@ -87,16 +87,18 @@ export default function DeliverableForm({
                 value={deliverable.name}
                 onValueChange={updateName}
             />
-            <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+            <div className="flex w-full flex-wrap gap-4">
                 <DatePicker
                     label="Start Date"
                     value={deliverable.start_date}
                     onChange={updateStartDate}
+                    granularity="minute"
                 />
                 <DatePicker
                     label="Deadline"
                     value={deliverable.deadline}
                     onChange={updateDeadline}
+                    granularity="minute"
                 />
             </div>
             <Input

@@ -1,23 +1,22 @@
 'use client';
 import {
     APIOnFailure,
-    APIServiceResponse,
     Endpoints,
     Semester,
+    SemesterDto,
 } from '@coursefull';
-import { authenticatedApiErrorHandler } from '@lib/helpers';
+import { authenticatedApiHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
-import axios from 'axios';
 import { api } from '@services';
+import { convertSemesterDto } from '@lib/dto';
 
 export async function createSemester(
     { name, status, goal }: Semester,
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<Semester> {
+    const { data } = await authenticatedApiHandler<SemesterDto>(
         async (session, headers) => {
-            const apiResponse = await api.post(
+            const apiResponse = await api.post<SemesterDto>(
                 Endpoints.API_SEMESTERS,
                 {
                     api_v1_semester: {
@@ -35,54 +34,54 @@ export async function createSemester(
             );
             return apiResponse;
         },
-        session,
-        onFailure
+        session
     );
+    const semester = convertSemesterDto(data);
+    return semester;
 }
 
 export async function getSemesters(
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<Semester[]> {
+    const { data } = await authenticatedApiHandler<SemesterDto[]>(
         async (session, headers) => {
-            return api.get(Endpoints.API_SEMESTERS, {
+            return api.get<SemesterDto[]>(Endpoints.API_SEMESTERS, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
                 },
             });
         },
-        session,
-        onFailure
+        session
     );
+    const semesters: Semester[] = data.map(convertSemesterDto);
+    return semesters;
 }
 
 export async function getSemester(
     id: string,
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<Semester> {
+    const { data } = await authenticatedApiHandler<SemesterDto>(
         async (session, headers) => {
-            return api.get(`${Endpoints.API_SEMESTERS}/${id}`, {
+            return api.get<SemesterDto>(`${Endpoints.API_SEMESTERS}/${id}`, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
                 },
             });
         },
-        session,
-        onFailure
+        session
     );
+    const semester = convertSemesterDto(data);
+    return semester;
 }
 
 export async function updateSemester(
     { id, name, status, goal }: Semester,
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<Semester> {
+    const { data } = await authenticatedApiHandler<SemesterDto>(
         async (session, headers) => {
             const apiResponse = await api.put(
                 `${Endpoints.API_SEMESTERS}/${id}`,
@@ -102,17 +101,17 @@ export async function updateSemester(
             );
             return apiResponse;
         },
-        session,
-        onFailure
+        session
     );
+    const semester = convertSemesterDto(data);
+    return semester;
 }
 
 export async function deleteSemester(
     id: string,
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<void> {
+    await authenticatedApiHandler(
         async (session, headers) => {
             const apiResponse = await api.delete(
                 `${Endpoints.API_SEMESTERS}/${id}`,
@@ -125,7 +124,6 @@ export async function deleteSemester(
             );
             return apiResponse;
         },
-        session,
-        onFailure
+        session
     );
 }

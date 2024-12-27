@@ -8,7 +8,7 @@ import {
     useDisclosure,
 } from '@nextui-org/react';
 import { Session } from '@supabase/supabase-js';
-import { Fragment, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 import {
@@ -27,10 +27,6 @@ import {
     User,
 } from '@coursefull';
 import { getProgress, getUserData } from '@services/userService';
-
-function onFailure(error: Error) {
-    alert('Error: ' + error.message);
-}
 
 function renderAverage(item: SemesterProgressType | null | undefined): string {
     if (!item) {
@@ -102,6 +98,8 @@ export default function Home({ session }: SessionProps) {
     const [progress, setProgress] = useState<SemesterProgressType[]>([]);
     const [userData, setUserData] = useState<User | null>(null);
 
+    const [error, setError] = useState<any>(null);
+
     const [activeSemester, setActiveSemester] =
         useState<SemesterProgressType | null>();
 
@@ -114,43 +112,37 @@ export default function Home({ session }: SessionProps) {
     let mounted = useRef(true);
 
     async function getProgressData(session: Session) {
-        const apiResponse = await getProgress(session, onFailure);
-        if (apiResponse.success == false) {
-            return;
-        }
-        const data: SemesterProgressType[] = apiResponse.response?.data;
-        setProgress(data);
+        const progress: SemesterProgressType[] = await getProgress(session);
+        setProgress(progress);
+        setLoadingProgress(false);
         setActiveSemester(
-            data
+            progress
                 .filter((semester) => semester.status === ItemStatus.ACTIVE)
                 .shift()
         );
     }
 
     async function getUser(session: Session) {
-        const apiResponse = await getUserData(session, onFailure);
-        if (apiResponse.success == false) {
-            return;
-        }
-        const data: User = apiResponse.response?.data;
-        setUserData(data);
+        const user: User = await getUserData(session);
+        setUserData(user);
+        setLoadingUserData(false);
     }
 
     useEffect(() => {
-        mounted.current = true;
+        if (!session || !mounted.current) {
+            return;
+        }
         setLoadingProgress(true);
 
-        if (mounted.current) {
-            getProgressData(session)
-                .then(() => {
-                    setLoadingProgress(false);
-                })
-                .catch();
-            getUser(session)
-                .then(() => {
-                    setLoadingUserData(false);
-                })
-                .catch();
+        async function getData() {
+            getProgressData(session);
+            getUserData(session);
+        }
+
+        try {
+            getData();
+        } catch (err) {
+            setError(err);
         }
 
         return () => {
@@ -158,8 +150,12 @@ export default function Home({ session }: SessionProps) {
         };
     }, [session]);
 
+    if(error){
+        throw error;
+    }
+
     return (
-        <div className='h-full'>
+        <div className="h-full">
             <h1>Hey, {session.user.user_metadata.first_name}!</h1>
             {loadingProgress ? (
                 <Spinner label="Loading Progress..." />

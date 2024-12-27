@@ -1,7 +1,7 @@
 'use client';
 
-import { Fragment, useState } from 'react';
 import { Input } from '@nextui-org/react';
+import { Fragment, useState } from 'react';
 import { z } from 'zod';
 
 import { Endpoints } from '@coursefull';
@@ -22,6 +22,7 @@ const LoginFormSchema = z.object({
 
 export default function LoginForm() {
     const router = useRouter();
+    const [error, setError] = useState<any>(null);
 
     const [loginFormState, setLoginFormState] = useState<LoginFormData>({
         email: '',
@@ -47,16 +48,15 @@ export default function LoginForm() {
         setLoading(true);
         try {
             const { email, password } = LoginFormSchema.parse(loginFormState);
-            const { success } = await login(email, password, (error) => {
-                alert(`Something went wrong: ${error}`);
-                setLoading(false);
-            });
-            if (success) {
-                router.push(Endpoints.ROOT);
-            }
+            await login(email, password);
+            router.push(Endpoints.ROOT);
         } catch (err) {
-            console.error(err);
+            setError(err);
         }
+    }
+
+    if (error) {
+        throw error;
     }
 
     return (

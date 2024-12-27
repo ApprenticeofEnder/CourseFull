@@ -139,8 +139,8 @@ describe('Helper Function', () => {
 
     describe('authenticatedApiErrorHandler', () => {
         const session = makeSession(USER1);
-        it('Should return axios data for a successful response', async () => {
-            const apiResponse = await helpers.authenticatedApiErrorHandler(
+        it('Should return data for a successful response', async () => {
+            const { data } = await helpers.authenticatedApiHandler(
                 async (session, headers) => {
                     const apiResponse = await axios.get(
                         Endpoints.API_PROGRESS,
@@ -150,87 +150,51 @@ describe('Helper Function', () => {
                     );
                     return apiResponse;
                 },
-                session,
-                (error) => {
-                    console.error(error);
-                }
+                session
             );
-            expect(apiResponse.success).toBeTruthy();
-            expect(apiResponse.response?.data.length).toEqual(2);
+            expect(data.length).toEqual(2);
         });
 
-        it('Should return an unsuccessful response on an invalid session', async () => {
-            const apiResponse = await helpers.authenticatedApiErrorHandler(
-                async (session, headers) => {
-                    const apiResponse = await axios.get(
-                        Endpoints.API_PROGRESS,
-                        {
-                            headers,
-                        }
-                    );
-                    return apiResponse;
-                },
-                null,
-                (error) => {
-                    expect(error.message).toEqual('Invalid session.');
-                }
-            );
-            expect(apiResponse.success).toBeFalsy();
+        it('Should throw an error on an invalid session', async () => {
+            expect(
+                await helpers.authenticatedApiHandler(
+                    async (session, headers) => {
+                        const apiResponse = await axios.get(
+                            Endpoints.API_PROGRESS,
+                            {
+                                headers,
+                            }
+                        );
+                        return apiResponse;
+                    },
+                    null
+                )
+            ).toThrowError();
         });
 
-        it('Should return an unsuccessful response when the api call throws an error', async () => {
-            const apiResponse = await helpers.authenticatedApiErrorHandler(
-                async (session) => {
+        it('Should throw an error when the api call throws an error', async () => {
+            expect(
+                await helpers.authenticatedApiHandler(async (session) => {
                     throw new Error('TEST');
-                },
-                session,
-                (error) => {
-                    expect(error.message).toEqual('TEST');
-                    expect(error instanceof AxiosError).toBeFalsy();
-                }
-            );
-            expect(apiResponse.success).toBeFalsy();
+                }, session)
+            ).toThrowError('TEST');
         });
 
         it('Should throw an AxiosError when Axios encounters a bad status code', async () => {
-            const apiResponse = await helpers.authenticatedApiErrorHandler(
-                async (session, headers) => {
+            expect(
+                await helpers.authenticatedApiHandler(async (session, headers) => {
                     const apiResponse = await axios.get('/404', {
                         headers,
                     });
                     return apiResponse;
-                },
-                session,
-                (error, cameFromAxios) => {
-                    expect(error instanceof AxiosError).toBeTruthy();
-                    expect(cameFromAxios).toBeTruthy();
-                }
-            );
-            expect(apiResponse.success).toBeFalsy();
-        });
-
-        it('Should return an unsuccessful response when the api call throws an unconventional error', async () => {
-            const fakeErrorObject = { error: 'Hello' };
-            const apiResponse = await helpers.authenticatedApiErrorHandler(
-                async (session) => {
-                    throw fakeErrorObject;
-                },
-                session,
-                (error) => {
-                    expect(error.message).toEqual(
-                        `This value was thrown as is, not through an Error: ${JSON.stringify(
-                            fakeErrorObject
-                        )}`
-                    );
-                }
-            );
-            expect(apiResponse.success).toBeFalsy();
+                }, session)
+            ).toThrowError();
         });
     });
 
     describe('apiErrorHandler', () => {
         it('Should return axios data for a successful response', async () => {
-            const apiResponse = await helpers.apiErrorHandler(
+            const {data}= await helpers.apiHandler(
                 async () => {
                     const apiPostData = {
                         api_v1_user: NEW_USER,
@@ -242,49 +206,25 @@ describe('Helper Function', () => {
                     );
                     return apiResponse;
                 },
-                (error) => {
-                    throw error;
-                }
             );
-            expect(apiResponse.success).toBeTruthy();
-            expect(apiResponse.response?.data.first_name).toEqual(
+            expect(data.first_name).toEqual(
                 NEW_USER.first_name
             );
         });
 
         it('Should throw an AxiosError when Axios encounters a bad status code', async () => {
-            const apiResponse = await helpers.apiErrorHandler(
-                async () => {
-                    const apiResponse = await axios.get('/404', {
-                        validateStatus: (status) => {
-                            return status === 200;
-                        },
-                    });
-                    return apiResponse;
-                },
-                (error, cameFromAxios) => {
-                    expect(error instanceof AxiosError).toBeTruthy();
-                    expect(cameFromAxios).toBeTruthy();
-                }
-            );
-            expect(apiResponse.success).toBeFalsy();
-        });
-
-        it('Should return an unsuccessful response when the api call throws an unconventional error', async () => {
-            const fakeErrorObject = { error: 'Hello' };
-            const apiResponse = await helpers.apiErrorHandler(
-                async () => {
-                    throw fakeErrorObject;
-                },
-                (error) => {
-                    expect(error.message).toEqual(
-                        `This value was thrown as is, not through an Error: ${JSON.stringify(
-                            fakeErrorObject
-                        )}`
-                    );
-                }
-            );
-            expect(apiResponse.success).toBeFalsy();
+            expect(
+                await helpers.apiHandler(
+                    async () => {
+                        const apiResponse = await axios.get('/404', {
+                            validateStatus: (status) => {
+                                return status === 200;
+                            },
+                        });
+                        return apiResponse;
+                    }
+                )
+            ).toThrowError();
         });
     });
 

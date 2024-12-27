@@ -1,23 +1,24 @@
-import { APIOnFailure, APIServiceResponse, Endpoints } from '@coursefull';
-import { authenticatedApiErrorHandler } from '@lib/helpers';
+import {
+    Endpoints,
+    Product,
+} from '@coursefull';
+import { authenticatedApiHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
-import axios from 'axios';
 import { api } from '@services';
 
 export async function getProducts(
-    session: Session | null,
-    onFailure: APIOnFailure
-): Promise<APIServiceResponse> {
-    return authenticatedApiErrorHandler(
+    session: Session | null
+): Promise<Product[]> {
+    const { data } = await authenticatedApiHandler<Product[]>(
         async (session, headers) => {
-            return api.get(Endpoints.API_PRODUCTS, {
+            return api.get<Product[]>(Endpoints.API_PRODUCTS, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
                 },
             });
         },
-        session,
-        onFailure
+        session
     );
+    return data;
 }

@@ -90,37 +90,23 @@ export default function CreateSemesterModal({
 
     async function handleCreateSemester(onClose: CallableFunction) {
         setIsLoading(true);
-        const semesterRes = await createSemester(
+        const semester: Semester = await createSemester(
             {
                 name,
                 goal: parseFloat(goal),
                 status,
             },
-            session,
-            (error) => {
-                alert(`Something went wrong: ${error}`);
-                setIsLoading(false);
-            }
+            session
         );
-        if (!semesterRes.success) {
-            return;
-        }
-
-        const newSemester: Semester = semesterRes.response?.data;
 
         for (let course of courses) {
             course = course!;
-            const { success } = await createCourse(
+            await createCourse(
                 {
                     ...course,
-                    api_v1_semester_id: newSemester.id,
+                    api_v1_semester_id: semester.id,
                 },
-                session,
-                (error) => {
-                    alert(`Something went wrong: ${error}`);
-                    console.error(error);
-                    setIsLoading(false);
-                }
+                session
             );
         }
 

@@ -22,6 +22,9 @@ export default function Signup() {
         }
     }, [session, loadingSession, router]);
 
+    // TODO: Add *better* validation and refactor this to use a single useState()
+    // TODO: Migrate the form to its own component
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fname, setFname] = useState('');
@@ -75,22 +78,16 @@ export default function Signup() {
 
     async function handleSignUp() {
         setLoading(true);
-        const { success } = await createUser(
+        await createUser(
             {
                 first_name: fname,
                 last_name: lname,
                 email,
                 password,
                 subscribed,
-            },
-            (error) => {
-                alert(`Something went wrong: ${error}`);
-                setLoading(false);
             }
         );
-        if (success) {
-            router.push(Endpoints.EMAIL_VERIFY);
-        }
+        router.push(Endpoints.EMAIL_VERIFY);
     }
 
     return (

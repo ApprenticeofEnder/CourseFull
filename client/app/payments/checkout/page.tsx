@@ -1,14 +1,14 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
 
 import CartItemCard from '@components/Card/CartItem';
 import { useCart } from '@lib/cart/cartContext';
 import { priceFormatter } from '@lib/helpers';
 import Button from '@components/Button/Button';
 import LinkButton from '@components/Button/LinkButton';
-import { Endpoints, CartItem } from '@coursefull';
+import { Endpoints, CartItem, PaymentLinkDto } from '@coursefull';
 import { createPayment } from '@services/paymentsService';
 
 import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
@@ -20,6 +20,7 @@ export default function Checkout() {
     const router = useRouter();
 
     const { cart, dispatch } = useCart()!;
+    const [error, setError] = useState<any>(null);
 
     const { session, loadingSession } = useSession()!;
     useProtectedEndpoint(session, loadingSession, router);
@@ -78,30 +79,21 @@ export default function Checkout() {
     };
 
     const checkout = async () => {
-        const { response, success } = await createPayment(
-            Object.values(cart.items),
-            session,
-            (error) => {
-                try {
-                    const errorData = JSON.parse(error.message);
-                    const noItemsError =
-                        errorData.status === 400 &&
-                        errorData.data.error_type === 'empty_cart';
-                    if (!noItemsError) {
-                        throw error;
-                    }
-                } catch (err) {
-                    alert(`Something went wrong: ${err}`);
-                }
-            }
-        );
-        if (!success) {
-            console.log(response?.data);
-            return;
+        try {
+            const paymentLink: PaymentLinkDto = await createPayment(
+                Object.values(cart.items),
+                session
+            );
+            router.push(paymentLink.redirect);
         }
-
-        router.push(response?.data.redirect);
+        catch(err) {
+            setError(err);
+        }
     };
+
+    if (error) {
+        throw error;
+    }
 
     return (
         <Suspense fallback={<Loading />}>

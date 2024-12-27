@@ -5,7 +5,7 @@ import {
     ModalBody,
     ModalFooter,
 } from '@nextui-org/react';
-import {parseDate, getLocalTimeZone, today} from "@internationalized/date";
+import {parseDate, getLocalTimeZone, now} from "@internationalized/date";
 
 import Button from '@components/Button/Button';
 import { ItemStatus, SessionProps, type Deliverable } from '@coursefull';
@@ -26,28 +26,21 @@ export default function CreateDeliverableModal({
         weight: 0,
         mark: 0,
         notes: "",
-        start_date: today(getLocalTimeZone()),
-        deadline: today(getLocalTimeZone())
+        start_date: now(getLocalTimeZone()),
+        deadline: now(getLocalTimeZone())
     });
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     async function handleCreateDeliverable(onClose: CallableFunction) {
         setIsLoading(true);
-        const { success } = await createDeliverable(
+        await createDeliverable(
             {
                 ...deliverable,
                 api_v1_course_id,
             },
-            session,
-            (error) => {
-                alert(`Something went wrong: ${error}`);
-                setIsLoading(false);
-            }
+            session
         );
-        if (!success) {
-            return;
-        }
         onClose();
         location.reload();
     }
