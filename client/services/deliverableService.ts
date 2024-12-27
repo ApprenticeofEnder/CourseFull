@@ -118,9 +118,9 @@ export async function getDeliverable(
     id: string,
     session: Session | null
 ): Promise<Deliverable> {
-    const res = await authenticatedApiHandler(
+    const res = await authenticatedApiHandler<DeliverableDto>(
         async (session, headers) => {
-            return api.get(`${Endpoints.API_DELIVERABLES}/${id}`, {
+            return api.get<DeliverableDto>(`${Endpoints.API_DELIVERABLES}/${id}`, {
                 headers,
                 validateStatus: (status) => {
                     return status === 200;
