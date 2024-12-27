@@ -3,14 +3,23 @@ import {
     APIServiceResponse,
     Deliverable,
     Endpoints,
+    Updated,
 } from '@coursefull';
 import { authenticatedApiErrorHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
-import axios from 'axios';
 import { api } from '@services';
 
 export async function createDeliverable(
-    { name, weight, mark, status, notes, api_v1_course_id }: Deliverable,
+    {
+        name,
+        weight,
+        mark,
+        status,
+        notes,
+        start_date,
+        deadline,
+        api_v1_course_id,
+    }: Deliverable,
     session: Session | null,
     onFailure: APIOnFailure
 ): Promise<APIServiceResponse> {
@@ -25,6 +34,8 @@ export async function createDeliverable(
                         mark,
                         status,
                         notes,
+                        start_date,
+                        deadline,
                         api_v1_course_id,
                     },
                 },
@@ -42,7 +53,16 @@ export async function createDeliverable(
 }
 
 export async function updateDeliverable(
-    { id, name, weight, mark, status, notes }: Deliverable,
+    {
+        id,
+        name,
+        weight,
+        mark,
+        status,
+        notes,
+        start_date,
+        deadline,
+    }: Updated<Deliverable>,
     session: Session | null,
     onFailure: APIOnFailure
 ): Promise<APIServiceResponse> {
@@ -57,6 +77,8 @@ export async function updateDeliverable(
                         mark,
                         status,
                         notes,
+                        start_date,
+                        deadline,
                     },
                 },
                 {

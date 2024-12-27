@@ -98,7 +98,7 @@ export default function CourseFullNavbar() {
                     justify="center"
                 >
                     {menuItems.map((menuItem) => (
-                        <NavbarItem isActive={menuItem.color == 'primary'}>
+                        <NavbarItem isActive={menuItem.color == 'primary'} key={menuItem.href}>
                             <Link
                                 color={menuItem.color}
                                 href={menuItem.href}

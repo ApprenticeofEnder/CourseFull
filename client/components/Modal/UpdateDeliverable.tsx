@@ -7,44 +7,26 @@ import {
 } from '@nextui-org/react';
 
 import Button from '@components/Button/Button';
-import { ItemStatus } from '@coursefull';
-import { Deliverable, SessionProps } from '@coursefull';
+import { Deliverable, Updated, UpdateDeliverableModalProps} from '@coursefull';
 import { updateDeliverable } from '@services/deliverableService';
 import DeliverableForm from '../Form/DeliverableForm';
-
-interface EditDeliverableModalProps extends SessionProps {
-    deliverable: Deliverable | null;
-}
+import assert from 'assert';
 
 export default function UpdateDeliverableModal({
     session,
     deliverable,
-}: EditDeliverableModalProps) {
-    const [name, setName] = useState<string>(deliverable?.name || '');
-    const [status, setStatus] = useState<ItemStatus>(
-        deliverable?.status || ItemStatus.NOT_STARTED
-    );
-    const [weight, setWeight] = useState<string>(
-        deliverable?.weight.toString() || ''
-    );
-    const [mark, setMark] = useState<string>(
-        deliverable?.mark.toString() || ''
-    );
-    const [notes, setNotes] = useState<string>(deliverable?.notes || '');
+}: UpdateDeliverableModalProps) {
+    assert(deliverable);
+    assert(deliverable.id);
+
+    const [updatedDeliverable, setUpdatedDeliverable] = useState<Deliverable>(deliverable);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     async function handleUpdateDeliverable(onClose: CallableFunction) {
         setIsLoading(true);
         const { success } = await updateDeliverable(
-            {
-                id: deliverable?.id,
-                name,
-                status,
-                weight: parseFloat(weight),
-                mark: parseFloat(mark),
-                notes,
-            },
+            updatedDeliverable as Updated<Deliverable>,
             session,
             (error) => {
                 alert(`Something went wrong: ${error}`);
@@ -66,18 +48,10 @@ export default function UpdateDeliverableModal({
                         Edit Deliverable
                     </ModalHeader>
                     <ModalBody>
-                        <h3>Goal: {deliverable?.goal}%</h3>
+                        <h3>Goal: {deliverable.goal}%</h3>
                         <DeliverableForm
-                            name={name}
-                            setName={setName}
-                            status={status}
-                            setStatus={setStatus}
-                            weight={weight}
-                            setWeight={setWeight}
-                            mark={mark}
-                            setMark={setMark}
-                            notes={notes}
-                            setNotes={setNotes}
+                            deliverable={updatedDeliverable}
+                            setDeliverable={setUpdatedDeliverable}
                         />
                     </ModalBody>
                     <ModalFooter>

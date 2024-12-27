@@ -5,9 +5,10 @@ import {
     ModalBody,
     ModalFooter,
 } from '@nextui-org/react';
+import {parseDate, getLocalTimeZone, today} from "@internationalized/date";
 
 import Button from '@components/Button/Button';
-import { ItemStatus, SessionProps } from '@coursefull';
+import { ItemStatus, SessionProps, type Deliverable } from '@coursefull';
 import { createDeliverable } from '@services/deliverableService';
 import DeliverableForm from '@components/Form/DeliverableForm';
 
@@ -19,11 +20,15 @@ export default function CreateDeliverableModal({
     session,
     api_v1_course_id,
 }: DeliverableModalProps) {
-    const [name, setName] = useState<string>('');
-    const [status, setStatus] = useState<ItemStatus>(ItemStatus.ACTIVE);
-    const [weight, setWeight] = useState<string>('');
-    const [mark, setMark] = useState<string>('0');
-    const [notes, setNotes] = useState<string>('');
+    const [deliverable, setDeliverable] = useState<Deliverable>({
+        name: "",
+        status: ItemStatus.ACTIVE,
+        weight: 0,
+        mark: 0,
+        notes: "",
+        start_date: today(getLocalTimeZone()),
+        deadline: today(getLocalTimeZone())
+    });
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -31,11 +36,7 @@ export default function CreateDeliverableModal({
         setIsLoading(true);
         const { success } = await createDeliverable(
             {
-                name,
-                status,
-                weight: parseFloat(weight),
-                mark: parseFloat(mark),
-                notes,
+                ...deliverable,
                 api_v1_course_id,
             },
             session,
@@ -60,16 +61,8 @@ export default function CreateDeliverableModal({
                     </ModalHeader>
                     <ModalBody>
                         <DeliverableForm
-                            name={name}
-                            setName={setName}
-                            status={status}
-                            setStatus={setStatus}
-                            weight={weight}
-                            setWeight={setWeight}
-                            mark={mark}
-                            setMark={setMark}
-                            notes={notes}
-                            setNotes={setNotes}
+                            deliverable={deliverable}
+                            setDeliverable={setDeliverable}
                         />
                     </ModalBody>
                     <ModalFooter>
