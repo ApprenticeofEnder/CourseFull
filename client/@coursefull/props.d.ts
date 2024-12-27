@@ -2,6 +2,7 @@ import { Session } from '@supabase/supabase-js';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 
 import { Semester, Course, Deliverable, UpdatedDeliverable, User } from "./data.d";
+import { ZodError } from 'zod';
 
 export type Dispatcher<T> = Dispatch<SetStateAction<T>>;
 
@@ -45,7 +46,16 @@ export interface AnimateOnScrollProps extends ChildrenProps {
     delay: number;
 }
 
-export interface DeliverableFormProps {
+export interface ZodErrorProps {
+    zodError: ZodError | null;
+}
+
+export interface CourseFormProps {
+    course: Course,
+    setCourse: Dispatcher<Course>
+}
+
+export interface DeliverableFormProps extends ZodErrorProps {
     deliverable: Deliverable;
     setDeliverable: Dispatcher<Deliverable>;
 }

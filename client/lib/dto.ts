@@ -9,10 +9,10 @@ import {
     Semester,
 } from '@coursefull';
 
-export function convertSemesterDto(dto: SemesterDto): Semester {
+export function convertSemesterFromDto(dto: SemesterDto): Semester {
     const courseDtos: CourseDto[] = dto.courses || [];
     const courses: Course[] = courseDtos.map(
-        convertCourseDto
+        convertCourseFromDto
     );
     const semester: Semester = {
         ...dto,
@@ -21,24 +21,44 @@ export function convertSemesterDto(dto: SemesterDto): Semester {
     return semester;
 }
 
-export function convertCourseDto(dto: CourseDto): Course {
+export function convertCourseFromDto(dto: CourseDto): Course {
     const deliverableDtos: DeliverableDto[] = dto.deliverables || [];
     const deliverables: Deliverable[] = deliverableDtos.map(
-        convertDeliverableDto
+        convertDeliverableFromDto
     );
-    const course: Course = {
+
+    return {
         ...dto,
         deliverables,
     };
-
-    return course;
 }
 
-export function convertDeliverableDto(dto: DeliverableDto): Deliverable {
+export function convertCourseToDto(data: Course): CourseDto {
+    const deliverables: Deliverable[] = data.deliverables || [];
+    const deliverableDtos: DeliverableDto[] = deliverables.map(
+        convertDeliverableToDto
+    );
+    return {
+        ...data,
+        deliverables: deliverableDtos
+    }
+}
+
+export function convertDeliverableFromDto(dto: DeliverableDto): Deliverable {
     const start_date = parseAbsolute(dto.start_date, getLocalTimeZone());
     const deadline = parseAbsolute(dto.deadline, getLocalTimeZone());
     return {
         ...dto,
+        start_date,
+        deadline,
+    };
+}
+
+export function convertDeliverableToDto(data: Deliverable): DeliverableDto {
+    const start_date = data.start_date.toAbsoluteString();
+    const deadline = data.deadline.toAbsoluteString();
+    return {
+        ...data,
         start_date,
         deadline,
     };

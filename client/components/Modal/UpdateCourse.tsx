@@ -7,12 +7,11 @@ import {
 } from '@nextui-org/react';
 
 import Button from '@components/Button/Button';
-import { Course, ItemStatus, Semester } from '@coursefull';
+import { Course, Updated } from '@coursefull';
 import { SessionProps } from '@coursefull';
-import SemesterForm from '../Form/SemesterForm';
-import { updateSemester } from '@services/semesterService';
 import CourseForm from '@components/Form/CourseForm';
 import { updateCourse } from '@services/courseService';
+import assert from 'assert';
 
 interface EditCourseModalProps extends SessionProps {
     course: Course | null;
@@ -22,25 +21,17 @@ export default function UpdateSemesterModal({
     session,
     course,
 }: EditCourseModalProps) {
-    const [title, setTitle] = useState<string>(course?.title || '');
-    const [courseCode, setCourseCode] = useState<string>(
-        course?.course_code || ''
-    );
-    const [status, setStatus] = useState<ItemStatus>(
-        course?.status || ItemStatus.NOT_STARTED
-    );
+    assert(course);
+    assert(course.id);
+
+    const [updatedCourse, setUpdatedCourse] = useState<Course>(course);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     async function handleUpdateCourse(onClose: CallableFunction) {
         setIsLoading(true);
         await updateCourse(
-            {
-                id: course?.id,
-                title,
-                course_code: courseCode,
-                status,
-            },
+            updatedCourse as Updated<Course>,
             session
         );
         onClose();
@@ -56,12 +47,8 @@ export default function UpdateSemesterModal({
                     </ModalHeader>
                     <ModalBody>
                         <CourseForm
-                            title={title}
-                            setTitle={setTitle}
-                            code={courseCode}
-                            setCode={setCourseCode}
-                            status={status}
-                            setStatus={setStatus}
+                            course={updatedCourse}
+                            setCourse={setUpdatedCourse}
                         />
                     </ModalBody>
                     <ModalFooter>

@@ -49,7 +49,7 @@ export default function LoginForm() {
         try {
             const { email, password } = LoginFormSchema.parse(loginFormState);
             await login(email, password);
-            router.push(Endpoints.ROOT);
+            router.push(Endpoints.DASHBOARD);
         } catch (err) {
             setError(err);
         }

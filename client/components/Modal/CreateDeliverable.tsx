@@ -5,12 +5,15 @@ import {
     ModalBody,
     ModalFooter,
 } from '@nextui-org/react';
-import {parseDate, getLocalTimeZone, now} from "@internationalized/date";
+import {parseDate, getLocalTimeZone, now, fromDate} from "@internationalized/date";
 
 import Button from '@components/Button/Button';
-import { ItemStatus, SessionProps, type Deliverable } from '@coursefull';
+import { DeliverableDto, ItemStatus, SessionProps, type Deliverable } from '@coursefull';
 import { createDeliverable } from '@services/deliverableService';
 import DeliverableForm from '@components/Form/DeliverableForm';
+import { convertDeliverableToDto } from '@lib/dto';
+import { DeliverableDtoSchema } from '@lib/validation';
+import { ZodError } from 'zod';
 
 interface DeliverableModalProps extends SessionProps {
     api_v1_course_id: string;
@@ -30,13 +33,21 @@ export default function CreateDeliverableModal({
         deadline: now(getLocalTimeZone())
     });
 
+    const [zodError, setZodError] = useState<ZodError | null>(null);
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     async function handleCreateDeliverable(onClose: CallableFunction) {
+        const dto = convertDeliverableToDto(deliverable);
+        const parseResult = DeliverableDtoSchema.safeParse(dto);
+        if(!parseResult.success){
+            setZodError(parseResult.error);
+            return;
+        }
         setIsLoading(true);
         await createDeliverable(
             {
-                ...deliverable,
+                ...parseResult.data!,
                 api_v1_course_id,
             },
             session
@@ -56,6 +67,7 @@ export default function CreateDeliverableModal({
                         <DeliverableForm
                             deliverable={deliverable}
                             setDeliverable={setDeliverable}
+                            zodError={zodError}
                         />
                     </ModalBody>
                     <ModalFooter>

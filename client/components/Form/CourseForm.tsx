@@ -1,26 +1,10 @@
-import { Fragment } from 'react';
+import { Fragment, Key } from 'react';
 import { Input, Listbox, ListboxItem } from '@nextui-org/react';
 
-import { ItemStatus } from '@coursefull';
+import { ItemStatus, CourseFormProps } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
 
-interface CourseFormProps {
-    title: string;
-    setTitle: (title: string) => void;
-    code: string;
-    setCode: (code: string) => void;
-    status: ItemStatus;
-    setStatus: (name: ItemStatus) => void;
-}
-
-export default function CourseForm({
-    title,
-    setTitle,
-    code,
-    setCode,
-    status,
-    setStatus,
-}: CourseFormProps) {
+export default function CourseForm({ course, setCourse }: CourseFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.ACTIVE,
         ItemStatus.COMPLETE,
@@ -28,42 +12,57 @@ export default function CourseForm({
 
     //TODO: Add client side validation
 
+    const updateTitle = (title: string) => {
+        setCourse((course) => ({ ...course, title }));
+    };
+
+    const updateCourseCode = (course_code: string) => {
+        setCourse((course) => ({ ...course, course_code }));
+    };
+
+    const updateStatus = (newStatus: Key) => {
+        onStatusChanged(newStatus, (status) => {
+            setCourse((course) => ({
+                ...course,
+                status,
+            }));
+        });
+    };
+
     return (
         <Fragment>
             <Input
                 type="text"
                 label="Course Title"
                 placeholder="e.g. Introduction to Psychology..."
-                value={title}
-                onValueChange={setTitle}
+                value={course.title}
+                onValueChange={updateTitle}
             />
             <Input
                 type="text"
                 label="Course Code"
                 placeholder="e.g PSYC 1001..."
-                value={code}
-                onValueChange={setCode}
+                value={course.course_code}
+                onValueChange={updateCourseCode}
             />
             <Listbox
                 items={statusObjects}
                 label="Status"
                 topContent="Status"
                 aria-label="Status"
-                onAction={(newStatus) => {
-                    onStatusChanged(newStatus, setStatus);
-                }}
+                onAction={updateStatus}
                 itemClasses={{ base: 'data-[hover=true]:bg-primary-700 p-4' }}
             >
                 {(item) => (
                     <ListboxItem
                         key={item.key}
                         className={classNames(
-                            status === item.key ? 'bg-primary-600' : ''
+                            course.status === item.key ? 'bg-primary-600' : ''
                         )}
                         textValue={item.label}
                     >
                         <span
-                            className={status === item.key ? 'font-bold' : ''}
+                            className={course.status === item.key ? 'font-bold' : ''}
                         >
                             {item.label}
                         </span>

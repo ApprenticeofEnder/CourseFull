@@ -1,4 +1,4 @@
-import { DateValue, getLocalTimeZone } from '@internationalized/date';
+import { DateValue, ZonedDateTime } from '@internationalized/date';
 import {
     DatePicker,
     Input,
@@ -6,21 +6,25 @@ import {
     ListboxItem,
     Textarea,
 } from '@nextui-org/react';
-import { Fragment, Key } from 'react';
+import { Fragment, Key, useEffect, useState } from 'react';
 
-import { ItemStatus, DeliverableFormProps, Deliverable } from '@coursefull';
+import {
+    ItemStatus,
+    DeliverableFormProps,
+    DeliverableFormErrors,
+} from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
+import { ZodIssue } from 'zod';
 
 export default function DeliverableForm({
     deliverable,
     setDeliverable,
+    zodError,
 }: DeliverableFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.ACTIVE,
         ItemStatus.COMPLETE,
     ]);
-
-    //TODO: Add client side validation
 
     const updateName = (name: string) => {
         setDeliverable((deliverable) => ({
@@ -32,14 +36,14 @@ export default function DeliverableForm({
     const updateStartDate = (start_date: DateValue) => {
         setDeliverable((deliverable) => ({
             ...deliverable,
-            start_date,
+            start_date: start_date as ZonedDateTime,
         }));
     };
 
     const updateDeadline = (deadline: DateValue) => {
         setDeliverable((deliverable) => ({
             ...deliverable,
-            deadline,
+            deadline: deadline as ZonedDateTime,
         }));
     };
 
@@ -78,6 +82,47 @@ export default function DeliverableForm({
         }));
     };
 
+    const getLastErrorMessage = (issues: ZodIssue[]) => {
+        return issues.slice(-1).pop()?.message;
+    };
+
+    const [errors, setErrors] = useState<DeliverableFormErrors>({
+        name: [],
+        start_date: [],
+        deadline: [],
+        weight: [],
+        mark: [],
+        status: [],
+        notes: [],
+        custom: [],
+    });
+
+    useEffect(() => {
+        console.log(zodError);
+        let updatedErrors: DeliverableFormErrors = {
+            name: [],
+            start_date: [],
+            deadline: [],
+            weight: [],
+            mark: [],
+            status: [],
+            notes: [],
+            custom: [],
+        };
+        for (let issue of zodError?.issues || []) {
+            issue.path.forEach((field) => {
+                if (!updatedErrors[field as keyof DeliverableFormErrors]) {
+                    return;
+                }
+                updatedErrors[field as keyof DeliverableFormErrors].push(issue);
+            });
+            if (issue.code === 'custom') {
+                updatedErrors.custom.push(issue);
+            }
+        }
+        setErrors(updatedErrors);
+    }, [zodError]);
+
     return (
         <Fragment>
             <Input
@@ -86,18 +131,30 @@ export default function DeliverableForm({
                 placeholder="What's the name of the deliverable?"
                 value={deliverable.name}
                 onValueChange={updateName}
+                isInvalid={errors.name.length > 0}
+                errorMessage={getLastErrorMessage(errors.name)}
             />
             <div className="flex w-full flex-wrap gap-4">
                 <DatePicker
                     label="Start Date"
                     value={deliverable.start_date}
                     onChange={updateStartDate}
+                    isInvalid={errors.start_date.length > 0}
+                    errorMessage={getLastErrorMessage(errors.start_date)}
                     granularity="minute"
                 />
+
                 <DatePicker
                     label="Deadline"
                     value={deliverable.deadline}
                     onChange={updateDeadline}
+                    errorMessage={
+                        getLastErrorMessage(errors.custom) ||
+                        getLastErrorMessage(errors.deadline)
+                    }
+                    isInvalid={
+                        errors.custom.length > 0 || errors.deadline.length > 0
+                    }
                     granularity="minute"
                 />
             </div>
@@ -107,7 +164,9 @@ export default function DeliverableForm({
                 placeholder="How much is it worth?"
                 value={deliverable.weight.toString()}
                 onValueChange={updateWeight}
-                min={0}
+                errorMessage={getLastErrorMessage(errors.weight)}
+                isInvalid={errors.weight.length > 0}
+                min={0.1}
                 max={100}
                 step={0.1}
             />
@@ -123,6 +182,8 @@ export default function DeliverableForm({
                     placeholder="What was the final grade?"
                     value={deliverable.mark.toString()}
                     onValueChange={updateMark}
+                    errorMessage={getLastErrorMessage(errors.mark)}
+                    isInvalid={errors.mark.length > 0}
                     min={0}
                     max={100}
                     step={0.1}
@@ -166,6 +227,8 @@ export default function DeliverableForm({
                 }
                 value={deliverable.notes}
                 onValueChange={updateNotes}
+                errorMessage={getLastErrorMessage(errors.notes)}
+                isInvalid={errors.notes.length > 0}
             />
         </Fragment>
     );

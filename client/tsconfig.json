@@ -25,9 +25,15 @@
             }
         ],
         "paths": {
+            "@app/*": ["./app/*"],
+            "@components/*": ["./components/*"],
             "@coursefull/*": ["./@coursefull/*"],
             "@coursefull": ["./@coursefull/index.d"],
-            "@*": ["./*"]
+            "@lib/*": ["./lib/*"],
+            "@playwright/*": ["./playwright/*"],
+            "@services*": ["./services/*"],
+            "@services": ["./services/index.ts"],
+            "@vitest.setup": ["./vitest.setup.ts"]
         }
     },
     "include": [

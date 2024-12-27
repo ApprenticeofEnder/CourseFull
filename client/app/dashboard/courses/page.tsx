@@ -147,6 +147,8 @@ function DeliverableTabs({ deliverables, session }: DeliverableTabsProps) {
     );
 }
 
+// TODO: Refactor the visual layout of this thing.
+
 function CoursePage() {
     const router = useRouter();
 

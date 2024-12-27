@@ -1,5 +1,5 @@
 import { ItemStatus } from '@coursefull/enums.d';
-import { DateValue } from '@internationalized/date';
+import { DateValue, ZonedDateTime } from '@internationalized/date';
 
 export interface BaseAcademicItem {
     id?: string;
@@ -28,8 +28,8 @@ export interface Deliverable extends BaseAcademicItem {
     weight: number;
     mark: number;
     notes: string;
-    start_date: DateValue;
-    deadline: DateValue;
+    start_date: ZonedDateTime;
+    deadline: ZonedDateTime;
     api_v1_course_id?: string;
     goal?: number;
 }

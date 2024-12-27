@@ -1,3 +1,4 @@
+import assert from 'assert';
 import { Fragment, useState } from 'react';
 import {
     ModalContent,
@@ -8,10 +9,17 @@ import {
 } from '@nextui-org/react';
 
 import Button from '@components/Button/Button';
-import { Deliverable, Updated, UpdateDeliverableModalProps } from '@coursefull';
+import DeliverableForm from '@components/Form/DeliverableForm';
+import {
+    Deliverable,
+    DeliverableDto,
+    Updated,
+    UpdateDeliverableModalProps,
+} from '@coursefull';
 import { updateDeliverable } from '@services/deliverableService';
-import DeliverableForm from '../Form/DeliverableForm';
-import assert from 'assert';
+import { convertDeliverableToDto } from '@lib/dto';
+import { DeliverableDtoSchema } from '@lib/validation';
+import { ZodError } from 'zod';
 
 export default function UpdateDeliverableModal({
     session,
@@ -22,13 +30,20 @@ export default function UpdateDeliverableModal({
 
     const [updatedDeliverable, setUpdatedDeliverable] =
         useState<Deliverable>(deliverable);
+    const [zodError, setZodError] = useState<ZodError | null>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     async function handleUpdateDeliverable(onClose: CallableFunction) {
+        const dto = convertDeliverableToDto(deliverable);
+        const parseResult = DeliverableDtoSchema.safeParse(dto);
+        if(!parseResult.success){
+            setZodError(parseResult.error);
+            return;
+        }
         setIsLoading(true);
         await updateDeliverable(
-            updatedDeliverable as Updated<Deliverable>,
+            parseResult.data as Updated<DeliverableDto>,
             session
         );
         onClose();
@@ -47,6 +62,7 @@ export default function UpdateDeliverableModal({
                         <DeliverableForm
                             deliverable={updatedDeliverable}
                             setDeliverable={setUpdatedDeliverable}
+                            zodError={zodError}
                         />
                     </ModalBody>
                     <ModalFooter>

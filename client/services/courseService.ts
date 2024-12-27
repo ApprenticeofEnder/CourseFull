@@ -4,18 +4,19 @@ import {
     Deliverable,
     Endpoints,
     ModifyCourseDto,
+    Updated,
 } from '@coursefull';
 import { authenticatedApiHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import { api } from '@services';
-import { convertCourseDto } from '@lib/dto';
-import { AxiosResponse } from '@node_modules/axios';
+import { convertCourseFromDto } from '@lib/dto';
+import { AxiosResponse } from 'axios';
 
 export async function createCourse(
     { title, course_code, status, api_v1_semester_id }: Course,
     session: Session | null
-): Promise<Course | null> {
-    const res = await authenticatedApiHandler<CourseDto>(
+): Promise<Course> {
+    const { data } = await authenticatedApiHandler<CourseDto>(
         async (session, headers) => {
             const response = await api.post<CourseDto>(
                 Endpoints.API_COURSES,
@@ -40,15 +41,14 @@ export async function createCourse(
         session
     );
 
-    const { data } = res;
-    const course: Course = convertCourseDto(data);
+    const course: Course = convertCourseFromDto(data);
     return course;
 }
 
 export async function getCourses(
     session: Session | null
 ): Promise<Course[] | null> {
-    const res = await authenticatedApiHandler<CourseDto[]>(
+    const { data } = await authenticatedApiHandler<CourseDto[]>(
         async (session, headers) => {
             return api.get<CourseDto[]>(Endpoints.API_COURSES, {
                 headers,
@@ -59,8 +59,7 @@ export async function getCourses(
         },
         session
     );
-    const { data } = res;
-    const courses: Course[] = data.map(convertCourseDto);
+    const courses: Course[] = data.map(convertCourseFromDto);
     return courses;
 }
 
@@ -68,7 +67,7 @@ export async function getCourse(
     id: string,
     session: Session | null
 ): Promise<Course> {
-    const res = await authenticatedApiHandler<CourseDto>(
+    const { data } = await authenticatedApiHandler<CourseDto>(
         async (session, headers) => {
             return api.get<CourseDto>(`${Endpoints.API_COURSES}/${id}`, {
                 headers,
@@ -79,22 +78,18 @@ export async function getCourse(
         },
         session
     );
-    const { data } = res;
-    const course: Course = convertCourseDto(data);
+    const course: Course = convertCourseFromDto(data);
 
     return course;
 }
 
 export async function updateCourse(
-    { id, title, course_code, status }: Partial<Course>,
+    { id, title, course_code, status }: Updated<Course>,
     session: Session | null
 ): Promise<Course> {
-    const res = await authenticatedApiHandler<CourseDto>(
+    const { data } = await authenticatedApiHandler<CourseDto>(
         async (session, headers) => {
-            const apiResponse = await api.put<
-                ModifyCourseDto,
-                AxiosResponse<CourseDto>
-            >(
+            const apiResponse = await api.put<CourseDto>(
                 `${Endpoints.API_COURSES}/${id}`,
                 {
                     api_v1_course: {
@@ -114,8 +109,7 @@ export async function updateCourse(
         },
         session
     );
-    const { data } = res;
-    const course: Course = convertCourseDto(data);
+    const course: Course = convertCourseFromDto(data);
 
     return course;
 }
@@ -123,21 +117,17 @@ export async function updateCourse(
 export async function deleteCourse(
     id: string,
     session: Session | null
-): Promise<null> {
-    await authenticatedApiHandler<null>(
-        async (session, headers) => {
-            const apiResponse = await api.delete<null>(
-                `${Endpoints.API_COURSES}/${id}`,
-                {
-                    headers,
-                    validateStatus: (status) => {
-                        return status === 204;
-                    },
-                }
-            );
-            return apiResponse;
-        },
-        session
-    );
-    return null;
+): Promise<void> {
+    await authenticatedApiHandler(async (session, headers) => {
+        const apiResponse = await api.delete(
+            `${Endpoints.API_COURSES}/${id}`,
+            {
+                headers,
+                validateStatus: (status) => {
+                    return status === 204;
+                },
+            }
+        );
+        return apiResponse;
+    }, session);
 }

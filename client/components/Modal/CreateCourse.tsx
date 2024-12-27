@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
     ModalContent,
@@ -11,7 +11,7 @@ import {
 
 import Button from '@components/Button/Button';
 import CourseForm from '@components/Form/CourseForm';
-import { SessionProps, User, Endpoints, ItemStatus } from '@coursefull';
+import { SessionProps, ItemStatus, Course } from '@coursefull';
 import { createCourse } from '@services/courseService';
 import { getUserData } from '@services/userService';
 
@@ -24,9 +24,13 @@ export default function CreateCourseModal({
     api_v1_semester_id,
 }: CourseModalProps) {
     const router = useRouter();
-    const [title, setTitle] = useState('');
-    const [code, setCode] = useState('');
-    const [status, setStatus] = useState<ItemStatus>(ItemStatus.ACTIVE);
+    const [course, setCourse] = useState<Course>({
+        title: '',
+        course_code: '',
+        status: ItemStatus.ACTIVE,
+    });
+
+    const [error, setError] = useState<any>(null);
 
     const [coursesRemaining, setCoursesRemaining] = useState(0);
 
@@ -55,58 +59,64 @@ export default function CreateCourseModal({
     // }
 
     async function handleCreateCourse(onClose: CallableFunction) {
-        setIsLoading(true);
-        const course = await createCourse(
-            {
-                title,
-                course_code: code,
-                status,
-                api_v1_semester_id,
-            },
-            session,
-        );
-        onClose();
-        location.reload();
+        try {
+            setIsLoading(true);
+            await createCourse(
+                {
+                    ...course,
+                    api_v1_semester_id,
+                },
+                session
+            );
+            onClose();
+            location.reload();
+        } catch (err) {
+            setError(err);
+        }
     }
 
+    let mounted = useRef(true);
+
     useEffect(() => {
-        let mounted = true;
+        if (!session || !mounted.current) {
+            return;
+        }
         setIsLoading(true);
 
-        getUserData(session)
-            .then((user) => {
-                if (mounted) {
-                    setCoursesRemaining(user.courses_remaining);
-                    setIsLoading(false);
-                }
-            })
-            .catch();
+        async function getData() {
+            const { courses_remaining } = await getUserData(session);
+            setCoursesRemaining(courses_remaining);
+            setIsLoading(false);
+        }
+
+        try {
+            getData();
+        } catch (err) {
+            setError(err);
+        }
 
         return () => {
-            mounted = false;
+            mounted.current = false;
         };
     }, [session]);
+
+    if (error) {
+        throw error;
+    }
 
     return (
         <ModalContent>
             {(onClose) => (
                 <Fragment>
                     <ModalHeader className="flex flex-col gap-1">
-                        Create New Course
+                        <h3 className="text-left">Create New Course</h3>
                     </ModalHeader>
                     <ModalBody>
                         <p>
                             You have {coursesRemaining} course(s) remaining on
                             your account.
                         </p>
-                        <CourseForm
-                            title={title}
-                            setTitle={setTitle}
-                            code={code}
-                            setCode={setCode}
-                            status={status}
-                            setStatus={setStatus}
-                        />
+                        <CourseForm course={course} setCourse={setCourse} />
                     </ModalBody>
                     <ModalFooter>
                         <Button onPress={onClose}>Close</Button>

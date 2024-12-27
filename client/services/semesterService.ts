@@ -1,6 +1,5 @@
 'use client';
 import {
-    APIOnFailure,
     Endpoints,
     Semester,
     SemesterDto,
@@ -8,7 +7,7 @@ import {
 import { authenticatedApiHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import { api } from '@services';
-import { convertSemesterDto } from '@lib/dto';
+import { convertSemesterFromDto } from '@lib/dto';
 
 export async function createSemester(
     { name, status, goal }: Semester,
@@ -36,7 +35,7 @@ export async function createSemester(
         },
         session
     );
-    const semester = convertSemesterDto(data);
+    const semester = convertSemesterFromDto(data);
     return semester;
 }
 
@@ -54,7 +53,7 @@ export async function getSemesters(
         },
         session
     );
-    const semesters: Semester[] = data.map(convertSemesterDto);
+    const semesters: Semester[] = data.map(convertSemesterFromDto);
     return semesters;
 }
 
@@ -73,7 +72,7 @@ export async function getSemester(
         },
         session
     );
-    const semester = convertSemesterDto(data);
+    const semester = convertSemesterFromDto(data);
     return semester;
 }
 
@@ -103,7 +102,7 @@ export async function updateSemester(
         },
         session
     );
-    const semester = convertSemesterDto(data);
+    const semester = convertSemesterFromDto(data);
     return semester;
 }
 

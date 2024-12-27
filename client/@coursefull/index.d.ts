@@ -1,3 +1,4 @@
+import { ZodIssue } from 'zod';
 import { ItemStatus } from './enums.d';
 
 export * from './cart.d';
@@ -27,4 +28,15 @@ export interface BasicUserData {
 
 export interface AuthHeaders {
     Authorization: string;
+}
+
+export interface DeliverableFormErrors {
+    name: ZodIssue[],
+    start_date: ZodIssue[],
+    deadline: ZodIssue[],
+    weight: ZodIssue[],
+    mark: ZodIssue[],
+    status: ZodIssue[],
+    notes: ZodIssue[],
+    custom: ZodIssue[]
 }
