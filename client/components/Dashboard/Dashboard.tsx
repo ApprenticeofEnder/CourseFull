@@ -7,10 +7,9 @@ import {
     Spinner,
     useDisclosure,
 } from '@nextui-org/react';
-import { Session } from '@supabase/supabase-js';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import {
     classNames,
@@ -95,7 +94,7 @@ function renderSemester(item: SemesterProgressType) {
     );
 }
 
-export default function Home({ session }: SessionProps) {
+export default function Dashboard({ session }: SessionProps) {
     const progressResult = useQuery({
         queryKey: ['progress'],
         queryFn: async () => {

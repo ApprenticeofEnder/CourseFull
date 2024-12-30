@@ -14,6 +14,7 @@ import CourseForm from '@components/Form/CourseForm';
 import { SessionProps, ItemStatus, Course } from '@coursefull';
 import { createCourse } from '@services/courseService';
 import { getUserData } from '@services/userService';
+import { CourseDtoSchema } from '@lib/validation';
 
 interface CourseModalProps extends SessionProps {
     api_v1_semester_id: string;
