@@ -43,7 +43,7 @@ module Api
         # end
 
         save
-        deliverables.active.update_all(goal: deliverable_goal)
+        deliverables.active.update(goal: deliverable_goal)
       end
 
       def current_grade; end
