@@ -1,9 +1,7 @@
 import {
     Course,
     CourseDto,
-    Deliverable,
     Endpoints,
-    ModifyCourseDto,
     Updated,
 } from '@coursefull';
 import { authenticatedApiHandler } from '@lib/helpers';

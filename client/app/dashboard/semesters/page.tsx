@@ -20,59 +20,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, Suspense, useEffect, useRef, useState } from 'react';
 
 import Button from '@components/Button/Button';
-import CourseCard from '@components/Card/Course';
 import CreateCourseModal from '@components/Modal/CreateCourse';
-import UpdateCourseModal from '@components/Modal/UpdateCourse';
 import UpdateSemesterModal from '@components/Modal/UpdateSemester';
+import Courses from '@app/dashboard/semesters/Courses';
 import { Course, Endpoints, Semester, SessionProps } from '@coursefull';
 import { ReadableStatus } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { deleteSemester, getSemester } from '@services/semesterService';
-
-interface CoursesProps extends SessionProps {
-    courses: Course[];
-}
-
-function Courses({ courses, session }: CoursesProps) {
-    const [currentCourse, setCurrentCourse] = useState<Course | null>(null);
-
-    const updateCourseModal = useDisclosure();
-
-    return (
-        <Fragment>
-            {(courses.length && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                    {courses.map((course) => (
-                        <CourseCard
-                            {...course}
-                            handleEdit={() => {
-                                setCurrentCourse(course);
-                                updateCourseModal.onOpen();
-                            }}
-                            handleDelete={() => {
-                                location.reload();
-                            }}
-                            session={session}
-                            key={course.id}
-                        />
-                    ))}
-                </div>
-            )) || (
-                <p>
-                    Looks like you don&quot;t have any courses. Time to add
-                    some!
-                </p>
-            )}
-            <Modal
-                isOpen={updateCourseModal.isOpen}
-                onOpenChange={updateCourseModal.onOpenChange}
-                className="bg-sky-100"
-            >
-                <UpdateCourseModal session={session} course={currentCourse} />
-            </Modal>
-        </Fragment>
-    );
-}
 
 function SemesterPage() {
     const router = useRouter();
