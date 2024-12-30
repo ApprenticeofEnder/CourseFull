@@ -1,5 +1,4 @@
-import { AxiosResponse } from 'axios';
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useMemo } from 'react';
 import {
     ModalContent,
     ModalHeader,
@@ -71,16 +70,18 @@ export default function CreateSemesterModal({
     userData,
     loadingUserData,
 }: CreateSemesterModalProps) {
-    const [name, setName] = useState('');
-    const [goal, setGoal] = useState('80');
-    const [status, setStatus] = useState<ItemStatus>(ItemStatus.NOT_STARTED);
-    const [courses, setCourses] = useState<Partial<Course[]>>([]);
+    const [semester, setSemester] = useState<Semester>({
+        name: '',
+        goal: 80,
+        status: ItemStatus.NOT_STARTED,
+        courses: [],
+    });
     const [page, setPage] = useState(0);
     const [coursesRemaining, setCoursesRemaining] = useState(
         userData?.courses_remaining || 3
     );
 
-    useEffect(() => {
+    useMemo(() => {
         if (!loadingUserData && userData) {
             setCoursesRemaining(userData.courses_remaining);
         }
@@ -88,44 +89,45 @@ export default function CreateSemesterModal({
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    async function handleCreateSemester(onClose: CallableFunction) {
-        setIsLoading(true);
-        const semester: Semester = await createSemester(
-            {
-                name,
-                goal: parseFloat(goal),
-                status,
-            },
-            session
-        );
+    if (!userData) {
+        return <></>;
+    }
 
-        for (let course of courses) {
+    async function handleCreateSemester(onClose: CallableFunction) {
+        // TODO: Replace this all with Tanstack Query to avoid having to reload
+        setIsLoading(true);
+        const newSemester: Semester = await createSemester(semester, session);
+
+        for (let course of semester.courses) {
             course = course!;
             await createCourse(
                 {
                     ...course,
-                    api_v1_semester_id: semester.id,
+                    api_v1_semester_id: newSemester.id,
                 },
                 session
             );
         }
-
         onClose();
         location.reload();
     }
 
     const addCourse = () => {
-        setCourses([
-            ...courses,
-            {
-                title: '',
-                course_code: '',
-                api_v1_semester_id: '',
-                status: ItemStatus.ACTIVE,
-            },
-        ]);
-        setCoursesRemaining(coursesRemaining - 1);
-        console.log(coursesRemaining);
+        const newCourse: Course = {
+            title: '',
+            course_code: '',
+            goal: 80,
+            status: ItemStatus.ACTIVE,
+            deliverables: []
+        };
+        setSemester((semester) => ({
+            ...semester,
+            courses: [
+                ...semester.courses!,
+                newCourse,
+            ],
+        }));
+        setCoursesRemaining((coursesRemaining) => coursesRemaining - 1);
     };
 
     return (
@@ -141,20 +143,16 @@ export default function CreateSemesterModal({
                         <ModalBody>
                             <SemesterModalBody
                                 courseMultiCreateProps={{
-                                    courses,
-                                    setCourses,
                                     coursesRemaining,
                                     setCoursesRemaining,
-                                    userData: userData!,
+                                    userData,
                                     loadingUserData,
+                                    semester,
+                                    setSemester,
                                 }}
                                 semesterFormProps={{
-                                    name,
-                                    setName,
-                                    goal,
-                                    setGoal,
-                                    status,
-                                    setStatus,
+                                    semester,
+                                    setSemester,
                                 }}
                                 page={page}
                             />
@@ -188,9 +186,9 @@ export default function CreateSemesterModal({
                                         }
                                         endContent={
                                             <span>
-                                                ({courses.length} /{' '}
+                                                ({semester.courses!.length} /{' '}
                                                 {coursesRemaining +
-                                                    courses.length}
+                                                    semester.courses!.length}
                                                 )
                                             </span>
                                         }

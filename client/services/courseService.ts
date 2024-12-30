@@ -10,7 +10,6 @@ import { authenticatedApiHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
 import { api } from '@services';
 import { convertCourseFromDto } from '@lib/dto';
-import { AxiosResponse } from 'axios';
 
 export async function createCourse(
     { title, course_code, status, api_v1_semester_id }: Course,

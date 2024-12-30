@@ -3,6 +3,7 @@ import {
     Endpoints,
     Semester,
     SemesterDto,
+    Updated,
 } from '@coursefull';
 import { authenticatedApiHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
@@ -77,7 +78,7 @@ export async function getSemester(
 }
 
 export async function updateSemester(
-    { id, name, status, goal }: Semester,
+    { id, name, status, goal }: Updated<Semester>,
     session: Session | null
 ): Promise<Semester> {
     const { data } = await authenticatedApiHandler<SemesterDto>(

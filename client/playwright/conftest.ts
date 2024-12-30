@@ -44,6 +44,7 @@ export const test = base.extend<CourseFullFixtures>({
             name: faker.lorem.words(2),
             goal: faker.number.int({ min: 60, max: 100 }),
             status: ItemStatus.ACTIVE,
+            courses: []
         };
         await use(data);
     },

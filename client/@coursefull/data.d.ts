@@ -10,7 +10,7 @@ export interface BaseAcademicItem {
 export interface Semester extends BaseAcademicItem {
     name: string;
     goal: number;
-    courses?: Course[];
+    courses: Course[];
 }
 
 export interface Course extends BaseAcademicItem {
@@ -20,7 +20,7 @@ export interface Course extends BaseAcademicItem {
     goal?: number;
     grade?: number;
     deliverable_goal?: number;
-    deliverables?: Deliverable[];
+    deliverables: Deliverable[];
 }
 
 export interface Deliverable extends BaseAcademicItem {

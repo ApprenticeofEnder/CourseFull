@@ -1,25 +1,12 @@
 import { Input, Listbox, ListboxItem } from '@nextui-org/react';
-import { Fragment } from 'react';
+import { Fragment, Key } from 'react';
 
-import { ItemStatus } from '@coursefull';
+import { ItemStatus, SemesterFormProps } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
 
-interface SemesterFormProps {
-    name: string;
-    setName: (name: string) => void;
-    status: ItemStatus;
-    setStatus: (name: ItemStatus) => void;
-    goal: string;
-    setGoal: (name: string) => void;
-}
-
 export default function SemesterForm({
-    name,
-    setName,
-    goal,
-    setGoal,
-    status,
-    setStatus,
+    semester,
+    setSemester,
 }: SemesterFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.NOT_STARTED,
@@ -29,22 +16,39 @@ export default function SemesterForm({
 
     //TODO: Add client side validation
 
+    const updateName = (name: string) => {
+        setSemester((semester) => ({ ...semester, name }));
+    };
+
+    const updateGoal = (goal: string) => {
+        setSemester((semester) => ({ ...semester, goal: parseFloat(goal) }));
+    };
+
+    const updateStatus = (newStatus: Key) => {
+        onStatusChanged(newStatus, (status) => {
+            setSemester((semester) => ({
+                ...semester,
+                status,
+            }));
+        });
+    };
+
     return (
         <Fragment>
             <Input
                 type="text"
                 label="Semester Name"
                 placeholder="e.g. Fall 2024..."
-                value={name}
-                onValueChange={setName}
+                value={semester.name}
+                onValueChange={updateName}
                 data-testid="semester-name"
             />
             <Input
                 type="number"
                 label="Goal (%)"
                 placeholder="Semester Goal"
-                value={goal}
-                onValueChange={setGoal}
+                value={semester.goal.toString()}
+                onValueChange={updateGoal}
                 min={0}
                 max={100}
                 step={0.5}
@@ -54,9 +58,7 @@ export default function SemesterForm({
                 label="Status"
                 topContent="Status"
                 aria-label="Status"
-                onAction={(newStatus) => {
-                    onStatusChanged(newStatus, setStatus);
-                }}
+                onAction={updateStatus}
                 data-testid="semester-status"
                 itemClasses={{ base: 'data-[hover=true]:bg-primary-700 p-4' }}
             >
@@ -64,12 +66,14 @@ export default function SemesterForm({
                     <ListboxItem
                         key={item.key}
                         className={classNames(
-                            status === item.key ? 'bg-primary-600' : ''
+                            semester.status === item.key ? 'bg-primary-600' : ''
                         )}
                         textValue={item.label}
                     >
                         <span
-                            className={status === item.key ? 'font-bold' : ''}
+                            className={
+                                semester.status === item.key ? 'font-bold' : ''
+                            }
                             data-testid={`semester-status-${item.key}`}
                         >
                             {item.label}

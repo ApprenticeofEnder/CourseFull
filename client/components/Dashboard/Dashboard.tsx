@@ -99,8 +99,7 @@ export default function Home({ session }: SessionProps) {
     const progressResult = useQuery({
         queryKey: ['progress'],
         queryFn: async () => {
-            const progress = await getProgress(session);
-            return Promise.resolve(getProgress(session));
+            return getProgress(session);
         },
     });
 
@@ -228,7 +227,7 @@ export default function Home({ session }: SessionProps) {
                 >
                     <CreateSemesterModal
                         session={session}
-                        userData={userData}
+                        userData={userData || null}
                         loadingUserData={loadingUserData}
                     />
                 </Modal>

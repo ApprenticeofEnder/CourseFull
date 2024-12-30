@@ -5,60 +5,75 @@ import Button from '@components/Button/Button';
 import { TrashIcon } from '@heroicons/react/24/outline';
 
 export default function CourseMultiCreate({
-    courses,
-    setCourses,
     coursesRemaining,
     setCoursesRemaining,
+    semester,
+    setSemester,
 }: CourseMultiCreateProps) {
-    function handleTitleChange(index: number, newTitle: string) {
-        const updatedCourses = [...courses];
-        updatedCourses[index] = {
-            ...updatedCourses[index],
-            title: newTitle,
-            course_code: updatedCourses[index]?.course_code || '',
-            status: updatedCourses[index]?.status || ItemStatus.ACTIVE,
-        };
-        setCourses(updatedCourses);
+    function updateCourseTitle(targetIndex: number, title: string) {
+        setSemester((semester) => ({
+            ...semester,
+            courses: semester.courses.map((course, index) => {
+                if (index !== targetIndex) {
+                    return course;
+                }
+                return {
+                    ...course,
+                    title,
+                };
+            }),
+        }));
     }
 
-    function handleCourseCodeChange(index: number, newCourseCode: string) {
-        const updatedCourses = [...courses];
-        updatedCourses[index] = {
-            ...updatedCourses[index],
-            title: updatedCourses[index]?.title || '',
-            course_code: newCourseCode,
-            status: updatedCourses[index]?.status || ItemStatus.ACTIVE,
-        };
-        setCourses(updatedCourses);
+    function updateCourseCode(targetIndex: number, course_code: string) {
+        setSemester((semester) => ({
+            ...semester,
+            courses: semester.courses.map((course, index) => {
+                if (index !== targetIndex) {
+                    return course;
+                }
+                return {
+                    ...course,
+                    course_code,
+                };
+            }),
+        }));
     }
 
-    function handleStatusChange(index: number, newStatusString: string) {
-        let newStatus: ItemStatus;
+    function handleStatusChange(targetIndex: number, newStatusString: string) {
+        let status: ItemStatus;
         switch (newStatusString) {
             case ItemStatus.ACTIVE:
-                newStatus = ItemStatus.ACTIVE;
+                status = ItemStatus.ACTIVE;
                 break;
             case ItemStatus.COMPLETE:
-                newStatus = ItemStatus.COMPLETE;
+                status = ItemStatus.COMPLETE;
                 break;
             default:
-                newStatus = ItemStatus.ACTIVE;
+                status = ItemStatus.ACTIVE;
         }
-        const updatedCourses = [...courses];
-        updatedCourses[index] = {
-            ...updatedCourses[index],
-            title: updatedCourses[index]?.title || '',
-            course_code: updatedCourses[index]?.course_code || '',
-            status: newStatus,
-        };
-        setCourses(updatedCourses);
+        setSemester((semester) => ({
+            ...semester,
+            courses: semester.courses.map((course, index) => {
+                if (index !== targetIndex) {
+                    return course;
+                }
+                return {
+                    ...course,
+                    status,
+                };
+            }),
+        }));
     }
 
-    const removeCourse = (index: number) => {
-        const updatedCourses = courses.filter((_, i) => i !== index);
-        setCourses(updatedCourses);
-        setCoursesRemaining(coursesRemaining + 1);
-        console.log(coursesRemaining);
+    const removeCourse = (targetIndex: number) => {
+        setSemester((semester) => ({
+            ...semester,
+            courses: semester.courses.filter(
+                (_, index) => index !== targetIndex
+            ),
+        }));
+        setCoursesRemaining((coursesRemaining) => coursesRemaining + 1);
     };
 
     return (
@@ -71,7 +86,7 @@ export default function CourseMultiCreate({
                 semester.
             </p>
             <div className="flex flex-col gap-4">
-                {courses.map((course, index) => (
+                {semester.courses.map((course, index) => (
                     <div
                         key={index}
                         className="p-4 border-primary-500/10 border-2 rounded-lg space-y-4"
@@ -81,7 +96,7 @@ export default function CourseMultiCreate({
                             placeholder="Enter course title"
                             value={course?.title}
                             onChange={(e) =>
-                                handleTitleChange(index, e.target.value)
+                                updateCourseTitle(index, e.target.value)
                             }
                             className="max-w-xs"
                         />
@@ -90,7 +105,7 @@ export default function CourseMultiCreate({
                             placeholder="Enter course code"
                             value={course?.course_code}
                             onChange={(e) =>
-                                handleCourseCodeChange(index, e.target.value)
+                                updateCourseCode(index, e.target.value)
                             }
                             className="max-w-xs"
                         />

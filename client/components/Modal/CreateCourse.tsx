@@ -28,6 +28,7 @@ export default function CreateCourseModal({
         title: '',
         course_code: '',
         status: ItemStatus.ACTIVE,
+        deliverables: [],
     });
 
     const [error, setError] = useState<any>(null);

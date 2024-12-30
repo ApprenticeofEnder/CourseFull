@@ -61,19 +61,13 @@ export interface DeliverableFormProps extends ZodErrorProps {
 }
 
 export interface SemesterFormProps {
-    name: string;
-    setName: (name: string) => void;
-    status: ItemStatus;
-    setStatus: (name: ItemStatus) => void;
-    goal: string;
-    setGoal: (name: string) => void;
+    semester: Semester;
+    setSemester: Dispatcher<Semester>;
 }
 
-export interface CourseMultiCreateProps {
-    courses: Partial<Course[]>;
-    setCourses: (courses: Partial<Course[]>) => void;
+export interface CourseMultiCreateProps extends SemesterFormProps {
     coursesRemaining: number;
-    setCoursesRemaining: (coursesRemaining: number) => void;
+    setCoursesRemaining: Dispatcher<number>;
     userData: User;
     loadingUserData: boolean;
 }

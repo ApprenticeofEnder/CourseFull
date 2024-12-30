@@ -7,10 +7,11 @@ import {
 } from '@nextui-org/react';
 
 import Button from '@components/Button/Button';
-import { ItemStatus, Semester } from '@coursefull';
+import { ItemStatus, Semester, Updated } from '@coursefull';
 import { SessionProps } from '@coursefull';
 import SemesterForm from '../Form/SemesterForm';
 import { updateSemester } from '@services/semesterService';
+import assert from 'assert';
 
 interface EditSemesterModalProps extends SessionProps {
     semester: Semester | null;
@@ -20,23 +21,17 @@ export default function UpdateSemesterModal({
     session,
     semester,
 }: EditSemesterModalProps) {
-    const [name, setName] = useState<string>(semester?.name || '');
-    const [status, setStatus] = useState<ItemStatus>(
-        semester?.status || ItemStatus.NOT_STARTED
-    );
-    const [goal, setGoal] = useState<string>(semester?.goal.toString() || '');
+    assert(semester);
+    assert(semester.id);
+
+    const [updatedSemester, setUpdatedSemester] = useState<Semester>(semester);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     async function handleUpdateSemester(onClose: CallableFunction) {
         setIsLoading(true);
         await updateSemester(
-            {
-                id: semester?.id,
-                name,
-                status,
-                goal: parseFloat(goal),
-            },
+            updatedSemester as Updated<Semester>,
             session
         );
         onClose();
@@ -52,12 +47,8 @@ export default function UpdateSemesterModal({
                     </ModalHeader>
                     <ModalBody>
                         <SemesterForm
-                            name={name}
-                            setName={setName}
-                            status={status}
-                            setStatus={setStatus}
-                            goal={goal}
-                            setGoal={setGoal}
+                            semester={updatedSemester}
+                            setSemester={setUpdatedSemester}
                         />
                     </ModalBody>
                     <ModalFooter>
