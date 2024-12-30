@@ -4,7 +4,7 @@ import { Fragment, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Endpoints } from '@coursefull';
-import { useSession } from '@lib/supabase/sessionContext';
+import { useSession } from '@lib/supabase/SessionContext';
 import LoginForm from '@components/Form/LoginForm';
 
 export default function Login() {

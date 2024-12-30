@@ -26,7 +26,7 @@ import UpdateCourseModal from '@components/Modal/UpdateCourse';
 import UpdateSemesterModal from '@components/Modal/UpdateSemester';
 import { Course, Endpoints, Semester, SessionProps } from '@coursefull';
 import { ReadableStatus } from '@lib/helpers';
-import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
+import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { deleteSemester, getSemester } from '@services/semesterService';
 
 interface CoursesProps extends SessionProps {

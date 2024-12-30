@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import Home from '@components/Home/Home';
-import { useSession } from '@lib/supabase/sessionContext';
+import { useSession } from '@lib/supabase/SessionContext';
 import { Endpoints } from '@coursefull';
 
 export default function HomePage() {

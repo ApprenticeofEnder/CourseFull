@@ -4,14 +4,14 @@ import { useRouter } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
 import CartItemCard from '@components/Card/CartItem';
-import { useCart } from '@lib/cart/cartContext';
+import { useCart } from '@lib/cart/CartContext';
 import { priceFormatter } from '@lib/helpers';
 import Button from '@components/Button/Button';
 import LinkButton from '@components/Button/LinkButton';
 import { Endpoints, CartItem, PaymentLinkDto } from '@coursefull';
 import { createPayment } from '@services/paymentsService';
 
-import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
+import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 
 import Loading from '@app/loading';
 

@@ -6,9 +6,9 @@ import { Input, Tab, Tabs } from '@nextui-org/react';
 import { SessionProps } from '@coursefull';
 import Loading from '@app/loading';
 import Button from '@components/Button/Button';
-import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
+import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { useToast } from '@lib/use-toast';
-import { deleteUser } from '@services/userService';
+import { deleteUser } from '@servicesuserService';
 import { supabase } from '@lib/supabase';
 
 export default function Security() {

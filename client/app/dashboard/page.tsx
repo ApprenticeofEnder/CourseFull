@@ -2,7 +2,7 @@
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 
-import { useSession, useProtectedEndpoint } from '@lib/supabase/sessionContext';
+import { useSession, useProtectedEndpoint } from '@lib/supabase/SessionContext';
 
 import Loading from '@app/loading';
 

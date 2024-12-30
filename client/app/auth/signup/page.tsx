@@ -8,7 +8,7 @@ import Button from '@components/Button/Button';
 import { Endpoints } from '@coursefull';
 import { createUser } from '@services/userService';
 import { validateEmail, validateName, validatePassword } from '@lib/helpers';
-import { useSession } from '@lib/supabase/sessionContext';
+import { useSession } from '@lib/supabase/SessionContext';
 import LinkButton from '@components/Button/LinkButton';
 
 export default function Signup() {

@@ -1,7 +1,7 @@
-import { Fragment, Key } from 'react';
+import { Fragment, Key, useState } from 'react';
 import { Input, Listbox, ListboxItem } from '@nextui-org/react';
 
-import { ItemStatus, CourseFormProps } from '@coursefull';
+import { ItemStatus, CourseFormProps, CourseFormErrors } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
 
 export default function CourseForm({ course, setCourse }: CourseFormProps) {
@@ -29,21 +29,27 @@ export default function CourseForm({ course, setCourse }: CourseFormProps) {
         });
     };
 
+    const [errors, setErrors] = useState<CourseFormErrors>({
+        title: [],
+        course_code: [],
+        status: [],
+    });
+
     return (
         <Fragment>
-            <Input
-                type="text"
-                label="Course Title"
-                placeholder="e.g. Introduction to Psychology..."
-                value={course.title}
-                onValueChange={updateTitle}
-            />
             <Input
                 type="text"
                 label="Course Code"
                 placeholder="e.g PSYC 1001..."
                 value={course.course_code}
                 onValueChange={updateCourseCode}
+            />
+            <Input
+                type="text"
+                label="Course Title"
+                placeholder="e.g. Introduction to Psychology..."
+                value={course.title}
+                onValueChange={updateTitle}
             />
             <Listbox
                 items={statusObjects}
@@ -62,7 +68,9 @@ export default function CourseForm({ course, setCourse }: CourseFormProps) {
                         textValue={item.label}
                     >
                         <span
-                            className={course.status === item.key ? 'font-bold' : ''}
+                            className={
+                                course.status === item.key ? 'font-bold' : ''
+                            }
                         >
                             {item.label}
                         </span>

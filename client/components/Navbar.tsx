@@ -14,7 +14,7 @@ import {
 } from '@nextui-org/react';
 import { Endpoints } from '@coursefull';
 import { Fragment, useEffect, useState } from 'react';
-import { useSession } from '@lib/supabase/sessionContext';
+import { useSession } from '@lib/supabase/SessionContext';
 import Link from '@components/Link';
 import LinkButton from '@components/Button/LinkButton';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';

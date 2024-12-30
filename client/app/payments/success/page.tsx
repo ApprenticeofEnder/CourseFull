@@ -1,7 +1,7 @@
 'use client';
 
 import LinkButton from '@components/Button/LinkButton';
-import { useCart } from '@lib/cart/cartContext';
+import { useCart } from '@lib/cart/CartContext';
 
 export default function SuccessfulPayment() {
     const { dispatch } = useCart()!;

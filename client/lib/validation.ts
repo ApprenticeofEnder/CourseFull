@@ -6,7 +6,7 @@ export const DeliverableDtoSchema = z
         name: z
             .string()
             .min(2, {
-                message: 'Name must be 2 or more characters long',
+                message: 'Name must be at least 2 characters long',
             })
             .max(150, {
                 message: 'Name must not be longer than 150 characters',
@@ -34,5 +34,13 @@ export const DeliverableDtoSchema = z
     );
 
 export const CourseDtoSchema = z.object({
-    title: z.string(),
+    title: z
+        .string()
+        .min(2, { message: 'Title must be at least 2 characters long' })
+        .max(150, { message: 'Title must not be longer than 150 characters' }),
+    course_code: z
+        .string()
+        .min(2, { message: 'Course code must be at least 2 characters long' })
+        .max(16, { message: 'Course code must not be longer than 16 characters' }),
+    status: z.nativeEnum(ItemStatus),
 });

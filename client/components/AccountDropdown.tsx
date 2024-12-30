@@ -9,9 +9,9 @@ import Button from '@components/Button/Button';
 import { Endpoints } from '@coursefull';
 import { classNames } from '@lib/helpers';
 import { UserMetadata } from '@supabase/supabase-js';
-import { useCart } from '@lib/cart/cartContext';
+import { useCart } from '@lib/cart/CartContext';
 import LinkButton from '@components/Button/LinkButton';
-import { useSession } from '@lib/supabase/sessionContext';
+import { useSession } from '@lib/supabase/SessionContext';
 import Link from '@components/Link';
 
 type MenuItem = {

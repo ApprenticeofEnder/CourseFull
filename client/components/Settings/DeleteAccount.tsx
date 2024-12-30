@@ -6,6 +6,7 @@ import { SessionProps } from '@coursefull';
 import Button from '@components/Button/Button';
 import { useToast } from '@lib/use-toast';
 import { deleteUser } from '@services/userService';
+import { ensureError } from '@lib/helpers';
 
 export default function DeleteAccount({ session }: SessionProps) {
     const [deleteConfirmation, setDeleteConfirmation] = useState('');
@@ -13,14 +14,18 @@ export default function DeleteAccount({ session }: SessionProps) {
     const { toast } = useToast();
 
     const deleteAccount = async () => {
-        await deleteUser(session, (error) => {
-            console.error(error.message);
+        try {
+            await deleteUser(session);
+        }
+        catch(error){
+            let actualError = ensureError(error)
+            console.error(actualError.message);
             toast({
                 title: 'Error',
-                description: error.message,
+                description: actualError.message,
                 variant: 'destructive',
             });
-        });
+        }
     };
 
     return (

@@ -1,4 +1,8 @@
 import { NextUIProvider, ScrollShadow } from '@nextui-org/react';
+import {
+    QueryClient,
+    QueryClientProvider,
+} from '@tanstack/react-query';
 import { MotionConfig } from 'motion/react';
 import { Atkinson_Hyperlegible } from 'next/font/google';
 import type { Metadata } from 'next';
@@ -6,8 +10,9 @@ import type { Metadata } from 'next';
 import Navbar from '@components/Navbar';
 import Spacer from '@components/Spacer';
 import { Toaster } from '@components/Toast/Toaster';
-import CartProvider from '@lib/cart/cartContext';
-import SessionProvider from '@lib/supabase/sessionContext';
+import CartProvider from '@lib/cart/CartContext';
+import SessionProvider from '@lib/supabase/SessionContext';
+import QueryProvider from '@lib/query/QueryContext';
 import './globals.css';
 import { ChildrenProps } from '@coursefull/props';
 
@@ -23,13 +28,17 @@ export const metadata: Metadata = {
 
 function Contexts({ children }: ChildrenProps) {
     return (
-        <SessionProvider>
-            <CartProvider>
-                <NextUIProvider>
-                    <MotionConfig reducedMotion="user">{children}</MotionConfig>
-                </NextUIProvider>
-            </CartProvider>
-        </SessionProvider>
+        <QueryProvider>
+            <SessionProvider>
+                <CartProvider>
+                    <NextUIProvider>
+                        <MotionConfig reducedMotion="user">
+                            {children}
+                        </MotionConfig>
+                    </NextUIProvider>
+                </CartProvider>
+            </SessionProvider>
+        </QueryProvider>
     );
 }
 

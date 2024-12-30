@@ -79,7 +79,7 @@ export function determineGradeBGColour(goal: number, grade: number) {
     }
 }
 
-function ensureError(value: unknown): AxiosError | Error {
+export function ensureError(value: unknown): AxiosError | Error {
     if (value instanceof Error) return value;
 
     let stringified = '[Unable to stringify the thrown value]';

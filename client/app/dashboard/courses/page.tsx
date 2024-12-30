@@ -36,7 +36,7 @@ import UpdateCourseModal from '@components/Modal/UpdateCourse';
 import UpdateDeliverableModal from '@components/Modal/UpdateDeliverable';
 
 import { ReadableStatus, semesterURL } from '@lib/helpers';
-import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
+import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 
 import { deleteCourse, getCourse } from '@services/courseService';
 

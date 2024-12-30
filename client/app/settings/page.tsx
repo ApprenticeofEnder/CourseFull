@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Tab, Tabs } from '@nextui-org/react';
 
 import Loading from '@app/loading';
-import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
+import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 
 import DeleteAccount from '@components/Settings/DeleteAccount';
 import AccountDetails from '@components/Settings/AccountDetails';

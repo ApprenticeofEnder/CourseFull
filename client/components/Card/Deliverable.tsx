@@ -1,4 +1,4 @@
-import { today, getLocalTimeZone } from '@internationalized/date';
+import { today, getLocalTimeZone, now } from '@internationalized/date';
 import { useDateFormatter } from '@react-aria/i18n';
 
 import Button from '@components/Button/Button';
@@ -52,7 +52,7 @@ export default function DeliverableCard({
     let overdue: boolean = false;
     if (
         status !== ItemStatus.COMPLETE &&
-        start_date < today(getLocalTimeZone())
+        deadline < now(getLocalTimeZone())
     ) {
         statusText = 'Overdue';
         overdue = true;
@@ -100,13 +100,13 @@ export default function DeliverableCard({
                         <h4>
                             <b>Start Date:</b>{' '}
                             {formatter.format(
-                                start_date.toDate(getLocalTimeZone())
+                                start_date.toDate()
                             )}
                         </h4>
                         <h4>
                             <b>Deadline:</b>{' '}
                             {formatter.format(
-                                deadline.toDate(getLocalTimeZone())
+                                deadline.toDate()
                             )}
                         </h4>
                         <h4>

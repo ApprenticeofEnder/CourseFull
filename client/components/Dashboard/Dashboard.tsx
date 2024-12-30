@@ -8,8 +8,9 @@ import {
     useDisclosure,
 } from '@nextui-org/react';
 import { Session } from '@supabase/supabase-js';
-import { useEffect, useState, useRef } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState, useRef, useMemo } from 'react';
 
 import {
     classNames,
@@ -95,64 +96,45 @@ function renderSemester(item: SemesterProgressType) {
 }
 
 export default function Home({ session }: SessionProps) {
-    const [progress, setProgress] = useState<SemesterProgressType[]>([]);
-    const [userData, setUserData] = useState<User | null>(null);
+    const progressResult = useQuery({
+        queryKey: ['progress'],
+        queryFn: async () => {
+            const progress = await getProgress(session);
+            return Promise.resolve(getProgress(session));
+        },
+    });
 
-    const [error, setError] = useState<any>(null);
+    const progress: SemesterProgressType[] | undefined = progressResult.data;
+    const loadingProgress: boolean = progressResult.isLoading;
+    const progressError: Error | null = progressResult.error;
+    if (progressError) {
+        throw progressError;
+    }
 
-    const [activeSemester, setActiveSemester] =
-        useState<SemesterProgressType | null>();
+    const activeSemester = useMemo(
+        () =>
+            progress
+                ?.filter((semester) => semester.status === ItemStatus.ACTIVE)
+                .shift() || null,
+        [progress]
+    );
 
-    const [loadingProgress, setLoadingProgress] = useState<boolean>(false);
-    const [loadingUserData, setLoadingUserData] = useState<boolean>(true);
+    const userResult = useQuery({
+        queryKey: ['user'],
+        queryFn: () => {
+            return getUserData(session);
+        },
+    });
+    const userData: User | undefined = userResult.data;
+    const loadingUserData: boolean = userResult.isLoading;
+    const userError: Error | null = userResult.error;
+    if (userError) {
+        throw progressError;
+    }
+
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const router = useRouter();
-
-    let mounted = useRef(true);
-
-    async function getProgressData(session: Session) {
-        const progress: SemesterProgressType[] = await getProgress(session);
-        setProgress(progress);
-        setLoadingProgress(false);
-        setActiveSemester(
-            progress
-                .filter((semester) => semester.status === ItemStatus.ACTIVE)
-                .shift()
-        );
-    }
-
-    async function getUser(session: Session) {
-        const user: User = await getUserData(session);
-        setUserData(user);
-        setLoadingUserData(false);
-    }
-
-    useEffect(() => {
-        if (!session || !mounted.current) {
-            return;
-        }
-        setLoadingProgress(true);
-
-        async function getData() {
-            getProgressData(session);
-            getUserData(session);
-        }
-
-        try {
-            getData();
-        } catch (err) {
-            setError(err);
-        }
-
-        return () => {
-            mounted.current = false;
-        };
-    }, [session]);
-
-    if(error){
-        throw error;
-    }
 
     return (
         <div className="h-full">
@@ -236,19 +218,21 @@ export default function Home({ session }: SessionProps) {
                 </div>
             )}
 
-            <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-                className="bg-sky-100"
-                scrollBehavior="inside"
-                classNames={{ footer: 'justify-between' }}
-            >
-                <CreateSemesterModal
-                    session={session}
-                    userData={userData}
-                    loadingUserData={loadingUserData}
-                />
-            </Modal>
+            {userData && (
+                <Modal
+                    isOpen={isOpen}
+                    onOpenChange={onOpenChange}
+                    className="bg-sky-100"
+                    scrollBehavior="inside"
+                    classNames={{ footer: 'justify-between' }}
+                >
+                    <CreateSemesterModal
+                        session={session}
+                        userData={userData}
+                        loadingUserData={loadingUserData}
+                    />
+                </Modal>
+            )}
         </div>
     );
 }

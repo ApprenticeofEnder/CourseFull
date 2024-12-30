@@ -40,3 +40,9 @@ export interface DeliverableFormErrors {
     notes: ZodIssue[],
     custom: ZodIssue[]
 }
+
+export interface CourseFormErrors {
+    title: ZodIssue[],
+    course_code: ZodIssue[],
+    status: ZodIssue[],
+}

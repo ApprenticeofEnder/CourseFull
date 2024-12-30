@@ -1,6 +1,6 @@
 'use client';
 
-import { useCart } from '@lib/cart/cartContext';
+import { useCart } from '@lib/cart/CartContext';
 import { priceFormatter } from '@lib/helpers';
 import { CartItem } from '@coursefull';
 import { useState } from 'react';

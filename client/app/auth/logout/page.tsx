@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Spinner } from '@nextui-org/react';
 
 import { supabase } from '@lib/supabase';
-import { useCart } from '@lib/cart/cartContext';
+import { useCart } from '@lib/cart/CartContext';
 import { Endpoints } from '@coursefull';
 
 export default function Logout() {
