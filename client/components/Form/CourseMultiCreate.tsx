@@ -92,20 +92,20 @@ export default function CourseMultiCreate({
                         className="p-4 border-primary-500/10 border-2 rounded-lg space-y-4"
                     >
                         <Input
-                            label="Course Title"
-                            placeholder="Enter course title"
-                            value={course?.title}
-                            onChange={(e) =>
-                                updateCourseTitle(index, e.target.value)
-                            }
-                            className="max-w-xs"
-                        />
-                        <Input
                             label="Course Code"
                             placeholder="Enter course code"
                             value={course?.course_code}
                             onChange={(e) =>
                                 updateCourseCode(index, e.target.value)
+                            }
+                            className="max-w-xs"
+                        />
+                        <Input
+                            label="Course Title"
+                            placeholder="Enter course title"
+                            value={course?.title}
+                            onChange={(e) =>
+                                updateCourseTitle(index, e.target.value)
                             }
                             className="max-w-xs"
                         />

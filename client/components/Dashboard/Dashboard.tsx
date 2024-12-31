@@ -97,7 +97,7 @@ function renderSemester(item: SemesterProgressType) {
 export default function Dashboard({ session }: SessionProps) {
     const progressResult = useQuery({
         queryKey: ['progress'],
-        queryFn: async () => {
+        queryFn: () => {
             return getProgress(session);
         },
     });
@@ -226,7 +226,7 @@ export default function Dashboard({ session }: SessionProps) {
                 >
                     <CreateSemesterModal
                         session={session}
-                        userData={userData || null}
+                        userData={userData}
                         loadingUserData={loadingUserData}
                     />
                 </Modal>

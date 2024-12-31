@@ -1,4 +1,9 @@
-import { DateValue, ZonedDateTime } from '@internationalized/date';
+import {
+    DateValue,
+    getLocalTimeZone,
+    now,
+    ZonedDateTime,
+} from '@internationalized/date';
 import {
     DatePicker,
     Input,
@@ -15,6 +20,9 @@ import {
 } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
 import { ZodIssue } from 'zod';
+import { DeliverableSchema, deliverableSchema } from '@lib/validation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function DeliverableForm({
     deliverable,
@@ -26,25 +34,39 @@ export default function DeliverableForm({
         ItemStatus.COMPLETE,
     ]);
 
+    const {
+        register,
+        setValue,
+        formState: { errors },
+    } = useForm<DeliverableSchema>({
+        resolver: zodResolver(deliverableSchema),
+        defaultValues: deliverable,
+    });
+
     const updateName = (name: string) => {
         setDeliverable((deliverable) => ({
             ...deliverable,
             name,
         }));
+        setValue('name', name);
     };
 
-    const updateStartDate = (start_date: DateValue) => {
+    const updateStartDate = (startDateValue: DateValue) => {
+        const start_date: ZonedDateTime = startDateValue as ZonedDateTime;
         setDeliverable((deliverable) => ({
             ...deliverable,
-            start_date: start_date as ZonedDateTime,
+            start_date,
         }));
+        setValue('start_date', start_date);
     };
 
-    const updateDeadline = (deadline: DateValue) => {
+    const updateDeadline = (deadlineValue: DateValue) => {
+        const deadline: ZonedDateTime = deadlineValue as ZonedDateTime;
         setDeliverable((deliverable) => ({
             ...deliverable,
-            deadline: deadline as ZonedDateTime,
+            deadline,
         }));
+        setValue('deadline', deadline);
     };
 
     const updateWeight = (weight: string) => {
@@ -86,42 +108,42 @@ export default function DeliverableForm({
         return issues.slice(-1).pop()?.message;
     };
 
-    const [errors, setErrors] = useState<DeliverableFormErrors>({
-        name: [],
-        start_date: [],
-        deadline: [],
-        weight: [],
-        mark: [],
-        status: [],
-        notes: [],
-        custom: [],
-    });
+    // const [errors, setErrors] = useState<DeliverableFormErrors>({
+    //     name: [],
+    //     start_date: [],
+    //     deadline: [],
+    //     weight: [],
+    //     mark: [],
+    //     status: [],
+    //     notes: [],
+    //     custom: [],
+    // });
 
-    useEffect(() => {
-        console.log(zodError);
-        let updatedErrors: DeliverableFormErrors = {
-            name: [],
-            start_date: [],
-            deadline: [],
-            weight: [],
-            mark: [],
-            status: [],
-            notes: [],
-            custom: [],
-        };
-        for (let issue of zodError?.issues || []) {
-            issue.path.forEach((field) => {
-                if (!updatedErrors[field as keyof DeliverableFormErrors]) {
-                    return;
-                }
-                updatedErrors[field as keyof DeliverableFormErrors].push(issue);
-            });
-            if (issue.code === 'custom') {
-                updatedErrors.custom.push(issue);
-            }
-        }
-        setErrors(updatedErrors);
-    }, [zodError]);
+    // useEffect(() => {
+    //     console.log(zodError);
+    //     let updatedErrors: DeliverableFormErrors = {
+    //         name: [],
+    //         start_date: [],
+    //         deadline: [],
+    //         weight: [],
+    //         mark: [],
+    //         status: [],
+    //         notes: [],
+    //         custom: [],
+    //     };
+    //     for (let issue of zodError?.issues || []) {
+    //         issue.path.forEach((field) => {
+    //             if (!updatedErrors[field as keyof DeliverableFormErrors]) {
+    //                 return;
+    //             }
+    //             updatedErrors[field as keyof DeliverableFormErrors].push(issue);
+    //         });
+    //         if (issue.code === 'custom') {
+    //             updatedErrors.custom.push(issue);
+    //         }
+    //     }
+    //     setErrors(updatedErrors);
+    // }, [zodError]);
 
     return (
         <Fragment>
@@ -129,18 +151,18 @@ export default function DeliverableForm({
                 type="text"
                 label="Name"
                 placeholder="What's the name of the deliverable?"
-                value={deliverable.name}
+                {...register('name')}
                 onValueChange={updateName}
-                isInvalid={errors.name.length > 0}
-                errorMessage={getLastErrorMessage(errors.name)}
+                isInvalid={!!errors.name}
+                errorMessage={errors.name?.message}
             />
             <div className="flex w-full flex-wrap gap-4">
                 <DatePicker
                     label="Start Date"
                     value={deliverable.start_date}
                     onChange={updateStartDate}
-                    isInvalid={errors.start_date.length > 0}
-                    errorMessage={getLastErrorMessage(errors.start_date)}
+                    isInvalid={!!errors.start_date}
+                    errorMessage={errors.start_date?.message}
                     granularity="minute"
                 />
 
@@ -149,11 +171,10 @@ export default function DeliverableForm({
                     value={deliverable.deadline}
                     onChange={updateDeadline}
                     errorMessage={
-                        getLastErrorMessage(errors.custom) ||
-                        getLastErrorMessage(errors.deadline)
+                        errors.root?.message || errors.deadline?.message
                     }
                     isInvalid={
-                        errors.custom.length > 0 || errors.deadline.length > 0
+                        !!errors.root || !!errors.deadline
                     }
                     granularity="minute"
                 />

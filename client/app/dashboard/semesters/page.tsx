@@ -45,7 +45,7 @@ function SemesterPage() {
     const updateSemesterModal = useDisclosure();
 
     function goBack() {
-        router.push(Endpoints.ROOT);
+        router.push(Endpoints.DASHBOARD);
     }
 
     async function handleDeleteSemester() {
@@ -59,7 +59,7 @@ function SemesterPage() {
             semesterId,
             session
         );
-        router.push(Endpoints.ROOT);
+        router.push(Endpoints.DASHBOARD);
     }
 
     let mounted = useRef(true);

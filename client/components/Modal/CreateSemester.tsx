@@ -20,10 +20,13 @@ import {
     CourseMultiCreateProps,
     UserDataProps,
     Semester,
+    Updated,
 } from '@coursefull';
 import { createSemester } from '@services/semesterService';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { createCourse } from '@services/courseService';
+import { Session } from '@supabase/supabase-js';
+import { ZodError } from 'zod';
 
 interface SemesterModalBodyProps {
     semesterFormProps: SemesterFormProps;
@@ -79,38 +82,50 @@ export default function CreateSemesterModal({
     });
     const [page, setPage] = useState(0);
     const [coursesRemaining, setCoursesRemaining] = useState(
-        userData?.courses_remaining || 3
+        userData.courses_remaining
     );
+    const [zodError, setZodError] = useState<ZodError | null>(null);
 
-    useMemo(() => {
-        if (!loadingUserData && userData) {
-            setCoursesRemaining(userData.courses_remaining);
-        }
-    }, [userData, loadingUserData]);
+    const queryClient = useQueryClient();
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    // TODO: Add client side validation
 
-    if (!userData) {
-        return <></>;
+    const coursesCreate = useMutation({
+        mutationFn: ({
+            id,
+        }: Updated<Semester>) => {
+            return Promise.all(
+                semester.courses.map((course) => {
+                    console.log(course);
+                    return createCourse(
+                        {
+                            ...course,
+                            api_v1_semester_id: id,
+                        },
+                        session
+                    );
+                })
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['progress'] });
+            queryClient.invalidateQueries({ queryKey: ['user'] });
+        },
+    });
+    if (coursesCreate.error) {
+        throw coursesCreate.error;
     }
 
-    async function handleCreateSemester(onClose: CallableFunction) {
-        // TODO: Replace this all with Tanstack Query to avoid having to reload
-        setIsLoading(true);
-        const newSemester: Semester = await createSemester(semester, session);
-
-        for (let course of semester.courses) {
-            course = course!;
-            await createCourse(
-                {
-                    ...course,
-                    api_v1_semester_id: newSemester.id,
-                },
-                session
-            );
-        }
-        onClose();
-        location.reload();
+    const semesterCreate = useMutation({
+        mutationFn: (session: Session) => {
+            return createSemester(semester, session) as Promise<Updated<Semester>>;
+        },
+        onSuccess: (semester: Updated<Semester>) => {
+            coursesCreate.mutate(semester);
+        },
+    });
+    if (semesterCreate.error) {
+        throw semesterCreate.error;
     }
 
     const addCourse = () => {
@@ -119,14 +134,11 @@ export default function CreateSemesterModal({
             course_code: '',
             goal: 80,
             status: ItemStatus.ACTIVE,
-            deliverables: []
+            deliverables: [],
         };
         setSemester((semester) => ({
             ...semester,
-            courses: [
-                ...semester.courses!,
-                newCourse,
-            ],
+            courses: [...semester.courses, newCourse],
         }));
         setCoursesRemaining((coursesRemaining) => coursesRemaining - 1);
     };
@@ -134,7 +146,7 @@ export default function CreateSemesterModal({
     return (
         <ModalContent>
             {(onClose) =>
-                loadingUserData && userData ? (
+                loadingUserData ? (
                     <Spinner />
                 ) : (
                     <Fragment>
@@ -170,7 +182,10 @@ export default function CreateSemesterModal({
                                             onPress={() => {
                                                 setPage(1);
                                             }}
-                                            isLoading={isLoading}
+                                            isLoading={
+                                                coursesCreate.isPending ||
+                                                semesterCreate.isPending
+                                            }
                                             buttonType="confirm"
                                         >
                                             Next
@@ -206,9 +221,14 @@ export default function CreateSemesterModal({
                                         </Button>
                                         <Button
                                             onPress={() => {
-                                                handleCreateSemester(onClose);
+                                                semesterCreate.mutate(session, {
+                                                    onSuccess: onClose,
+                                                });
                                             }}
-                                            isLoading={isLoading}
+                                            isLoading={
+                                                coursesCreate.isPending ||
+                                                semesterCreate.isPending
+                                            }
                                             buttonType="confirm"
                                         >
                                             Create!

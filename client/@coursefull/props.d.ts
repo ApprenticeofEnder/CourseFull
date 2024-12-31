@@ -19,7 +19,7 @@ export interface SessionProps {
 }
 
 export interface UserDataProps {
-    userData: User | null;
+    userData: User;
 }
 
 export interface SpacerProps extends ChildrenProps {
