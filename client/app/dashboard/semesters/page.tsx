@@ -18,12 +18,19 @@ import {
 } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, Suspense, useEffect, useRef, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import Button from '@components/Button/Button';
 import CreateCourseModal from '@components/Modal/CreateCourse';
 import UpdateSemesterModal from '@components/Modal/UpdateSemester';
 import Courses from '@app/dashboard/semesters/Courses';
-import { Course, Endpoints, Semester, SessionProps } from '@coursefull';
+import {
+    Course,
+    Endpoints,
+    ItemStatus,
+    Semester,
+    SessionProps,
+} from '@coursefull';
 import { ReadableStatus } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { deleteSemester, getSemester } from '@services/semesterService';
@@ -36,13 +43,19 @@ function SemesterPage() {
     const searchParams = useSearchParams();
     const semesterId = searchParams.get('id') || '';
 
-    const [semester, setSemester] = useState<Semester | null>(null);
-    const [courses, setCourses] = useState<Course[]>([]);
-
-    const [error, setError] = useState<any>(null);
-
     const createCourseModal = useDisclosure();
     const updateSemesterModal = useDisclosure();
+
+    const semesterQuery = useQuery({
+        queryKey: ['semester'],
+        queryFn: () => {
+            return getSemester(semesterId, session);
+        },
+        enabled: session !== null,
+    });
+    if (semesterQuery.error) {
+        throw semesterQuery.error;
+    }
 
     function goBack() {
         router.push(Endpoints.DASHBOARD);
@@ -55,45 +68,13 @@ function SemesterPage() {
         if (!confirmDelete) {
             return;
         }
-        await deleteSemester(
-            semesterId,
-            session
-        );
+        await deleteSemester(semesterId, session);
         router.push(Endpoints.DASHBOARD);
-    }
-
-    let mounted = useRef(true);
-
-    useEffect(() => {
-        if (semester || !session || !mounted.current) {
-            return;
-        }
-
-        async function getData(){
-            const semesterData = await getSemester(semesterId, session);
-            setSemester(semesterData);
-            setCourses(semesterData.courses || []);
-        }
-
-        try {
-            getData()
-        }
-        catch(err){
-            setError(err);
-        }
-
-        return () => {
-            mounted.current = false;
-        };
-    }, [semester, session, semesterId]);
-
-    if(error){
-        throw error;
     }
 
     return (
         <Fragment>
-            {session && semester ? (
+            {session && !semesterQuery.isLoading ? (
                 <div>
                     <Button
                         startContent={<ArrowLeftIcon className="h-6 w-6" />}
@@ -103,7 +84,9 @@ function SemesterPage() {
                         Go Back
                     </Button>
                     <div className="flex mb-2 gap-4 justify-between">
-                        <h2 className="text-left font-bold">{semester.name}</h2>
+                        <h2 className="text-left font-bold">
+                            {semesterQuery.data?.name}
+                        </h2>
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button
@@ -144,9 +127,14 @@ function SemesterPage() {
                     </div>
 
                     <div className="flex flex-row gap-4">
-                        <h3>{ReadableStatus(semester.status)}</h3>
+                        <h3>
+                            {ReadableStatus(
+                                semesterQuery.data?.status ||
+                                    ItemStatus.NOT_STARTED
+                            )}
+                        </h3>
                         <h3>|</h3>
-                        <h3>Goal: {semester.goal}%</h3>
+                        <h3>Goal: {semesterQuery.data?.goal}%</h3>
                     </div>
                     <hr className="border-1 border-primary-100/50 my-2" />
                     <div className="my-5 flex gap-4">
@@ -159,7 +147,10 @@ function SemesterPage() {
                             Add Course
                         </Button>
                     </div>
-                    <Courses courses={courses} session={session} />
+                    <Courses
+                        courses={semesterQuery.data?.courses || []}
+                        session={session}
+                    />
                     <Modal
                         isOpen={createCourseModal.isOpen}
                         onOpenChange={createCourseModal.onOpenChange}
@@ -177,7 +168,7 @@ function SemesterPage() {
                     >
                         <UpdateSemesterModal
                             session={session}
-                            semester={semester}
+                            semester={semesterQuery.data!}
                         />
                         <></>
                     </Modal>

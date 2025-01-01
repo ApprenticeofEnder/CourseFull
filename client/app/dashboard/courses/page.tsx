@@ -20,7 +20,7 @@ import {
 } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, Suspense, useEffect, useRef, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import {
     Course,
@@ -169,6 +169,7 @@ function CoursePage() {
         queryFn: () => {
             return getCourse(courseId, session);
         },
+        enabled: session !== null
     });
     if (courseQuery.error) {
         throw courseQuery.error;
