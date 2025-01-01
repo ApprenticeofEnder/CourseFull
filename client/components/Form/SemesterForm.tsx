@@ -3,6 +3,9 @@ import { Fragment, Key } from 'react';
 
 import { ItemStatus, SemesterFormProps } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { semesterSchema, SemesterSchema } from '@lib/validation';
 
 export default function SemesterForm({
     semester,
@@ -14,18 +17,30 @@ export default function SemesterForm({
         ItemStatus.COMPLETE,
     ]);
 
-    //TODO: Add client side validation
+    const {
+        register,
+        setValue,
+        formState: { errors },
+        control,
+    } = useForm<SemesterSchema>({
+        resolver: zodResolver(semesterSchema),
+        defaultValues: semester,
+    });
 
     const updateName = (name: string) => {
+        setValue('name', name, { shouldValidate: true });
         setSemester((semester) => ({ ...semester, name }));
     };
 
-    const updateGoal = (goal: string) => {
-        setSemester((semester) => ({ ...semester, goal: parseFloat(goal) }));
+    const updateGoal = (goalValue: string) => {
+        const goal: number = parseFloat(goalValue);
+        setValue('goal', goal, { shouldValidate: true });
+        setSemester((semester) => ({ ...semester, goal }));
     };
 
     const updateStatus = (newStatus: Key) => {
         onStatusChanged(newStatus, (status) => {
+            setValue('status', status, { shouldValidate: true });
             setSemester((semester) => ({
                 ...semester,
                 status,
@@ -39,16 +54,20 @@ export default function SemesterForm({
                 type="text"
                 label="Semester Name"
                 placeholder="e.g. Fall 2024..."
-                value={semester.name}
+                {...register('name')}
                 onValueChange={updateName}
+                isInvalid={!!errors.name}
+                errorMessage={errors.name?.message}
                 data-testid="semester-name"
             />
             <Input
                 type="number"
                 label="Goal (%)"
                 placeholder="Semester Goal"
-                value={semester.goal.toString()}
+                {...register('goal')}
                 onValueChange={updateGoal}
+                isInvalid={!!errors.goal}
+                errorMessage={errors.goal?.message}
                 min={0}
                 max={100}
                 step={0.5}

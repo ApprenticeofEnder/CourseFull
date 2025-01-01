@@ -12,6 +12,7 @@ import { SessionProps } from '@coursefull';
 import SemesterForm from '../Form/SemesterForm';
 import { updateSemester } from '@services/semesterService';
 import assert from 'assert';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface EditSemesterModalProps extends SessionProps {
     semester: Semester | null;
@@ -26,16 +27,21 @@ export default function UpdateSemesterModal({
 
     const [updatedSemester, setUpdatedSemester] = useState<Semester>(semester);
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const queryClient = useQueryClient();
 
-    async function handleUpdateSemester(onClose: CallableFunction) {
-        setIsLoading(true);
-        await updateSemester(
-            updatedSemester as Updated<Semester>,
-            session
-        );
-        onClose();
-        location.reload();
+    const semesterUpdate = useMutation({
+        mutationFn: (semester: Semester) => {
+            return updateSemester(
+                semester as Updated<Semester>,
+                session
+            ) as Promise<Updated<Semester>>;
+        },
+        onSuccess: (semester) => {
+            queryClient.invalidateQueries({ queryKey: ['semester', semester.id] });
+        },
+    });
+    if (semesterUpdate.error) {
+        throw semesterUpdate.error;
     }
 
     return (
@@ -56,9 +62,11 @@ export default function UpdateSemesterModal({
                         <Button
                             buttonType="confirm"
                             onPress={() => {
-                                handleUpdateSemester(onClose);
+                                semesterUpdate.mutate(updatedSemester, {
+                                    onSuccess: onClose
+                                })
                             }}
-                            isLoading={isLoading}
+                            isLoading={semesterUpdate.isPending}
                         >
                             Save
                         </Button>

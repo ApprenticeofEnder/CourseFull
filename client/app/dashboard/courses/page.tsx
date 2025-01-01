@@ -19,7 +19,14 @@ import {
     useDisclosure,
 } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Fragment, Suspense, useEffect, useRef, useState } from 'react';
+import {
+    Fragment,
+    Suspense,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import {
@@ -46,26 +53,33 @@ interface DeliverableTabsProps extends SessionProps {
 }
 
 function DeliverableTabs({ deliverables, session }: DeliverableTabsProps) {
+    type DeliverableClassifications = {
+        active: Deliverable[];
+        complete: Deliverable[];
+    };
     const [currentDeliverable, setCurrentDeliverable] =
         useState<Deliverable | null>(null);
 
     const updateDeliverableModal = useDisclosure();
 
-    const activeDeliverables: Deliverable[] = [];
-    const completeDeliverables: Deliverable[] = [];
-
-    deliverables?.forEach((deliverable) => {
-        switch (deliverable.status) {
-            case ItemStatus.ACTIVE:
-                activeDeliverables.push(deliverable);
-                break;
-            case ItemStatus.COMPLETE:
-                completeDeliverables.push(deliverable);
-                break;
-            default:
-                break;
-        }
-    });
+    const { active, complete } = useMemo(() => {
+        const classifications: DeliverableClassifications = {
+            active: [],
+            complete: [],
+        };
+        return deliverables.reduce(({ active, complete }, deliverable) => {
+            return {
+                active:
+                    deliverable.status === ItemStatus.ACTIVE
+                        ? [...active, deliverable]
+                        : active,
+                complete:
+                    deliverable.status === ItemStatus.COMPLETE
+                        ? [...complete, deliverable]
+                        : complete,
+            };
+        }, classifications);
+    }, [deliverables]);
 
     const deliverableTabs = [
         {
@@ -76,12 +90,12 @@ function DeliverableTabs({ deliverables, session }: DeliverableTabsProps) {
         {
             id: 'active',
             title: 'Active Deliverables',
-            deliverableList: activeDeliverables,
+            deliverableList: active,
         },
         {
             id: 'completed',
             title: 'Completed Deliverables',
-            deliverableList: completeDeliverables,
+            deliverableList: complete,
         },
     ];
 
@@ -169,7 +183,7 @@ function CoursePage() {
         queryFn: () => {
             return getCourse(courseId, session);
         },
-        enabled: session !== null
+        enabled: session !== null,
     });
     if (courseQuery.error) {
         throw courseQuery.error;
@@ -208,7 +222,9 @@ function CoursePage() {
                 Go Back
             </Button>
             <div className="flex gap-4 justify-between">
-                <h2 className="text-left font-bold">{courseQuery.data?.course_code}</h2>
+                <h2 className="text-left font-bold">
+                    {courseQuery.data?.course_code}
+                </h2>
                 <Dropdown>
                     <DropdownTrigger>
                         <Button
@@ -247,14 +263,21 @@ function CoursePage() {
             <h2 className="text-left">{courseQuery.data?.title}</h2>
             <div className="flex flex-col sm:flex-row sm:justify-between">
                 <h3 className="text-left basis-1/2">
-                    {ReadableStatus(courseQuery.data?.status || ItemStatus.ACTIVE)}
+                    {ReadableStatus(
+                        courseQuery.data?.status || ItemStatus.ACTIVE
+                    )}
                 </h3>
                 <div className="flex basis-1/2 justify-between gap-8 sm:justify-end">
                     <h3 className="text-left">
                         Grade:{' '}
-                        {(courseQuery.data?.grade && Math.round(courseQuery.data?.grade)) || '--'}%
+                        {(courseQuery.data?.grade &&
+                            Math.round(courseQuery.data?.grade)) ||
+                            '--'}
+                        %
                     </h3>
-                    <h3 className="text-right">Goal: {courseQuery.data?.goal}%</h3>
+                    <h3 className="text-right">
+                        Goal: {courseQuery.data?.goal}%
+                    </h3>
                 </div>
             </div>
 
@@ -279,7 +302,10 @@ function CoursePage() {
                 </h3>
             </div>
 
-            <DeliverableTabs deliverables={courseQuery.data?.deliverables || []} session={session} />
+            <DeliverableTabs
+                deliverables={courseQuery.data?.deliverables || []}
+                session={session}
+            />
             <Modal
                 isOpen={createDeliverableModal.isOpen}
                 onOpenChange={createDeliverableModal.onOpenChange}
@@ -297,7 +323,10 @@ function CoursePage() {
                 className="bg-sky-100"
                 scrollBehavior="inside"
             >
-                <UpdateCourseModal session={session} course={courseQuery.data!} />
+                <UpdateCourseModal
+                    session={session}
+                    course={courseQuery.data!}
+                />
             </Modal>
         </Fragment>
     ) : (

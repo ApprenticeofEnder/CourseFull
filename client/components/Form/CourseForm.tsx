@@ -1,10 +1,10 @@
-import { Fragment, Key, useState } from 'react';
+import { Fragment, Key } from 'react';
 import { Input, Listbox, ListboxItem } from '@nextui-org/react';
 
-import { ItemStatus, CourseFormProps, CourseFormErrors } from '@coursefull';
+import { ItemStatus, CourseFormProps } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
 import { useForm } from 'react-hook-form';
-import { CourseSchema, deliverableSchema } from '@lib/validation';
+import { courseSchema, CourseSchema } from '@lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function CourseForm({ course, setCourse }: CourseFormProps) {
@@ -13,15 +13,13 @@ export default function CourseForm({ course, setCourse }: CourseFormProps) {
         ItemStatus.COMPLETE,
     ]);
 
-    //TODO: Add client side validation
-
     const {
         register,
         setValue,
         formState: { errors },
         control,
     } = useForm<CourseSchema>({
-        resolver: zodResolver(deliverableSchema),
+        resolver: zodResolver(courseSchema),
         defaultValues: course,
     });
 

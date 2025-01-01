@@ -29,20 +29,3 @@ export interface BasicUserData {
 export interface AuthHeaders {
     Authorization: string;
 }
-
-export interface DeliverableFormErrors {
-    name: ZodIssue[],
-    start_date: ZodIssue[],
-    deadline: ZodIssue[],
-    weight: ZodIssue[],
-    mark: ZodIssue[],
-    status: ZodIssue[],
-    notes: ZodIssue[],
-    custom: ZodIssue[]
-}
-
-export interface CourseFormErrors {
-    title: ZodIssue[],
-    course_code: ZodIssue[],
-    status: ZodIssue[],
-}

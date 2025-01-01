@@ -84,11 +84,8 @@ export default function CreateSemesterModal({
     const [coursesRemaining, setCoursesRemaining] = useState(
         userData.courses_remaining
     );
-    const [zodError, setZodError] = useState<ZodError | null>(null);
 
     const queryClient = useQueryClient();
-
-    // TODO: Add client side validation
 
     const coursesCreate = useMutation({
         mutationFn: ({
