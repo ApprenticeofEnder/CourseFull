@@ -47,7 +47,7 @@ function SemesterPage() {
     const updateSemesterModal = useDisclosure();
 
     const semesterQuery = useQuery({
-        queryKey: ['semester'],
+        queryKey: ['semester', semesterId],
         queryFn: () => {
             return getSemester(semesterId, session);
         },

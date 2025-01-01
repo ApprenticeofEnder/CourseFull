@@ -12,6 +12,7 @@ import { SessionProps } from '@coursefull';
 import CourseForm from '@components/Form/CourseForm';
 import { updateCourse } from '@services/courseService';
 import assert from 'assert';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface EditCourseModalProps extends SessionProps {
     course: Course | null;
@@ -23,19 +24,25 @@ export default function UpdateSemesterModal({
 }: EditCourseModalProps) {
     assert(course);
     assert(course.id);
+    assert(course.api_v1_semester_id);
 
     const [updatedCourse, setUpdatedCourse] = useState<Course>(course);
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const queryClient = useQueryClient();
 
-    async function handleUpdateCourse(onClose: CallableFunction) {
-        setIsLoading(true);
-        await updateCourse(
-            updatedCourse as Updated<Course>,
-            session
-        );
-        onClose();
-        location.reload();
+    const courseUpdate = useMutation({
+        mutationFn: (course: Course) => {
+            return updateCourse(
+                course as Updated<Course>,
+                session
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['semester', updatedCourse.api_v1_semester_id]})
+        },
+    });
+    if (courseUpdate.error) {
+        throw courseUpdate.error;
     }
 
     return (
@@ -56,9 +63,11 @@ export default function UpdateSemesterModal({
                         <Button
                             buttonType="confirm"
                             onPress={() => {
-                                handleUpdateCourse(onClose);
+                                courseUpdate.mutate(updatedCourse, {
+                                    onSuccess: onClose
+                                })
                             }}
-                            isLoading={isLoading}
+                            isLoading={courseUpdate.isPending}
                         >
                             Save
                         </Button>

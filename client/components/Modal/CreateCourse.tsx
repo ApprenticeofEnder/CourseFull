@@ -12,9 +12,9 @@ import {
 import Button from '@components/Button/Button';
 import CourseForm from '@components/Form/CourseForm';
 import { SessionProps, ItemStatus, Course } from '@coursefull';
-import { createCourse } from '@services/courseService';
+import { createCourse as courseCreate, createCourse } from '@services/courseService';
 import { getUserData } from '@services/userService';
-import { CourseDtoSchema } from '@lib/validation';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface CourseModalProps extends SessionProps {
     api_v1_semester_id: string;
@@ -24,7 +24,6 @@ export default function CreateCourseModal({
     session,
     api_v1_semester_id,
 }: CourseModalProps) {
-    const router = useRouter();
     const [course, setCourse] = useState<Course>({
         title: '',
         course_code: '',
@@ -32,78 +31,34 @@ export default function CreateCourseModal({
         deliverables: [],
     });
 
-    const [error, setError] = useState<any>(null);
+    const queryClient = useQueryClient();
 
-    const [coursesRemaining, setCoursesRemaining] = useState(0);
+    const userResult = useQuery({
+        queryKey: ['user'],
+        queryFn: () => {
+            return getUserData(session);
+        },
+    });
+    if(userResult.error){
+        throw userResult.error;
+    }
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-
-    // (error) => {
-    //     setIsLoading(false);
-    //     try {
-    //         const errorData = JSON.parse(error.message);
-    //         const outOfTicketsError =
-    //             errorData.status === 403 &&
-    //             errorData.data.error === 'No course tickets remaining.';
-    //         if (!outOfTicketsError) {
-    //             alert(`Something went wrong: ${error}`);
-    //         } else {
-    //             const buying = confirm(
-    //                 "Whoops! Looks like you don't have room for any more courses. Buy some tickets to add more!"
-    //             );
-    //             if (buying) router.push(Endpoints.PRODUCTS);
-    //         }
-    //     } catch (err) {
-    //         alert(`Something went wrong: ${error}`);
-    //     } finally {
-    //         onClose();
-    //     }
-    // }
-
-    async function handleCreateCourse(onClose: CallableFunction) {
-        try {
-            setIsLoading(true);
-            await createCourse(
+    const courseCreate = useMutation({
+        mutationFn: (course: Course) => {
+            return createCourse(
                 {
                     ...course,
                     api_v1_semester_id,
                 },
                 session
             );
-            onClose();
-            location.reload();
-        } catch (err) {
-            setError(err);
-        }
-    }
-
-    let mounted = useRef(true);
-
-    useEffect(() => {
-        if (!session || !mounted.current) {
-            return;
-        }
-        setIsLoading(true);
-
-        async function getData() {
-            const { courses_remaining } = await getUserData(session);
-            setCoursesRemaining(courses_remaining);
-            setIsLoading(false);
-        }
-
-        try {
-            getData();
-        } catch (err) {
-            setError(err);
-        }
-
-        return () => {
-            mounted.current = false;
-        };
-    }, [session]);
-
-    if (error) {
-        throw error;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['semester', api_v1_semester_id]})
+        },
+    });
+    if (courseCreate.error) {
+        throw courseCreate.error;
     }
 
     return (
@@ -115,7 +70,7 @@ export default function CreateCourseModal({
                     </ModalHeader>
                     <ModalBody>
                         <p>
-                            You have {coursesRemaining} course(s) remaining on
+                            You have {userResult.data?.courses_remaining || 0} course(s) remaining on
                             your account.
                         </p>
                         <CourseForm course={course} setCourse={setCourse} />
@@ -124,9 +79,11 @@ export default function CreateCourseModal({
                         <Button onPress={onClose}>Close</Button>
                         <Button
                             onPress={() => {
-                                handleCreateCourse(onClose);
+                                courseCreate.mutate(course, {
+                                    onSuccess: onClose
+                                })
                             }}
-                            isLoading={isLoading}
+                            isLoading={courseCreate.isPending}
                             buttonType="confirm"
                         >
                             Create!

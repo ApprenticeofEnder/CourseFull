@@ -68,7 +68,7 @@ export const deliverableDtoSchema = z
 
 export type DeliverableDtoSchema = z.infer<typeof deliverableDtoSchema>;
 
-export const courseDtoSchema = z.object({
+export const courseSchema = z.object({
     title: z
         .string()
         .min(2, { message: 'Title must be at least 2 characters long' })
@@ -82,4 +82,4 @@ export const courseDtoSchema = z.object({
     status: z.nativeEnum(ItemStatus),
 });
 
-export type CourseDtoSchema = z.infer<typeof courseDtoSchema>;
+export type CourseSchema = z.infer<typeof courseSchema>;
