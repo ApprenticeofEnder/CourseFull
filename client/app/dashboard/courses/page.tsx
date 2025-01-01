@@ -22,19 +22,16 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Fragment,
     Suspense,
-    useEffect,
     useMemo,
-    useRef,
     useState,
 } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
-    Course,
     Deliverable,
-    Endpoints,
     ItemStatus,
     SessionProps,
+    Updated,
 } from '@coursefull';
 
 import Button from '@components/Button/Button';
@@ -127,7 +124,7 @@ function DeliverableTabs({ deliverables, session }: DeliverableTabsProps) {
                                 {item.deliverableList.map(
                                     (deliverable: Deliverable) => (
                                         <DeliverableCard
-                                            {...deliverable}
+                                            {...(deliverable as Updated<Deliverable>)}
                                             session={session}
                                             handleEdit={() => {
                                                 setCurrentDeliverable(
@@ -173,13 +170,13 @@ function CoursePage() {
     const searchParams = useSearchParams();
     const courseId = searchParams.get('id') || '';
 
-    const [error, setError] = useState<any>(null);
-
     const createDeliverableModal = useDisclosure();
     const updateCourseModal = useDisclosure();
 
+    const queryClient = useQueryClient();
+
     const courseQuery = useQuery({
-        queryKey: ['course'],
+        queryKey: ['course', courseId],
         queryFn: () => {
             return getCourse(courseId, session);
         },
@@ -193,23 +190,29 @@ function CoursePage() {
         router.push(semesterURL(courseQuery.data?.api_v1_semester_id));
     }
 
-    async function handleDeleteCourse() {
-        const confirmDelete = confirm(
-            'Are you sure you want to delete this course? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.'
-        );
-        if (!confirmDelete) {
-            return;
-        }
-        try {
-            await deleteCourse(courseId, session);
-            router.push(semesterURL(courseQuery.data?.api_v1_semester_id));
-        } catch (err) {
-            setError(err);
-        }
-    }
-
-    if (error) {
-        throw error;
+    const courseDelete = useMutation({
+        mutationFn: (id: string) => {
+            const confirmDelete = confirm(
+                `Are you sure you want to delete ${courseQuery.data?.course_code}? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.`
+            );
+            if (!confirmDelete) {
+                return Promise.resolve();
+            }
+            return deleteCourse(id, session);
+        },
+        onSuccess: () => {
+            const backUrl = semesterURL(courseQuery.data?.api_v1_semester_id);
+            queryClient.invalidateQueries({
+                queryKey: ['semester', courseQuery.data?.api_v1_semester_id!],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ['course', courseId],
+            });
+            router.push(backUrl);
+        },
+    });
+    if (courseDelete.error) {
+        throw courseDelete.error;
     }
 
     return session && !courseQuery.isLoading ? (
@@ -231,9 +234,7 @@ function CoursePage() {
                             className="top-1"
                             endContent={<CogIcon className="h-6 w-6" />}
                         >
-                            <span className="sr-only">
-                                Open semester options
-                            </span>
+                            <span className="sr-only">Open course options</span>
                         </Button>
                     </DropdownTrigger>
                     <DropdownMenu
@@ -246,15 +247,17 @@ function CoursePage() {
                             className="bg-primary-800 data-[hover=true]:bg-primary-700"
                             onPressEnd={updateCourseModal.onOpen}
                         >
-                            Edit Semester
+                            Edit Course
                         </DropdownItem>
                         <DropdownItem
                             key="delete"
                             endContent={<TrashIcon className="h-6 w-6" />}
                             className="text-danger-800 bg-danger-100 data-[hover=true]:bg-danger-200"
-                            onPressEnd={handleDeleteCourse}
+                            onPressEnd={()=>{
+                                courseDelete.mutate(courseId);
+                            }}
                         >
-                            Delete Semester
+                            Delete Course
                         </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>

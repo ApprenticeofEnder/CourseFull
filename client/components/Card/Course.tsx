@@ -6,6 +6,7 @@ import {
     DeletableProps,
     EditableProps,
     SessionProps,
+    Updated,
 } from '@coursefull';
 
 import Button from '@components/Button/Button';
@@ -20,10 +21,11 @@ import {
 } from '@lib/helpers';
 import { deleteCourse } from '@services/courseService';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface CourseCardProps
-    extends Course,
+    extends Updated<Course>,
         DeletableProps,
         EditableProps,
         SessionProps {}
@@ -35,39 +37,51 @@ export default function CourseCard({
     status,
     goal,
     grade,
+    api_v1_semester_id,
     session,
     handleEdit,
     handleDelete,
 }: CourseCardProps) {
+    const queryClient = useQueryClient();
+    const courseDelete = useMutation({
+        mutationFn: (id: string) => {
+            const confirmDelete = confirm(
+                `Are you sure you want to delete ${course_code}? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.`
+            );
+            if (!confirmDelete) {
+                return Promise.resolve();
+            }
+            return deleteCourse(id, session);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['semester', api_v1_semester_id!],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ['course', id],
+            });
+        },
+    });
+    if (courseDelete.error) {
+        throw courseDelete.error;
+    }
+
     const router = useRouter();
 
-    const [deleteLoading, setDeleteLoading] = useState(false);
-
-    async function handleDeleteCourse() {
-        const confirmDelete = confirm(
-            `Are you sure you want to delete ${course_code}? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.`
-        );
-        if (!confirmDelete) {
-            return;
+    const bgColour = useMemo(() => {
+        if (goal === undefined || grade === undefined || grade === 0) {
+            return 'bg-primary-800';
+        } else {
+            return determineGradeBGColour(goal, grade);
         }
-        setDeleteLoading(true);
-        await deleteCourse(id!, session);
-        handleDelete();
-    }
-
-    let bgColour = 'bg-primary-800';
-    if (goal === undefined || grade === undefined || grade === 0) {
-        //mostly so TypeScript doesn't freak out
-    } else {
-        bgColour = determineGradeBGColour(goal, grade);
-    }
+    }, [goal, grade]);
 
     const href = courseURL(id);
 
     return (
         <div
             className={classNames(
-                'card-primary hover:bg-primary-900 hover:cursor-pointer transition-colors',
+                'card-primary hover:bg-primary-900 hover:cursor-pointer transition-colors flex flex-col gap-4 justify-between',
                 bgColour
             )}
             onClick={() => {
@@ -78,22 +92,22 @@ export default function CourseCard({
                 <h4>Goal: {goal}%</h4>
                 <h4>Grade: {(grade && Math.round(grade)) || '--'}%</h4>
             </div>
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
                 <Image
                     width={300}
                     alt="NextUI hero Image"
                     src={''}
                     // isLoading={true}
                 />
+            </div> */}
+            <div>
+                <Link href={href} color="foreground" underline="hover">
+                    <h3 className="text-left">{course_code}</h3>
+                </Link>
+                <h4 className="text-left">{title}</h4>
+                <h4 className="text-left italic">{ReadableStatus(status)}</h4>
             </div>
-
-            <Link href={href} color="foreground" underline="hover">
-                <h3 className="text-left">{course_code}</h3>
-            </Link>
-            <h4 className="text-left">{title}</h4>
-            <h4 className="text-left italic">{ReadableStatus(status)}</h4>
-
-            <div className="flex my-2 gap-4">
+            <div className="flex gap-4">
                 <Button
                     endContent={<PencilIcon className="h-6 w-6" />}
                     onPressEnd={handleEdit}
@@ -104,9 +118,12 @@ export default function CourseCard({
                 <Button
                     className="top-1 basis-1/2"
                     endContent={<TrashIcon className="h-6 w-6" />}
-                    onPressEnd={handleDeleteCourse}
+                    onPressEnd={() => {
+                        courseDelete.mutate(id);
+                        handleDelete();
+                    }}
                     buttonType="danger"
-                    isLoading={deleteLoading}
+                    isLoading={courseDelete.isPending}
                 >
                     Delete
                 </Button>

@@ -1,13 +1,10 @@
 'use client';
-import {
-    Modal,
-    useDisclosure,
-} from '@nextui-org/react';
+import { Modal, useDisclosure } from '@nextui-org/react';
 import { Fragment, useState } from 'react';
 
 import CourseCard from '@components/Card/Course';
 import UpdateCourseModal from '@components/Modal/UpdateCourse';
-import { Course, SessionProps } from '@coursefull';
+import { Course, SessionProps, Updated } from '@coursefull';
 
 interface CoursesProps extends SessionProps {
     courses: Course[];
@@ -22,20 +19,20 @@ export default function Courses({ courses, session }: CoursesProps) {
         <Fragment>
             {(courses.length && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                    {courses.map((course) => (
-                        <CourseCard
-                            {...course}
-                            handleEdit={() => {
-                                setCurrentCourse(course);
-                                updateCourseModal.onOpen();
-                            }}
-                            handleDelete={() => {
-                                location.reload();
-                            }}
-                            session={session}
-                            key={course.id}
-                        />
-                    ))}
+                    {courses.map((course) => {
+                        return (
+                            <CourseCard
+                                {...(course as Updated<Course>)}
+                                handleEdit={() => {
+                                    setCurrentCourse(course);
+                                    updateCourseModal.onOpen();
+                                }}
+                                handleDelete={() => {}}
+                                session={session}
+                                key={course.id}
+                            />
+                        );
+                    })}
                 </div>
             )) || (
                 <p>
