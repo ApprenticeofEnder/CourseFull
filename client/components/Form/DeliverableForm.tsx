@@ -21,13 +21,12 @@ import {
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
 import { ZodIssue } from 'zod';
 import { DeliverableSchema, deliverableSchema } from '@lib/validation';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function DeliverableForm({
     deliverable,
     setDeliverable,
-    zodError,
 }: DeliverableFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.ACTIVE,
@@ -38,112 +37,79 @@ export default function DeliverableForm({
         register,
         setValue,
         formState: { errors },
+        control,
     } = useForm<DeliverableSchema>({
         resolver: zodResolver(deliverableSchema),
         defaultValues: deliverable,
     });
 
     const updateName = (name: string) => {
+        setValue('name', name, { shouldValidate: true });
         setDeliverable((deliverable) => ({
             ...deliverable,
             name,
         }));
-        setValue('name', name);
     };
 
     const updateStartDate = (startDateValue: DateValue) => {
         const start_date: ZonedDateTime = startDateValue as ZonedDateTime;
+        setValue('start_date', start_date, { shouldValidate: true });
         setDeliverable((deliverable) => ({
             ...deliverable,
             start_date,
         }));
-        setValue('start_date', start_date);
     };
 
     const updateDeadline = (deadlineValue: DateValue) => {
         const deadline: ZonedDateTime = deadlineValue as ZonedDateTime;
+        setValue('deadline', deadline, { shouldValidate: true });
         setDeliverable((deliverable) => ({
             ...deliverable,
             deadline,
         }));
-        setValue('deadline', deadline);
     };
 
-    const updateWeight = (weight: string) => {
+    const updateWeight = (weightValue: string) => {
+        const weight: number = parseFloat(weightValue);
+        setValue('weight', weight, { shouldValidate: true });
         setDeliverable((deliverable) => ({
             ...deliverable,
-            weight: parseFloat(weight),
+            weight,
         }));
     };
 
-    const updateMark = (mark: string) => {
+    const updateMark = (markValue: string) => {
+        const mark: number = parseFloat(markValue);
+        setValue('mark', mark, { shouldValidate: true });
         setDeliverable((deliverable) => ({
             ...deliverable,
-            mark: parseFloat(mark),
+            mark,
         }));
     };
 
     const updateStatus = (newStatus: Key) => {
-        let mark: string = deliverable.mark.toString();
+        let mark = deliverable.mark;
         if (newStatus === ItemStatus.ACTIVE) {
-            mark = '0';
+            mark = 0;
         }
+        setValue('mark', mark, { shouldValidate: true });
         onStatusChanged(newStatus, (status) => {
+            setValue('status', status, { shouldValidate: true });
             setDeliverable((deliverable) => ({
                 ...deliverable,
-                mark: parseFloat(mark),
+                mark,
                 status,
             }));
         });
     };
 
     const updateNotes = (notes: string) => {
+        setValue('notes', notes, { shouldValidate: true });
         setDeliverable((deliverable) => ({
             ...deliverable,
             notes,
         }));
     };
-
-    const getLastErrorMessage = (issues: ZodIssue[]) => {
-        return issues.slice(-1).pop()?.message;
-    };
-
-    // const [errors, setErrors] = useState<DeliverableFormErrors>({
-    //     name: [],
-    //     start_date: [],
-    //     deadline: [],
-    //     weight: [],
-    //     mark: [],
-    //     status: [],
-    //     notes: [],
-    //     custom: [],
-    // });
-
-    // useEffect(() => {
-    //     console.log(zodError);
-    //     let updatedErrors: DeliverableFormErrors = {
-    //         name: [],
-    //         start_date: [],
-    //         deadline: [],
-    //         weight: [],
-    //         mark: [],
-    //         status: [],
-    //         notes: [],
-    //         custom: [],
-    //     };
-    //     for (let issue of zodError?.issues || []) {
-    //         issue.path.forEach((field) => {
-    //             if (!updatedErrors[field as keyof DeliverableFormErrors]) {
-    //                 return;
-    //             }
-    //             updatedErrors[field as keyof DeliverableFormErrors].push(issue);
-    //         });
-    //         if (issue.code === 'custom') {
-    //             updatedErrors.custom.push(issue);
-    //         }
-    //     }
-    //     setErrors(updatedErrors);
-    // }, [zodError]);
 
     return (
         <Fragment>
@@ -157,36 +123,51 @@ export default function DeliverableForm({
                 errorMessage={errors.name?.message}
             />
             <div className="flex w-full flex-wrap gap-4">
-                <DatePicker
-                    label="Start Date"
-                    value={deliverable.start_date}
-                    onChange={updateStartDate}
-                    isInvalid={!!errors.start_date}
-                    errorMessage={errors.start_date?.message}
-                    granularity="minute"
+                <Controller
+                    control={control}
+                    name="start_date"
+                    render={({ field }) => (
+                        <DatePicker
+                            label="Start Date"
+                            value={field.value}
+                            onChange={(date) => {
+                                updateStartDate(date);
+                                field.onChange(date);
+                            }}
+                            isInvalid={!!errors.start_date}
+                            errorMessage={errors.start_date?.message}
+                            granularity="minute"
+                        />
+                    )}
                 />
-
-                <DatePicker
-                    label="Deadline"
-                    value={deliverable.deadline}
-                    onChange={updateDeadline}
-                    errorMessage={
-                        errors.root?.message || errors.deadline?.message
-                    }
-                    isInvalid={
-                        !!errors.root || !!errors.deadline
-                    }
-                    granularity="minute"
+                <Controller
+                    control={control}
+                    name="deadline"
+                    render={({ field }) => (
+                        <DatePicker
+                            label="Deadline"
+                            value={field.value}
+                            onChange={(date) => {
+                                updateDeadline(date);
+                                field.onChange(date);
+                            }}
+                            errorMessage={
+                                errors.root?.message || errors.deadline?.message
+                            }
+                            isInvalid={!!errors.root || !!errors.deadline}
+                            granularity="minute"
+                        />
+                    )}
                 />
             </div>
             <Input
                 type="number"
                 label="Weight (%)"
                 placeholder="How much is it worth?"
-                value={deliverable.weight.toString()}
+                {...register('weight')}
                 onValueChange={updateWeight}
-                errorMessage={getLastErrorMessage(errors.weight)}
-                isInvalid={errors.weight.length > 0}
+                errorMessage={errors.weight?.message}
+                isInvalid={!!errors.weight}
                 min={0.1}
                 max={100}
                 step={0.1}
@@ -201,10 +182,10 @@ export default function DeliverableForm({
                     type="number"
                     label="Mark (%)"
                     placeholder="What was the final grade?"
-                    value={deliverable.mark.toString()}
+                    {...register('mark')}
                     onValueChange={updateMark}
-                    errorMessage={getLastErrorMessage(errors.mark)}
-                    isInvalid={errors.mark.length > 0}
+                    errorMessage={errors.mark?.message}
+                    isInvalid={!!errors.mark}
                     min={0}
                     max={100}
                     step={0.1}
@@ -246,10 +227,10 @@ export default function DeliverableForm({
                         ? "What went well with this deliverable?\n\nIf you didn't get the grade you wanted, what could make future ones go better?"
                         : "What's important about this particular deliverable?"
                 }
-                value={deliverable.notes}
+                {...register('notes')}
                 onValueChange={updateNotes}
-                errorMessage={getLastErrorMessage(errors.notes)}
-                isInvalid={errors.notes.length > 0}
+                errorMessage={errors.notes?.message}
+                isInvalid={!!errors.notes}
             />
         </Fragment>
     );

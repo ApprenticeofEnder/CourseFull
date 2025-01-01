@@ -5,8 +5,8 @@ import {
     ModalHeader,
     ModalBody,
     ModalFooter,
-    ScrollShadow,
 } from '@nextui-org/react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import Button from '@components/Button/Button';
 import DeliverableForm from '@components/Form/DeliverableForm';
@@ -18,8 +18,6 @@ import {
 } from '@coursefull';
 import { updateDeliverable } from '@services/deliverableService';
 import { convertDeliverableToDto } from '@lib/dto';
-import { DeliverableDtoSchema } from '@lib/validation';
-import { ZodError } from 'zod';
 
 export default function UpdateDeliverableModal({
     session,
@@ -30,24 +28,25 @@ export default function UpdateDeliverableModal({
 
     const [updatedDeliverable, setUpdatedDeliverable] =
         useState<Deliverable>(deliverable);
-    const [zodError, setZodError] = useState<ZodError | null>(null);
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const queryClient = useQueryClient();
 
-    async function handleUpdateDeliverable(onClose: CallableFunction) {
-        const dto = convertDeliverableToDto(deliverable);
-        const parseResult = DeliverableDtoSchema.safeParse(dto);
-        if(!parseResult.success){
-            setZodError(parseResult.error);
-            return;
-        }
-        setIsLoading(true);
-        await updateDeliverable(
-            parseResult.data as Updated<DeliverableDto>,
-            session
-        );
-        onClose();
-        location.reload();
+    const deliverableUpdate = useMutation({
+        mutationFn: (deliverable: Deliverable) => {
+            const dto = convertDeliverableToDto(deliverable);
+            return updateDeliverable(
+                {
+                    ...dto,
+                } as Updated<DeliverableDto>,
+                session
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['course'] });
+        },
+    });
+    if (deliverableUpdate.error) {
+        throw deliverableUpdate.error;
     }
 
     return (
@@ -62,7 +61,6 @@ export default function UpdateDeliverableModal({
                         <DeliverableForm
                             deliverable={updatedDeliverable}
                             setDeliverable={setUpdatedDeliverable}
-                            zodError={zodError}
                         />
                     </ModalBody>
                     <ModalFooter>
@@ -70,9 +68,11 @@ export default function UpdateDeliverableModal({
                         <Button
                             buttonType="confirm"
                             onPress={() => {
-                                handleUpdateDeliverable(onClose);
+                                deliverableUpdate.mutate(updatedDeliverable, {
+                                    onSuccess: onClose,
+                                });
                             }}
-                            isLoading={isLoading}
+                            isLoading={deliverableUpdate.isPending}
                         >
                             Save
                         </Button>

@@ -20,6 +20,7 @@ import {
 } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, Suspense, useEffect, useRef, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
     Course,
@@ -136,7 +137,7 @@ function DeliverableTabs({ deliverables, session }: DeliverableTabsProps) {
                 isOpen={updateDeliverableModal.isOpen}
                 onOpenChange={updateDeliverableModal.onOpenChange}
                 className="bg-sky-100"
-                scrollBehavior='inside'
+                scrollBehavior="inside"
             >
                 <UpdateDeliverableModal
                     session={session}
@@ -158,16 +159,23 @@ function CoursePage() {
     const searchParams = useSearchParams();
     const courseId = searchParams.get('id') || '';
 
-    const [course, setCourse] = useState<Course | null>(null);
-    const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
-
     const [error, setError] = useState<any>(null);
 
     const createDeliverableModal = useDisclosure();
     const updateCourseModal = useDisclosure();
 
+    const courseQuery = useQuery({
+        queryKey: ['course'],
+        queryFn: () => {
+            return getCourse(courseId, session);
+        },
+    });
+    if (courseQuery.error) {
+        throw courseQuery.error;
+    }
+
     function goBack() {
-        router.push(semesterURL(course?.api_v1_semester_id));
+        router.push(semesterURL(courseQuery.data?.api_v1_semester_id));
     }
 
     async function handleDeleteCourse() {
@@ -179,7 +187,7 @@ function CoursePage() {
         }
         try {
             await deleteCourse(courseId, session);
-            router.push(Endpoints.ROOT);
+            router.push(semesterURL(courseQuery.data?.api_v1_semester_id));
         } catch (err) {
             setError(err);
         }
@@ -189,31 +197,7 @@ function CoursePage() {
         throw error;
     }
 
-    let mounted = useRef(true);
-
-    useEffect(() => {
-        if (course || !session || !mounted.current) {
-            return;
-        }
-
-        async function getData(){
-            const courseData = await getCourse(courseId, session);
-            setCourse(courseData);
-            setDeliverables(courseData.deliverables || []);
-        }
-
-        try {
-            getData()
-        }
-        catch(err){
-            setError(err);
-        }
-        return () => {
-            mounted.current = false;
-        };
-    }, [course, session, courseId]);
-
-    return session && course ? (
+    return session && !courseQuery.isLoading ? (
         <Fragment>
             <Button
                 startContent={<ArrowLeftIcon className="h-6 w-6" />}
@@ -223,7 +207,7 @@ function CoursePage() {
                 Go Back
             </Button>
             <div className="flex gap-4 justify-between">
-                <h2 className="text-left font-bold">{course.course_code}</h2>
+                <h2 className="text-left font-bold">{courseQuery.data?.course_code}</h2>
                 <Dropdown>
                     <DropdownTrigger>
                         <Button
@@ -259,17 +243,17 @@ function CoursePage() {
                 </Dropdown>
             </div>
 
-            <h2 className="text-left">{course.title}</h2>
+            <h2 className="text-left">{courseQuery.data?.title}</h2>
             <div className="flex flex-col sm:flex-row sm:justify-between">
                 <h3 className="text-left basis-1/2">
-                    {ReadableStatus(course.status)}
+                    {ReadableStatus(courseQuery.data?.status || ItemStatus.ACTIVE)}
                 </h3>
                 <div className="flex basis-1/2 justify-between gap-8 sm:justify-end">
                     <h3 className="text-left">
                         Grade:{' '}
-                        {(course.grade && Math.round(course.grade)) || '--'}%
+                        {(courseQuery.data?.grade && Math.round(courseQuery.data?.grade)) || '--'}%
                     </h3>
-                    <h3 className="text-right">Goal: {course.goal}%</h3>
+                    <h3 className="text-right">Goal: {courseQuery.data?.goal}%</h3>
                 </div>
             </div>
 
@@ -286,20 +270,20 @@ function CoursePage() {
                 <h3>
                     You need{' '}
                     <strong>
-                        {course.deliverable_goal &&
-                            course.deliverable_goal.toFixed(1)}
+                        {courseQuery.data?.deliverable_goal &&
+                            courseQuery.data?.deliverable_goal.toFixed(1)}
                         %
                     </strong>{' '}
                     (or better) on each deliverable to reach your goal!
                 </h3>
             </div>
 
-            <DeliverableTabs deliverables={deliverables} session={session} />
+            <DeliverableTabs deliverables={courseQuery.data?.deliverables || []} session={session} />
             <Modal
                 isOpen={createDeliverableModal.isOpen}
                 onOpenChange={createDeliverableModal.onOpenChange}
                 className="bg-sky-100"
-                scrollBehavior='inside'
+                scrollBehavior="inside"
             >
                 <CreateDeliverableModal
                     session={session}
@@ -310,9 +294,9 @@ function CoursePage() {
                 isOpen={updateCourseModal.isOpen}
                 onOpenChange={updateCourseModal.onOpenChange}
                 className="bg-sky-100"
-                scrollBehavior='inside'
+                scrollBehavior="inside"
             >
-                <UpdateCourseModal session={session} course={course} />
+                <UpdateCourseModal session={session} course={courseQuery.data!} />
             </Modal>
         </Fragment>
     ) : (

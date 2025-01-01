@@ -7,14 +7,12 @@ import {
     ModalFooter,
 } from '@nextui-org/react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ZodError } from 'zod';
 
 import Button from '@components/Button/Button';
 import { ItemStatus, SessionProps, type Deliverable } from '@coursefull';
 import { createDeliverable } from '@services/deliverableService';
 import DeliverableForm from '@components/Form/DeliverableForm';
 import { convertDeliverableToDto } from '@lib/dto';
-import { deliverableDtoSchema, DeliverableDtoSchema, deliverableSchema, DeliverableSchema } from '@lib/validation';
 
 interface DeliverableModalProps extends SessionProps {
     api_v1_course_id: string;
@@ -34,10 +32,6 @@ export default function CreateDeliverableModal({
         deadline: now(getLocalTimeZone()),
     });
 
-    const [zodError, setZodError] = useState<ZodError | null>(null);
-
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-
     const queryClient = useQueryClient();
 
     const deliverableCreate = useMutation({
@@ -53,29 +47,10 @@ export default function CreateDeliverableModal({
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['course'] });
-        }
+        },
     });
-    if (deliverableCreate.error){
+    if (deliverableCreate.error) {
         throw deliverableCreate.error;
-    }
-
-    async function handleCreateDeliverable(onClose: CallableFunction) {
-        const dto = convertDeliverableToDto(deliverable);
-        const parseResult = deliverableDtoSchema.safeParse(dto);
-        if (!parseResult.success) {
-            setZodError(parseResult.error);
-            return;
-        }
-        setIsLoading(true);
-        await createDeliverable(
-            {
-                ...parseResult.data!,
-                api_v1_course_id,
-            },
-            session
-        );
-        onClose();
-        location.reload();
     }
 
     return (
@@ -89,16 +64,17 @@ export default function CreateDeliverableModal({
                         <DeliverableForm
                             deliverable={deliverable}
                             setDeliverable={setDeliverable}
-                            zodError={zodError}
                         />
                     </ModalBody>
                     <ModalFooter>
                         <Button onPress={onClose}>Close</Button>
                         <Button
                             onPress={() => {
-                                handleCreateDeliverable(onClose);
+                                deliverableCreate.mutate(deliverable, {
+                                    onSuccess: onClose,
+                                });
                             }}
-                            isLoading={isLoading}
+                            isLoading={deliverableCreate.isPending}
                             buttonType="confirm"
                         >
                             Create!

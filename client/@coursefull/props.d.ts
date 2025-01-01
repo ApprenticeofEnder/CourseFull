@@ -55,7 +55,7 @@ export interface CourseFormProps {
     setCourse: Dispatcher<Course>
 }
 
-export interface DeliverableFormProps extends ZodErrorProps {
+export interface DeliverableFormProps {
     deliverable: Deliverable;
     setDeliverable: Dispatcher<Deliverable>;
 }
