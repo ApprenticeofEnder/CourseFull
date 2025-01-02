@@ -40,6 +40,14 @@ export interface EditableProps {
     handleEdit: () => void;
 }
 
+export interface ViewableProps {
+    handleView: () => void;
+}
+
+export interface ExitProps {
+    handleExit: () => void;
+}
+
 export interface DeletableProps {
     handleDelete: () => void;
 }

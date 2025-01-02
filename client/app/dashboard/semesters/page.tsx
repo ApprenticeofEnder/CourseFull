@@ -8,6 +8,7 @@ import {
     TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
+    Divider,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -136,7 +137,7 @@ function SemesterPage() {
                         <h3>|</h3>
                         <h3>Goal: {semesterQuery.data?.goal}%</h3>
                     </div>
-                    <hr className="border-1 border-primary-100/50 my-2" />
+                    <Divider className='my-2'></Divider>
                     <div className="my-5 flex gap-4">
                         <Button
                             className="top-1"
