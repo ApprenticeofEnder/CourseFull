@@ -1,5 +1,5 @@
 import { Input, Listbox, ListboxItem } from '@nextui-org/react';
-import { Fragment, Key } from 'react';
+import { Fragment, Key, useEffect } from 'react';
 
 import { ItemStatus, SemesterFormProps } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
@@ -10,6 +10,7 @@ import { semesterSchema, SemesterSchema } from '@lib/validation';
 export default function SemesterForm({
     semester,
     setSemester,
+    setIsValid
 }: SemesterFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.NOT_STARTED,
@@ -20,7 +21,7 @@ export default function SemesterForm({
     const {
         register,
         setValue,
-        formState: { errors },
+        formState: { errors, isValid },
         control,
     } = useForm<SemesterSchema>({
         resolver: zodResolver(semesterSchema),
@@ -47,6 +48,10 @@ export default function SemesterForm({
             }));
         });
     };
+
+    useEffect(() => {
+        setIsValid(isValid);
+    }, [setIsValid, isValid]);
 
     return (
         <Fragment>

@@ -8,6 +8,8 @@ import {
     TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
+    Breadcrumbs,
+    BreadcrumbItem,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -21,7 +23,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, Suspense, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { Deliverable, ItemStatus, SessionProps, Updated } from '@coursefull';
+import {
+    Deliverable,
+    Endpoints,
+    ItemStatus,
+    Updated,
+} from '@coursefull';
 
 import Button from '@components/Button/Button';
 import DeliverableCard from '@components/Card/Deliverable';
@@ -34,14 +41,14 @@ import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 
 import { deleteCourse, getCourse } from '@services/courseService';
 import DeliverableDetail from '@components/Detail/Deliverable';
-
-// TODO: Refactor the visual layout of this thing.
+import { getSemester } from '@services/semesterService';
+import Link from '@components/Link';
 
 function CoursePage() {
     const router = useRouter();
 
-    const [currentDeliverable, setCurrentDeliverable] =
-        useState<Deliverable | null>(null);
+    const [currentDeliverableIndex, setCurrentDeliverableIndex] =
+        useState<number>(-1);
 
     const { session, loadingSession } = useSession()!;
     useProtectedEndpoint(session, loadingSession, router);
@@ -66,9 +73,22 @@ function CoursePage() {
         throw courseQuery.error;
     }
 
-    function goBack() {
-        router.push(semesterURL(courseQuery.data?.api_v1_semester_id));
+    const semesterQuery = useQuery({
+        queryKey: ['semester', courseQuery.data?.api_v1_semester_id!],
+        queryFn: () => {
+            setCurrentDeliverableIndex(-1);
+            return getSemester(courseQuery.data?.api_v1_semester_id!, session);
+        },
+        enabled: session !== null && !!courseQuery.data,
+    });
+
+    if (semesterQuery.error) {
+        throw semesterQuery.error;
     }
+
+    const semesterLink = useMemo(() => {
+        return semesterURL(courseQuery.data?.api_v1_semester_id);
+    }, [courseQuery.data]);
 
     const courseDelete = useMutation({
         mutationFn: (id: string) => {
@@ -81,14 +101,13 @@ function CoursePage() {
             return deleteCourse(id, session);
         },
         onSuccess: () => {
-            const backUrl = semesterURL(courseQuery.data?.api_v1_semester_id);
             queryClient.invalidateQueries({
                 queryKey: ['semester', courseQuery.data?.api_v1_semester_id!],
             });
             queryClient.invalidateQueries({
                 queryKey: ['course', courseId],
             });
-            router.push(backUrl);
+            router.push(semesterLink);
         },
     });
     if (courseDelete.error) {
@@ -112,93 +131,111 @@ function CoursePage() {
 
     return session && !courseQuery.isLoading ? (
         <Fragment>
-            <Button
-                startContent={<ArrowLeftIcon className="h-6 w-6" />}
-                onPressEnd={goBack}
-                className="my-4"
-            >
-                Go Back
-            </Button>
-            <div className="flex gap-4 justify-between">
-                <h2 className="text-left font-bold">
-                    {courseQuery.data?.course_code}
-                </h2>
-                <Dropdown>
-                    <DropdownTrigger>
-                        <Button
-                            className="top-1"
-                            endContent={<CogIcon className="h-6 w-6" />}
-                        >
-                            <span className="sr-only">Open course options</span>
-                        </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                        aria-label="Semester options"
-                        itemClasses={{ base: ['p-4'] }}
+            <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap gap-4 justify-between items-end">
+                    <Breadcrumbs
+                        size="lg"
+                        itemsBeforeCollapse={0}
+                        itemsAfterCollapse={1}
+                        maxItems={1}
                     >
-                        <DropdownItem
-                            key="edit"
-                            endContent={<PencilIcon className="h-6 w-6" />}
-                            className="bg-primary-800 data-[hover=true]:bg-primary-700"
-                            onPressEnd={updateCourseModal.onOpen}
+                        <BreadcrumbItem>
+                            <Link
+                                href={Endpoints.DASHBOARD}
+                                className="text-xl"
+                            >
+                                Dashboard
+                            </Link>
+                        </BreadcrumbItem>
+                        <BreadcrumbItem>
+                            <Link href={semesterLink} className="text-xl">
+                                {semesterQuery.data?.name}
+                            </Link>
+                        </BreadcrumbItem>
+                    </Breadcrumbs>
+                </div>
+                <div className="grow flex justify-between">
+                    <h2 className="text-left font-bold flex flex-wrap">
+                        <span>{courseQuery.data?.course_code}:&nbsp;</span>
+                        <span>{courseQuery.data?.title}</span>
+                    </h2>
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button
+                                className="top-1"
+                                endContent={<CogIcon className="h-6 w-6" />}
+                            >
+                                <span className="sr-only">
+                                    Open course options
+                                </span>
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            aria-label="Semester options"
+                            itemClasses={{ base: ['p-4'] }}
                         >
-                            Edit Course
-                        </DropdownItem>
-                        <DropdownItem
-                            key="delete"
-                            endContent={<TrashIcon className="h-6 w-6" />}
-                            className="text-danger-800 bg-danger-100 data-[hover=true]:bg-danger-200"
-                            onPressEnd={() => {
-                                courseDelete.mutate(courseId);
-                            }}
-                        >
-                            Delete Course
-                        </DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
-            </div>
-
-            <h2 className="text-left">{courseQuery.data?.title}</h2>
-            <div className="flex flex-col sm:flex-row sm:justify-between">
-                <h3 className="text-left basis-1/2">
-                    {ReadableStatus(
-                        courseQuery.data?.status || ItemStatus.ACTIVE
-                    )}
-                </h3>
-                <div className="flex basis-1/2 justify-between gap-8 sm:justify-end">
-                    <h3 className="text-left">
-                        Grade:{' '}
-                        {(courseQuery.data?.grade &&
-                            Math.round(courseQuery.data?.grade)) ||
-                            '--'}
-                        %
+                            <DropdownItem
+                                key="edit"
+                                endContent={<PencilIcon className="h-6 w-6" />}
+                                className="bg-primary-800 data-[hover=true]:bg-primary-700"
+                                onPressEnd={updateCourseModal.onOpen}
+                            >
+                                Edit Course
+                            </DropdownItem>
+                            <DropdownItem
+                                key="delete"
+                                endContent={<TrashIcon className="h-6 w-6" />}
+                                className="text-danger-800 bg-danger-100 data-[hover=true]:bg-danger-200"
+                                onPressEnd={() => {
+                                    courseDelete.mutate(courseId);
+                                }}
+                            >
+                                Delete Course
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+                <div className="flex flex-col md:flex-row md:justify-between">
+                    <h3 className="text-left basis-1/2">
+                        {ReadableStatus(
+                            courseQuery.data?.status || ItemStatus.ACTIVE
+                        )}
                     </h3>
-                    <h3 className="text-right">
-                        Goal: {courseQuery.data?.goal}%
-                    </h3>
+                    <div className="flex basis-1/2 justify-between gap-8 md:justify-end">
+                        <h3 className="text-left">
+                            Grade:{' '}
+                            {(courseQuery.data?.grade &&
+                                Math.round(courseQuery.data?.grade)) ||
+                                '--'}
+                            %
+                        </h3>
+                        <h3 className="text-right">
+                            Goal: {courseQuery.data?.goal}%
+                        </h3>
+                    </div>
                 </div>
             </div>
-            <Divider className='my-2'></Divider>
+            <Divider className="my-2"></Divider>
 
             {/* MAIN BODY START */}
-            <div className="flex gap-4 my-4 h-screen">
-                <div className="w-full sm:basis-1/3 order-2 sm:order-1 flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row gap-4 my-4 h-screen">
+                <div className="w-full md:basis-1/3 order-2 md:order-1 flex flex-col gap-4">
                     <Button
-                        className="top-2 order-last sm:order-first"
+                        className="top-2 order-last md:order-first"
                         endContent={<PlusIcon className="h-6 w-6" />}
                         onPressEnd={createDeliverableModal.onOpen}
                         buttonType="confirm"
                     >
                         Add Deliverable
                     </Button>
-                    <Divider className='mt-2'></Divider>
-                    {deliverables ? (
-                        deliverables.map((deliverable: Deliverable) => (
+                    <Divider className="collapse md:visible mt-2"></Divider>
+                    {deliverables?.length ? (
+                        deliverables.map((deliverable: Deliverable, index) => (
                             <DeliverableCard
                                 {...(deliverable as Updated<Deliverable>)}
                                 session={session}
                                 handleView={() => {
-                                    setCurrentDeliverable(deliverable);
+                                    setCurrentDeliverableIndex(index);
                                 }}
                                 key={deliverable.id}
                             />
@@ -207,20 +244,22 @@ function CoursePage() {
                         <p>No deliverables yet. Start by adding one!</p>
                     )}
                 </div>
-                <div className="w-full h-full sm:basis-2/3 order-1 flex-1 sm:order-2 flex flex-col gap-4">
-                    <div className="flex-grow">
-                        {currentDeliverable ? (
-                            <div className='h-full'>
+                <div className="w-full md:h-full md:basis-2/3 order-1 md:flex-1 md:order-2 flex flex-col gap-4">
+                    <div className="md:flex-grow">
+                        {currentDeliverableIndex >= 0 && deliverables ? (
+                            <div className="h-full">
                                 <DeliverableDetail
                                     deliverable={
-                                        currentDeliverable as Updated<Deliverable>
+                                        deliverables.at(currentDeliverableIndex) as Updated<Deliverable>
                                     }
                                     session={session}
                                     handleEdit={() => {
                                         updateDeliverableModal.onOpen();
                                     }}
                                     handleExit={() => {}}
-                                    handleDelete={() => {}}
+                                    handleDelete={() => {
+                                        setCurrentDeliverableIndex(-1);
+                                    }}
                                 />
                             </div>
                         ) : (
@@ -237,12 +276,12 @@ function CoursePage() {
                                     (or better) on each deliverable to reach
                                     your goal!
                                 </h3>
-                                {deliverables && (
+                                {deliverables?.length ? (
                                     <p className="text-center">
-                                        Click on any deliverable to view more
-                                        details.
+                                        Click or tap on any deliverable to view
+                                        more details.
                                     </p>
-                                )}
+                                ) : <></>}
                             </div>
                         )}
                     </div>
@@ -268,7 +307,7 @@ function CoursePage() {
             >
                 <UpdateDeliverableModal
                     session={session}
-                    deliverable={currentDeliverable}
+                    deliverable={deliverables?.at(currentDeliverableIndex) || null}
                 />
             </Modal>
             <Modal

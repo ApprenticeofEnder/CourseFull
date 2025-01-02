@@ -5,6 +5,7 @@ import {
     Course,
     DeletableProps,
     EditableProps,
+    ExitProps,
     SessionProps,
     Updated,
     ViewableProps,
@@ -25,23 +26,21 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-interface CourseCardProps
-    extends Updated<Course>,
-        ViewableProps,
-        SessionProps {}
+interface CourseDetailProps
+    extends DeletableProps,
+        EditableProps,
+        ExitProps,
+        SessionProps {
+    course: Updated<Course>;
+}
 
-export default function CourseCard({
-    id,
-    title,
-    course_code,
-    status,
-    goal,
-    grade,
-    api_v1_semester_id,
+export default function CourseDetail({
+    course: { id, title, course_code, status, goal, grade, api_v1_semester_id },
     session,
-    handleView,
-}: CourseCardProps) {
-    const router = useRouter();
+    handleExit,
+    handleEdit,
+    handleDelete,
+}: CourseDetailProps) {
     const queryClient = useQueryClient();
     const courseDelete = useMutation({
         mutationFn: (id: string) => {
@@ -66,6 +65,8 @@ export default function CourseCard({
         throw courseDelete.error;
     }
 
+    const router = useRouter();
+
     const bgColour = useMemo(() => {
         if (goal === undefined || grade === undefined || grade === 0) {
             return 'bg-primary-800';
@@ -79,21 +80,9 @@ export default function CourseCard({
     return (
         <div
             className={classNames(
-                'card-primary hover:bg-primary-900 hover:cursor-pointer transition-colors flex flex-col gap-4 justify-between',
+                'card-primary h-full',
                 bgColour
             )}
-            onClick={(e) => {
-                switch(e.detail){
-                    case 1:
-                        setTimeout(handleView, 200);
-                        break;
-                    case 2:
-                        router.push(href);
-                        break;
-                    default:
-                        router.push(href);
-                }
-            }}
         >
             <div className="flex justify-between">
                 <h4>Goal: {goal}%</h4>
@@ -108,9 +97,32 @@ export default function CourseCard({
                 />
             </div> */}
             <div>
-                <h3 className="text-left">{course_code}</h3>
+                <Link href={href} color="foreground" underline="hover">
+                    <h3 className="text-left">{course_code}</h3>
+                </Link>
                 <h4 className="text-left">{title}</h4>
                 <h4 className="text-left italic">{ReadableStatus(status)}</h4>
+            </div>
+            <div className="flex gap-4">
+                <Button
+                    endContent={<PencilIcon className="h-6 w-6" />}
+                    onPressEnd={handleEdit}
+                    className="top-1 basis-1/2"
+                >
+                    Edit
+                </Button>
+                <Button
+                    className="top-1 basis-1/2"
+                    endContent={<TrashIcon className="h-6 w-6" />}
+                    onPressEnd={() => {
+                        courseDelete.mutate(id);
+                        handleDelete();
+                    }}
+                    buttonType="danger"
+                    isLoading={courseDelete.isPending}
+                >
+                    Delete
+                </Button>
             </div>
         </div>
     );

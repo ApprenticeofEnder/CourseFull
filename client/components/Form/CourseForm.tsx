@@ -1,4 +1,4 @@
-import { Fragment, Key } from 'react';
+import { Fragment, Key, useEffect } from 'react';
 import { Input, Listbox, ListboxItem } from '@nextui-org/react';
 
 import { ItemStatus, CourseFormProps } from '@coursefull';
@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { courseSchema, CourseSchema } from '@lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-export default function CourseForm({ course, setCourse }: CourseFormProps) {
+export default function CourseForm({ course, setCourse, setIsValid }: CourseFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.ACTIVE,
         ItemStatus.COMPLETE,
@@ -16,7 +16,7 @@ export default function CourseForm({ course, setCourse }: CourseFormProps) {
     const {
         register,
         setValue,
-        formState: { errors },
+        formState: { errors, isValid },
         control,
     } = useForm<CourseSchema>({
         resolver: zodResolver(courseSchema),
@@ -44,6 +44,10 @@ export default function CourseForm({ course, setCourse }: CourseFormProps) {
             }));
         });
     };
+
+    useEffect(() => {
+        setIsValid(isValid);
+    }, [setIsValid, isValid])
 
     return (
         <Fragment>

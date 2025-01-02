@@ -26,6 +26,7 @@ export default function UpdateSemesterModal({
     assert(semester.id);
 
     const [updatedSemester, setUpdatedSemester] = useState<Semester>(semester);
+    const [isValid, setIsValid] = useState<boolean>(true);
 
     const queryClient = useQueryClient();
 
@@ -55,6 +56,7 @@ export default function UpdateSemesterModal({
                         <SemesterForm
                             semester={updatedSemester}
                             setSemester={setUpdatedSemester}
+                            setIsValid={setIsValid}
                         />
                     </ModalBody>
                     <ModalFooter>
@@ -67,6 +69,7 @@ export default function UpdateSemesterModal({
                                 })
                             }}
                             isLoading={semesterUpdate.isPending}
+                            isDisabled={!isValid}
                         >
                             Save
                         </Button>

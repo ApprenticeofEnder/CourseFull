@@ -9,7 +9,7 @@ import {
     ListboxItem,
     Textarea,
 } from '@nextui-org/react';
-import { Fragment, Key } from 'react';
+import { Fragment, Key, useEffect } from 'react';
 
 import {
     ItemStatus,
@@ -23,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 export default function DeliverableForm({
     deliverable,
     setDeliverable,
+    setIsValid
 }: DeliverableFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.ACTIVE,
@@ -32,7 +33,7 @@ export default function DeliverableForm({
     const {
         register,
         setValue,
-        formState: { errors },
+        formState: { errors, isValid },
         control,
     } = useForm<DeliverableSchema>({
         resolver: zodResolver(deliverableSchema),
@@ -106,6 +107,10 @@ export default function DeliverableForm({
             notes,
         }));
     };
+
+    useEffect(() => {
+        setIsValid(isValid);
+    }, [setIsValid, isValid]);
 
     return (
         <Fragment>

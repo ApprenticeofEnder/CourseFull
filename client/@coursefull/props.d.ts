@@ -69,17 +69,21 @@ export interface FormProps<T> {
     setData: Dispatcher<T>;
 }
 
-export interface CourseFormProps {
+export interface BasicFormProps {
+    setIsValid: Dispatcher<boolean>;
+}
+
+export interface CourseFormProps extends BasicFormProps {
     course: Course;
     setCourse: Dispatcher<Course>;
 }
 
-export interface DeliverableFormProps {
+export interface DeliverableFormProps extends BasicFormProps {
     deliverable: Deliverable;
     setDeliverable: Dispatcher<Deliverable>;
 }
 
-export interface SemesterFormProps {
+export interface SemesterFormProps extends BasicFormProps {
     semester: Semester;
     setSemester: Dispatcher<Semester>;
 }

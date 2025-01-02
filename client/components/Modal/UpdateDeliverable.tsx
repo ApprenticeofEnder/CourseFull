@@ -29,6 +29,8 @@ export default function UpdateDeliverableModal({
     const [updatedDeliverable, setUpdatedDeliverable] =
         useState<Deliverable>(deliverable);
 
+    const [isValid, setIsValid] = useState<boolean>(false);
+
     const queryClient = useQueryClient();
 
     const deliverableUpdate = useMutation({
@@ -61,6 +63,7 @@ export default function UpdateDeliverableModal({
                         <DeliverableForm
                             deliverable={updatedDeliverable}
                             setDeliverable={setUpdatedDeliverable}
+                            setIsValid={setIsValid}
                         />
                     </ModalBody>
                     <ModalFooter>
@@ -73,6 +76,7 @@ export default function UpdateDeliverableModal({
                                 });
                             }}
                             isLoading={deliverableUpdate.isPending}
+                            isDisabled={!isValid}
                         >
                             Save
                         </Button>

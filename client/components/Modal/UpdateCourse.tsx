@@ -28,6 +28,8 @@ export default function UpdateSemesterModal({
 
     const [updatedCourse, setUpdatedCourse] = useState<Course>(course);
 
+    const [isValid, setIsValid] = useState<boolean>(true);
+
     const queryClient = useQueryClient();
 
     const courseUpdate = useMutation({
@@ -56,6 +58,7 @@ export default function UpdateSemesterModal({
                         <CourseForm
                             course={updatedCourse}
                             setCourse={setUpdatedCourse}
+                            setIsValid={setIsValid}
                         />
                     </ModalBody>
                     <ModalFooter>
@@ -68,6 +71,7 @@ export default function UpdateSemesterModal({
                                 })
                             }}
                             isLoading={courseUpdate.isPending}
+                            isDisabled={!isValid}
                         >
                             Save
                         </Button>

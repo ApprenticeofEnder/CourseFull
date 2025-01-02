@@ -32,6 +32,8 @@ export default function CreateDeliverableModal({
         deadline: now(getLocalTimeZone()),
     });
 
+    const [isValid, setIsValid] = useState<boolean>(false);
+
     const queryClient = useQueryClient();
 
     const deliverableCreate = useMutation({
@@ -64,6 +66,7 @@ export default function CreateDeliverableModal({
                         <DeliverableForm
                             deliverable={deliverable}
                             setDeliverable={setDeliverable}
+                            setIsValid={setIsValid}
                         />
                     </ModalBody>
                     <ModalFooter>
@@ -76,6 +79,7 @@ export default function CreateDeliverableModal({
                             }}
                             isLoading={deliverableCreate.isPending}
                             buttonType="confirm"
+                            isDisabled={!isValid}
                         >
                             Create!
                         </Button>

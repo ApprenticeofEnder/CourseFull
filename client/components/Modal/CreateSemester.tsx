@@ -27,6 +27,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { createCourse } from '@services/courseService';
 import { Session } from '@supabase/supabase-js';
 import { ZodError } from 'zod';
+import { courseSchema } from '@lib/validation';
 
 interface SemesterModalBodyProps {
     semesterFormProps: SemesterFormProps;
@@ -80,6 +81,7 @@ export default function CreateSemesterModal({
         status: ItemStatus.NOT_STARTED,
         courses: [],
     });
+    const [isValid, setIsValid] = useState<boolean>(true);
     const [page, setPage] = useState(0);
     const [coursesRemaining, setCoursesRemaining] = useState(
         userData.courses_remaining
@@ -88,9 +90,7 @@ export default function CreateSemesterModal({
     const queryClient = useQueryClient();
 
     const coursesCreate = useMutation({
-        mutationFn: ({
-            id,
-        }: Updated<Semester>) => {
+        mutationFn: ({ id }: Updated<Semester>) => {
             return Promise.all(
                 semester.courses.map((course) => {
                     console.log(course);
@@ -115,7 +115,9 @@ export default function CreateSemesterModal({
 
     const semesterCreate = useMutation({
         mutationFn: (session: Session) => {
-            return createSemester(semester, session) as Promise<Updated<Semester>>;
+            return createSemester(semester, session) as Promise<
+                Updated<Semester>
+            >;
         },
         onSuccess: (semester: Updated<Semester>) => {
             coursesCreate.mutate(semester);
@@ -140,6 +142,15 @@ export default function CreateSemesterModal({
         setCoursesRemaining((coursesRemaining) => coursesRemaining - 1);
     };
 
+    const coursesValid = useMemo(() => {
+        return (
+            semester.courses.filter((course) => {
+                const parseResult = courseSchema.safeParse(course);
+                return parseResult.success;
+            }).length === semester.courses.length
+        );
+    }, [semester.courses]);
+
     return (
         <ModalContent>
             {(onClose) =>
@@ -159,10 +170,12 @@ export default function CreateSemesterModal({
                                     loadingUserData,
                                     semester,
                                     setSemester,
+                                    setIsValid,
                                 }}
                                 semesterFormProps={{
                                     semester,
                                     setSemester,
+                                    setIsValid,
                                 }}
                                 page={page}
                             />
@@ -183,6 +196,7 @@ export default function CreateSemesterModal({
                                                 coursesCreate.isPending ||
                                                 semesterCreate.isPending
                                             }
+                                            isDisabled={!isValid}
                                             buttonType="confirm"
                                         >
                                             Next
@@ -226,6 +240,7 @@ export default function CreateSemesterModal({
                                                 coursesCreate.isPending ||
                                                 semesterCreate.isPending
                                             }
+                                            isDisabled={!coursesValid}
                                             buttonType="confirm"
                                         >
                                             Create!
