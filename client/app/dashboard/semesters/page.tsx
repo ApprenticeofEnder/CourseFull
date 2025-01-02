@@ -210,6 +210,7 @@ function SemesterPage() {
                         ) : (
                             <div className="flex flex-col gap-4">
                                 <h1>Placeholder</h1>
+                                {/* TODO: Fix this placeholder */}
                                 {semesterQuery.data?.courses && (
                                     <p className="text-center">
                                         Click or tap on any course to view more
