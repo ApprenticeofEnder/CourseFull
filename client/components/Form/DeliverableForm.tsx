@@ -1,7 +1,4 @@
-import {
-    DateValue,
-    ZonedDateTime,
-} from '@internationalized/date';
+import { DateValue, ZonedDateTime } from '@internationalized/date';
 import {
     DatePicker,
     Input,
@@ -9,12 +6,9 @@ import {
     ListboxItem,
     Textarea,
 } from '@nextui-org/react';
-import { Fragment, Key, useEffect } from 'react';
+import { Fragment, Key, useEffect, useMemo } from 'react';
 
-import {
-    ItemStatus,
-    DeliverableFormProps,
-} from '@coursefull';
+import { ItemStatus, DeliverableFormProps } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
 import { DeliverableSchema, deliverableSchema } from '@lib/validation';
 import { Controller, useForm } from 'react-hook-form';
@@ -22,7 +16,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function DeliverableForm({
     deliverable,
-    setDeliverable
+    setDeliverable,
+    totalWeight,
 }: DeliverableFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.ACTIVE,
@@ -32,7 +27,9 @@ export default function DeliverableForm({
     const {
         register,
         setValue,
+        setError,
         formState: { errors },
+        trigger,
         control,
     } = useForm<DeliverableSchema>({
         resolver: zodResolver(deliverableSchema),
@@ -68,10 +65,12 @@ export default function DeliverableForm({
     const updateWeight = (weightValue: string) => {
         const weight: number = parseFloat(weightValue);
         setValue('weight', weight, { shouldValidate: true });
-        setDeliverable((deliverable) => ({
-            ...deliverable,
-            weight,
-        }));
+        setDeliverable((deliverable) => {
+            return {
+                ...deliverable,
+                weight,
+            };
+        });
     };
 
     const updateMark = (markValue: string) => {
@@ -106,6 +105,16 @@ export default function DeliverableForm({
             notes,
         }));
     };
+
+    const weightMeta = useMemo(() => {
+        const isOverweight = deliverable.weight + totalWeight > 100;
+        return {
+            isOverweight,
+            message: isOverweight
+                ? "You can't have more than 100 weight in a course!"
+                : undefined,
+        };
+    }, [deliverable.weight, totalWeight]);
 
     return (
         <Fragment>
@@ -162,8 +171,8 @@ export default function DeliverableForm({
                 placeholder="How much is it worth?"
                 {...register('weight')}
                 onValueChange={updateWeight}
-                errorMessage={errors.weight?.message}
-                isInvalid={!!errors.weight}
+                errorMessage={errors.weight?.message || weightMeta.message}
+                isInvalid={!!errors.weight || weightMeta.isOverweight}
                 min={0.1}
                 max={100}
                 step={0.1}

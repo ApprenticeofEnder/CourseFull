@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Fragment, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import {
     ModalContent,
     ModalHeader,
@@ -13,15 +13,21 @@ import DeliverableForm from '@components/Form/DeliverableForm';
 import {
     Deliverable,
     DeliverableDto,
+    SessionProps,
     Updated,
-    UpdateDeliverableModalProps,
 } from '@coursefull';
 import { updateDeliverable } from '@services/deliverableService';
 import { convertDeliverableToDto } from '@lib/dto';
 
+interface UpdateDeliverableModalProps extends SessionProps {
+    deliverable: Updated<Deliverable> | null;
+    totalWeight: number;
+}
+
 export default function UpdateDeliverableModal({
     session,
     deliverable,
+    totalWeight,
 }: UpdateDeliverableModalProps) {
     assert(deliverable);
     assert(deliverable.id);
@@ -49,6 +55,10 @@ export default function UpdateDeliverableModal({
         throw deliverableUpdate.error;
     }
 
+    const isOverweight = useMemo(() => {
+        return updatedDeliverable.weight + totalWeight > 100;
+    }, [updatedDeliverable.weight, totalWeight]);
+
     return (
         <ModalContent>
             {(onClose) => (
@@ -61,6 +71,7 @@ export default function UpdateDeliverableModal({
                         <DeliverableForm
                             deliverable={updatedDeliverable}
                             setDeliverable={setUpdatedDeliverable}
+                            totalWeight={totalWeight}
                         />
                     </ModalBody>
                     <ModalFooter>
@@ -73,6 +84,7 @@ export default function UpdateDeliverableModal({
                                 });
                             }}
                             isLoading={deliverableUpdate.isPending}
+                            isDisabled={isOverweight}
                         >
                             Save
                         </Button>

@@ -156,6 +156,7 @@ export default function CourseDetail({
                 >
                     Enter Course
                 </Button>
+                <Divider></Divider>
                 <Button
                     endContent={<CheckIcon className="h-6 w-6" />}
                     onPressEnd={()=>{
@@ -165,7 +166,6 @@ export default function CourseDetail({
                 >
                     Mark Completed
                 </Button>
-                <Divider></Divider>
                 <Button
                     endContent={<PencilIcon className="h-6 w-6" />}
                     onPressEnd={handleEdit}

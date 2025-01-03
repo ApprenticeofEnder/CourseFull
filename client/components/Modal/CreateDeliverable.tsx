@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { getLocalTimeZone, now } from '@internationalized/date';
 import {
     ModalContent,
@@ -16,11 +16,13 @@ import { convertDeliverableToDto } from '@lib/dto';
 
 interface DeliverableModalProps extends SessionProps {
     api_v1_course_id: string;
+    totalWeight: number;
 }
 
 export default function CreateDeliverableModal({
     session,
     api_v1_course_id,
+    totalWeight,
 }: DeliverableModalProps) {
     const [deliverable, setDeliverable] = useState<Deliverable>({
         name: '',
@@ -53,6 +55,10 @@ export default function CreateDeliverableModal({
         throw deliverableCreate.error;
     }
 
+    const isOverweight = useMemo(() => {
+        return deliverable.weight + totalWeight > 100;
+    }, [deliverable.weight, totalWeight]);
+
     return (
         <ModalContent>
             {(onClose) => (
@@ -62,6 +68,7 @@ export default function CreateDeliverableModal({
                     </ModalHeader>
                     <ModalBody>
                         <DeliverableForm
+                            totalWeight={totalWeight}
                             deliverable={deliverable}
                             setDeliverable={setDeliverable}
                         />
@@ -75,6 +82,7 @@ export default function CreateDeliverableModal({
                                 });
                             }}
                             isLoading={deliverableCreate.isPending}
+                            isDisabled={isOverweight}
                             buttonType="confirm"
                         >
                             Create!

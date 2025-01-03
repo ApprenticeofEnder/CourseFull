@@ -5,7 +5,6 @@ import {
     Semester,
     Course,
     Deliverable,
-    UpdatedDeliverable,
     User,
 } from './data.d';
 import { ZodError } from 'zod';
@@ -52,10 +51,6 @@ export interface DeletableProps {
     handleDelete: () => void;
 }
 
-export interface UpdateDeliverableModalProps extends SessionProps {
-    deliverable: UpdatedDeliverable | null;
-}
-
 export interface AnimateOnScrollProps extends ChildrenProps {
     delay: number;
 }
@@ -81,6 +76,7 @@ export interface CourseFormProps extends BasicFormProps {
 export interface DeliverableFormProps extends BasicFormProps {
     deliverable: Deliverable;
     setDeliverable: Dispatcher<Deliverable>;
+    totalWeight: number;
 }
 
 export interface SemesterFormProps extends BasicFormProps {

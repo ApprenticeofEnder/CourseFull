@@ -101,9 +101,9 @@ export default function DeliverableDetail({
                     className="top-1"
                 />
             </div>
-            <div className="grid grid-cols-3 min-w-fit w-1/2 md:w-1/4 gap-x-4 !text-lg">
+            <div className="grid grid-cols w-full gap-x-4 !text-lg">
                 <h4>Grade:</h4>
-                <h4 className="text-right col-span-2">
+                <h4 className="text-right">
                     <span className="sr-only">Your grade is</span>
                     {mark !== undefined && status == ItemStatus.COMPLETE
                         ? mark.toFixed(1)
@@ -111,23 +111,23 @@ export default function DeliverableDetail({
                     %
                 </h4>
                 <h4>Goal:</h4>
-                <h4 className="text-right col-span-2">
+                <h4 className="text-right">
                     <span className="sr-only">Your goal is</span>
                     {goal!.toFixed(1)} %
                 </h4>
                 <h4>Weight:</h4>
-                <h4 className="text-right col-span-2">
+                <h4 className="text-right">
                     {weight && weight.toFixed(1)} %
                 </h4>
-                <Divider className="my-2 col-span-3"></Divider>
+                <Divider className="my-2 col-span-2"></Divider>
                 <h4>Time Remaining:</h4>
-                <h4 className="text-right col-span-2">{timeRemaining.message}</h4>
+                <h4 className="text-right">{timeRemaining.message}</h4>
                 <h4>Deadline:</h4>
-                <h4 className="text-right col-span-2">
+                <h4 className="text-right">
                     {formatter.format(deadline.toDate())}
                 </h4>
                 <h4>Start Date:</h4>
-                <h4 className="text-right col-span-2">
+                <h4 className="text-right">
                     {formatter.format(start_date.toDate())}
                 </h4>
             </div>

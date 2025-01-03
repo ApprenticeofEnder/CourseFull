@@ -124,6 +124,12 @@ function CoursePage({ session }: SessionProps) {
         });
     }, [courseQuery.data]);
 
+    const totalWeight = useMemo(() => {
+        return deliverables?.reduce((totalWeight, deliverable) => {
+            return totalWeight + deliverable.weight;
+        }, 0);
+    }, [deliverables]);
+
     return session && !courseQuery.isLoading ? (
         <Fragment>
             <div className="flex flex-col gap-2">
@@ -300,6 +306,7 @@ function CoursePage({ session }: SessionProps) {
                 <CreateDeliverableModal
                     session={session}
                     api_v1_course_id={courseId}
+                    totalWeight={totalWeight || 0}
                 />
             </Modal>
             <Modal
@@ -311,7 +318,17 @@ function CoursePage({ session }: SessionProps) {
                 <UpdateDeliverableModal
                     session={session}
                     deliverable={
-                        deliverables?.at(currentDeliverableIndex) || null
+                        (deliverables?.at(
+                            currentDeliverableIndex
+                        ) as Updated<Deliverable>) || null
+                    }
+                    totalWeight={
+                        totalWeight! -
+                            (
+                                deliverables?.at(
+                                    currentDeliverableIndex
+                                ) as Updated<Deliverable>
+                            ).weight || 0
                     }
                 />
             </Modal>
