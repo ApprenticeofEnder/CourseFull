@@ -26,6 +26,7 @@ export default function StatusChip({ status }: StatusChipProps) {
             classNames={{
                 content: 'font-bold',
             }}
+            size='lg'
             color={getChipColour(status)}
             variant="solid"
         >

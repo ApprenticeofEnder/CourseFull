@@ -1,5 +1,5 @@
 'use client';
-import { Image } from '@nextui-org/react';
+import { Divider, Image } from '@nextui-org/react';
 
 import {
     Course,
@@ -15,17 +15,17 @@ import Button from '@components/Button/Button';
 
 import {
     ArrowRightIcon,
+    CheckIcon,
     PencilIcon,
     TrashIcon,
     XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { classNames, courseURL } from '@lib/helpers';
-import { deleteCourse, getCourse } from '@services/courseService';
+import { deleteCourse, getCourse, updateCourse } from '@services/courseService';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import StatusChip from '@components/Chip/StatusChip';
 import { useGradeColours } from '@lib/hooks/ui';
-import assert from 'assert';
 
 interface CourseDetailProps
     extends DeletableProps,
@@ -36,12 +36,14 @@ interface CourseDetailProps
 }
 
 export default function CourseDetail({
-    course: { id, title, course_code, status, goal, grade, api_v1_semester_id },
+    course,
     session,
     handleExit,
     handleEdit,
     handleDelete,
 }: CourseDetailProps) {
+    const { id, title, course_code, status, goal, grade, api_v1_semester_id } =
+        course;
     const queryClient = useQueryClient();
     const { data: courseData, error: courseError } = useQuery({
         queryKey: ['course', id],
@@ -54,6 +56,26 @@ export default function CourseDetail({
         throw courseError;
     }
     const deliverables = courseData?.deliverables || [];
+
+    const courseComplete = useMutation({
+        mutationFn: (course: Course) => {
+            return updateCourse(
+                { ...course, status: ItemStatus.COMPLETE } as Updated<Course>,
+                session
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['semester', api_v1_semester_id!],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ['course', id],
+            });
+        },
+    });
+    if (courseComplete.error) {
+        throw courseComplete.error;
+    }
 
     const courseDelete = useMutation({
         mutationFn: (id: string) => {
@@ -94,7 +116,8 @@ export default function CourseDetail({
         >
             <div className="flex justify-between items-start">
                 <h2 className="text-left flex flex-col justify-start gap-2">
-                    <span>{course_code}</span> <StatusChip status={status} />
+                    <span>{course_code}</span>
+                    <StatusChip status={status} />
                 </h2>
                 <Button
                     endContent={<XMarkIcon className="h-6 w-6" />}
@@ -123,25 +146,35 @@ export default function CourseDetail({
                 <h4>Deliverables:</h4>
                 <h4 className="text-right">{deliverables.length}</h4>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 mt-10">
+            <div className="flex flex-col gap-4 sm:mt-10">
                 <Button
                     endContent={<ArrowRightIcon className="h-6 w-6" />}
                     onPressEnd={() => {
                         router.push(href);
                     }}
-                    className="top-1 w-fit sm:basis-1/3"
+                    className="top-1"
                 >
-                    <span className="hidden sm:inline">Enter Course</span>
+                    Enter Course
                 </Button>
+                <Button
+                    endContent={<CheckIcon className="h-6 w-6" />}
+                    onPressEnd={()=>{
+                        courseComplete.mutate(course);
+                    }}
+                    className="top-1"
+                >
+                    Mark Completed
+                </Button>
+                <Divider></Divider>
                 <Button
                     endContent={<PencilIcon className="h-6 w-6" />}
                     onPressEnd={handleEdit}
-                    className="top-1 w-fit sm:basis-1/3"
+                    className="top-1"
                 >
-                    <span className="hidden sm:inline">Edit</span>
+                    Edit
                 </Button>
                 <Button
-                    className="top-1 w-fit sm:basis-1/3"
+                    className="top-1"
                     endContent={<TrashIcon className="h-6 w-6" />}
                     onPressEnd={() => {
                         courseDelete.mutate(id);
@@ -150,7 +183,7 @@ export default function CourseDetail({
                     buttonType="danger"
                     isLoading={courseDelete.isPending}
                 >
-                    <span className="hidden sm:inline">Delete</span>
+                    Delete
                 </Button>
             </div>
         </div>
