@@ -23,7 +23,6 @@ import {
 import { deleteCourse } from '@services/courseService';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useGradeColours } from '@lib/hooks/ui';
 import StatusChip from '@components/Chip/StatusChip';
 

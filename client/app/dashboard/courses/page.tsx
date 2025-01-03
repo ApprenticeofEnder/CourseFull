@@ -41,6 +41,7 @@ import { ReadableStatus, semesterURL } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { deleteCourse, getCourse } from '@services/courseService';
 import { getSemester } from '@services/semesterService';
+import { useCourseDelete, useCourseQuery } from '@lib/query/course';
 
 function CoursePage({ session }: SessionProps) {
     const router = useRouter();
@@ -55,19 +56,11 @@ function CoursePage({ session }: SessionProps) {
     const updateDeliverableModal = useDisclosure();
     const updateCourseModal = useDisclosure();
 
-    const queryClient = useQueryClient();
-
-    const courseQuery = useQuery({
-        queryKey: ['course', courseId],
-        queryFn: () => {
+    const courseQuery = useCourseQuery(courseId, session, {
+        prefetch: () => {
             setCurrentDeliverableIndex(-1);
-            return getCourse(courseId, session);
         },
-        enabled: session !== null,
     });
-    if (courseQuery.error) {
-        throw courseQuery.error;
-    }
 
     const semesterQuery = useQuery({
         queryKey: ['semester', courseQuery.data?.api_v1_semester_id!],
@@ -85,29 +78,12 @@ function CoursePage({ session }: SessionProps) {
         return semesterURL(courseQuery.data?.api_v1_semester_id);
     }, [courseQuery.data]);
 
-    const courseDelete = useMutation({
-        mutationFn: (id: string) => {
-            const confirmDelete = confirm(
-                `Are you sure you want to delete ${courseQuery.data?.course_code}? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.`
-            );
-            if (!confirmDelete) {
-                return Promise.resolve();
-            }
-            return deleteCourse(id, session);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['semester', courseQuery.data?.api_v1_semester_id!],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['course', courseId],
-            });
-            router.push(semesterLink);
-        },
-    });
-    if (courseDelete.error) {
-        throw courseDelete.error;
-    }
+    const courseDelete = useCourseDelete(
+        courseId,
+        courseQuery.data?.course_code!,
+        courseQuery.data?.api_v1_semester_id!,
+        session
+    );
 
     const deliverables = useMemo(() => {
         return courseQuery.data?.deliverables?.sort((a, b) => {
@@ -123,7 +99,6 @@ function CoursePage({ session }: SessionProps) {
             }
         });
     }, [courseQuery.data]);
-
     const totalWeight = useMemo(() => {
         return deliverables?.reduce((totalWeight, deliverable) => {
             return totalWeight + deliverable.weight;
@@ -188,7 +163,11 @@ function CoursePage({ session }: SessionProps) {
                                 endContent={<TrashIcon className="h-6 w-6" />}
                                 className="text-danger-800 bg-danger-100 data-[hover=true]:bg-danger-200"
                                 onPressEnd={() => {
-                                    courseDelete.mutate(courseId);
+                                    courseDelete.mutate(courseId, {
+                                        onSuccess: () => {
+                                            router.push(semesterLink);
+                                        },
+                                    });
                                 }}
                             >
                                 Delete Course

@@ -38,6 +38,7 @@ export default function CreateCourseModal({
         queryFn: () => {
             return getUserData(session);
         },
+        enabled: session !== null
     });
     if(userResult.error){
         throw userResult.error;

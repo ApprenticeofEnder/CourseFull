@@ -21,11 +21,10 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { classNames, courseURL } from '@lib/helpers';
-import { deleteCourse, getCourse, updateCourse } from '@services/courseService';
 import { useRouter } from 'next/navigation';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import StatusChip from '@components/Chip/StatusChip';
 import { useGradeColours } from '@lib/hooks/ui';
+import { useCourseComplete, useCourseDelete, useCourseQuery } from '@lib/query/course';
 
 interface CourseDetailProps
     extends DeletableProps,
@@ -44,61 +43,17 @@ export default function CourseDetail({
 }: CourseDetailProps) {
     const { id, title, course_code, status, goal, grade, api_v1_semester_id } =
         course;
-    const queryClient = useQueryClient();
-    const { data: courseData, error: courseError } = useQuery({
-        queryKey: ['course', id],
-        queryFn: () => {
-            return getCourse(id, session);
-        },
-        enabled: session !== null,
-    });
-    if (courseError) {
-        throw courseError;
-    }
+    const { data: courseData } = useCourseQuery(id, session);
     const deliverables = courseData?.deliverables || [];
 
-    const courseComplete = useMutation({
-        mutationFn: (course: Course) => {
-            return updateCourse(
-                { ...course, status: ItemStatus.COMPLETE } as Updated<Course>,
-                session
-            );
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['semester', api_v1_semester_id!],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['course', id],
-            });
-        },
-    });
-    if (courseComplete.error) {
-        throw courseComplete.error;
-    }
+    const courseComplete = useCourseComplete(id, api_v1_semester_id!, session);
 
-    const courseDelete = useMutation({
-        mutationFn: (id: string) => {
-            const confirmDelete = confirm(
-                `Are you sure you want to delete ${course_code}? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.`
-            );
-            if (!confirmDelete) {
-                return Promise.resolve();
-            }
-            return deleteCourse(id, session);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['semester', api_v1_semester_id!],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['course', id],
-            });
-        },
-    });
-    if (courseDelete.error) {
-        throw courseDelete.error;
-    }
+    const courseDelete = useCourseDelete(
+        id,
+        course_code,
+        api_v1_semester_id!,
+        session
+    );
 
     const router = useRouter();
 
@@ -159,7 +114,7 @@ export default function CourseDetail({
                 <Divider></Divider>
                 <Button
                     endContent={<CheckIcon className="h-6 w-6" />}
-                    onPressEnd={()=>{
+                    onPressEnd={() => {
                         courseComplete.mutate(course);
                     }}
                     className="top-1"
