@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    ArrowLeftIcon,
     CogIcon,
     PencilIcon,
     PlusIcon,
@@ -15,7 +14,6 @@ import {
     DropdownMenu,
     DropdownTrigger,
     Modal,
-    Spinner,
     Divider,
     useDisclosure,
 } from '@nextui-org/react';
@@ -31,20 +29,18 @@ import {
     Updated,
 } from '@coursefull';
 
+import Loading from '@app/loading';
 import Button from '@components/Button/Button';
 import DeliverableCard from '@components/Card/Deliverable';
+import DeliverableDetail from '@components/Detail/Deliverable';
 import CreateDeliverableModal from '@components/Modal/CreateDeliverable';
 import UpdateCourseModal from '@components/Modal/UpdateCourse';
 import UpdateDeliverableModal from '@components/Modal/UpdateDeliverable';
-
+import Link from '@components/Link';
 import { ReadableStatus, semesterURL } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
-
 import { deleteCourse, getCourse } from '@services/courseService';
-import DeliverableDetail from '@components/Detail/Deliverable';
 import { getSemester } from '@services/semesterService';
-import Link from '@components/Link';
-import Loading from '@app/loading';
 
 function CoursePage({ session }: SessionProps) {
     const router = useRouter();
@@ -64,6 +60,7 @@ function CoursePage({ session }: SessionProps) {
     const courseQuery = useQuery({
         queryKey: ['course', courseId],
         queryFn: () => {
+            setCurrentDeliverableIndex(-1);
             return getCourse(courseId, session);
         },
         enabled: session !== null,
@@ -75,7 +72,6 @@ function CoursePage({ session }: SessionProps) {
     const semesterQuery = useQuery({
         queryKey: ['semester', courseQuery.data?.api_v1_semester_id!],
         queryFn: () => {
-            setCurrentDeliverableIndex(-1);
             return getSemester(courseQuery.data?.api_v1_semester_id!, session);
         },
         enabled: session !== null && !!courseQuery.data,
@@ -216,8 +212,10 @@ function CoursePage({ session }: SessionProps) {
             </div>
             <Divider className="my-2"></Divider>
 
+            {/* TODO: Fix the bug with adding more than 100% weight worth of deliverables */}
+
             {/* MAIN BODY START */}
-            <div className="flex flex-col md:flex-row gap-4 my-4 h-screen">
+            <div className="flex flex-col md:flex-row gap-4 my-4 md:h-screen">
                 <div className="w-full md:basis-1/3 order-2 md:order-1 flex flex-col gap-4">
                     <Button
                         className="top-2 order-last md:order-first"
@@ -257,7 +255,9 @@ function CoursePage({ session }: SessionProps) {
                                     handleEdit={() => {
                                         updateDeliverableModal.onOpen();
                                     }}
-                                    handleExit={() => {}}
+                                    handleExit={() => {
+                                        setCurrentDeliverableIndex(-1);
+                                    }}
                                     handleDelete={() => {
                                         setCurrentDeliverableIndex(-1);
                                     }}

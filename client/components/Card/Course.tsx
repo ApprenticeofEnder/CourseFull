@@ -24,6 +24,8 @@ import { deleteCourse } from '@services/courseService';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useGradeColours } from '@lib/hooks/ui';
+import StatusChip from '@components/Chip/StatusChip';
 
 interface CourseCardProps
     extends Updated<Course>,
@@ -37,42 +39,11 @@ export default function CourseCard({
     status,
     goal,
     grade,
-    api_v1_semester_id,
-    session,
     handleView,
 }: CourseCardProps) {
     const router = useRouter();
-    const queryClient = useQueryClient();
-    const courseDelete = useMutation({
-        mutationFn: (id: string) => {
-            const confirmDelete = confirm(
-                `Are you sure you want to delete ${course_code}? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.`
-            );
-            if (!confirmDelete) {
-                return Promise.resolve();
-            }
-            return deleteCourse(id, session);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['semester', api_v1_semester_id!],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['course', id],
-            });
-        },
-    });
-    if (courseDelete.error) {
-        throw courseDelete.error;
-    }
 
-    const bgColour = useMemo(() => {
-        if (goal === undefined || grade === undefined || grade === 0) {
-            return 'bg-primary-800';
-        } else {
-            return determineGradeBGColour(goal, grade);
-        }
-    }, [goal, grade]);
+    const { bgColour, textColour } = useGradeColours(goal, grade);
 
     const href = courseURL(id);
 
@@ -80,10 +51,11 @@ export default function CourseCard({
         <div
             className={classNames(
                 'card-primary hover:bg-primary-900 hover:cursor-pointer transition-colors flex flex-col gap-4 justify-between',
-                bgColour
+                bgColour,
+                textColour
             )}
             onClick={(e) => {
-                switch(e.detail){
+                switch (e.detail) {
                     case 1:
                         setTimeout(handleView, 200);
                         break;
@@ -95,22 +67,18 @@ export default function CourseCard({
                 }
             }}
         >
-            <div className="flex justify-between">
-                <h4>Goal: {goal}%</h4>
-                <h4>Grade: {(grade && Math.round(grade)) || '--'}%</h4>
-            </div>
-            {/* <div className="flex justify-center">
-                <Image
-                    width={300}
-                    alt="NextUI hero Image"
-                    src={''}
-                    // isLoading={true}
-                />
-            </div> */}
-            <div>
-                <h3 className="text-left">{course_code}</h3>
-                <h4 className="text-left">{title}</h4>
-                <h4 className="text-left italic">{ReadableStatus(status)}</h4>
+            <div className="flex flex-col justify-between gap-2">
+                <div className="flex flex-wrap justify-between">
+                    <h3 className="text-lg font-bold">{course_code}</h3>
+                    <h3 className="text-lg font-bold">
+                        {(grade && Math.round(grade)) || '--'} / {goal} %
+                    </h3>
+                </div>
+
+                <div className="flex justify-between items-end">
+                    <h4>{title}</h4>
+                    <StatusChip status={status}></StatusChip>
+                </div>
             </div>
         </div>
     );

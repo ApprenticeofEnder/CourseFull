@@ -1,4 +1,3 @@
-import { today, getLocalTimeZone, now } from '@internationalized/date';
 import { useDateFormatter } from '@react-aria/i18n';
 
 import Button from '@components/Button/Button';
@@ -10,26 +9,22 @@ import {
     ItemStatus,
     SessionProps,
     Updated,
-    ViewableProps,
 } from '@coursefull';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import {
-    ReadableStatus,
-    classNames,
-    determineGradeBGColour,
-    determineGradeTextColour,
-} from '@lib/helpers';
+import { PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { classNames } from '@lib/helpers';
 import { deleteDeliverable } from '@services/deliverableService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useDeliverableStatus, useGradeColours } from '@lib/hooks/ui';
+import StatusChip from '@components/Chip/StatusChip';
+import { Divider } from '@nextui-org/react';
 
 interface DeliverableDetailProps
     extends DeletableProps,
         EditableProps,
         ExitProps,
         SessionProps {
-            deliverable: Updated<Deliverable>
-        }
+    deliverable: Updated<Deliverable>;
+}
 
 export default function DeliverableDetail({
     deliverable: {
@@ -42,13 +37,17 @@ export default function DeliverableDetail({
         weight,
         mark,
         notes,
-        api_v1_course_id
+        api_v1_course_id,
     },
     session,
     handleEdit,
+    handleExit,
     handleDelete,
 }: DeliverableDetailProps) {
-    let formatter = useDateFormatter({ dateStyle: 'short' });
+    let formatter = useDateFormatter({
+        dateStyle: 'short',
+        timeStyle: 'short',
+    });
 
     const queryClient = useQueryClient();
     const deliverableDelete = useMutation({
@@ -75,107 +74,81 @@ export default function DeliverableDetail({
         throw deliverableDelete.error;
     }
 
-    const {
-        bgColour,
-        textColour
-    } = useMemo(()=>{
-        if (!goal || goal == 0 || status !== ItemStatus.COMPLETE) {
-            return {
-                bgColour: 'bg-primary-800',
-                textColour: 'text-text'
-            }
-        } else {
-            return {
-                bgColour: determineGradeBGColour(goal, mark),
-                textColour: determineGradeTextColour(goal, mark)
-            }
-        }
-    },[goal, mark, status])
+    const { bgColour, textColour } = useGradeColours(goal, mark, status);
 
-    const { statusText, overdue } = useMemo(() => {
-        const incomplete = status !== ItemStatus.COMPLETE;
-        const deadlinePassed = deadline < now(getLocalTimeZone());
-        if (incomplete && deadlinePassed) {
-            return {
-                statusText: 'Overdue',
-                overdue: true,
-            };
-        }
-        return {
-            statusText: ReadableStatus(status),
-            overdue: false,
-        };
-    }, [status, deadline]);
-
-    async function handleDeleteDeliverable() {
-        const confirmDelete = confirm(
-            `Are you sure you want to delete ${name}?`
-        );
-        if (!confirmDelete) {
-            return;
-        }
-        await deleteDeliverable(id!, session);
-        handleDelete();
-    }
+    const { status: deliverableStatus } = useDeliverableStatus(
+        status,
+        deadline
+    );
 
     return (
-        <div className={classNames('card-primary h-full', bgColour)}>
-            <div className="flex flex-col justify-between gap-2">
-                <div className="flex justify-between">
-                    <h3 className="text-lg font-bold">{name}</h3>
-                    <h3 className="text-lg font-bold">
-                        {(status === ItemStatus.COMPLETE &&
-                            mark &&
-                            mark.toFixed(0)) ||
-                            '--'}{' '}
-                        / {goal} %
-                    </h3>
-                </div>
-
-                <div className="flex justify-between items-end">
-                    <div>
-                        <h4>
-                            <b>Status:</b>{' '}
-                            <span
-                                className={classNames(
-                                    overdue ? 'text-danger-400' : ''
-                                )}
-                            >
-                                {statusText}
-                            </span>
-                        </h4>
-                        <h4>
-                            <b>Start Date:</b>{' '}
-                            {formatter.format(start_date.toDate())}
-                        </h4>
-                        <h4>
-                            <b>Deadline:</b>{' '}
-                            {formatter.format(deadline.toDate())}
-                        </h4>
-                        <h4>
-                            <b>Weight:</b> {weight && weight.toFixed(1)}%
-                        </h4>
-                    </div>
-                    <div className="flex gap-2">
-                        <Button
-                            endContent={<PencilIcon className="h-6 w-6" />}
-                            onPressEnd={handleEdit}
-                            className="top-1"
-                        >
-                            <span className="hidden sm:inline">Edit</span>
-                        </Button>
-                        <Button
-                            endContent={<TrashIcon className="h-6 w-6" />}
-                            onPressEnd={()=>{
-                                deliverableDelete.mutate(id);
-                            }}
-                            className="top-1"
-                            buttonType="danger"
-                        >
-                            <span className="hidden sm:inline">Delete</span>
-                        </Button>
-                    </div>
-                </div>
+        <div
+            className={classNames(
+                'card-primary h-full flex flex-col gap-2',
+                bgColour,
+                textColour
+            )}
+        >
+            <div className="flex justify-between items-start">
+                <h2 className="text-left flex flex-col justify-start gap-2">
+                    <span>{name}</span> <StatusChip status={status} />
+                </h2>
+                <Button
+                    endContent={<XMarkIcon className="h-6 w-6" />}
+                    onPressEnd={handleExit}
+                    className="top-1"
+                />
+            </div>
+            <div className="grid grid-cols-3 min-w-fit w-1/2 md:w-1/4 gap-x-4 !text-lg">
+                <h4>Grade:</h4>
+                <h4 className="text-right col-span-2">
+                    <span className="sr-only">Your grade is</span>
+                    {mark !== undefined && status == ItemStatus.COMPLETE
+                        ? mark.toFixed(1)
+                        : '--'}{' '}
+                    %
+                </h4>
+                <h4>Goal:</h4>
+                <h4 className="text-right col-span-2">
+                    <span className="sr-only">Your goal is</span>
+                    {goal!.toFixed(1)} %
+                </h4>
+                <h4>Weight:</h4>
+                <h4 className="text-right col-span-2">
+                    {weight && weight.toFixed(1)} %
+                </h4>
+                <Divider className="my-2 col-span-3"></Divider>
+                <h4>Start Date:</h4>
+                <h4 className="text-right col-span-2">
+                    {formatter.format(start_date.toDate())}
+                </h4>
+                <h4>Deadline:</h4>
+                <h4 className="text-right col-span-2">
+                    {formatter.format(deadline.toDate())}
+                </h4>
+            </div>
+            <Divider className="my-2"></Divider>
+            <div>
+                {notes || "No notes for this deliverable. Might be a good time to add anything important!"}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 mt-10">
+                <Button
+                    endContent={<PencilIcon className="h-6 w-6" />}
+                    onPressEnd={handleEdit}
+                    className="top-1 w-fit sm:basis-1/2"
+                >
+                    <span className="hidden sm:inline">Edit</span>
+                </Button>
+                <Button
+                    endContent={<TrashIcon className="h-6 w-6" />}
+                    onPressEnd={() => {
+                        deliverableDelete.mutate(id);
+                    }}
+                    className="top-1 w-fit sm:basis-1/2"
+                    buttonType="danger"
+                >
+                    <span className="hidden sm:inline">Delete</span>
+                </Button>
             </div>
         </div>
     );

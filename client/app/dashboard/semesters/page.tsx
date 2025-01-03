@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    ArrowLeftIcon,
     CogIcon,
     PencilIcon,
     PlusIcon,
@@ -16,12 +15,12 @@ import {
     DropdownMenu,
     DropdownTrigger,
     Modal,
-    Spinner,
     useDisclosure,
 } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, Suspense, useEffect, useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import assert from 'assert';
 
 import Button from '@components/Button/Button';
 import Link from '@components/Link';
@@ -35,12 +34,18 @@ import {
     SessionProps,
     Updated,
 } from '@coursefull';
-import { ReadableStatus } from '@lib/helpers';
+import {
+    classNames,
+    determineGradeTextColour,
+    ReadableStatus,
+} from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { deleteSemester, getSemester } from '@services/semesterService';
 import CourseCard from '@components/Card/Course';
 import CourseDetail from '@components/Detail/Course';
 import Loading from '@app/loading';
+import StatusChip from '@components/Chip/StatusChip';
+import { useGradeColours } from '@lib/hooks/ui';
 
 function SemesterPage({ session }: SessionProps) {
     const router = useRouter();
@@ -56,7 +61,11 @@ function SemesterPage({ session }: SessionProps) {
 
     const queryClient = useQueryClient();
 
-    const semesterQuery = useQuery({
+    const {
+        data: semesterData,
+        error: semesterError,
+        isLoading: semesterLoading,
+    } = useQuery({
         queryKey: ['semester', semesterId],
         queryFn: () => {
             setCurrentCourseIndex(-1);
@@ -64,14 +73,14 @@ function SemesterPage({ session }: SessionProps) {
         },
         enabled: session !== null,
     });
-    if (semesterQuery.error) {
-        throw semesterQuery.error;
+    if (semesterError) {
+        throw semesterError;
     }
 
     const semesterDelete = useMutation({
         mutationFn: (id: string) => {
             const confirmDelete = confirm(
-                `Are you sure you want to delete ${semesterQuery.data?.name}? All of its courses will be deleted, and you will not get a refund for the course tickets you used to buy them.`
+                `Are you sure you want to delete ${semesterData?.name}? All of its courses will be deleted, and you will not get a refund for the course tickets you used to buy them.`
             );
             if (!confirmDelete) {
                 return Promise.resolve();
@@ -92,7 +101,35 @@ function SemesterPage({ session }: SessionProps) {
         throw semesterDelete.error;
     }
 
-    return !semesterQuery.isLoading ? (
+    const average: number | undefined = useMemo(() => {
+        if (!semesterData) {
+            return undefined;
+        }
+        const gradedCourses = semesterData.courses.filter(
+            (course) => !!course.goal && !!course.grade
+        );
+        if (gradedCourses.length <= 0) {
+            return undefined;
+        }
+        return (
+            gradedCourses.reduce((sum, course) => {
+                return sum + course.grade!;
+            }, 0) / gradedCourses.length
+        );
+    }, [semesterData]);
+
+    const { textColour: averageColour } = useGradeColours(
+        semesterData?.goal,
+        average
+    );
+
+    if (semesterLoading) {
+        return <Loading message="Loading semester..." />;
+    }
+
+    assert(semesterData);
+
+    return (
         <Fragment>
             <div className="flex flex-col gap-2">
                 <div className="flex gap-4 justify-between items-end">
@@ -113,9 +150,7 @@ function SemesterPage({ session }: SessionProps) {
                     </Breadcrumbs>
                 </div>
                 <div className="grow flex justify-between">
-                    <h2 className="text-left font-bold">
-                        {semesterQuery.data?.name}
-                    </h2>
+                    <h2 className="text-left font-bold">{semesterData.name}</h2>
                     <Dropdown>
                         <DropdownTrigger>
                             <Button
@@ -152,19 +187,11 @@ function SemesterPage({ session }: SessionProps) {
                         </DropdownMenu>
                     </Dropdown>
                 </div>
-                <div className="flex justify-between">
-                    <h3 className="text-left basis-1/2">
-                        {ReadableStatus(
-                            semesterQuery.data?.status || ItemStatus.NOT_STARTED
-                        )}
-                    </h3>
-                    <h3>Goal: {semesterQuery.data?.goal}%</h3>
-                </div>
             </div>
             <Divider className="my-2"></Divider>
 
             {/* MAIN BODY START */}
-            <div className="flex flex-col md:flex-row gap-4 my-4 h-screen">
+            <div className="flex flex-col md:flex-row gap-4 my-4 md:h-screen">
                 <div className="w-full md:basis-1/3 order-2 md:order-1 flex flex-col gap-4">
                     <Button
                         className="top-2 order-last md:order-first"
@@ -175,30 +202,28 @@ function SemesterPage({ session }: SessionProps) {
                         Add Course
                     </Button>
                     <Divider className="collapse md:visible mt-2"></Divider>
-                    {semesterQuery.data && semesterQuery.data.courses ? (
-                        semesterQuery.data.courses.map(
-                            (course: Course, index) => (
-                                <CourseCard
-                                    {...(course as Updated<Course>)}
-                                    session={session}
-                                    handleView={() => {
-                                        setCurrentCourseIndex(index);
-                                    }}
-                                    key={course.id}
-                                />
-                            )
-                        )
+                    {semesterData?.courses && semesterData?.courses.length ? (
+                        semesterData.courses.map((course: Course, index) => (
+                            <CourseCard
+                                {...(course as Updated<Course>)}
+                                session={session}
+                                handleView={() => {
+                                    setCurrentCourseIndex(index);
+                                }}
+                                key={course.id}
+                            />
+                        ))
                     ) : (
                         <p>No courses yet. Start by adding one!</p>
                     )}
                 </div>
                 <div className="w-full md:h-full md:basis-2/3 order-1 md:flex-1 md:order-2 flex flex-col gap-4">
                     <div className="md:flex-grow">
-                        {currentCourseIndex >= 0 && semesterQuery.data ? (
+                        {currentCourseIndex >= 0 && semesterData ? (
                             <div className="h-full">
                                 <CourseDetail
                                     course={
-                                        semesterQuery.data?.courses.at(
+                                        semesterData?.courses.at(
                                             currentCourseIndex
                                         ) as Updated<Course>
                                     }
@@ -206,18 +231,44 @@ function SemesterPage({ session }: SessionProps) {
                                     handleEdit={() => {
                                         updateCourseModal.onOpen();
                                     }}
-                                    handleExit={() => {}}
+                                    handleExit={() => {
+                                        setCurrentCourseIndex(-1);
+                                    }}
                                     handleDelete={() => {
                                         setCurrentCourseIndex(-1);
                                     }}
                                 />
                             </div>
                         ) : (
-                            <div className="flex flex-col gap-4">
-                                <h1>Placeholder</h1>
-                                {/* TODO: Fix this placeholder */}
-                                {semesterQuery.data?.courses && (
-                                    <p className="text-center">
+                            <div className="flex flex-col gap-2 p-2">
+                                <h2 className="text-left flex flex-col items-start gap-2">
+                                    <span>{semesterData.name}</span>
+                                    <StatusChip status={semesterData.status} />
+                                </h2>
+                                <div className="grid grid-cols-2 min-w-fit w-1/4 !text-lg">
+                                    <h4>Average:</h4>
+                                    <h4
+                                        className={classNames(
+                                            averageColour,
+                                            'text-right'
+                                        )}
+                                    >
+                                        {average === undefined
+                                            ? '--'
+                                            : average.toFixed(1)}{' '}
+                                        %
+                                    </h4>
+                                    <h4>Goal:</h4>
+                                    <h4 className="text-right">
+                                        {semesterData.goal.toFixed(1)} %
+                                    </h4>
+                                    <h4>Courses:</h4>
+                                    <h4 className="text-right">
+                                        {semesterData.courses.length}
+                                    </h4>
+                                </div>
+                                {semesterData?.courses && (
+                                    <p>
                                         Click or tap on any course to view more
                                         details.
                                     </p>
@@ -245,8 +296,7 @@ function SemesterPage({ session }: SessionProps) {
                 <UpdateCourseModal
                     session={session}
                     course={
-                        semesterQuery.data?.courses.at(currentCourseIndex) ||
-                        null
+                        semesterData?.courses.at(currentCourseIndex) || null
                     }
                 />
             </Modal>
@@ -257,13 +307,11 @@ function SemesterPage({ session }: SessionProps) {
             >
                 <UpdateSemesterModal
                     session={session}
-                    semester={semesterQuery.data!}
+                    semester={semesterData!}
                 />
                 <></>
             </Modal>
         </Fragment>
-    ) : (
-        <Loading message="Loading semester..." />
     );
 }
 

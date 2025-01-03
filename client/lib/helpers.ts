@@ -24,6 +24,8 @@ export function ReadableStatus(status: ItemStatus) {
             return 'Active';
         case ItemStatus.COMPLETE:
             return 'Completed';
+        case ItemStatus.OVERDUE:
+            return 'Overdue';
     }
 }
 
@@ -61,11 +63,11 @@ export function onStatusChanged(
 
 export function determineGradeTextColour(goal: number, grade: number) {
     if (grade >= goal) {
-        return 'text-success-500';
+        return 'text-success-800';
     } else if (goal - grade <= 5) {
-        return 'text-warning-500';
+        return 'text-warning-800';
     } else {
-        return 'text-danger-400';
+        return 'text-danger-800';
     }
 }
 

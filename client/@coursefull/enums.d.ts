@@ -24,4 +24,5 @@ export enum ItemStatus {
     NOT_STARTED = 'not_started',
     ACTIVE = 'active',
     COMPLETE = 'complete',
+    OVERDUE = 'overdue',
 }

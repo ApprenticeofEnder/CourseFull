@@ -70,7 +70,7 @@ export interface FormProps<T> {
 }
 
 export interface BasicFormProps {
-    setIsValid: Dispatcher<boolean>;
+    setIsValid?: Dispatcher<boolean>;
 }
 
 export interface CourseFormProps extends BasicFormProps {

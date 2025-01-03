@@ -21,6 +21,8 @@ import {
 import { deleteDeliverable } from '@services/deliverableService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { useDeliverableStatus, useGradeColours } from '@lib/hooks/ui';
+import StatusChip from '@components/Chip/StatusChip';
 
 interface DeliverableCardProps
     extends Updated<Deliverable>,
@@ -42,37 +44,22 @@ export default function DeliverableCard({
 }: DeliverableCardProps) {
     let formatter = useDateFormatter({ dateStyle: 'short' });
 
-    const { bgColour, textColour } = useMemo(() => {
-        if (!goal || goal == 0 || status !== ItemStatus.COMPLETE) {
-            return {
-                bgColour: 'bg-primary-800',
-                textColour: 'text-text',
-            };
-        } else {
-            return {
-                bgColour: determineGradeBGColour(goal, mark),
-                textColour: determineGradeTextColour(goal, mark),
-            };
-        }
-    }, [goal, mark, status]);
+    const { bgColour, textColour } = useGradeColours(goal, mark, status);
 
-    const { statusText, overdue } = useMemo(() => {
-        const incomplete = status !== ItemStatus.COMPLETE;
-        const deadlinePassed = deadline < now(getLocalTimeZone());
-        if (incomplete && deadlinePassed) {
-            return {
-                statusText: 'Overdue',
-                overdue: true,
-            };
-        }
-        return {
-            statusText: ReadableStatus(status),
-            overdue: false,
-        };
-    }, [status, deadline]);
+    const { status: deliverableStatus } = useDeliverableStatus(
+        status,
+        deadline
+    );
 
     return (
-        <div className={classNames('card-primary hover:bg-primary-900 hover:cursor-pointer transition-colors', bgColour)} onClick={handleView}>
+        <div
+            className={classNames(
+                'card-primary hover:bg-primary-900 hover:cursor-pointer transition-colors',
+                bgColour,
+                textColour
+            )}
+            onClick={handleView}
+        >
             <div className="flex flex-col justify-between gap-2">
                 <div className="flex flex-wrap justify-between">
                     <h3 className="text-lg font-bold">{name}</h3>
@@ -86,18 +73,10 @@ export default function DeliverableCard({
                 </div>
 
                 <div className="flex justify-between items-end">
-                    <div>
-                        <h4
-                            className={classNames(
-                                overdue ? 'text-danger-400' : ''
-                            )}
-                        >
-                            {statusText}
-                        </h4>
-                        <h4>
-                            <b>Deadline:</b> {formatter.format(deadline.toDate())}
-                        </h4>
-                    </div>
+                    <h4>
+                        <b>Deadline:</b> {formatter.format(deadline.toDate())}
+                    </h4>
+                    <StatusChip status={deliverableStatus}></StatusChip>
                 </div>
             </div>
         </div>

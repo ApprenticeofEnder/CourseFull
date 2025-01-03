@@ -7,7 +7,7 @@ import {
     Spinner,
     useDisclosure,
 } from '@nextui-org/react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
@@ -28,6 +28,7 @@ import {
 } from '@coursefull';
 import { getProgress, getUserData } from '@services/userService';
 import Loading from '@app/loading';
+import StatusChip from '@components/Chip/StatusChip';
 
 function renderAverage(item: SemesterProgressType | null | undefined): string {
     if (!item) {
@@ -81,15 +82,7 @@ function renderSemester(item: SemesterProgressType) {
             textValue={`${item.average} % out of ${item.goal} %`}
         >
             <div className="hidden md:flex md:justify-center">
-                <Chip
-                    classNames={{
-                        content: 'font-bold',
-                    }}
-                    color={getChipColour(item.status)}
-                    variant="solid"
-                >
-                    {ReadableStatus(item.status)}
-                </Chip>
+                <StatusChip status={item.status} />
             </div>
         </ListboxItem>
     );
