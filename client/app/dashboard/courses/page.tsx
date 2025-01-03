@@ -218,8 +218,6 @@ function CoursePage({ session }: SessionProps) {
             </div>
             <Divider className="my-2"></Divider>
 
-            {/* TODO: Fix the bug with adding more than 100% weight worth of deliverables */}
-
             {/* MAIN BODY START */}
             <div className="flex flex-col md:flex-row gap-4 my-4 md:h-screen">
                 <div className="w-full md:basis-1/3 order-2 md:order-1 flex flex-col gap-4">
