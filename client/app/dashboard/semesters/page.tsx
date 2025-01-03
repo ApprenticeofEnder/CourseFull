@@ -28,17 +28,22 @@ import Link from '@components/Link';
 import CreateCourseModal from '@components/Modal/CreateCourse';
 import UpdateCourseModal from '@components/Modal/UpdateCourse';
 import UpdateSemesterModal from '@components/Modal/UpdateSemester';
-import { Course, Endpoints, ItemStatus, Updated } from '@coursefull';
+import {
+    Course,
+    Endpoints,
+    ItemStatus,
+    SessionProps,
+    Updated,
+} from '@coursefull';
 import { ReadableStatus } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { deleteSemester, getSemester } from '@services/semesterService';
 import CourseCard from '@components/Card/Course';
 import CourseDetail from '@components/Detail/Course';
+import Loading from '@app/loading';
 
-function SemesterPage() {
+function SemesterPage({ session }: SessionProps) {
     const router = useRouter();
-    const { session, loadingSession } = useSession()!;
-    useProtectedEndpoint(session, loadingSession, router);
 
     const searchParams = useSearchParams();
     const semesterId = searchParams.get('id') || '';
@@ -83,11 +88,11 @@ function SemesterPage() {
             router.push(Endpoints.DASHBOARD);
         },
     });
-    if(semesterDelete.error) {
+    if (semesterDelete.error) {
         throw semesterDelete.error;
     }
 
-    return session && !semesterQuery.isLoading ? (
+    return !semesterQuery.isLoading ? (
         <Fragment>
             <div className="flex flex-col gap-2">
                 <div className="flex gap-4 justify-between items-end">
@@ -139,7 +144,7 @@ function SemesterPage() {
                                 endContent={<TrashIcon className="h-6 w-6" />}
                                 className="text-danger-800 bg-danger-100 data-[hover=true]:bg-danger-200"
                                 onPressEnd={() => {
-                                    semesterDelete.mutate(semesterId)
+                                    semesterDelete.mutate(semesterId);
                                 }}
                             >
                                 Delete Semester
@@ -258,18 +263,20 @@ function SemesterPage() {
             </Modal>
         </Fragment>
     ) : (
-        <div className="flex justify-center">
-            <div className="flex flex-col">
-                <Spinner label="Loading..." size="lg" />
-            </div>
-        </div>
+        <Loading message="Loading semester..." />
     );
 }
 
 export default function SemesterDashboard() {
+    const { session, loadingSession } = useSession();
+    useProtectedEndpoint(session, loadingSession);
     return (
         <Suspense>
-            <SemesterPage />
+            {session ? (
+                <SemesterPage session={session} />
+            ) : (
+                <Loading message="Loading semester..." />
+            )}
         </Suspense>
     );
 }

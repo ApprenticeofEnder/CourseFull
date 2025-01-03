@@ -4,7 +4,7 @@ import {
     User,
     SemesterProgressType,
 } from '@coursefull';
-import { apiHandler, authenticatedApiHandler } from '@lib/helpers';
+import { apiHandler, authenticatedApiHandler, sleep } from '@lib/helpers';
 import { supabase } from '@lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import { api } from '@services';

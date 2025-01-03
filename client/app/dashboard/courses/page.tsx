@@ -27,6 +27,7 @@ import {
     Deliverable,
     Endpoints,
     ItemStatus,
+    SessionProps,
     Updated,
 } from '@coursefull';
 
@@ -43,15 +44,13 @@ import { deleteCourse, getCourse } from '@services/courseService';
 import DeliverableDetail from '@components/Detail/Deliverable';
 import { getSemester } from '@services/semesterService';
 import Link from '@components/Link';
+import Loading from '@app/loading';
 
-function CoursePage() {
+function CoursePage({ session }: SessionProps) {
     const router = useRouter();
 
     const [currentDeliverableIndex, setCurrentDeliverableIndex] =
         useState<number>(-1);
-
-    const { session, loadingSession } = useSession()!;
-    useProtectedEndpoint(session, loadingSession, router);
 
     const searchParams = useSearchParams();
     const courseId = searchParams.get('id') || '';
@@ -250,7 +249,9 @@ function CoursePage() {
                             <div className="h-full">
                                 <DeliverableDetail
                                     deliverable={
-                                        deliverables.at(currentDeliverableIndex) as Updated<Deliverable>
+                                        deliverables.at(
+                                            currentDeliverableIndex
+                                        ) as Updated<Deliverable>
                                     }
                                     session={session}
                                     handleEdit={() => {
@@ -281,7 +282,9 @@ function CoursePage() {
                                         Click or tap on any deliverable to view
                                         more details.
                                     </p>
-                                ) : <></>}
+                                ) : (
+                                    <></>
+                                )}
                             </div>
                         )}
                     </div>
@@ -307,7 +310,9 @@ function CoursePage() {
             >
                 <UpdateDeliverableModal
                     session={session}
-                    deliverable={deliverables?.at(currentDeliverableIndex) || null}
+                    deliverable={
+                        deliverables?.at(currentDeliverableIndex) || null
+                    }
                 />
             </Modal>
             <Modal
@@ -323,18 +328,20 @@ function CoursePage() {
             </Modal>
         </Fragment>
     ) : (
-        <div className="flex justify-center">
-            <div className="flex flex-col">
-                <Spinner label="Loading..." size="lg" />
-            </div>
-        </div>
+        <Loading message="Loading course..." />
     );
 }
 
 export default function CourseDashboard() {
+    const { session, loadingSession } = useSession();
+    useProtectedEndpoint(session, loadingSession);
     return (
         <Suspense>
-            <CoursePage />
+            {session ? (
+                <CoursePage session={session} />
+            ) : (
+                <Loading message="Loading course..." />
+            )}
         </Suspense>
     );
 }

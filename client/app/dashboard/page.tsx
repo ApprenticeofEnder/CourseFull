@@ -1,6 +1,5 @@
 'use client';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
 
 import { useSession, useProtectedEndpoint } from '@lib/supabase/SessionContext';
 
@@ -11,13 +10,12 @@ const Dashboard = dynamic(() => import('@components/Dashboard/Dashboard'), {
 });
 
 export default function DashboardPage() {
-    const router = useRouter();
     const { session, loadingSession } = useSession();
-    useProtectedEndpoint(session, loadingSession, router);
+    useProtectedEndpoint(session, loadingSession);
     return (
         <div className="flex flex-col justify-center w-full">
             {loadingSession ? (
-                <Loading message="Good to see you!" />
+                <Loading message="Hey there!" />
             ) : session ? (
                 <Dashboard session={session} />
             ) : (

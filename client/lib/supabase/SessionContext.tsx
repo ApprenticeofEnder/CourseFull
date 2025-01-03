@@ -12,6 +12,7 @@ import {
 } from 'react';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { Endpoints } from '@coursefull';
+import { useRouter } from 'next/navigation';
 
 export const SessionContext = createContext<{
     session: Session | null;
@@ -75,9 +76,9 @@ export function useSession() {
 
 export function useProtectedEndpoint(
     session: Session | null,
-    loadingSession: boolean,
-    router: AppRouterInstance
+    loadingSession: boolean
 ) {
+    const router = useRouter();
     useEffect(() => {
         if (!loadingSession && !session) {
             router.push(Endpoints.ROOT);

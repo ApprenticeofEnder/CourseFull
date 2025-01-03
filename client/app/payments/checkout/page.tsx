@@ -16,20 +16,13 @@ import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import Loading from '@app/loading';
 
 export default function Checkout() {
-    const [loading, setLoading] = useState(true);
     const router = useRouter();
 
     const { cart, dispatch } = useCart()!;
     const [error, setError] = useState<any>(null);
 
     const { session, loadingSession } = useSession()!;
-    useProtectedEndpoint(session, loadingSession, router);
-
-    useEffect(() => {
-        if (!loadingSession && session) {
-            setLoading(false);
-        }
-    }, [session, loadingSession]);
+    useProtectedEndpoint(session, loadingSession);
 
     const addQuantity = (cartItem: CartItem, quantity: number) => {
         dispatch({

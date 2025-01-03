@@ -11,10 +11,9 @@ import AccountDetails from '@components/Settings/AccountDetails';
 import Security from '@components/Settings/Security';
 
 export default function SettingsPage() {
-    const router = useRouter();
     const { session, loadingSession } = useSession()!;
 
-    useProtectedEndpoint(session, loadingSession, router);
+    useProtectedEndpoint(session, loadingSession);
     return (
         <div>
             <div>

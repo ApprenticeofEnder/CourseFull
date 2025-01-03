@@ -27,6 +27,7 @@ import {
     User,
 } from '@coursefull';
 import { getProgress, getUserData } from '@services/userService';
+import Loading from '@app/loading';
 
 function renderAverage(item: SemesterProgressType | null | undefined): string {
     if (!item) {
@@ -138,7 +139,7 @@ export default function Dashboard({ session }: SessionProps) {
         <div className="h-full">
             <h1>Hey, {session.user.user_metadata.first_name}!</h1>
             {loadingProgress ? (
-                <Spinner label="Loading Progress..." />
+                <Loading message="Loading Progress..." />
             ) : (
                 <div className="flex my-5 sm:mx-auto w-full gap-8 lg:h-1/2 lg:max-h-64 flex-col sm:flex-row mb-10">
                     <div

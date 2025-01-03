@@ -5,17 +5,15 @@ import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { Product } from '@coursefull';
 import { getProducts } from '@services/productsService';
 import { Spinner } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 export default function ProductsPage() {
     const [loadingProducts, setLoadingProducts] = useState(true);
     const [products, setProducts] = useState<Product[]>([]);
 
-    const router = useRouter();
     const [error, setError] = useState<any>(null);
     const { session, loadingSession } = useSession()!;
 
-    useProtectedEndpoint(session, loadingSession, router);
+    useProtectedEndpoint(session, loadingSession);
 
     useEffect(() => {
         if (!session) {
@@ -37,7 +35,6 @@ export default function ProductsPage() {
             mounted = false;
         };
     }, [session]);
-    
     if(error){
         throw error;
     }
