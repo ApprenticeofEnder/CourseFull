@@ -108,7 +108,7 @@ export const semesterSchema = z.object({
 
 export type SemesterSchema = z.infer<typeof semesterSchema>;
 
-const loginSchema = z.object({
+export const loginSchema = z.object({
     email: z.string().email(),
     password: z.string(),
 });

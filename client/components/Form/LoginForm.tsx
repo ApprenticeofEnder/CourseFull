@@ -1,62 +1,42 @@
 'use client';
 
 import { Input } from '@nextui-org/react';
-import { Fragment, useState } from 'react';
-import { z } from 'zod';
+import { Fragment } from 'react';
 
 import { Endpoints } from '@coursefull';
 import { login } from '@services/userService';
 import Button from '@components/Button/Button';
 import LinkButton from '@components/Button/LinkButton';
 import { useRouter } from 'next/navigation';
-
-interface LoginFormData {
-    email: string;
-    password: string;
-}
-
-const LoginFormSchema = z.object({
-    email: z.string().email(),
-    password: z.string(),
-});
+import { LoginSchema, loginSchema } from '@lib/validation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 
 export default function LoginForm() {
     const router = useRouter();
-    const [error, setError] = useState<any>(null);
-
-    const [loginFormState, setLoginFormState] = useState<LoginFormData>({
-        email: '',
-        password: '',
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isValid },
+    } = useForm<LoginSchema>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+        },
     });
 
-    function updatePassword(password: string) {
-        setLoginFormState((currentState) => ({
-            ...currentState,
-            password,
-        }));
-    }
-
-    function updateEmail(email: string) {
-        setLoginFormState((currentState) => ({
-            ...currentState,
-            email,
-        }));
-    }
-    const [loading, setLoading] = useState(false);
-
-    async function handleLogin() {
-        setLoading(true);
-        try {
-            const { email, password } = LoginFormSchema.parse(loginFormState);
-            await login(email, password);
+    const loginMutation = useMutation({
+        mutationFn: ({ email, password }: LoginSchema) => {
+            return login(email, password);
+        },
+        onSuccess: () => {
             router.push(Endpoints.DASHBOARD);
-        } catch (err) {
-            setError(err);
-        }
-    }
-
-    if (error) {
-        throw error;
+        },
+    });
+    if (loginMutation.error) {
+        throw loginMutation.error;
     }
 
     return (
@@ -65,21 +45,24 @@ export default function LoginForm() {
                 type="email"
                 label="Email"
                 placeholder="Email"
-                value={loginFormState.email}
-                onValueChange={updateEmail}
+                {...register('email')}
+                isInvalid={!!errors.email}
+                errorMessage={errors.email?.message}
                 data-testid="login-email"
             />
             <Input
                 type="password"
                 label="Password"
                 placeholder="Password"
-                value={loginFormState.password}
-                onValueChange={updatePassword}
+                {...register('password')}
+                isInvalid={!!errors.password}
+                errorMessage={errors.password?.message}
                 data-testid="login-password"
             />
             <div className="flex gap-4">
                 <LinkButton
                     className="basis-1/2 top-1"
+                    isLoading={loginMutation.isPending}
                     href={Endpoints.SIGN_UP}
                     data-testid="signup-nav-button"
                 >
@@ -87,12 +70,18 @@ export default function LoginForm() {
                 </LinkButton>
                 <Button
                     className="basis-1/2 top-1"
-                    onClick={handleLogin}
-                    isLoading={loading}
+                    onClick={() => {
+                        const submitForm = handleSubmit((data: LoginSchema) => {
+                            loginMutation.mutate(data);
+                        });
+                        submitForm();
+                    }}
+                    isLoading={loginMutation.isPending}
+                    isDisabled={!isValid}
                     buttonType="confirm"
                     data-testid="login-button"
                 >
-                    {loading ? 'Logging in...' : 'Log In'}
+                    {loginMutation.isPending ? 'Logging in...' : 'Log In'}
                 </Button>
             </div>
         </Fragment>

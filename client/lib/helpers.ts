@@ -170,3 +170,7 @@ export const priceFormatter = new Intl.NumberFormat('en-CA', {
     style: 'currency',
     currency: 'CAD',
 });
+
+export async function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
