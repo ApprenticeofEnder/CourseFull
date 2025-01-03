@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
     ModalContent,
@@ -30,7 +30,6 @@ export default function CreateCourseModal({
         status: ItemStatus.ACTIVE,
         deliverables: [],
     });
-    const [isValid, setIsValid] = useState<boolean>(false);
 
     const queryClient = useQueryClient();
 
@@ -74,7 +73,7 @@ export default function CreateCourseModal({
                             You have {userResult.data?.courses_remaining || 0} course(s) remaining on
                             your account.
                         </p>
-                        <CourseForm course={course} setCourse={setCourse} setIsValid={setIsValid} />
+                        <CourseForm course={course} setCourse={setCourse} />
                     </ModalBody>
                     <ModalFooter>
                         <Button onPress={onClose}>Close</Button>
@@ -85,7 +84,6 @@ export default function CreateCourseModal({
                                 })
                             }}
                             isLoading={courseCreate.isPending}
-                            isDisabled={!isValid}
                             buttonType="confirm"
                         >
                             Create!

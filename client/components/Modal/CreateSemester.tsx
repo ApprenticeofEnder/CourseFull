@@ -81,7 +81,6 @@ export default function CreateSemesterModal({
         status: ItemStatus.NOT_STARTED,
         courses: [],
     });
-    const [isValid, setIsValid] = useState<boolean>(true);
     const [page, setPage] = useState(0);
     const [coursesRemaining, setCoursesRemaining] = useState(
         userData.courses_remaining
@@ -170,12 +169,10 @@ export default function CreateSemesterModal({
                                     loadingUserData,
                                     semester,
                                     setSemester,
-                                    setIsValid,
                                 }}
                                 semesterFormProps={{
                                     semester,
                                     setSemester,
-                                    setIsValid,
                                 }}
                                 page={page}
                             />
@@ -196,7 +193,6 @@ export default function CreateSemesterModal({
                                                 coursesCreate.isPending ||
                                                 semesterCreate.isPending
                                             }
-                                            isDisabled={!isValid}
                                             buttonType="confirm"
                                         >
                                             Next

@@ -22,8 +22,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function DeliverableForm({
     deliverable,
-    setDeliverable,
-    setIsValid
+    setDeliverable
 }: DeliverableFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.ACTIVE,
@@ -33,7 +32,7 @@ export default function DeliverableForm({
     const {
         register,
         setValue,
-        formState: { errors, isValid },
+        formState: { errors },
         control,
     } = useForm<DeliverableSchema>({
         resolver: zodResolver(deliverableSchema),
@@ -107,10 +106,6 @@ export default function DeliverableForm({
             notes,
         }));
     };
-
-    useEffect(() => {
-        setIsValid(isValid);
-    }, [setIsValid, isValid]);
 
     return (
         <Fragment>

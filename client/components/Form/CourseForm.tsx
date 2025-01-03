@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { courseSchema, CourseSchema } from '@lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-export default function CourseForm({ course, setCourse, setIsValid }: CourseFormProps) {
+export default function CourseForm({ course, setCourse }: CourseFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.ACTIVE,
         ItemStatus.COMPLETE,
@@ -44,10 +44,6 @@ export default function CourseForm({ course, setCourse, setIsValid }: CourseForm
             }));
         });
     };
-
-    useEffect(() => {
-        setIsValid(isValid);
-    }, [setIsValid, isValid])
 
     return (
         <Fragment>

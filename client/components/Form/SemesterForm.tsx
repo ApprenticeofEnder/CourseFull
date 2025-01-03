@@ -9,8 +9,7 @@ import { semesterSchema, SemesterSchema } from '@lib/validation';
 
 export default function SemesterForm({
     semester,
-    setSemester,
-    setIsValid
+    setSemester
 }: SemesterFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.NOT_STARTED,
@@ -48,10 +47,6 @@ export default function SemesterForm({
             }));
         });
     };
-
-    useEffect(() => {
-        setIsValid(isValid);
-    }, [setIsValid, isValid]);
 
     return (
         <Fragment>
