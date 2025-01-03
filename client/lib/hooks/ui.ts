@@ -1,8 +1,12 @@
 import { ItemStatus } from '@coursefull';
 import { getLocalTimeZone, now, ZonedDateTime } from '@internationalized/date';
-import { ReadableStatus } from '@lib/helpers';
-import StatusChip from '@components/Chip/StatusChip';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+    differenceInDays,
+    differenceInHours,
+    differenceInMinutes,
+    differenceInSeconds,
+} from 'date-fns';
 
 interface GradeColours {
     bgColour: string;
@@ -42,20 +46,57 @@ export function useGradeColours(
     }, [goal, grade, deliverableStatus]);
 }
 
-export function useDeliverableStatus(
-    status: ItemStatus,
-    deadline: ZonedDateTime
-) {
-    return useMemo(() => {
-        const incomplete = status !== ItemStatus.COMPLETE;
-        const deadlinePassed = deadline < now(getLocalTimeZone());
-        if (incomplete && deadlinePassed) {
-            return {
-                status: ItemStatus.OVERDUE
-            };
+interface TimeRemaining {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+    message: string;
+    status: ItemStatus;
+}
+
+export function useTimeRemaining(deadline: ZonedDateTime, status: ItemStatus): TimeRemaining {
+    const [timeRemaining, setTimeRemaining] = useState<TimeRemaining>({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        message: '',
+        status
+    });
+    function getTimeRemaining() {
+        const deadlineDate = deadline.toDate();
+        const currentDate = now(getLocalTimeZone()).toDate();
+        const days = differenceInDays(deadlineDate, currentDate);
+        const hours = differenceInHours(deadlineDate, currentDate);
+        const minutes = differenceInMinutes(deadlineDate, currentDate);
+        const seconds = differenceInSeconds(deadlineDate, currentDate);
+        let messageVariableData = 'No time';
+        if(days > 0){
+            messageVariableData = `${days} days`;
+        } else if (hours > 0){
+            messageVariableData = `${hours} hours`;
+        } else if (minutes > 0){
+            messageVariableData = `${minutes} minutes`;
+        } else if (seconds >= 0){
+            messageVariableData = `${seconds} seconds`;
         }
-        return {
-            status,
+        const incomplete = status !== ItemStatus.COMPLETE;
+        setTimeRemaining({
+            days,
+            hours,
+            minutes,
+            seconds,
+            status: (seconds < 0 && incomplete) ? ItemStatus.OVERDUE : status,
+            message: `${messageVariableData} remaining`,
+        });
+    }
+    useEffect(() => {
+        getTimeRemaining();
+        const timer = setInterval(getTimeRemaining, 1000);
+        return () => {
+            clearInterval(timer);
         };
-    }, [status, deadline]);
+    }, [deadline, status]);
+    return timeRemaining;
 }

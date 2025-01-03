@@ -21,7 +21,7 @@ import {
 import { deleteDeliverable } from '@services/deliverableService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useDeliverableStatus, useGradeColours } from '@lib/hooks/ui';
+import { useGradeColours, useTimeRemaining } from '@lib/hooks/ui';
 import StatusChip from '@components/Chip/StatusChip';
 
 interface DeliverableCardProps
@@ -46,10 +46,7 @@ export default function DeliverableCard({
 
     const { bgColour, textColour } = useGradeColours(goal, mark, status);
 
-    const { status: deliverableStatus } = useDeliverableStatus(
-        status,
-        deadline
-    );
+    const timeRemaining = useTimeRemaining(deadline, status);
 
     return (
         <div
@@ -76,7 +73,7 @@ export default function DeliverableCard({
                     <h4>
                         <b>Deadline:</b> {formatter.format(deadline.toDate())}
                     </h4>
-                    <StatusChip status={deliverableStatus}></StatusChip>
+                    <StatusChip status={timeRemaining.status}></StatusChip>
                 </div>
             </div>
         </div>

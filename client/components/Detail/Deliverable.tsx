@@ -1,4 +1,5 @@
 import { useDateFormatter } from '@react-aria/i18n';
+import { differenceInDays, setDay } from 'date-fns';
 
 import Button from '@components/Button/Button';
 import {
@@ -14,7 +15,10 @@ import { PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { classNames } from '@lib/helpers';
 import { deleteDeliverable } from '@services/deliverableService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useDeliverableStatus, useGradeColours } from '@lib/hooks/ui';
+import {
+    useTimeRemaining,
+    useGradeColours,
+} from '@lib/hooks/ui';
 import StatusChip from '@components/Chip/StatusChip';
 import { Divider } from '@nextui-org/react';
 
@@ -76,10 +80,7 @@ export default function DeliverableDetail({
 
     const { bgColour, textColour } = useGradeColours(goal, mark, status);
 
-    const { status: deliverableStatus } = useDeliverableStatus(
-        status,
-        deadline
-    );
+    const timeRemaining = useTimeRemaining(deadline, status);
 
     return (
         <div
@@ -91,7 +92,8 @@ export default function DeliverableDetail({
         >
             <div className="flex justify-between items-start">
                 <h2 className="text-left flex flex-col justify-start gap-2">
-                    <span>{name}</span> <StatusChip status={status} />
+                    <span>{name}</span>{' '}
+                    <StatusChip status={timeRemaining.status} />
                 </h2>
                 <Button
                     endContent={<XMarkIcon className="h-6 w-6" />}
@@ -118,18 +120,21 @@ export default function DeliverableDetail({
                     {weight && weight.toFixed(1)} %
                 </h4>
                 <Divider className="my-2 col-span-3"></Divider>
-                <h4>Start Date:</h4>
-                <h4 className="text-right col-span-2">
-                    {formatter.format(start_date.toDate())}
-                </h4>
+                <h4>Time Remaining:</h4>
+                <h4 className="text-right col-span-2">{timeRemaining.message}</h4>
                 <h4>Deadline:</h4>
                 <h4 className="text-right col-span-2">
                     {formatter.format(deadline.toDate())}
                 </h4>
+                <h4>Start Date:</h4>
+                <h4 className="text-right col-span-2">
+                    {formatter.format(start_date.toDate())}
+                </h4>
             </div>
             <Divider className="my-2"></Divider>
             <div>
-                {notes || "No notes for this deliverable. Might be a good time to add anything important!"}
+                {notes ||
+                    'No notes for this deliverable. Might be a good time to add anything important!'}
             </div>
             <div className="flex flex-col sm:flex-row gap-4 mt-10">
                 <Button
