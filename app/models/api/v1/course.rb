@@ -28,6 +28,8 @@ module Api
         set_goal(goal)
       end
 
+      # TODO: Figure out if having grades and goals cap out at 100% would be better than having weighbt cap out at 100%
+
       def set_goal(goal)
         self.goal = goal
         goal_calculator = GoalCalculator.new(goal)

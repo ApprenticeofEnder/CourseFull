@@ -7,6 +7,11 @@ import { Endpoints } from '@coursefull';
 import { useSession } from '@lib/supabase/SessionContext';
 import SignupForm from '@components/Form/SignupForm';
 
+// TODO: Add Google Oauth
+// TODO: Add Discord Oauth
+// TODO: Add Microsoft Oauth
+// TODO: Add Apple Oauth
+
 export default function Signup() {
     const router = useRouter();
     const { session, loadingSession } = useSession();

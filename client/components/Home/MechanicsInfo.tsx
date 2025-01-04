@@ -1,11 +1,13 @@
+import { HomePageProps } from '@coursefull/props';
 import { motion, type Variants } from 'motion/react';
+import { RefObject } from 'react';
 
 interface Step {
     stepNumber: number;
     step: string;
 }
 
-export default function MechanicsInfo() {
+export default function MechanicsInfo({mechanicsRef}: Partial<HomePageProps>) {
     const steps = [
         'Add your courses! (You get 3 for free.)',
         'Add your deliverables!',
@@ -40,7 +42,7 @@ export default function MechanicsInfo() {
     };
 
     return (
-        <div className="flex flex-col justify-center items-center gap-4 sm:px-16">
+        <motion.div className="flex flex-col justify-center items-center gap-4 sm:px-16" ref={mechanicsRef}>
             <motion.h2
                 initial="offscreen"
                 whileInView="onscreen"
@@ -75,6 +77,6 @@ export default function MechanicsInfo() {
                     </motion.div>
                 ))}
             </div>
-        </div>
+        </motion.div>
     );
 }

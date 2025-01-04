@@ -9,7 +9,7 @@ import { Endpoints } from '@coursefull';
 
 export default function HomePage() {
     const router = useRouter();
-    const { session, loadingSession } = useSession()!;
+    const { session, loadingSession } = useSession();
 
     useEffect(() => {
         if (!session) {

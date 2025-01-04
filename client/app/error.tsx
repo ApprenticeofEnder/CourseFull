@@ -12,6 +12,9 @@ export default function Error({
     error: Error & { digest?: string };
     reset: () => void;
 }) {
+
+    // TODO: Make more specific error handling (isolate axios errors, etc.)
+
     useEffect(() => {
         // Log the error to an error reporting service
         console.error(error);

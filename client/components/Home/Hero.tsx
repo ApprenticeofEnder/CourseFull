@@ -1,20 +1,21 @@
 'use client';
 
+
+import { RefObject } from 'react';
 import {
     motion,
     type Variants,
-    useMotionValueEvent,
-    useScroll,
 } from 'motion/react';
 import { ClipboardIcon, UserIcon } from '@heroicons/react/24/solid';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
-import { Endpoints } from '@coursefull';
+import { Endpoints, HomePageProps } from '@coursefull';
 import LinkButton from '@components/Button/LinkButton';
 import Button from '@components/Button/Button';
 
-export default function Hero() {
-
+export default function Hero({
+    mechanicsRef,
+}: Partial<HomePageProps>) {
     const basicVariants: Variants = {
         offscreen: {
             opacity: 0,
@@ -68,17 +69,21 @@ export default function Hero() {
     const heroLinkButtons = [
         {
             href: Endpoints.LOGIN,
-            text: 'Login',
+            text: 'Start Tracking Your Goals',
             testId: 'home-login',
             endContent: <UserIcon className="w-6 h-6"></UserIcon>,
         },
         {
             href: Endpoints.SIGN_UP,
-            text: 'Sign Up',
+            text: 'Try a Better Way to Manage Goals',
             testId: 'home-signup',
             endContent: <ClipboardIcon className="w-6 h-6"></ClipboardIcon>,
         },
     ];
+
+    const scrollToMechanics = () => {
+        mechanicsRef?.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     return (
         <div className="flex flex-col sm:flex-row items-center justify-between sm:px-16">
@@ -100,7 +105,7 @@ export default function Hero() {
                     viewport={{ once: true }}
                     className="text-left text-5xl font-bold"
                 >
-                    Tracking goals is in.
+                    Tracking school goals is in.
                 </motion.h1>
                 <motion.p
                     initial="offscreen"
@@ -173,8 +178,9 @@ export default function Hero() {
                         endContent={
                             <InformationCircleIcon className="w-6 h-6"></InformationCircleIcon>
                         }
+                        onClick={scrollToMechanics}
                     >
-                        Learn More
+                        How It Works
                     </Button>
                 </motion.div>
             </div>

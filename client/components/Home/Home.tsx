@@ -1,9 +1,15 @@
 'use client';
 
-import dynamic from "next/dynamic";
-import Hero from "@components/Home/Hero";
+import dynamic from 'next/dynamic';
+import { HomePageProps } from '@coursefull/props';
+import Hero from '@components/Home/Hero';
+import { ReactNode, useRef } from 'react';
 
+const Benefits = dynamic(() => import('@components/Home/Benefits'));
+const CallToValue = dynamic(()=>import('@components/Home/CallToValue'));
+const Features = dynamic(() => import('@components/Home/Features'));
 const MechanicsInfo = dynamic(() => import('@components/Home/MechanicsInfo'));
+const Pricing = dynamic(() => import('@components/Home/Pricing'));
 
 /**
  * Header:
@@ -18,12 +24,27 @@ const MechanicsInfo = dynamic(() => import('@components/Home/MechanicsInfo'));
  * - CourseFull tracks your grades, and what you need to achieve your goals, all semester long.
  */
 
-export default function AnonHome() {
+export default function Home() {
+    const useHomepageRef = () => useRef<HTMLDivElement>(null);
+    const refs: HomePageProps = {
+        benefitsRef: useHomepageRef(),
+        callToValueRef: useHomepageRef(),
+        faqRef: useHomepageRef(),
+        featuresRef: useHomepageRef(),
+        heroRef: useHomepageRef(),
+        inActionRef: useHomepageRef(),
+        mechanicsRef: useHomepageRef(),
+        pricingRef: useHomepageRef(),
+        resultsRef: useHomepageRef(),
+        socialProofRef: useHomepageRef()
+    };
 
     return (
         <div className="flex flex-col gap-4 sm:gap-8 lg:gap-16">
-            <Hero />
-            <MechanicsInfo />
+            <Hero {...refs} />
+            <Features {...refs}/>
+            <MechanicsInfo {...refs} />
+            <Pricing />
         </div>
     );
 }

@@ -1,12 +1,7 @@
 import { Session } from '@supabase/supabase-js';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Dispatch, ReactNode, RefObject, SetStateAction, useRef } from 'react';
 
-import {
-    Semester,
-    Course,
-    Deliverable,
-    User,
-} from './data.d';
+import { Semester, Course, Deliverable, User } from './data.d';
 import { ZodError } from 'zod';
 
 export type Dispatcher<T> = Dispatch<SetStateAction<T>>;
@@ -89,4 +84,19 @@ export interface CourseMultiCreateProps extends SemesterFormProps {
     setCoursesRemaining: Dispatcher<number>;
     userData: User;
     loadingUserData: boolean;
+}
+
+export type HomePageRef = RefObject<HTMLDivElement>;
+
+export interface HomePageProps {
+    benefitsRef: HomePageRef;
+    callToValueRef: HomePageRef;
+    faqRef: HomePageRef;
+    featuresRef: HomePageRef;
+    heroRef: HomePageRef;
+    inActionRef: HomePageRef;
+    mechanicsRef: HomePageRef;
+    pricingRef: HomePageRef;
+    resultsRef: HomePageRef;
+    socialProofRef: HomePageRef;
 }
