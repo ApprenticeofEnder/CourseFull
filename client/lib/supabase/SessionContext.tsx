@@ -10,7 +10,6 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { Endpoints } from '@coursefull';
 import { useRouter } from 'next/navigation';
 
