@@ -38,7 +38,7 @@ const CourseFullButton = forwardRef<HTMLButtonElement, ButtonProps>(
             <Button
                 ref={ref}
                 className={classNames(
-                    'button font-bold rounded-lg hover:-translate-y-1 active:translate-y-0 active:shadow-none',
+                    'button font-bold rounded-lg top-1 hover:-translate-y-1 active:translate-y-0 active:shadow-none',
                     types[buttonType],
                     'text-text-200 focus:bg-warning-100',
                     className || '',
@@ -53,6 +53,6 @@ const CourseFullButton = forwardRef<HTMLButtonElement, ButtonProps>(
     }
 );
 
-CourseFullButton.displayName = 'CourseFullButton';
+CourseFullButton.displayName = 'Button';
 
 export default CourseFullButton;

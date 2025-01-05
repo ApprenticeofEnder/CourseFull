@@ -85,18 +85,3 @@ export interface CourseMultiCreateProps extends SemesterFormProps {
     userData: User;
     loadingUserData: boolean;
 }
-
-export type HomePageRef = RefObject<HTMLDivElement>;
-
-export interface HomePageProps {
-    benefitsRef: HomePageRef;
-    callToValueRef: HomePageRef;
-    faqRef: HomePageRef;
-    featuresRef: HomePageRef;
-    heroRef: HomePageRef;
-    inActionRef: HomePageRef;
-    mechanicsRef: HomePageRef;
-    pricingRef: HomePageRef;
-    resultsRef: HomePageRef;
-    socialProofRef: HomePageRef;
-}

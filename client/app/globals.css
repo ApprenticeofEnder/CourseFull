@@ -88,4 +88,12 @@
     .card-secondary {
         @apply rounded-lg bg-secondary-800 p-2 border-solid border-2 border-secondary-500/10
     }
+
+    .icon {
+        @apply h-6 w-6
+    }
+
+    .icon-lg {
+        @apply h-8 w-8 sm:h-16 sm:w-16
+    }
 }

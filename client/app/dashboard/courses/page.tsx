@@ -138,7 +138,6 @@ function CoursePage({ session }: SessionProps) {
                     <Dropdown>
                         <DropdownTrigger>
                             <Button
-                                className="top-1"
                                 endContent={<CogIcon className="h-6 w-6" />}
                             >
                                 <span className="sr-only">

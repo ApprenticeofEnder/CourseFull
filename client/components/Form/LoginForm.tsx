@@ -61,7 +61,7 @@ export default function LoginForm() {
             />
             <div className="flex gap-4">
                 <LinkButton
-                    className="basis-1/2 top-1"
+                    className="basis-1/2"
                     isLoading={loginMutation.isPending}
                     href={Endpoints.SIGN_UP}
                     data-testid="signup-nav-button"
@@ -69,7 +69,7 @@ export default function LoginForm() {
                     Go to Signup
                 </LinkButton>
                 <Button
-                    className="basis-1/2 top-1"
+                    className="basis-1/2"
                     onClick={() => {
                         const submitForm = handleSubmit((data: LoginSchema) => {
                             loginMutation.mutate(data);

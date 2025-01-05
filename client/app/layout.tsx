@@ -1,8 +1,4 @@
 import { NextUIProvider, ScrollShadow } from '@nextui-org/react';
-import {
-    QueryClient,
-    QueryClientProvider,
-} from '@tanstack/react-query';
 import { MotionConfig } from 'motion/react';
 import { Atkinson_Hyperlegible } from 'next/font/google';
 import type { Metadata } from 'next';
@@ -10,11 +6,13 @@ import type { Metadata } from 'next';
 import Navbar from '@components/Navbar';
 import Spacer from '@components/Spacer';
 import { Toaster } from '@components/Toast/Toaster';
-import CartProvider from '@lib/cart/CartContext';
-import SessionProvider from '@lib/supabase/SessionContext';
-import QueryProvider from '@lib/query/QueryContext';
-import './globals.css';
 import { ChildrenProps } from '@coursefull/props';
+import CartProvider from '@lib/cart/CartContext';
+import HomePageProvider from '@lib/home/HomePageContext';
+import QueryProvider from '@lib/query/QueryContext';
+import SessionProvider from '@lib/supabase/SessionContext';
+
+import './globals.css';
 
 const atkinsonHyperlegible = Atkinson_Hyperlegible({
     weight: ['400', '700'],
@@ -31,11 +29,13 @@ function Contexts({ children }: ChildrenProps) {
         <QueryProvider>
             <SessionProvider>
                 <CartProvider>
-                    <NextUIProvider>
-                        <MotionConfig reducedMotion="user">
-                            {children}
-                        </MotionConfig>
-                    </NextUIProvider>
+                    <HomePageProvider>
+                        <NextUIProvider>
+                            <MotionConfig reducedMotion="user">
+                                {children}
+                            </MotionConfig>
+                        </NextUIProvider>
+                    </HomePageProvider>
                 </CartProvider>
             </SessionProvider>
         </QueryProvider>

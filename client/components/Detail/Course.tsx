@@ -77,7 +77,6 @@ export default function CourseDetail({
                 <Button
                     endContent={<XMarkIcon className="h-6 w-6" />}
                     onPressEnd={handleExit}
-                    className="top-1"
                 />
             </div>
             <h3 className="text-left">{title}</h3>
@@ -107,7 +106,6 @@ export default function CourseDetail({
                     onPressEnd={() => {
                         router.push(href);
                     }}
-                    className="top-1"
                 >
                     Enter Course
                 </Button>
@@ -117,19 +115,16 @@ export default function CourseDetail({
                     onPressEnd={() => {
                         courseComplete.mutate(course);
                     }}
-                    className="top-1"
                 >
                     Mark Completed
                 </Button>
                 <Button
                     endContent={<PencilIcon className="h-6 w-6" />}
                     onPressEnd={handleEdit}
-                    className="top-1"
                 >
                     Edit
                 </Button>
                 <Button
-                    className="top-1"
                     endContent={<TrashIcon className="h-6 w-6" />}
                     onPressEnd={() => {
                         courseDelete.mutate(id);

@@ -1,15 +1,21 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import { HomePageProps } from '@coursefull/props';
-import Hero from '@components/Home/Hero';
 import { ReactNode, useRef } from 'react';
+import dynamic from 'next/dynamic';
+import { HomePageRefs } from '@coursefull';
+import Hero from '@components/Home/Hero';
+
+import { useHomePage } from '@lib/home/HomePageContext';
 
 const Benefits = dynamic(() => import('@components/Home/Benefits'));
 const CallToValue = dynamic(()=>import('@components/Home/CallToValue'));
+const Faq = dynamic(()=>import('@components/Home/Faq'));
 const Features = dynamic(() => import('@components/Home/Features'));
+const InAction = dynamic(()=>import('@components/Home/InAction'));
 const MechanicsInfo = dynamic(() => import('@components/Home/MechanicsInfo'));
 const Pricing = dynamic(() => import('@components/Home/Pricing'));
+const Results = dynamic(() => import('@components/Home/Results'));
+const SocialProof = dynamic(() => import('@components/Home/SocialProof'));
 
 /**
  * Header:
@@ -25,25 +31,13 @@ const Pricing = dynamic(() => import('@components/Home/Pricing'));
  */
 
 export default function Home() {
-    const useHomepageRef = () => useRef<HTMLDivElement>(null);
-    const refs: HomePageProps = {
-        benefitsRef: useHomepageRef(),
-        callToValueRef: useHomepageRef(),
-        faqRef: useHomepageRef(),
-        featuresRef: useHomepageRef(),
-        heroRef: useHomepageRef(),
-        inActionRef: useHomepageRef(),
-        mechanicsRef: useHomepageRef(),
-        pricingRef: useHomepageRef(),
-        resultsRef: useHomepageRef(),
-        socialProofRef: useHomepageRef()
-    };
 
     return (
-        <div className="flex flex-col gap-4 sm:gap-8 lg:gap-16">
-            <Hero {...refs} />
-            <Features {...refs}/>
-            <MechanicsInfo {...refs} />
+        <div className="flex flex-col gap-8 lg:gap-16">
+            <Hero />
+            <Features />
+            <Benefits />
+            <MechanicsInfo />
             <Pricing />
         </div>
     );

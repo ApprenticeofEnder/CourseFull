@@ -1,48 +1,30 @@
-import { HomePageProps } from '@coursefull/props';
-import { motion, type Variants } from 'motion/react';
-import { RefObject } from 'react';
+import { useHomePage } from '@lib/home/HomePageContext';
+import { expositionVariants, cardVariants } from '@lib/animations/variants';
+import { motion } from 'motion/react';
 
 interface Step {
     stepNumber: number;
     step: string;
 }
 
-export default function MechanicsInfo({mechanicsRef}: Partial<HomePageProps>) {
+export default function MechanicsInfo() {
     const steps = [
         'Add your courses! (You get 3 for free.)',
         'Add your deliverables!',
         'Update your grades as you get them!',
     ];
+    const { refs } = useHomePage();
 
     const cardData = steps.map((step, index) => ({
         stepNumber: index + 1,
         step,
     }));
 
-    const expositionVariants: Variants = {
-        offscreen: {
-            opacity: 0,
-            filter: 'blur(20px)',
-        },
-        onscreen: {
-            opacity: 1,
-            filter: 'blur(0)',
-        },
-    };
-
-    const cardVariants: Variants = {
-        offscreen: {
-            ...expositionVariants.offscreen,
-            x: '-100%',
-        },
-        onscreen: {
-            ...expositionVariants.onscreen,
-            x: '0%',
-        },
-    };
-
     return (
-        <motion.div className="flex flex-col justify-center items-center gap-4 sm:px-16" ref={mechanicsRef}>
+        <motion.div
+            className="flex flex-col justify-center items-center gap-4 sm:px-16 sm:py-8"
+            ref={refs?.mechanicsRef.ref}
+        >
             <motion.h2
                 initial="offscreen"
                 whileInView="onscreen"
@@ -60,7 +42,7 @@ export default function MechanicsInfo({mechanicsRef}: Partial<HomePageProps>) {
                 you always know what you need to get on your assignments, exams,
                 and other deliverables.
             </motion.p>
-            <div className="flex flex-col sm:flex-row justify-between gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch gap-4">
                 {cardData.map(({ stepNumber, step }: Step, index: number) => (
                     <motion.div
                         key={stepNumber}

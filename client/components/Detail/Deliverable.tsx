@@ -98,7 +98,6 @@ export default function DeliverableDetail({
                 <Button
                     endContent={<XMarkIcon className="h-6 w-6" />}
                     onPressEnd={handleExit}
-                    className="top-1"
                 />
             </div>
             <div className="grid grid-cols w-full gap-x-4 !text-lg">
@@ -140,7 +139,7 @@ export default function DeliverableDetail({
                 <Button
                     endContent={<PencilIcon className="h-6 w-6" />}
                     onPressEnd={handleEdit}
-                    className="top-1 w-fit sm:basis-1/2"
+                    className="w-fit sm:basis-1/2"
                 >
                     <span className="hidden sm:inline">Edit</span>
                 </Button>
@@ -149,7 +148,7 @@ export default function DeliverableDetail({
                     onPressEnd={() => {
                         deliverableDelete.mutate(id);
                     }}
-                    className="top-1 w-fit sm:basis-1/2"
+                    className="w-fit sm:basis-1/2"
                     buttonType="danger"
                 >
                     <span className="hidden sm:inline">Delete</span>

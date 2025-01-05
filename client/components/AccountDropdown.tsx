@@ -71,7 +71,6 @@ export default function AccountDropdown() {
         <div className="flex">
             <LinkButton
                 href={Endpoints.CHECKOUT}
-                className="top-1"
                 startContent={<ShoppingCartIcon className="h-6 w-6" />}
             >
                 {cartItems}
@@ -81,7 +80,6 @@ export default function AccountDropdown() {
                     <Menu.Button
                         as={Button}
                         startContent={userIcon}
-                        className="top-1"
                     >
                         <span className="sr-only">Open user menu</span>
                         <div className="text-sm hidden md:inline">

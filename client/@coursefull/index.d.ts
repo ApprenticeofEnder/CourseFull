@@ -4,6 +4,7 @@ import { ItemStatus } from './enums.d';
 export * from './cart.d';
 export * from './data.d';
 export * from './dto.d';
+export * from './home-page.d';
 export * from './enums.d';
 export * from './props.d';
 

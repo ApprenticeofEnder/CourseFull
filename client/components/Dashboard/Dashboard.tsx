@@ -59,7 +59,7 @@ function renderSemester(item: SemesterProgressType) {
             startContent={
                 <LinkButton
                     href={semesterURL(item.semester_id)}
-                    className="basis-3/4 sm:basis-1/2 top-1"
+                    className="basis-3/4 sm:basis-1/2"
                 >
                     <span data-testid={`semester-btn-${item.semester}`}>
                         {item.semester}
@@ -175,7 +175,7 @@ export default function Dashboard({ session }: SessionProps) {
                                 endContent={
                                     <PlusIcon className="h-6 w-6"></PlusIcon>
                                 }
-                                className="top-1 focus:bg-warning-100"
+                                className="focus:bg-warning-100"
                                 onPressEnd={onOpen}
                                 buttonType="confirm"
                                 data-testid="create-semester-button"

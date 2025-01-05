@@ -18,6 +18,7 @@ import { useSession } from '@lib/supabase/SessionContext';
 import Link from '@components/Link';
 import LinkButton from '@components/Button/LinkButton';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
+import { useHomePage } from '@lib/home/HomePageContext';
 
 const GITHUB_LINK: string = 'https://github.com/ApprenticeofEnder/CourseFull';
 
@@ -27,13 +28,56 @@ export default function CourseFullNavbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const { session, loadingSession } = useSession()!;
+    const { refs: homeRefs } = useHomePage();
 
-    const menuItems: {
+    interface MenuItem {
         label: string;
-        href: string;
         color: 'foreground' | 'primary' | 'danger' | 'warning';
         disabled?: boolean;
-    }[] = [
+    }
+
+    interface AuthenticatedMenuItem extends MenuItem {
+        href: string;
+    }
+
+    interface HomeMenuItem extends MenuItem{
+        onClick: (()=>void) | undefined
+    }
+
+    const homeMenuItems: HomeMenuItem[] = [
+        {
+            label: "Home",
+            color: "foreground",
+            onClick: homeRefs?.heroRef.scrollIntoView
+        },
+        {
+            label: "Features",
+            color: "foreground",
+            onClick: homeRefs?.featuresRef.scrollIntoView
+        },
+        {
+            label: "Use Cases",
+            color: "foreground",
+            onClick: homeRefs?.inActionRef.scrollIntoView
+        },
+        {
+            label: "Benefits",
+            color: "foreground",
+            onClick: homeRefs?.benefitsRef.scrollIntoView
+        },
+        {
+            label: "How It Works",
+            color: "foreground",
+            onClick: homeRefs?.mechanicsRef.scrollIntoView
+        },
+        {
+            label: "FAQ",
+            color: "foreground",
+            onClick: homeRefs?.faqRef.scrollIntoView
+        }
+    ];
+
+    const authenticatedMenuItems: AuthenticatedMenuItem[] = [
         {
             label: 'Dashboard',
             href: Endpoints.DASHBOARD,
@@ -94,19 +138,40 @@ export default function CourseFullNavbar() {
                     </div>
                 </NavbarBrand>
             </NavbarContent>
-            {session && (
+            {session ? (
                 <NavbarContent
                     className="hidden md:flex gap-4"
                     justify="center"
                 >
-                    {menuItems.map((menuItem) => (
-                        <NavbarItem isActive={menuItem.color == 'primary'} key={menuItem.href}>
+                    {authenticatedMenuItems.map((menuItem) => (
+                        <NavbarItem
+                            isActive={menuItem.color == 'primary'}
+                            key={menuItem.href}
+                        >
                             <Link
                                 color={menuItem.color}
                                 href={menuItem.href}
                                 underline="hover"
                             >
                                 {menuItem.label}
+                            </Link>
+                        </NavbarItem>
+                    ))}
+                </NavbarContent>
+            ) : (
+                <NavbarContent>
+                    {homeMenuItems.map(({color, label, onClick}) => (
+                        <NavbarItem
+                            isActive={color == 'primary'}
+                            key={label}
+                        >
+                            <Link
+                                color={color}
+                                onClick={onClick}
+                                underline="hover"
+                                className='hover:cursor-pointer'
+                            >
+                                {label}
                             </Link>
                         </NavbarItem>
                     ))}
@@ -122,7 +187,6 @@ export default function CourseFullNavbar() {
                     <Fragment>
                         <NavbarItem className="hidden lg:flex">
                             <LinkButton
-                                className="top-1"
                                 href={Endpoints.LOGIN}
                                 variant="flat"
                                 data-testid="nav-signup"
@@ -132,7 +196,6 @@ export default function CourseFullNavbar() {
                         </NavbarItem>
                         <NavbarItem>
                             <LinkButton
-                                className="top-1"
                                 href={Endpoints.SIGN_UP}
                                 variant="flat"
                                 data-testid="nav-signup"
@@ -144,24 +207,28 @@ export default function CourseFullNavbar() {
                 )}
             </NavbarContent>
             <NavbarMenu className="bg-background-900">
-                {menuItems.map((item, index) => {
-                    return (
-                        <NavbarMenuItem key={`${item}-${index}`}>
-                            <Link
-                                className="w-full"
-                                isDisabled={item.disabled}
-                                href={item.href}
-                                size="lg"
-                                color={item.color}
-                                onClick={() => {
-                                    setIsMenuOpen(false);
-                                }}
-                            >
-                                {item.label}
-                            </Link>
-                        </NavbarMenuItem>
-                    );
-                })}
+                {session ? (
+                    authenticatedMenuItems.map((item, index) => {
+                        return (
+                            <NavbarMenuItem key={`${item}-${index}`}>
+                                <Link
+                                    className="w-full"
+                                    isDisabled={item.disabled}
+                                    href={item.href}
+                                    size="lg"
+                                    color={item.color}
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                    }}
+                                >
+                                    {item.label}
+                                </Link>
+                            </NavbarMenuItem>
+                        );
+                    })
+                ) : (
+                    <NavbarMenuItem></NavbarMenuItem>
+                )}
                 <Spacer y={4} />
 
                 <hr className="border-1 border-primary-700/50 my-2" />
