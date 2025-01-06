@@ -76,7 +76,7 @@ importers:
         version: 11.15.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       next:
         specifier: 14.2.18
-        version: 14.2.18(@babel/core@7.26.0)(@playwright/test@1.49.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 14.2.18(@babel/core@7.26.0)(@playwright/test@1.49.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react:
         specifier: ^18
         version: 18.2.0
@@ -113,7 +113,7 @@ importers:
         version: 8.4.1
       '@playwright/test':
         specifier: ^1.46.0
-        version: 1.49.0
+        version: 1.49.1
       '@tanstack/eslint-plugin-query':
         specifier: ^5.62.9
         version: 5.62.9(eslint@8.57.1)(typescript@5.4.5)
@@ -1467,8 +1467,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@playwright/test@1.49.0':
-    resolution: {integrity: sha512-DMulbwQURa8rNIQrf94+jPJQ4FmOVdpE5ZppRNvWVjvhC+6sOeo28r8MgIpQRYouXRtt/FCCXU7zn20jnHR4Qw==}
+  '@playwright/test@1.49.1':
+    resolution: {integrity: sha512-Ky+BVzPz8pL6PQxHqNRW1k3mIyv933LML7HktS8uik0bUXNCdPhoS/kLihiO1tMf/egaJb4IutXd7UywvXEW+g==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -4642,13 +4642,13 @@ packages:
   pkg-types@1.1.1:
     resolution: {integrity: sha512-ko14TjmDuQJ14zsotODv7dBlwxKhUKQEhuhmbqo1uCi9BB0Z2alo/wAXg6q1dTR5TyuqYyWhjtfe/Tsh+X28jQ==}
 
-  playwright-core@1.49.0:
-    resolution: {integrity: sha512-R+3KKTQF3npy5GTiKH/T+kdhoJfJojjHESR1YEWhYuEKRVfVaxH3+4+GvXE5xyCngCxhxnykk0Vlah9v8fs3jA==}
+  playwright-core@1.49.1:
+    resolution: {integrity: sha512-BzmpVcs4kE2CH15rWfzpjzVGhWERJfmnXmniSyKeRZUs9Ws65m+RGIi7mjJK/euCegfn3i7jvqWeWyHe9y3Vgg==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.49.0:
-    resolution: {integrity: sha512-eKpmys0UFDnfNb3vfsf8Vx2LEOtflgRebl0Im2eQQnYMA4Aqd+Zw8bEOB+7ZKvN76901mRnqdsiOGKxzVTbi7A==}
+  playwright@1.49.1:
+    resolution: {integrity: sha512-VYL8zLoNTBxVOrJBbDuRgDWa3i+mfQgDTrL8Ah9QXZ7ax4Dsj0MSq5bYgytRnDVVe+njoKnfsYkH3HzqVj5UZA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -7374,9 +7374,9 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@playwright/test@1.49.0':
+  '@playwright/test@1.49.1':
     dependencies:
-      playwright: 1.49.0
+      playwright: 1.49.1
 
   '@radix-ui/primitive@1.1.0': {}
 
@@ -9783,7 +9783,7 @@ snapshots:
       debug: 4.3.7
       enhanced-resolve: 5.16.0
       eslint: 8.57.1
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1)
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1)
       fast-glob: 3.3.2
       get-tsconfig: 4.8.1
@@ -9795,7 +9795,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.1))(eslint@8.57.1):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -9816,7 +9816,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.15.1
       is-glob: 4.0.3
@@ -11195,7 +11195,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next@14.2.18(@babel/core@7.26.0)(@playwright/test@1.49.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  next@14.2.18(@babel/core@7.26.0)(@playwright/test@1.49.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@next/env': 14.2.18
       '@swc/helpers': 0.5.5
@@ -11216,7 +11216,7 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 14.2.18
       '@next/swc-win32-ia32-msvc': 14.2.18
       '@next/swc-win32-x64-msvc': 14.2.18
-      '@playwright/test': 1.49.0
+      '@playwright/test': 1.49.1
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
@@ -11415,11 +11415,11 @@ snapshots:
       mlly: 1.7.1
       pathe: 1.1.2
 
-  playwright-core@1.49.0: {}
+  playwright-core@1.49.1: {}
 
-  playwright@1.49.0:
+  playwright@1.49.1:
     dependencies:
-      playwright-core: 1.49.0
+      playwright-core: 1.49.1
     optionalDependencies:
       fsevents: 2.3.2
 
