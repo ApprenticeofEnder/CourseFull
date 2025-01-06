@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_30_185909) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_26_062011) do
   create_schema "_analytics"
   create_schema "_realtime"
   create_schema "auth"
@@ -63,6 +63,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_30_185909) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "api_v1_user_id", null: false
+    t.datetime "start_date", default: -> { "CURRENT_TIMESTAMP" }
+    t.datetime "deadline", default: -> { "CURRENT_TIMESTAMP" }
     t.index ["api_v1_course_id"], name: "index_api_v1_deliverables_on_api_v1_course_id"
     t.index ["api_v1_user_id"], name: "index_api_v1_deliverables_on_api_v1_user_id"
   end

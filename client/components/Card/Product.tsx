@@ -5,7 +5,7 @@ import { useContext, useState } from 'react';
 import Button from '@components/Button/Button';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { classNames, priceFormatter } from '@lib/helpers';
-import { useCart } from '@lib/cart/cartContext';
+import { useCart } from '@lib/cart/CartContext';
 import { useRouter } from 'next/navigation';
 import { Endpoints } from '@coursefull';
 
@@ -56,7 +56,7 @@ export default function ProductCard({
     return (
         <div
             className={classNames(
-                'rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10',
+                'card-primary',
                 className
             )}
         >

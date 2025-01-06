@@ -1,21 +1,19 @@
 'use client';
 import ProductCard from '@components/Card/Product';
 import { classNames } from '@lib/helpers';
-import { useProtectedEndpoint, useSession } from '@lib/supabase/sessionContext';
+import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { Product } from '@coursefull';
 import { getProducts } from '@services/productsService';
 import { Spinner } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 export default function ProductsPage() {
     const [loadingProducts, setLoadingProducts] = useState(true);
     const [products, setProducts] = useState<Product[]>([]);
 
-    const router = useRouter();
-
+    const [error, setError] = useState<any>(null);
     const { session, loadingSession } = useSession()!;
 
-    useProtectedEndpoint(session, loadingSession, router);
+    useProtectedEndpoint(session, loadingSession);
 
     useEffect(() => {
         if (!session) {
@@ -23,23 +21,26 @@ export default function ProductsPage() {
         }
         let mounted = true;
 
-        getProducts(session, (error) => {
-            console.error(error.message);
-        })
-            .then(({ response }) => {
+        getProducts(session)
+            .then((products) => {
                 if (mounted) {
-                    const data: Product[] = response?.data;
-                    setProducts(data);
+                    setProducts(products);
                     setLoadingProducts(false);
                 }
             })
-            .catch();
+            .catch((err) => {
+                setError(err);
+            });
         return () => {
             mounted = false;
         };
     }, [session]);
+    if(error){
+        throw error;
+    }
+
     return (
-        <div className="h-dvh flex flex-col justify-center gap-8">
+        <div className="flex flex-col justify-start gap-8">
             <h1>Products</h1>
             {loadingProducts ? (
                 <Spinner label="One sec while we grab what we have..." />

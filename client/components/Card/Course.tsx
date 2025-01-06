@@ -6,6 +6,8 @@ import {
     DeletableProps,
     EditableProps,
     SessionProps,
+    Updated,
+    ViewableProps,
 } from '@coursefull';
 
 import Button from '@components/Button/Button';
@@ -20,12 +22,13 @@ import {
 } from '@lib/helpers';
 import { deleteCourse } from '@services/courseService';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useGradeColours } from '@lib/hooks/ui';
+import StatusChip from '@components/Chip/StatusChip';
 
 interface CourseCardProps
-    extends Course,
-        DeletableProps,
-        EditableProps,
+    extends Updated<Course>,
+        ViewableProps,
         SessionProps {}
 
 export default function CourseCard({
@@ -35,83 +38,46 @@ export default function CourseCard({
     status,
     goal,
     grade,
-    session,
-    handleEdit,
-    handleDelete,
+    handleView,
 }: CourseCardProps) {
     const router = useRouter();
 
-    const [deleteLoading, setDeleteLoading] = useState(false);
-
-    async function handleDeleteCourse() {
-        const confirmDelete = confirm(
-            `Are you sure you want to delete ${course_code}? All of its deliverables will be deleted, and you will not get a refund for the course ticket you used to buy it.`
-        );
-        if (!confirmDelete) {
-            return;
-        }
-        setDeleteLoading(true);
-        await deleteCourse(id!, session, (error) => {
-            alert(`Something went wrong: ${error.message}`);
-        });
-        handleDelete();
-    }
-
-    let bgColour = 'bg-primary-800';
-    if (goal === undefined || grade === undefined || grade === 0) {
-        //mostly so TypeScript doesn't freak out
-    } else {
-        bgColour = determineGradeBGColour(goal, grade);
-    }
+    const { bgColour, textColour } = useGradeColours(goal, grade);
 
     const href = courseURL(id);
 
     return (
         <div
             className={classNames(
-                'rounded-lg p-2 border-solid border-2 border-primary-500/10 hover:bg-primary-900 hover:cursor-pointer transition-colors',
-                bgColour
+                'card-primary hover:bg-primary-900 hover:cursor-pointer transition-colors flex flex-col gap-4 justify-between',
+                bgColour,
+                textColour
             )}
-            onClick={() => {
-                router.push(href);
+            onClick={(e) => {
+                switch (e.detail) {
+                    case 1:
+                        setTimeout(handleView, 200);
+                        break;
+                    case 2:
+                        router.push(href);
+                        break;
+                    default:
+                        router.push(href);
+                }
             }}
         >
-            <div className="flex justify-between">
-                <h4>Goal: {goal}%</h4>
-                <h4>Grade: {(grade && Math.round(grade)) || '--'}%</h4>
-            </div>
-            <div className="flex justify-center">
-                <Image
-                    width={300}
-                    alt="NextUI hero Image"
-                    src={''}
-                    // isLoading={true}
-                />
-            </div>
+            <div className="flex flex-col justify-between gap-2">
+                <div className="flex flex-wrap justify-between">
+                    <h3 className="text-lg font-bold">{course_code}</h3>
+                    <h3 className="text-lg font-bold">
+                        {(grade && Math.round(grade)) || '--'} / {goal} %
+                    </h3>
+                </div>
 
-            <Link href={href} color="foreground" underline="hover">
-                <h3 className="text-left">{course_code}</h3>
-            </Link>
-            <h4 className="text-left">{title}</h4>
-            <h4 className="text-left italic">{ReadableStatus(status)}</h4>
-
-            <div className="flex my-2 gap-4">
-                <Button
-                    endContent={<PencilIcon className="h-6 w-6" />}
-                    onPressEnd={handleEdit}
-                    className="top-1 basis-1/2"
-                >
-                    Edit
-                </Button>
-                <Button
-                    className="top-1 basis-1/2"
-                    endContent={<TrashIcon className="h-6 w-6" />}
-                    onPressEnd={handleDeleteCourse}
-                    buttonType="danger"
-                    isLoading={deleteLoading}
-                >
-                    Delete
-                </Button>
+                <div className="flex justify-between items-end">
+                    <h4>{title}</h4>
+                    <StatusChip status={status}></StatusChip>
+                </div>
             </div>
         </div>
     );

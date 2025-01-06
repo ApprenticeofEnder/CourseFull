@@ -7,12 +7,12 @@ import {
 } from '@nextui-org/react';
 
 import Button from '@components/Button/Button';
-import { Course, ItemStatus, Semester } from '@coursefull';
+import { Course, Updated } from '@coursefull';
 import { SessionProps } from '@coursefull';
-import SemesterForm from '../Form/SemesterForm';
-import { updateSemester } from '@services/semesterService';
 import CourseForm from '@components/Form/CourseForm';
 import { updateCourse } from '@services/courseService';
+import assert from 'assert';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface EditCourseModalProps extends SessionProps {
     course: Course | null;
@@ -22,36 +22,27 @@ export default function UpdateSemesterModal({
     session,
     course,
 }: EditCourseModalProps) {
-    const [title, setTitle] = useState<string>(course?.title || '');
-    const [courseCode, setCourseCode] = useState<string>(
-        course?.course_code || ''
-    );
-    const [status, setStatus] = useState<ItemStatus>(
-        course?.status || ItemStatus.NOT_STARTED
-    );
+    assert(course);
+    assert(course.id);
+    assert(course.api_v1_semester_id);
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [updatedCourse, setUpdatedCourse] = useState<Course>(course);
 
-    async function handleUpdateCourse(onClose: CallableFunction) {
-        setIsLoading(true);
-        const { success } = await updateCourse(
-            {
-                id: course?.id,
-                title,
-                course_code: courseCode,
-                status,
-            },
-            session,
-            (error) => {
-                alert(`Something went wrong: ${error}`);
-                setIsLoading(false);
-            }
-        );
-        if (!success) {
-            return;
-        }
-        onClose();
-        location.reload();
+    const queryClient = useQueryClient();
+
+    const courseUpdate = useMutation({
+        mutationFn: (course: Course) => {
+            return updateCourse(
+                course as Updated<Course>,
+                session
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['semester', updatedCourse.api_v1_semester_id]})
+        },
+    });
+    if (courseUpdate.error) {
+        throw courseUpdate.error;
     }
 
     return (
@@ -63,12 +54,8 @@ export default function UpdateSemesterModal({
                     </ModalHeader>
                     <ModalBody>
                         <CourseForm
-                            title={title}
-                            setTitle={setTitle}
-                            code={courseCode}
-                            setCode={setCourseCode}
-                            status={status}
-                            setStatus={setStatus}
+                            course={updatedCourse}
+                            setCourse={setUpdatedCourse}
                         />
                     </ModalBody>
                     <ModalFooter>
@@ -76,9 +63,11 @@ export default function UpdateSemesterModal({
                         <Button
                             buttonType="confirm"
                             onPress={() => {
-                                handleUpdateCourse(onClose);
+                                courseUpdate.mutate(updatedCourse, {
+                                    onSuccess: onClose
+                                })
                             }}
-                            isLoading={isLoading}
+                            isLoading={courseUpdate.isPending}
                         >
                             Save
                         </Button>

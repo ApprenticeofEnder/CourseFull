@@ -1,55 +1,63 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
+import { getLocalTimeZone, now } from '@internationalized/date';
 import {
     ModalContent,
     ModalHeader,
     ModalBody,
     ModalFooter,
 } from '@nextui-org/react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import Button from '@components/Button/Button';
-import { ItemStatus, SessionProps } from '@coursefull';
+import { ItemStatus, SessionProps, type Deliverable } from '@coursefull';
 import { createDeliverable } from '@services/deliverableService';
 import DeliverableForm from '@components/Form/DeliverableForm';
+import { convertDeliverableToDto } from '@lib/dto';
 
 interface DeliverableModalProps extends SessionProps {
     api_v1_course_id: string;
+    totalWeight: number;
 }
 
 export default function CreateDeliverableModal({
     session,
     api_v1_course_id,
+    totalWeight,
 }: DeliverableModalProps) {
-    const [name, setName] = useState<string>('');
-    const [status, setStatus] = useState<ItemStatus>(ItemStatus.ACTIVE);
-    const [weight, setWeight] = useState<string>('');
-    const [mark, setMark] = useState<string>('0');
-    const [notes, setNotes] = useState<string>('');
+    const [deliverable, setDeliverable] = useState<Deliverable>({
+        name: '',
+        status: ItemStatus.ACTIVE,
+        weight: 0,
+        mark: 0,
+        notes: '',
+        start_date: now(getLocalTimeZone()),
+        deadline: now(getLocalTimeZone()),
+    });
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const queryClient = useQueryClient();
 
-    async function handleCreateDeliverable(onClose: CallableFunction) {
-        setIsLoading(true);
-        const { success } = await createDeliverable(
-            {
-                name,
-                status,
-                weight: parseFloat(weight),
-                mark: parseFloat(mark),
-                notes,
-                api_v1_course_id,
-            },
-            session,
-            (error) => {
-                alert(`Something went wrong: ${error}`);
-                setIsLoading(false);
-            }
-        );
-        if (!success) {
-            return;
-        }
-        onClose();
-        location.reload();
+    const deliverableCreate = useMutation({
+        mutationFn: (deliverable: Deliverable) => {
+            const dto = convertDeliverableToDto(deliverable);
+            return createDeliverable(
+                {
+                    ...dto,
+                    api_v1_course_id,
+                },
+                session
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['course'] });
+        },
+    });
+    if (deliverableCreate.error) {
+        throw deliverableCreate.error;
     }
+
+    const isOverweight = useMemo(() => {
+        return deliverable.weight + totalWeight > 100;
+    }, [deliverable.weight, totalWeight]);
 
     return (
         <ModalContent>
@@ -60,25 +68,21 @@ export default function CreateDeliverableModal({
                     </ModalHeader>
                     <ModalBody>
                         <DeliverableForm
-                            name={name}
-                            setName={setName}
-                            status={status}
-                            setStatus={setStatus}
-                            weight={weight}
-                            setWeight={setWeight}
-                            mark={mark}
-                            setMark={setMark}
-                            notes={notes}
-                            setNotes={setNotes}
+                            totalWeight={totalWeight}
+                            deliverable={deliverable}
+                            setDeliverable={setDeliverable}
                         />
                     </ModalBody>
                     <ModalFooter>
                         <Button onPress={onClose}>Close</Button>
                         <Button
                             onPress={() => {
-                                handleCreateDeliverable(onClose);
+                                deliverableCreate.mutate(deliverable, {
+                                    onSuccess: onClose,
+                                });
                             }}
-                            isLoading={isLoading}
+                            isLoading={deliverableCreate.isPending}
+                            isDisabled={isOverweight}
                             buttonType="confirm"
                         >
                             Create!

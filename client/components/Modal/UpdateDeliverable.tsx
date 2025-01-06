@@ -1,83 +1,77 @@
-import { Fragment, useState } from 'react';
+import assert from 'assert';
+import { Fragment, useMemo, useState } from 'react';
 import {
     ModalContent,
     ModalHeader,
     ModalBody,
     ModalFooter,
 } from '@nextui-org/react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import Button from '@components/Button/Button';
-import { ItemStatus } from '@coursefull';
-import { Deliverable, SessionProps } from '@coursefull';
+import DeliverableForm from '@components/Form/DeliverableForm';
+import {
+    Deliverable,
+    DeliverableDto,
+    SessionProps,
+    Updated,
+} from '@coursefull';
 import { updateDeliverable } from '@services/deliverableService';
-import DeliverableForm from '../Form/DeliverableForm';
+import { convertDeliverableToDto } from '@lib/dto';
 
-interface EditDeliverableModalProps extends SessionProps {
-    deliverable: Deliverable | null;
+interface UpdateDeliverableModalProps extends SessionProps {
+    deliverable: Updated<Deliverable> | null;
+    totalWeight: number;
 }
 
 export default function UpdateDeliverableModal({
     session,
     deliverable,
-}: EditDeliverableModalProps) {
-    const [name, setName] = useState<string>(deliverable?.name || '');
-    const [status, setStatus] = useState<ItemStatus>(
-        deliverable?.status || ItemStatus.NOT_STARTED
-    );
-    const [weight, setWeight] = useState<string>(
-        deliverable?.weight.toString() || ''
-    );
-    const [mark, setMark] = useState<string>(
-        deliverable?.mark.toString() || ''
-    );
-    const [notes, setNotes] = useState<string>(deliverable?.notes || '');
+    totalWeight,
+}: UpdateDeliverableModalProps) {
+    assert(deliverable);
+    assert(deliverable.id);
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [updatedDeliverable, setUpdatedDeliverable] =
+        useState<Deliverable>(deliverable);
 
-    async function handleUpdateDeliverable(onClose: CallableFunction) {
-        setIsLoading(true);
-        const { success } = await updateDeliverable(
-            {
-                id: deliverable?.id,
-                name,
-                status,
-                weight: parseFloat(weight),
-                mark: parseFloat(mark),
-                notes,
-            },
-            session,
-            (error) => {
-                alert(`Something went wrong: ${error}`);
-                setIsLoading(false);
-            }
-        );
-        if (!success) {
-            return;
-        }
-        onClose();
-        location.reload();
+    const queryClient = useQueryClient();
+
+    const deliverableUpdate = useMutation({
+        mutationFn: (deliverable: Deliverable) => {
+            const dto = convertDeliverableToDto(deliverable);
+            return updateDeliverable(
+                {
+                    ...dto,
+                } as Updated<DeliverableDto>,
+                session
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['course'] });
+        },
+    });
+    if (deliverableUpdate.error) {
+        throw deliverableUpdate.error;
     }
+
+    const isOverweight = useMemo(() => {
+        return updatedDeliverable.weight + totalWeight > 100;
+    }, [updatedDeliverable.weight, totalWeight]);
 
     return (
         <ModalContent>
             {(onClose) => (
                 <Fragment>
-                    <ModalHeader className="flex flex-col gap-1">
-                        Edit Deliverable
+                    <ModalHeader className="flex flex-col justify-between gap-1">
+                        <h3 className="text-left">Edit Deliverable</h3>
+                        <h4>Goal: {deliverable.goal}%</h4>
                     </ModalHeader>
                     <ModalBody>
-                        <h3>Goal: {deliverable?.goal}%</h3>
                         <DeliverableForm
-                            name={name}
-                            setName={setName}
-                            status={status}
-                            setStatus={setStatus}
-                            weight={weight}
-                            setWeight={setWeight}
-                            mark={mark}
-                            setMark={setMark}
-                            notes={notes}
-                            setNotes={setNotes}
+                            deliverable={updatedDeliverable}
+                            setDeliverable={setUpdatedDeliverable}
+                            totalWeight={totalWeight}
                         />
                     </ModalBody>
                     <ModalFooter>
@@ -85,9 +79,12 @@ export default function UpdateDeliverableModal({
                         <Button
                             buttonType="confirm"
                             onPress={() => {
-                                handleUpdateDeliverable(onClose);
+                                deliverableUpdate.mutate(updatedDeliverable, {
+                                    onSuccess: onClose,
+                                });
                             }}
-                            isLoading={isLoading}
+                            isLoading={deliverableUpdate.isPending}
+                            isDisabled={isOverweight}
                         >
                             Save
                         </Button>

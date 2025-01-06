@@ -6,6 +6,8 @@ FactoryBot.define do
     status { 'active' }
     notes { Faker::Lorem.paragraph }
     goal { 80.0 }
+    start_date { Faker::Time.between(from: DateTime.now - 2, to: DateTime.now) }
+    deadline { Faker::Time.between(from: DateTime.now, to: DateTime.now + 2) }
     course factory: :api_v1_course
     user factory: :api_v1_user
 

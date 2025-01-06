@@ -14,6 +14,8 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { connect } from 'ts-postgres';
 import { it } from 'vitest';
 import { api } from '@services';
+import { getLocalTimeZone, now, parseAbsolute } from '@internationalized/date';
+import { DateValue } from '@nextui-org/react';
 
 const COURSE_DATA = [
     { title: 'Introduction to Computer Science', course_code: 'CS101' },
@@ -181,6 +183,30 @@ async function populateCourse(
     }
 }
 
+function createDeliverableDates(): {
+    start_date: DateValue,
+    deadline: DateValue
+}{
+    const startDateRaw = faker.date
+        .between({
+            from: now(getLocalTimeZone()).subtract({ days: 5 }).toString(),
+            to: now(getLocalTimeZone()).toString(),
+        })
+        .toISOString();
+    const deadlineRaw = faker.date
+        .between({
+            from: now(getLocalTimeZone()).toString(),
+            to: now(getLocalTimeZone()).add({ days: 5 }).toString(),
+        })
+        .toISOString();
+    const start_date = parseAbsolute(startDateRaw, getLocalTimeZone());
+    const deadline = parseAbsolute(deadlineRaw, getLocalTimeZone());
+    return {
+        start_date,
+        deadline
+    }
+}
+
 function createAssignment(
     i: number,
     assignmentsCompleted: number,
@@ -198,6 +224,7 @@ function createAssignment(
         status,
         weight: assignmentWeight,
         mark,
+        ...createDeliverableDates(),
         ...baseDeliverable,
     };
     return assignment;
@@ -220,6 +247,7 @@ function createTutorial(
         status,
         weight: tutorialWeight,
         mark,
+        ...createDeliverableDates(),
         ...baseDeliverable,
     };
     return assignment;
@@ -242,6 +270,7 @@ function createExam(
         status,
         weight,
         mark,
+        ...createDeliverableDates(),
         ...baseDeliverable,
     };
     return exam;
@@ -249,6 +278,7 @@ function createExam(
 
 it(
     'Populate demo data',
+    { timeout: 10000 },
     async () => {
         if (process.env.NODE_ENV !== 'development') {
             return;
@@ -275,9 +305,8 @@ it(
             await dbClient.end();
         })();
 
-        const { error, data } = await supabase.auth.signInWithPassword(
-            DEMO_ACCOUNT_DATA
-        );
+        const { error, data } =
+            await supabase.auth.signInWithPassword(DEMO_ACCOUNT_DATA);
 
         const { session } = data;
 
@@ -314,6 +343,5 @@ it(
             throw err;
         }
         console.log(session);
-    },
-    { timeout: 10000 }
+    }
 );

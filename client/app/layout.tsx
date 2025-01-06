@@ -1,14 +1,19 @@
+import { NextUIProvider, ScrollShadow } from '@nextui-org/react';
+import { MotionConfig } from 'motion/react';
+import { Atkinson_Hyperlegible } from 'next/font/google';
+import type { Metadata } from 'next';
+
 import Navbar from '@components/Navbar';
 import Spacer from '@components/Spacer';
 import { Toaster } from '@components/Toast/Toaster';
-import CartProvider from '@lib/cart/cartContext';
-import SessionProvider from '@lib/supabase/sessionContext';
-import { NextUIProvider } from '@nextui-org/react';
-import type { Metadata } from 'next';
-import { Atkinson_Hyperlegible, Inter } from 'next/font/google';
+import { ChildrenProps } from '@coursefull/props';
+import CartProvider from '@lib/cart/CartContext';
+import HomePageProvider from '@lib/home/HomePageContext';
+import QueryProvider from '@lib/query/QueryContext';
+import SessionProvider from '@lib/supabase/SessionContext';
+
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
 const atkinsonHyperlegible = Atkinson_Hyperlegible({
     weight: ['400', '700'],
     subsets: ['latin'],
@@ -19,6 +24,24 @@ export const metadata: Metadata = {
     description: 'Live your education to the fullest.',
 };
 
+function Contexts({ children }: ChildrenProps) {
+    return (
+        <QueryProvider>
+            <SessionProvider>
+                <CartProvider>
+                    <HomePageProvider>
+                        <NextUIProvider>
+                            <MotionConfig reducedMotion="user">
+                                {children}
+                            </MotionConfig>
+                        </NextUIProvider>
+                    </HomePageProvider>
+                </CartProvider>
+            </SessionProvider>
+        </QueryProvider>
+    );
+}
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -27,17 +50,13 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={atkinsonHyperlegible.className}>
-                <SessionProvider>
-                    <CartProvider>
-                        <NextUIProvider>
-                            <Navbar />
-                            <Spacer className="overflow-auto">
-                                {children}
-                            </Spacer>
-                            <Toaster />
-                        </NextUIProvider>
-                    </CartProvider>
-                </SessionProvider>
+                <Contexts>
+                    <Navbar />
+                    <ScrollShadow className="relative flex justify-center h-[calc(100dvh-64px)]">
+                        <Spacer>{children}</Spacer>
+                    </ScrollShadow>
+                    <Toaster />
+                </Contexts>
             </body>
         </html>
     );

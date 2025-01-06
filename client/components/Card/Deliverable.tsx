@@ -1,3 +1,6 @@
+import { today, getLocalTimeZone, now } from '@internationalized/date';
+import { useDateFormatter } from '@react-aria/i18n';
+
 import Button from '@components/Button/Button';
 import {
     DeletableProps,
@@ -5,6 +8,8 @@ import {
     EditableProps,
     ItemStatus,
     SessionProps,
+    Updated,
+    ViewableProps,
 } from '@coursefull';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
@@ -14,11 +19,14 @@ import {
     determineGradeTextColour,
 } from '@lib/helpers';
 import { deleteDeliverable } from '@services/deliverableService';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import { useGradeColours, useTimeRemaining } from '@lib/hooks/ui';
+import StatusChip from '@components/Chip/StatusChip';
 
 interface DeliverableCardProps
-    extends Deliverable,
-        DeletableProps,
-        EditableProps,
+    extends Updated<Deliverable>,
+        ViewableProps,
         SessionProps {}
 
 export default function DeliverableCard({
@@ -28,77 +36,44 @@ export default function DeliverableCard({
     weight,
     status,
     goal,
+    deadline,
+    start_date,
+    api_v1_course_id,
     session,
-    handleEdit,
-    handleDelete,
+    handleView,
 }: DeliverableCardProps) {
-    let bgColour = 'bg-primary-800';
-    let textColour = '';
-    if (!goal || goal == 0 || status !== ItemStatus.COMPLETE) {
-        //mostly so TypeScript doesn't freak out
-    } else {
-        bgColour = determineGradeBGColour(goal, mark);
-        textColour = determineGradeTextColour(goal, mark);
-    }
+    let formatter = useDateFormatter({ dateStyle: 'short' });
 
-    async function handleDeleteDeliverable() {
-        const confirmDelete = confirm(
-            `Are you sure you want to delete ${name}?`
-        );
-        if (!confirmDelete) {
-            return;
-        }
-        const { success } = await deleteDeliverable(id!, session, (error) => {
-            alert(`Something went wrong: ${error.message}`);
-        });
-        if (!success) {
-            return;
-        }
-        handleDelete();
-    }
+    const { bgColour, textColour } = useGradeColours(goal, mark, status);
+
+    const timeRemaining = useTimeRemaining(deadline, status);
 
     return (
         <div
             className={classNames(
+                'card-primary hover:bg-primary-900 hover:cursor-pointer transition-colors',
                 bgColour,
-                'rounded-lg p-2 border-solid border-2 border-primary-500/10'
+                textColour
             )}
+            onClick={handleView}
         >
-            <div className="flex justify-between">
-                <div className="flex flex-col justify-between basis-1/2">
-                    <h3 className="text-lg text-left font-bold">
-                        {name} ({weight && weight.toFixed(1)}%)
+            <div className="flex flex-col justify-between gap-2">
+                <div className="flex flex-wrap justify-between">
+                    <h3 className="text-lg font-bold">{name}</h3>
+                    <h3 className="text-lg font-bold">
+                        {(status === ItemStatus.COMPLETE &&
+                            mark &&
+                            mark.toFixed(0)) ||
+                            '--'}{' '}
+                        / {goal} %
                     </h3>
-                    <div className="flex flex-col gap-4">
-                        <h4 className="font-bold basis-3/4">
-                            {(status === ItemStatus.COMPLETE &&
-                                mark &&
-                                mark.toFixed(1)) ||
-                                '--'}{' '}
-                            / {goal} %
-                        </h4>
-                        <h4 className="italic">{ReadableStatus(status)}</h4>
-                    </div>
                 </div>
 
-                <div className="flex flex-col justify-center">
-                    <div className="flex flex-col sm:flex-row gap-2">
-                        <Button
-                            endContent={<PencilIcon className="h-6 w-6" />}
-                            onPressEnd={handleEdit}
-                            className="top-1"
-                        >
-                            <span className="hidden sm:inline">Edit</span>
-                        </Button>
-                        <Button
-                            endContent={<TrashIcon className="h-6 w-6" />}
-                            onPressEnd={handleDeleteDeliverable}
-                            className="top-1"
-                            buttonType="danger"
-                        >
-                            <span className="hidden sm:inline">Delete</span>
-                        </Button>
-                    </div>
+                <div className="flex justify-between items-end">
+                    <h4>
+                        <b>Deadline:</b> {formatter.format(deadline.toDate())}
+                    </h4>
+                    <StatusChip status={timeRemaining.status}></StatusChip>
                 </div>
             </div>
         </div>

@@ -1,25 +1,15 @@
 import { Input, Listbox, ListboxItem } from '@nextui-org/react';
-import { Fragment } from 'react';
+import { Fragment, Key, useEffect } from 'react';
 
-import { ItemStatus } from '@coursefull';
+import { ItemStatus, SemesterFormProps } from '@coursefull';
 import { classNames, createStatusObjects, onStatusChanged } from '@lib/helpers';
-
-interface SemesterFormProps {
-    name: string;
-    setName: (name: string) => void;
-    status: ItemStatus;
-    setStatus: (name: ItemStatus) => void;
-    goal: string;
-    setGoal: (name: string) => void;
-}
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { semesterSchema, SemesterSchema } from '@lib/validation';
 
 export default function SemesterForm({
-    name,
-    setName,
-    goal,
-    setGoal,
-    status,
-    setStatus,
+    semester,
+    setSemester
 }: SemesterFormProps) {
     const statusObjects = createStatusObjects([
         ItemStatus.NOT_STARTED,
@@ -27,7 +17,36 @@ export default function SemesterForm({
         ItemStatus.COMPLETE,
     ]);
 
-    //TODO: Add client side validation
+    const {
+        register,
+        setValue,
+        formState: { errors, isValid },
+        control,
+    } = useForm<SemesterSchema>({
+        resolver: zodResolver(semesterSchema),
+        defaultValues: semester,
+    });
+
+    const updateName = (name: string) => {
+        setValue('name', name, { shouldValidate: true });
+        setSemester((semester) => ({ ...semester, name }));
+    };
+
+    const updateGoal = (goalValue: string) => {
+        const goal: number = parseFloat(goalValue);
+        setValue('goal', goal, { shouldValidate: true });
+        setSemester((semester) => ({ ...semester, goal }));
+    };
+
+    const updateStatus = (newStatus: Key) => {
+        onStatusChanged(newStatus, (status) => {
+            setValue('status', status, { shouldValidate: true });
+            setSemester((semester) => ({
+                ...semester,
+                status,
+            }));
+        });
+    };
 
     return (
         <Fragment>
@@ -35,16 +54,20 @@ export default function SemesterForm({
                 type="text"
                 label="Semester Name"
                 placeholder="e.g. Fall 2024..."
-                value={name}
-                onValueChange={setName}
+                {...register('name')}
+                onValueChange={updateName}
+                isInvalid={!!errors.name}
+                errorMessage={errors.name?.message}
                 data-testid="semester-name"
             />
             <Input
                 type="number"
                 label="Goal (%)"
                 placeholder="Semester Goal"
-                value={goal}
-                onValueChange={setGoal}
+                {...register('goal')}
+                onValueChange={updateGoal}
+                isInvalid={!!errors.goal}
+                errorMessage={errors.goal?.message}
                 min={0}
                 max={100}
                 step={0.5}
@@ -54,9 +77,7 @@ export default function SemesterForm({
                 label="Status"
                 topContent="Status"
                 aria-label="Status"
-                onAction={(newStatus) => {
-                    onStatusChanged(newStatus, setStatus);
-                }}
+                onAction={updateStatus}
                 data-testid="semester-status"
                 itemClasses={{ base: 'data-[hover=true]:bg-primary-700 p-4' }}
             >
@@ -64,12 +85,14 @@ export default function SemesterForm({
                     <ListboxItem
                         key={item.key}
                         className={classNames(
-                            status === item.key ? 'bg-primary-600' : ''
+                            semester.status === item.key ? 'bg-primary-600' : ''
                         )}
                         textValue={item.label}
                     >
                         <span
-                            className={status === item.key ? 'font-bold' : ''}
+                            className={
+                                semester.status === item.key ? 'font-bold' : ''
+                            }
                             data-testid={`semester-status-${item.key}`}
                         >
                             {item.label}

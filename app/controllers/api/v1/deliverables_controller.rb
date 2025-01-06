@@ -71,11 +71,11 @@ module Api
 
       # Only allow a list of trusted parameters through.
       def api_v1_deliverable_params
-        params.require(:api_v1_deliverable).permit(:name, :weight, :mark, :notes, :api_v1_course_id, :status)
+        params.require(:api_v1_deliverable).permit(:name, :weight, :mark, :notes, :api_v1_course_id, :status, :start_date, :deadline)
       end
 
       def api_v1_deliverable_update_params
-        params.require(:api_v1_deliverable).permit(:name, :weight, :mark, :notes, :status)
+        params.require(:api_v1_deliverable).permit(:name, :weight, :mark, :notes, :status, :start_date, :deadline)
       end
     end
   end

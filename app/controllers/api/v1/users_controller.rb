@@ -38,9 +38,8 @@ class Api::V1::UsersController < Api::V1::ApplicationController
       res = http.delete("/auth/v1/admin/users/#{@supabase_id}", headers)
       res.value
     rescue Net::HTTPClientException
-      Rails.logger.error(format('Attempt to delete Supabase User with ID %s failed. Status code: %s', @supabase_id,
-                                res.code))
-      Rails.logger.error(format('Deletion details: %s', res.body))
+      Rails.logger.error('Attempt to delete Supabase User with ID %s failed. Status code: %s', @supabase_id, res.code)
+      Rails.logger.error('Deletion details: %s', res.body)
       return render json: { error: 'Failed to delete user.' }, status: res.code
     end
 
@@ -59,12 +58,17 @@ class Api::V1::UsersController < Api::V1::ApplicationController
       'api_v1_semesters.status AS status'
     ]
 
+    joins = [
+      'LEFT JOIN "api_v1_courses" ON "api_v1_courses"."api_v1_semester_id" = "api_v1_semesters"."id"',
+      'LEFT JOIN "api_v1_deliverables" ON "api_v1_deliverables"."api_v1_course_id" = "api_v1_courses"."id"'
+    ]
+
     group_by_clauses = [
       'api_v1_semesters.id', 'api_v1_semesters.name', 'api_v1_semesters.goal', 'api_v1_semesters.status'
     ]
 
     attempted_semester_progress = @api_v1_user.semesters
-                                              .joins(courses: :deliverables)
+                                              .joins(joins)
                                               .select(
                                                 *select_statements
                                               )

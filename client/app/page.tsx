@@ -1,45 +1,26 @@
 'use client';
 
-import { UserMetadata } from '@supabase/supabase-js';
-import { Suspense, useEffect, useState } from 'react';
-import { ScrollShadow } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-import Loading from '@app/loading';
-import AnonHomeStatus from '@components/HomeStatus/AnonHomeStatus';
-import HomeStatus from '@components/HomeStatus/HomeStatus';
-import { useSession } from '@lib/supabase/sessionContext';
+import Home from '@components/Home/Home';
+import { useSession } from '@lib/supabase/SessionContext';
+import { Endpoints } from '@coursefull';
 
-export default function Home() {
-    const [loading, setLoading] = useState(true);
+export default function HomePage() {
+    const router = useRouter();
+    const { session, loadingSession } = useSession();
 
-    const { session, loadingSession } = useSession()!;
-
-    const [username, setUsername] = useState('friend');
     useEffect(() => {
-        setLoading(loadingSession);
         if (!session) {
             return;
         }
-        const metadata: UserMetadata = session.user.user_metadata;
-        setUsername(metadata.first_name);
-    }, [session, loadingSession]);
+        router.push(Endpoints.DASHBOARD)
+    }, [session, loadingSession, router]);
 
     return (
-        <main>
-            <ScrollShadow className="relative py-10 flex justify-center mt-4 lg:mt-0 h-dvh">
-                <div className="flex flex-col justify-center w-full">
-                    <h1>Hey, {username}!</h1>
-                    <Suspense fallback={<Loading message="Good to see you!" />}>
-                        {loading ? (
-                            <Loading message="Good to see you!" />
-                        ) : session ? (
-                            <HomeStatus session={session} />
-                        ) : (
-                            <AnonHomeStatus />
-                        )}
-                    </Suspense>
-                </div>
-            </ScrollShadow>
-        </main>
+        <div className="flex flex-col justify-center w-full">
+            <Home />
+        </div>
     );
 }

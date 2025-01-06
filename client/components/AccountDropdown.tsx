@@ -9,9 +9,9 @@ import Button from '@components/Button/Button';
 import { Endpoints } from '@coursefull';
 import { classNames } from '@lib/helpers';
 import { UserMetadata } from '@supabase/supabase-js';
-import { useCart } from '@lib/cart/cartContext';
+import { useCart } from '@lib/cart/CartContext';
 import LinkButton from '@components/Button/LinkButton';
-import { useSession } from '@lib/supabase/sessionContext';
+import { useSession } from '@lib/supabase/SessionContext';
 import Link from '@components/Link';
 
 type MenuItem = {
@@ -71,7 +71,6 @@ export default function AccountDropdown() {
         <div className="flex">
             <LinkButton
                 href={Endpoints.CHECKOUT}
-                className="top-1"
                 startContent={<ShoppingCartIcon className="h-6 w-6" />}
             >
                 {cartItems}
@@ -81,7 +80,6 @@ export default function AccountDropdown() {
                     <Menu.Button
                         as={Button}
                         startContent={userIcon}
-                        className="top-1"
                     >
                         <span className="sr-only">Open user menu</span>
                         <div className="text-sm hidden md:inline">

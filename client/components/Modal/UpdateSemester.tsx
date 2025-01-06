@@ -7,10 +7,12 @@ import {
 } from '@nextui-org/react';
 
 import Button from '@components/Button/Button';
-import { ItemStatus, Semester } from '@coursefull';
+import { ItemStatus, Semester, Updated } from '@coursefull';
 import { SessionProps } from '@coursefull';
 import SemesterForm from '../Form/SemesterForm';
 import { updateSemester } from '@services/semesterService';
+import assert from 'assert';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface EditSemesterModalProps extends SessionProps {
     semester: Semester | null;
@@ -20,34 +22,26 @@ export default function UpdateSemesterModal({
     session,
     semester,
 }: EditSemesterModalProps) {
-    const [name, setName] = useState<string>(semester?.name || '');
-    const [status, setStatus] = useState<ItemStatus>(
-        semester?.status || ItemStatus.NOT_STARTED
-    );
-    const [goal, setGoal] = useState<string>(semester?.goal.toString() || '');
+    assert(semester);
+    assert(semester.id);
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [updatedSemester, setUpdatedSemester] = useState<Semester>(semester);
 
-    async function handleUpdateSemester(onClose: CallableFunction) {
-        setIsLoading(true);
-        const { success } = await updateSemester(
-            {
-                id: semester?.id,
-                name,
-                status,
-                goal: parseFloat(goal),
-            },
-            session,
-            (error) => {
-                alert(`Something went wrong: ${error}`);
-                setIsLoading(false);
-            }
-        );
-        if (!success) {
-            return;
-        }
-        onClose();
-        location.reload();
+    const queryClient = useQueryClient();
+
+    const semesterUpdate = useMutation({
+        mutationFn: (semester: Semester) => {
+            return updateSemester(
+                semester as Updated<Semester>,
+                session
+            ) as Promise<Updated<Semester>>;
+        },
+        onSuccess: (semester) => {
+            queryClient.invalidateQueries({ queryKey: ['semester', semester.id] });
+        },
+    });
+    if (semesterUpdate.error) {
+        throw semesterUpdate.error;
     }
 
     return (
@@ -59,12 +53,8 @@ export default function UpdateSemesterModal({
                     </ModalHeader>
                     <ModalBody>
                         <SemesterForm
-                            name={name}
-                            setName={setName}
-                            status={status}
-                            setStatus={setStatus}
-                            goal={goal}
-                            setGoal={setGoal}
+                            semester={updatedSemester}
+                            setSemester={setUpdatedSemester}
                         />
                     </ModalBody>
                     <ModalFooter>
@@ -72,9 +62,11 @@ export default function UpdateSemesterModal({
                         <Button
                             buttonType="confirm"
                             onPress={() => {
-                                handleUpdateSemester(onClose);
+                                semesterUpdate.mutate(updatedSemester, {
+                                    onSuccess: onClose
+                                })
                             }}
-                            isLoading={isLoading}
+                            isLoading={semesterUpdate.isPending}
                         >
                             Save
                         </Button>
