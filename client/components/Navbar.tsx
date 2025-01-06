@@ -55,26 +55,26 @@ export default function CourseFullNavbar() {
             color: "foreground",
             onClick: homeRefs?.featuresRef.scrollIntoView
         },
-        {
-            label: "Use Cases",
-            color: "foreground",
-            onClick: homeRefs?.inActionRef.scrollIntoView
-        },
-        {
-            label: "Benefits",
-            color: "foreground",
-            onClick: homeRefs?.benefitsRef.scrollIntoView
-        },
+        // {
+        //     label: "Use Cases",
+        //     color: "foreground",
+        //     onClick: homeRefs?.inActionRef.scrollIntoView
+        // },
+        // {
+        //     label: "Benefits",
+        //     color: "foreground",
+        //     onClick: homeRefs?.benefitsRef.scrollIntoView
+        // },
         {
             label: "How It Works",
             color: "foreground",
             onClick: homeRefs?.mechanicsRef.scrollIntoView
         },
-        {
-            label: "FAQ",
-            color: "foreground",
-            onClick: homeRefs?.faqRef.scrollIntoView
-        }
+        // {
+        //     label: "FAQ",
+        //     color: "foreground",
+        //     onClick: homeRefs?.faqRef.scrollIntoView
+        // }
     ];
 
     const authenticatedMenuItems: AuthenticatedMenuItem[] = [

@@ -12,7 +12,7 @@ import { useHomePage } from '@lib/home/HomePageContext';
 
 interface FeatureData {
     title: string;
-    subheading: string;
+    subtitle: string;
     description: string;
     visual: ReactNode;
 }
@@ -43,21 +43,21 @@ export default function Features() {
     const features: FeatureData[] = [
         {
             title: 'Automatic Goal Tracking',
-            subheading: 'Let us do the math for you!',
+            subtitle: 'Let us do the math for you!',
             description:
                 'Got a target you need to hit? We do the math behind the scenes so you always know what you need to get on your assignments, exams, and other deliverables to get the report card of your dreams!',
             visual: <ArrowTrendingUpIcon className="icon-lg" />,
         },
         {
             title: 'Instant Visual Feedback',
-            subheading: "See how you're doing at a glance!",
+            subtitle: "See how you're doing at a glance!",
             description:
                 "Colour-coded items let you know where you have breathing room, where you need to put a little more work, and where you're starting to fall behind!",
             visual: <EyeIcon className="icon-lg" />,
         },
         {
             title: 'Always-On Deadline Tracking',
-            subheading: "Know what's coming up so you can prioritize better!",
+            subtitle: "Know what's coming up so you can prioritize better!",
             description:
                 'Know what deadlines you have coming soon, and how much time you have left! If any deliverables are overdue, you will see them first.',
             visual: <CalendarIcon className="icon-lg" />,
@@ -80,7 +80,7 @@ export default function Features() {
             </motion.h2>
             <div className="flex flex-col md:flex-row gap-4 justify-center">
                 {features.map(
-                    ({ title, subheading, visual, description }, index) => {
+                    ({ title, subtitle: subheading, visual, description }, index) => {
                         return (
                             <motion.div
                                 className="card-primary pb-4 flex flex-col gap-4 justify-between items-center basis-1/3"

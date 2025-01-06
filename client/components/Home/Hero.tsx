@@ -1,6 +1,5 @@
 'use client';
 
-import { RefObject } from 'react';
 import { motion, type Variants } from 'motion/react';
 import { ClipboardIcon, UserIcon } from '@heroicons/react/24/solid';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
@@ -9,42 +8,10 @@ import { Endpoints, HomePageRefs } from '@coursefull';
 import LinkButton from '@components/Button/LinkButton';
 import Button from '@components/Button/Button';
 import { useHomePage } from '@lib/home/HomePageContext';
+import { headerVariants, heroVariants } from '@lib/animations/variants';
 
 export default function Hero() {
     const { refs } = useHomePage();
-
-    const basicVariants: Variants = {
-        offscreen: {
-            opacity: 0,
-            filter: 'blur(5px)',
-        },
-        onscreen: {
-            opacity: 1,
-            filter: 'blur(0)',
-        },
-    };
-
-    const headerVariants: Variants = {
-        offscreen: {
-            ...basicVariants.offscreen,
-            x: '-100%',
-        },
-        onscreen: {
-            ...basicVariants.onscreen,
-            x: '0%',
-        },
-    };
-
-    const heroVariants: Variants = {
-        offscreen: {
-            ...basicVariants.offscreen,
-            y: '100%',
-        },
-        onscreen: {
-            ...basicVariants.onscreen,
-            y: '0%',
-        },
-    };
 
     const heroDelay: number = 1.5;
     const heroButtonDelay: number = heroDelay + 0.5;

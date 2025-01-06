@@ -1,11 +1,7 @@
 'use client';
 
-import { ReactNode, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { HomePageRefs } from '@coursefull';
 import Hero from '@components/Home/Hero';
-
-import { useHomePage } from '@lib/home/HomePageContext';
 
 const Benefits = dynamic(() => import('@components/Home/Benefits'));
 const CallToValue = dynamic(()=>import('@components/Home/CallToValue'));
@@ -36,9 +32,9 @@ export default function Home() {
         <div className="flex flex-col gap-8 lg:gap-16">
             <Hero />
             <Features />
-            <Benefits />
+            {/* <Benefits /> */}
             <MechanicsInfo />
-            <Pricing />
+            {/* <Pricing /> */}
         </div>
     );
 }
