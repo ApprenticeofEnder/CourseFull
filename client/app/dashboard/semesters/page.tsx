@@ -30,14 +30,11 @@ import UpdateSemesterModal from '@components/Modal/UpdateSemester';
 import {
     Course,
     Endpoints,
-    ItemStatus,
     SessionProps,
     Updated,
 } from '@coursefull';
 import {
     classNames,
-    determineGradeTextColour,
-    ReadableStatus,
 } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { deleteSemester, getSemester } from '@services/semesterService';
