@@ -61,9 +61,9 @@ export default function CourseFullNavbar() {
         //     onClick: homeRefs?.inActionRef.scrollIntoView
         // },
         {
-            label: "Benefits",
-            color: "foreground",
-            onClick: homeRefs?.benefitsRef.navigateTo
+            label: 'Benefits',
+            color: 'foreground',
+            onClick: homeRefs?.benefitsRef.navigateTo,
         },
         {
             label: 'How It Works',
@@ -71,10 +71,10 @@ export default function CourseFullNavbar() {
             onClick: homeRefs?.mechanicsRef.navigateTo,
         },
         {
-            label: "FAQ",
-            color: "foreground",
-            onClick: homeRefs?.faqRef.scrollIntoView
-        }
+            label: 'FAQ',
+            color: 'foreground',
+            onClick: homeRefs?.faqRef.scrollIntoView,
+        },
     ];
 
     const authenticatedMenuItems: AuthenticatedMenuItem[] = [
@@ -98,6 +98,7 @@ export default function CourseFullNavbar() {
     return (
         <Navbar
             onMenuOpenChange={setIsMenuOpen}
+            isMenuOpen={isMenuOpen}
             position="sticky"
             className="bg-background-900"
         >
@@ -207,28 +208,50 @@ export default function CourseFullNavbar() {
                 )}
             </NavbarContent>
             <NavbarMenu className="bg-background-900">
-                {session ? (
-                    authenticatedMenuItems.map((item, index) => {
-                        return (
-                            <NavbarMenuItem key={`${item}-${index}`}>
-                                <Link
-                                    className="w-full"
-                                    isDisabled={item.disabled}
-                                    href={item.href}
-                                    size="lg"
-                                    color={item.color}
-                                    onClick={() => {
-                                        setIsMenuOpen(false);
-                                    }}
-                                >
-                                    {item.label}
-                                </Link>
-                            </NavbarMenuItem>
-                        );
-                    })
-                ) : (
-                    <NavbarMenuItem></NavbarMenuItem>
-                )}
+                {session
+                    ? authenticatedMenuItems.map(
+                          ({ label, disabled, href, color }, index) => {
+                              return (
+                                  <NavbarMenuItem key={`${label}-${index}`}>
+                                      <Link
+                                          className="w-full"
+                                          isDisabled={disabled}
+                                          href={href}
+                                          size="lg"
+                                          color={color}
+                                          onClick={() => {
+                                              setIsMenuOpen(false);
+                                          }}
+                                      >
+                                          {label}
+                                      </Link>
+                                  </NavbarMenuItem>
+                              );
+                          }
+                      )
+                    : homeMenuItems.map(
+                          ({ color, disabled, label, onClick }, index) => {
+                              return (
+                                  <NavbarItem
+                                      isActive={color == 'primary'}
+                                      key={`${label}-${index}`}
+                                  >
+                                      <Link
+                                          color={color}
+                                          size="lg"
+                                          onClick={() => {
+                                              setIsMenuOpen(false);
+                                              onClick && onClick();
+                                          }}
+                                          underline="hover"
+                                          className="w-full hover:cursor-pointer"
+                                      >
+                                          {label}
+                                      </Link>
+                                  </NavbarItem>
+                              );
+                          }
+                      )}
                 <Spacer y={4} />
 
                 <hr className="border-1 border-primary-700/50 my-2" />

@@ -17,6 +17,7 @@ import {
 } from '@nextui-org/react';
 import { useHomePage } from '@lib/home/HomePageContext';
 import { expositionVariants, cardVariants } from '@lib/animations/variants';
+import Section from './Section';
 
 interface Question {
     question: string;
@@ -37,26 +38,17 @@ export default function Faq() {
         },
         {
             question: "Can't I just use a spreadsheet for this?",
-            answer: "You can! If you have the skill, time, and energy to invest in maintaining a spreadsheet that can track your goals going forward, go for it. That said, some people don't have all three of those things, which is why CourseFull exists."
+            answer: "You can! If you have the skill, time, and energy to invest in maintaining a spreadsheet that can track your goals going forward, go for it. That said, some people don't have all three of those things, which is why CourseFull exists.",
         },
         {
-            question: "Do you use AI at all?",
-            answer: "If by AI you mean generative AI like ChatGPT, not at the moment. If enough of our users want it, we're happy to implement AI functionality! However, we also want to be thoughtful of what we put in, making sure any generative AI or LLM feature is sensible, both in terms of what it can do and what it does with user data."
-        }
+            question: 'Do you use AI at all?',
+            answer: "If by AI you mean generative AI like ChatGPT, not at the moment. If enough of our users want it, we're happy to implement AI functionality! However, we also want to be thoughtful of what we put in, making sure any generative AI or LLM feature is sensible, both in terms of what it can do and what it does with user data.",
+        },
     ];
 
     return (
-        <motion.div
-            ref={refs?.faqRef.ref}
-            className="flex flex-col justify-center gap-4 sm:px-16 sm:py-8"
-        >
-            <motion.h2
-                initial="offscreen"
-                whileInView="onscreen"
-                variants={expositionVariants}
-            >
-                FAQ
-            </motion.h2>
+        <Section ref={refs?.faqRef.ref} title="FAQ">
+            {/* Necessary because of flexbox stuff. */}
             <div>
                 <Accordion variant="splitted">
                     {questions.map(({ question, answer }, index) => {
@@ -73,6 +65,6 @@ export default function Faq() {
                     })}
                 </Accordion>
             </div>
-        </motion.div>
+        </Section>
     );
 }

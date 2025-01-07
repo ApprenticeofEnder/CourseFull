@@ -10,6 +10,7 @@ import {
     FaceFrownIcon,
     FaceSmileIcon,
 } from '@heroicons/react/24/outline';
+import Section from './Section';
 
 export default function Benefits() {
     const { refs } = useHomePage();
@@ -53,17 +54,7 @@ export default function Benefits() {
     ];
 
     return (
-        <motion.div
-            className="flex flex-col justify-center items-center gap-4 sm:px-16 sm:py-8"
-            ref={refs?.benefitsRef.ref}
-        >
-            <motion.h2
-                initial="offscreen"
-                whileInView="onscreen"
-                variants={expositionVariants}
-            >
-                Benefits
-            </motion.h2>
+        <Section ref={refs?.benefitsRef.ref} title="Benefits">
             <motion.p
                 initial="offscreen"
                 whileInView="onscreen"
@@ -93,6 +84,6 @@ export default function Benefits() {
                     );
                 })}
             </motion.div>
-        </motion.div>
+        </Section>
     );
 }
