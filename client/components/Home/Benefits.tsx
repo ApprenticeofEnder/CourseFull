@@ -5,11 +5,11 @@ import { ReactNode } from 'react';
 import {
     ArrowRightIcon,
     ClipboardDocumentCheckIcon,
+    ClockIcon,
     ExclamationTriangleIcon,
     FaceFrownIcon,
     FaceSmileIcon,
 } from '@heroicons/react/24/outline';
-import { TimerIcon } from '@radix-ui/react-icons';
 
 export default function Benefits() {
     const { refs } = useHomePage();
@@ -48,7 +48,7 @@ export default function Benefits() {
             title: 'More Time',
             subtitle:
                 "Because you're not fiddling with a spreadsheet or Notion template all the time.",
-            visual: <TimerIcon className="icon-lg" />,
+            visual: <ClockIcon className="icon-lg" />,
         },
     ];
 
@@ -73,11 +73,16 @@ export default function Benefits() {
                 {"What's in it for you? A lot, actually!"}
             </motion.p>
             <motion.div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-2">
-                {benefits.map(({ title, subtitle, visual }) => {
+                {benefits.map(({ title, subtitle, visual }, index) => {
                     return (
                         <motion.div
                             className="card-secondary flex flex-col gap-2 justify-between items-center p-4"
                             key={title}
+                            initial="offscreen"
+                            whileInView="onscreen"
+                            variants={cardVariants}
+                            transition={{ delay: 0.1 * (index + 1) }}
+                            viewport={{ once: true }}
                         >
                             <motion.h3>{title}</motion.h3>
                             {visual}
