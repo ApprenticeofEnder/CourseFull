@@ -70,11 +70,11 @@ export default function CourseFullNavbar() {
             color: 'foreground',
             onClick: homeRefs?.mechanicsRef.navigateTo,
         },
-        // {
-        //     label: "FAQ",
-        //     color: "foreground",
-        //     onClick: homeRefs?.faqRef.scrollIntoView
-        // }
+        {
+            label: "FAQ",
+            color: "foreground",
+            onClick: homeRefs?.faqRef.scrollIntoView
+        }
     ];
 
     const authenticatedMenuItems: AuthenticatedMenuItem[] = [
