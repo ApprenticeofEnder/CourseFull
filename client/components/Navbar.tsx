@@ -22,8 +22,6 @@ import { useHomePage } from '@lib/home/HomePageContext';
 
 const GITHUB_LINK: string = 'https://github.com/ApprenticeofEnder/CourseFull';
 
-// TODO: Add links for the unauthenticated home page
-
 export default function CourseFullNavbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 

@@ -38,7 +38,8 @@ export default function HomePage() {
                 <Benefits />
                 <MechanicsInfo />
                 <Faq />
-                <CallToValue />
+                {/* TODO: Finish this page */}
+                {/* <CallToValue /> */}
                 {/* <Pricing /> */}
             </div>
         </div>
