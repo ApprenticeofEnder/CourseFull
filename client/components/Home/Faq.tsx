@@ -47,6 +47,7 @@ export default function Faq() {
                             key={index}
                             aria-label={question}
                             title={question}
+                            className='bg-primary-800'
                         >
                             {answer}
                         </AccordionItem>
