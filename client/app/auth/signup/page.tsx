@@ -26,7 +26,7 @@ export default function Signup() {
     return (
         <Fragment>
             <h1 data-testid="signup-header">Sign up for CourseFull</h1>
-            <SignupForm/>
+            <SignupForm />
         </Fragment>
     );
 }

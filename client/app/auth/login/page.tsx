@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Endpoints } from '@coursefull';
 import { useSession } from '@lib/supabase/SessionContext';
 import LoginForm from '@components/Form/LoginForm';
+import { Metadata } from 'next';
 
 export default function Login() {
     const router = useRouter();

@@ -11,7 +11,7 @@ import {
     useState,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { HomePageRef, HomePageRefs } from '@coursefull';
+import { Endpoints, HomePageRef, HomePageRefs } from '@coursefull';
 
 type HomePageRefOptions = {
     href: string;
@@ -20,19 +20,34 @@ type HomePageRefOptions = {
 function useHomePageRef(options?: HomePageRefOptions): HomePageRef {
     const router = useRouter();
     const ref = useRef<HTMLDivElement>(null);
+    const scrollIntoView = () => {
+        ref.current?.scrollIntoView({ behavior: 'smooth' });
+    };
     const result: HomePageRef = {
         ref,
-        scrollIntoView: () => {
-            ref.current?.scrollIntoView({ behavior: 'smooth' });
+        scrollIntoView,
+        navigateTo: async () => {
+            if (window.location.pathname !== Endpoints.ROOT) {
+                router.push(Endpoints.ROOT);
+                await new Promise((resolve) => {
+                    setTimeout(resolve, 100);
+                });
+            }
+            scrollIntoView();
         },
-        navigateTo: () => {},
     };
     if (options) {
         let { href } = options;
         return {
             ...result,
-            navigateTo: () => {
-                router.push(href!);
+            navigateTo: async () => {
+                if (window.location.pathname !== Endpoints.ROOT) {
+                    router.push(href!);
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, 100);
+                    });
+                }
+                scrollIntoView();
             },
         };
     }
@@ -64,7 +79,7 @@ const HomePageProvider: FC<{ children: ReactNode }> = ({ children }) => {
     );
 };
 
-export function useHomePage(){
+export function useHomePage() {
     return useContext(HomePageContext);
 }
 

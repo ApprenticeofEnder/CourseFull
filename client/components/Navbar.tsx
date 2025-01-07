@@ -40,35 +40,35 @@ export default function CourseFullNavbar() {
         href: string;
     }
 
-    interface HomeMenuItem extends MenuItem{
-        onClick: (()=>void) | undefined
+    interface HomeMenuItem extends MenuItem {
+        onClick: (() => void) | undefined;
     }
 
     const homeMenuItems: HomeMenuItem[] = [
         {
-            label: "Home",
-            color: "foreground",
-            onClick: homeRefs?.heroRef.scrollIntoView
+            label: 'Home',
+            color: 'foreground',
+            onClick: homeRefs?.heroRef.navigateTo,
         },
         {
-            label: "Features",
-            color: "foreground",
-            onClick: homeRefs?.featuresRef.scrollIntoView
+            label: 'Features',
+            color: 'foreground',
+            onClick: homeRefs?.featuresRef.navigateTo,
         },
         // {
         //     label: "Use Cases",
         //     color: "foreground",
         //     onClick: homeRefs?.inActionRef.scrollIntoView
         // },
-        // {
-        //     label: "Benefits",
-        //     color: "foreground",
-        //     onClick: homeRefs?.benefitsRef.scrollIntoView
-        // },
         {
-            label: "How It Works",
+            label: "Benefits",
             color: "foreground",
-            onClick: homeRefs?.mechanicsRef.scrollIntoView
+            onClick: homeRefs?.benefitsRef.navigateTo
+        },
+        {
+            label: 'How It Works',
+            color: 'foreground',
+            onClick: homeRefs?.mechanicsRef.navigateTo,
         },
         // {
         //     label: "FAQ",
@@ -159,17 +159,17 @@ export default function CourseFullNavbar() {
                     ))}
                 </NavbarContent>
             ) : (
-                <NavbarContent>
-                    {homeMenuItems.map(({color, label, onClick}) => (
-                        <NavbarItem
-                            isActive={color == 'primary'}
-                            key={label}
-                        >
+                <NavbarContent
+                    className="hidden md:flex gap-4"
+                    justify="center"
+                >
+                    {homeMenuItems.map(({ color, label, onClick }) => (
+                        <NavbarItem isActive={color == 'primary'} key={label}>
                             <Link
                                 color={color}
                                 onClick={onClick}
                                 underline="hover"
-                                className='hover:cursor-pointer'
+                                className="hover:cursor-pointer"
                             >
                                 {label}
                             </Link>

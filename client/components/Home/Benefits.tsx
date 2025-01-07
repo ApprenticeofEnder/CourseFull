@@ -2,6 +2,14 @@ import { useHomePage } from '@lib/home/HomePageContext';
 import { motion } from 'motion/react';
 import { expositionVariants, cardVariants } from '@lib/animations/variants';
 import { ReactNode } from 'react';
+import {
+    ArrowRightIcon,
+    ClipboardDocumentCheckIcon,
+    ExclamationTriangleIcon,
+    FaceFrownIcon,
+    FaceSmileIcon,
+} from '@heroicons/react/24/outline';
+import { TimerIcon } from '@radix-ui/react-icons';
 
 export default function Benefits() {
     const { refs } = useHomePage();
@@ -15,8 +23,32 @@ export default function Benefits() {
     const benefits: Benefit[] = [
         {
             title: 'Better Grades',
-            subtitle: 'Which means better scholarships and more opportunities.',
-            visual: '',
+            subtitle:
+                'Which means better scholarships and more opportunities. And maybe happier parents.',
+            visual: <ClipboardDocumentCheckIcon className="icon-lg" />,
+        },
+        {
+            title: 'Fewer Missed Deadlines',
+            subtitle: "They suck when they happen, but they don't have to.",
+            visual: <ExclamationTriangleIcon className="icon-lg" />,
+        },
+        {
+            title: 'Less Stress',
+            subtitle:
+                'Managing all your deadlines and knowing where you stand can be a lot. We can help.',
+            visual: (
+                <div className="flex gap-1 justify-center">
+                    <FaceFrownIcon className="icon-lg" />
+                    <ArrowRightIcon className="icon-lg" />
+                    <FaceSmileIcon className="icon-lg" />
+                </div>
+            ),
+        },
+        {
+            title: 'More Time',
+            subtitle:
+                "Because you're not fiddling with a spreadsheet or Notion template all the time.",
+            visual: <TimerIcon className="icon-lg" />,
         },
     ];
 
@@ -40,11 +72,18 @@ export default function Benefits() {
             >
                 {"What's in it for you? A lot, actually!"}
             </motion.p>
-            <motion.div className="grid grid-cols-2">
+            <motion.div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-2">
                 {benefits.map(({ title, subtitle, visual }) => {
                     return (
-                        <motion.div key={title}>
+                        <motion.div
+                            className="card-secondary flex flex-col gap-2 justify-between items-center p-4"
+                            key={title}
+                        >
                             <motion.h3>{title}</motion.h3>
+                            {visual}
+                            <motion.h4 className="text-center basis-1/3 flex flex-col justify-center">
+                                {subtitle}
+                            </motion.h4>
                         </motion.div>
                     );
                 })}
