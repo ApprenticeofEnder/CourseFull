@@ -1,22 +1,8 @@
-import { motion, type Variants } from 'motion/react';
-import { ReactNode, useState } from 'react';
-import {
-    ArrowTrendingUpIcon,
-    CalendarIcon,
-    EyeIcon,
-    InformationCircleIcon,
-} from '@heroicons/react/24/outline';
-
-import Button from '@components/Button/Button';
 import {
     Accordion,
     AccordionItem,
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
 } from '@nextui-org/react';
 import { useHomePage } from '@lib/home/HomePageContext';
-import { expositionVariants, cardVariants } from '@lib/animations/variants';
 import Section from './Section';
 
 interface Question {
