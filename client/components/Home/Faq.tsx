@@ -49,7 +49,7 @@ export default function Faq() {
     return (
         <Section ref={refs?.faqRef.ref} title="FAQ">
             {/* Necessary because of flexbox stuff. */}
-            <div>
+            <div className='w-full'>
                 <Accordion variant="splitted">
                     {questions.map(({ question, answer }, index) => {
                         return (
