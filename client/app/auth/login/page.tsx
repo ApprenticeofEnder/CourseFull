@@ -19,6 +19,8 @@ export default function Login() {
         }
     }, [session, loadingSession, router]);
 
+    // TODO: Add "Forgot Password" menu
+
     return (
         <Fragment>
             <h1 data-testid="login-header">Log In to CourseFull</h1>
