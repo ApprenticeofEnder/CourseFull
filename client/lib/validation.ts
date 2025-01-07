@@ -134,9 +134,9 @@ export const signupSchema = loginSchema
                 message: 'Last name must not be longer than 150 characters',
             }),
         subscribed: z.boolean(),
-    })
-    .refine(({ password }) => {
-        return validatePassword(password);
+        password: z.string().refine((password)=>{
+            return validatePassword(password) || false;
+        }),
     });
 
 export type SignupSchema = z.infer<typeof signupSchema>;

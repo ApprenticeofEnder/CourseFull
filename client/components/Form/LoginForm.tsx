@@ -1,7 +1,7 @@
 'use client';
 
 import { Input } from '@nextui-org/react';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 
 import { Endpoints } from '@coursefull';
 import { login } from '@services/userService';
@@ -15,6 +15,8 @@ import { useMutation } from '@tanstack/react-query';
 
 export default function LoginForm() {
     const router = useRouter();
+    const [isNavigating, setIsNavigating] = useState<boolean>(false);
+
     const {
         register,
         handleSubmit,
@@ -25,6 +27,7 @@ export default function LoginForm() {
             email: '',
             password: '',
         },
+        mode: "onChange"
     });
 
     const loginMutation = useMutation({
@@ -33,6 +36,7 @@ export default function LoginForm() {
         },
         onSuccess: () => {
             router.push(Endpoints.DASHBOARD);
+            setIsNavigating(true);
         },
     });
     if (loginMutation.error) {
@@ -62,8 +66,11 @@ export default function LoginForm() {
             <div className="flex gap-4">
                 <LinkButton
                     className="basis-1/2"
-                    isLoading={loginMutation.isPending}
+                    isLoading={isNavigating}
                     href={Endpoints.SIGN_UP}
+                    onClick={()=>{
+                        setIsNavigating(true);
+                    }}
                     data-testid="signup-nav-button"
                 >
                     Go to Signup
