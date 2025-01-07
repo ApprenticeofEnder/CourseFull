@@ -1,6 +1,7 @@
 import { useHomePage } from '@lib/home/HomePageContext';
 import { expositionVariants, cardVariants } from '@lib/animations/variants';
 import { motion } from 'motion/react';
+import Section from '@components/Home/Section';
 
 interface Step {
     stepNumber: number;
@@ -21,28 +22,16 @@ export default function MechanicsInfo() {
     }));
 
     return (
-        <motion.div
-            className="flex flex-col justify-center items-center gap-4 sm:px-16 sm:py-8"
-            ref={refs?.mechanicsRef.ref}
-        >
-            <motion.h2
-                initial="offscreen"
-                whileInView="onscreen"
-                variants={expositionVariants}
-            >
-                Take charge of your academic goals!
-            </motion.h2>
+        <Section ref={refs?.mechanicsRef.ref} title="How It Works">
             <motion.p
                 initial="offscreen"
                 whileInView="onscreen"
                 variants={expositionVariants}
                 className="text-center"
             >
-                <b>Got a target to hit?</b> We do the math behind the scenes so
-                you always know what you need to get on your assignments, exams,
-                and other deliverables.
+                It's easier than you think.
             </motion.p>
-            <div className="flex flex-col sm:flex-row justify-between items-stretch gap-4">
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
                 {cardData.map(({ stepNumber, step }: Step, index: number) => (
                     <motion.div
                         key={stepNumber}
@@ -52,13 +41,15 @@ export default function MechanicsInfo() {
                         transition={{
                             delay: 0.1 * (index + 1),
                         }}
-                        className="basis-1/3 card-secondary lg:p-8 flex flex-col justify-between gap-2 lg:gap-4 rounded-lg"
+                        className="basis-1/3 card-secondary lg:p-8 flex flex-col justify-between items-center gap-2 lg:gap-4 rounded-lg"
                     >
                         <h1>{stepNumber}</h1>
-                        <p className="text-center text-xl">{step}</p>
+                        <div className="flex flex-col justify-center basis-1/2">
+                            <p className="text-center text-xl">{step}</p>
+                        </div>
                     </motion.div>
                 ))}
             </div>
-        </motion.div>
+        </Section>
     );
 }

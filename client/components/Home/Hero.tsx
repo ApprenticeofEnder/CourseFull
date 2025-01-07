@@ -72,7 +72,7 @@ export default function Hero() {
                     className="text-xl sm:text-2xl my-5"
                 >
                     CourseFull tracks your grades, and what you need to achieve
-                    your goals, all semester long.
+                    your goals, so you can get the report card of your dreams.
                 </motion.p>
                 <motion.blockquote
                     initial="offscreen"

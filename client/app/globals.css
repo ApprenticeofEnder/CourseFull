@@ -86,7 +86,7 @@
     }
 
     .card-secondary {
-        @apply rounded-lg bg-secondary-800 p-2 border-solid border-2 border-secondary-500/10
+        @apply rounded-lg !text-secondary-200 bg-secondary-800 p-2 border-solid border-2 border-secondary-500/10
     }
 
     .icon {

@@ -22,8 +22,6 @@ import { useHomePage } from '@lib/home/HomePageContext';
 
 const GITHUB_LINK: string = 'https://github.com/ApprenticeofEnder/CourseFull';
 
-// TODO: Add links for the unauthenticated home page
-
 export default function CourseFullNavbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -40,41 +38,41 @@ export default function CourseFullNavbar() {
         href: string;
     }
 
-    interface HomeMenuItem extends MenuItem{
-        onClick: (()=>void) | undefined
+    interface HomeMenuItem extends MenuItem {
+        onClick: (() => void) | undefined;
     }
 
     const homeMenuItems: HomeMenuItem[] = [
         {
-            label: "Home",
-            color: "foreground",
-            onClick: homeRefs?.heroRef.scrollIntoView
+            label: 'Home',
+            color: 'foreground',
+            onClick: homeRefs?.heroRef.navigateTo,
         },
         {
-            label: "Features",
-            color: "foreground",
-            onClick: homeRefs?.featuresRef.scrollIntoView
+            label: 'Features',
+            color: 'foreground',
+            onClick: homeRefs?.featuresRef.navigateTo,
         },
         // {
         //     label: "Use Cases",
         //     color: "foreground",
         //     onClick: homeRefs?.inActionRef.scrollIntoView
         // },
-        // {
-        //     label: "Benefits",
-        //     color: "foreground",
-        //     onClick: homeRefs?.benefitsRef.scrollIntoView
-        // },
         {
-            label: "How It Works",
-            color: "foreground",
-            onClick: homeRefs?.mechanicsRef.scrollIntoView
+            label: 'Benefits',
+            color: 'foreground',
+            onClick: homeRefs?.benefitsRef.navigateTo,
         },
-        // {
-        //     label: "FAQ",
-        //     color: "foreground",
-        //     onClick: homeRefs?.faqRef.scrollIntoView
-        // }
+        {
+            label: 'How It Works',
+            color: 'foreground',
+            onClick: homeRefs?.mechanicsRef.navigateTo,
+        },
+        {
+            label: 'FAQ',
+            color: 'foreground',
+            onClick: homeRefs?.faqRef.scrollIntoView,
+        },
     ];
 
     const authenticatedMenuItems: AuthenticatedMenuItem[] = [
@@ -98,6 +96,7 @@ export default function CourseFullNavbar() {
     return (
         <Navbar
             onMenuOpenChange={setIsMenuOpen}
+            isMenuOpen={isMenuOpen}
             position="sticky"
             className="bg-background-900"
         >
@@ -159,17 +158,17 @@ export default function CourseFullNavbar() {
                     ))}
                 </NavbarContent>
             ) : (
-                <NavbarContent>
-                    {homeMenuItems.map(({color, label, onClick}) => (
-                        <NavbarItem
-                            isActive={color == 'primary'}
-                            key={label}
-                        >
+                <NavbarContent
+                    className="hidden md:flex gap-4"
+                    justify="center"
+                >
+                    {homeMenuItems.map(({ color, label, onClick }) => (
+                        <NavbarItem isActive={color == 'primary'} key={label}>
                             <Link
                                 color={color}
                                 onClick={onClick}
                                 underline="hover"
-                                className='hover:cursor-pointer'
+                                className="hover:cursor-pointer"
                             >
                                 {label}
                             </Link>
@@ -207,28 +206,50 @@ export default function CourseFullNavbar() {
                 )}
             </NavbarContent>
             <NavbarMenu className="bg-background-900">
-                {session ? (
-                    authenticatedMenuItems.map((item, index) => {
-                        return (
-                            <NavbarMenuItem key={`${item}-${index}`}>
-                                <Link
-                                    className="w-full"
-                                    isDisabled={item.disabled}
-                                    href={item.href}
-                                    size="lg"
-                                    color={item.color}
-                                    onClick={() => {
-                                        setIsMenuOpen(false);
-                                    }}
-                                >
-                                    {item.label}
-                                </Link>
-                            </NavbarMenuItem>
-                        );
-                    })
-                ) : (
-                    <NavbarMenuItem></NavbarMenuItem>
-                )}
+                {session
+                    ? authenticatedMenuItems.map(
+                          ({ label, disabled, href, color }, index) => {
+                              return (
+                                  <NavbarMenuItem key={`${label}-${index}`}>
+                                      <Link
+                                          className="w-full"
+                                          isDisabled={disabled}
+                                          href={href}
+                                          size="lg"
+                                          color={color}
+                                          onClick={() => {
+                                              setIsMenuOpen(false);
+                                          }}
+                                      >
+                                          {label}
+                                      </Link>
+                                  </NavbarMenuItem>
+                              );
+                          }
+                      )
+                    : homeMenuItems.map(
+                          ({ color, disabled, label, onClick }, index) => {
+                              return (
+                                  <NavbarItem
+                                      isActive={color == 'primary'}
+                                      key={`${label}-${index}`}
+                                  >
+                                      <Link
+                                          color={color}
+                                          size="lg"
+                                          onClick={() => {
+                                              setIsMenuOpen(false);
+                                              onClick && onClick();
+                                          }}
+                                          underline="hover"
+                                          className="w-full hover:cursor-pointer"
+                                      >
+                                          {label}
+                                      </Link>
+                                  </NavbarItem>
+                              );
+                          }
+                      )}
                 <Spacer y={4} />
 
                 <hr className="border-1 border-primary-700/50 my-2" />

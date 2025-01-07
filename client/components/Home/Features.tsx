@@ -9,6 +9,7 @@ import {
 import Button from '@components/Button/Button';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 import { useHomePage } from '@lib/home/HomePageContext';
+import { expositionVariants, cardVariants } from '@lib/animations/variants';
 
 interface FeatureData {
     title: string;
@@ -18,27 +19,6 @@ interface FeatureData {
 }
 
 export default function Features() {
-    const expositionVariants: Variants = {
-        offscreen: {
-            opacity: 0,
-            filter: 'blur(20px)',
-        },
-        onscreen: {
-            opacity: 1,
-            filter: 'blur(0)',
-        },
-    };
-
-    const cardVariants: Variants = {
-        offscreen: {
-            ...expositionVariants.offscreen,
-            x: '-100%',
-        },
-        onscreen: {
-            ...expositionVariants.onscreen,
-            x: '0%',
-        },
-    };
 
     const features: FeatureData[] = [
         {

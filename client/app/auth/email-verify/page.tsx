@@ -7,8 +7,9 @@ export default function EmailVerify() {
         <Fragment>
             <h2>Email Verification Sent</h2>
             <p className="text-center">
-                You&quot;ll need to verify your email address before you can
-                start using CourseFull.
+                {
+                    "You'll need to verify your email address before you can start using CourseFull."
+                }
             </p>
         </Fragment>
     );

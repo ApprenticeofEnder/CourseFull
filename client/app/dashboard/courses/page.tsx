@@ -86,19 +86,29 @@ function CoursePage({ session }: SessionProps) {
     );
 
     const deliverables = useMemo(() => {
-        return courseQuery.data?.deliverables?.sort((a, b) => {
-            if (a.status === b.status) {
-                const aDeadline = a.deadline.toDate();
-                const bDeadline = b.deadline.toDate();
-                return aDeadline.getTime() - bDeadline.getTime();
-            }
-            if (a.status === ItemStatus.ACTIVE) {
-                return -1;
-            } else {
-                return 1;
-            }
-        });
+        return (
+            courseQuery.data?.deliverables?.sort((a, b) => {
+                if (a.status === b.status) {
+                    const aDeadline = a.deadline.toDate();
+                    const bDeadline = b.deadline.toDate();
+                    return aDeadline.getTime() - bDeadline.getTime();
+                }
+                if (a.status === ItemStatus.ACTIVE) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }) || []
+        );
     }, [courseQuery.data]);
+
+    const currentDeliverable: Deliverable | null = useMemo(() => {
+        if (currentDeliverableIndex < 0 || !deliverables) {
+            return null;
+        }
+        return deliverables.at(currentDeliverableIndex) || null;
+    }, [deliverables, currentDeliverableIndex]);
+    
     const totalWeight = useMemo(() => {
         return deliverables?.reduce((totalWeight, deliverable) => {
             return totalWeight + deliverable.weight;
@@ -225,13 +235,11 @@ function CoursePage({ session }: SessionProps) {
                 </div>
                 <div className="w-full md:h-full md:basis-2/3 order-1 md:flex-1 md:order-2 flex flex-col gap-4">
                     <div className="md:flex-grow">
-                        {currentDeliverableIndex >= 0 && deliverables ? (
+                        {currentDeliverable ? (
                             <div className="h-full">
                                 <DeliverableDetail
                                     deliverable={
-                                        deliverables.at(
-                                            currentDeliverableIndex
-                                        ) as Updated<Deliverable>
+                                        currentDeliverable as Updated<Deliverable>
                                     }
                                     session={session}
                                     handleEdit={() => {
@@ -259,6 +267,7 @@ function CoursePage({ session }: SessionProps) {
                                     (or better) on each deliverable to reach
                                     your goal!
                                 </h3>
+                                {/* TODO: Figure out how to make getting to courses more intuitive */}
                                 {deliverables?.length ? (
                                     <p className="text-center">
                                         Click or tap on any deliverable to view
@@ -300,11 +309,7 @@ function CoursePage({ session }: SessionProps) {
                     }
                     totalWeight={
                         totalWeight! -
-                            (
-                                deliverables?.at(
-                                    currentDeliverableIndex
-                                ) as Updated<Deliverable>
-                            ).weight || 0
+                        (currentDeliverable?.weight || 0)
                     }
                 />
             </Modal>

@@ -1,10 +1,10 @@
 'use client';
 
-import { Fragment } from 'react';
-import { Input, Checkbox } from '@nextui-org/react';
+import { Fragment, useState } from 'react';
+import { Input, Checkbox, Divider, cn } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Button from '@components/Button/Button';
@@ -15,9 +15,11 @@ import { signupSchema, SignupSchema } from '@lib/validation';
 
 export default function SignupForm({}) {
     const router = useRouter();
+    const [isNavigating, setIsNavigating] = useState<boolean>(false);
     const {
         register,
         handleSubmit,
+        getValues,
         formState: { errors, isValid },
         control,
     } = useForm<SignupSchema>({
@@ -29,6 +31,7 @@ export default function SignupForm({}) {
             password: '',
             subscribed: false,
         },
+        mode: 'onChange',
     });
 
     const signupMutation = useMutation({
@@ -37,6 +40,7 @@ export default function SignupForm({}) {
         },
         onSuccess: () => {
             router.push(Endpoints.EMAIL_VERIFY);
+            setIsNavigating(true);
         },
     });
     if (signupMutation.error) {
@@ -65,10 +69,12 @@ export default function SignupForm({}) {
                 />
             </div>
 
-            {!!errors.last_name ? (
+            {!!errors.last_name || !getValues('last_name') ? (
                 <p className="text-center">
-                    <strong>Hint:</strong> If you don&quot;t have 2 separate
-                    names, just put in 2 hyphens (--) for the last name field.
+                    <strong>Hint:</strong>{' '}
+                    {
+                        "If you don't have 2 separate names, just put in 2 hyphens (--) for the last name field."
+                    }
                 </p>
             ) : (
                 <Fragment />
@@ -83,7 +89,16 @@ export default function SignupForm({}) {
                 errorMessage={errors.email?.message}
                 data-testid="signup-email"
             />
-            {!!errors.password ? (
+            <Input
+                type="password"
+                label="Password"
+                placeholder="Password"
+                isInvalid={!!errors.password}
+                errorMessage="Please enter a valid password"
+                {...register('password')}
+                data-testid="signup-password"
+            />
+            {!!errors.password && (
                 <div className="text-success-800">
                     <p>A password must have:</p>
                     <ul>
@@ -94,32 +109,35 @@ export default function SignupForm({}) {
                     </ul>
                     <strong>We also recommend using a password manager!</strong>
                 </div>
-            ) : (
-                <Fragment />
             )}
-            <Input
-                type="password"
-                label="Password"
-                placeholder="Password"
-                isInvalid={!!errors.password}
-                errorMessage="Please enter a valid password"
-                {...register('password')}
-                data-testid="signup-password"
+            <Controller
+                control={control}
+                name="subscribed"
+                render={({ field: { onChange, value } }) => (
+                    <Checkbox
+                        onChange={onChange}
+                        isSelected={value}
+                        data-testid="signup-subscribe"
+                        classNames={{
+                            wrapper:
+                                'border-2 border-primary rounded-full group-data-[selected=true]:border-transparent',
+                        }}
+                    >
+                        I want to get emails from CourseFull, including
+                        resources for academic success, product updates, and
+                        promotional offers.
+                    </Checkbox>
+                )}
             />
-
-            <Checkbox
-                {...register('subscribed')}
-                data-testid="signup-subscribe"
-            >
-                I want to get emails from CourseFull, including resources for
-                academic success, product updates, and promotional offers.
-            </Checkbox>
-
+            <Divider className="my-2"></Divider>
             <div className="flex gap-4">
                 <LinkButton
                     className="basis-1/2"
-                    isLoading={signupMutation.isPending}
+                    isLoading={signupMutation.isPending || isNavigating}
                     href={Endpoints.LOGIN}
+                    onClick={() => {
+                        setIsNavigating(true);
+                    }}
                     data-testid="signup-nav-button"
                 >
                     Go to Login
@@ -127,12 +145,14 @@ export default function SignupForm({}) {
                 <Button
                     className="basis-1/2"
                     onPressEnd={() => {
-                        const submitForm = handleSubmit(async (data: SignupSchema) => {
-                            signupMutation.mutate(data);
-                        });
+                        const submitForm = handleSubmit(
+                            async (data: SignupSchema) => {
+                                signupMutation.mutate(data);
+                            }
+                        );
                         submitForm();
                     }}
-                    isLoading={signupMutation.isPending}
+                    isLoading={signupMutation.isPending || isNavigating}
                     isDisabled={!isValid}
                     buttonType="confirm"
                     data-testid="signup-button"
