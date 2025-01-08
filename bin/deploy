@@ -14,7 +14,7 @@ function pnpm-run() {
 
 cd client
 pnpm i
-rm -rf out/* .next/*
+rm -rf out/ .next/
 pnpm-run build
 cp -r out/* ../public
 # pnpm-run upload-assets Figure out what's wrong with Supabase
