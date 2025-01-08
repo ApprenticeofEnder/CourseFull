@@ -29,7 +29,7 @@ export default function MechanicsInfo() {
                 variants={expositionVariants}
                 className="text-center"
             >
-                It's easier than you think.
+                {"It's easier than you think."}
             </motion.p>
             <div className="flex flex-col sm:flex-row justify-between gap-4">
                 {cardData.map(({ stepNumber, step }: Step, index: number) => (
