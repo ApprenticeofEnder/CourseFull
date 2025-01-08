@@ -20,7 +20,7 @@ export default function Faq() {
         },
         {
             question: "What's the point of tracking my goals?",
-            answer: 'So that you can stay on top of them throughout the entire semester, instead of panicking last minute checking what you need to get on the final to get the grade you want or need.',
+            answer: 'So that you can stay on top of them throughout the entire semester. Beats panic checking what you need to get on the final last minute, right?',
         },
         {
             question: "Can't I just use a spreadsheet for this?",
@@ -28,7 +28,7 @@ export default function Faq() {
         },
         {
             question: 'Do you use AI at all?',
-            answer: "If by AI you mean generative AI like ChatGPT, not at the moment. If enough of our users want it, we're happy to implement AI functionality! However, we also want to be thoughtful of what we put in, making sure any generative AI or LLM feature is sensible, both in terms of what it can do and what it does with user data.",
+            answer: "If by AI you mean generative AI like ChatGPT, not at the moment. If enough of our users want it, we're happy to implement AI functionality! However, we also want to be thoughtful of what we put in, making sure any generative AI or LLM feature is sensible. That means both in terms of what it can do and what it does with user data.",
         },
     ];
 

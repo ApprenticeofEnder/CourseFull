@@ -64,7 +64,8 @@ export function useTimeRemaining(deadline: ZonedDateTime, status: ItemStatus): T
         message: '',
         status
     });
-    function getTimeRemaining() {
+
+    const getTimeRemaining = useCallback(()=>{
         const deadlineDate = deadline.toDate();
         const currentDate = now(getLocalTimeZone()).toDate();
         const days = differenceInDays(deadlineDate, currentDate);
@@ -90,13 +91,14 @@ export function useTimeRemaining(deadline: ZonedDateTime, status: ItemStatus): T
             status: (seconds < 0 && incomplete) ? ItemStatus.OVERDUE : status,
             message: `${messageVariableData} remaining`,
         });
-    }
+    }, [deadline, status]);
+
     useEffect(() => {
         getTimeRemaining();
         const timer = setInterval(getTimeRemaining, 1000);
         return () => {
             clearInterval(timer);
         };
-    }, [deadline, status]);
+    }, [deadline, status, getTimeRemaining]);
     return timeRemaining;
 }
