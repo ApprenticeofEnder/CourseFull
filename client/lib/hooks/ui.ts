@@ -1,4 +1,4 @@
-import { ItemStatus } from '@coursefull';
+import { GradeColours, ItemStatus, SemesterProgressType } from '@coursefull';
 import { getLocalTimeZone, now, ZonedDateTime } from '@internationalized/date';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -7,11 +7,6 @@ import {
     differenceInMinutes,
     differenceInSeconds,
 } from 'date-fns';
-
-interface GradeColours {
-    bgColour: string;
-    textColour: string;
-}
 
 export function useGradeColours(
     goal: number | undefined,
@@ -46,6 +41,46 @@ export function useGradeColours(
     }, [goal, grade, deliverableStatus]);
 }
 
+export function useProgressColours(
+    semesters: SemesterProgressType[] | undefined
+): SemesterProgressType[] {
+    return useMemo(() => {
+        if (!semesters) {
+            return [];
+        }
+        return semesters.map((semester) => {
+            const { goal, average } = semester;
+            const defaultResult = {
+                // For some reason this is a very light colour
+                // and yet the success/danger colours are the inverse?
+                bgColour: 'bg-primary-800',
+                textColour: 'text-text',
+            };
+            if (goal === undefined || average === undefined || average === 0) {
+                return {
+                    ...semester,
+                    grade_colour: defaultResult,
+                };
+            }
+            let indicator: string = 'danger';
+            if (average >= goal) {
+                indicator = 'success';
+            } else if (goal - average <= 5) {
+                indicator = 'warning';
+            } else {
+                indicator = 'danger';
+            }
+            return {
+                ...semester,
+                grade_colour: {
+                    bgColour: `bg-${indicator}-200`,
+                    textColour: `text-${indicator}-800`,
+                },
+            };
+        });
+    }, [semesters]);
+}
+
 interface TimeRemaining {
     days: number;
     hours: number;
@@ -55,17 +90,19 @@ interface TimeRemaining {
     status: ItemStatus;
 }
 
-export function useTimeRemaining(deadline: ZonedDateTime, status: ItemStatus): TimeRemaining {
+export function useTimeRemaining(
+    deadline: ZonedDateTime,
+    status: ItemStatus
+): TimeRemaining {
     const [timeRemaining, setTimeRemaining] = useState<TimeRemaining>({
         days: 0,
         hours: 0,
         minutes: 0,
         seconds: 0,
         message: '',
-        status
+        status,
     });
-
-    const getTimeRemaining = useCallback(()=>{
+    const getTimeRemaining = useCallback(()=> {
         const deadlineDate = deadline.toDate();
         const currentDate = now(getLocalTimeZone()).toDate();
         const days = differenceInDays(deadlineDate, currentDate);
@@ -73,13 +110,13 @@ export function useTimeRemaining(deadline: ZonedDateTime, status: ItemStatus): T
         const minutes = differenceInMinutes(deadlineDate, currentDate);
         const seconds = differenceInSeconds(deadlineDate, currentDate);
         let messageVariableData = 'No time';
-        if(days > 0){
+        if (days > 0) {
             messageVariableData = `${days} days`;
-        } else if (hours > 0){
+        } else if (hours > 0) {
             messageVariableData = `${hours} hours`;
-        } else if (minutes > 0){
+        } else if (minutes > 0) {
             messageVariableData = `${minutes} minutes`;
-        } else if (seconds >= 0){
+        } else if (seconds >= 0) {
             messageVariableData = `${seconds} seconds`;
         }
         const incomplete = status !== ItemStatus.COMPLETE;
@@ -88,17 +125,16 @@ export function useTimeRemaining(deadline: ZonedDateTime, status: ItemStatus): T
             hours,
             minutes,
             seconds,
-            status: (seconds < 0 && incomplete) ? ItemStatus.OVERDUE : status,
+            status: seconds < 0 && incomplete ? ItemStatus.OVERDUE : status,
             message: `${messageVariableData} remaining`,
         });
     }, [deadline, status]);
-
     useEffect(() => {
         getTimeRemaining();
         const timer = setInterval(getTimeRemaining, 1000);
         return () => {
             clearInterval(timer);
         };
-    }, [deadline, status, getTimeRemaining]);
+    }, [getTimeRemaining]);
     return timeRemaining;
 }

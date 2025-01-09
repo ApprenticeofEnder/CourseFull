@@ -108,7 +108,7 @@ function CoursePage({ session }: SessionProps) {
         }
         return deliverables.at(currentDeliverableIndex) || null;
     }, [deliverables, currentDeliverableIndex]);
-    
+
     const totalWeight = useMemo(() => {
         return deliverables?.reduce((totalWeight, deliverable) => {
             return totalWeight + deliverable.weight;
@@ -210,7 +210,7 @@ function CoursePage({ session }: SessionProps) {
             <div className="flex flex-col md:flex-row gap-4 my-4 md:h-screen">
                 <div className="w-full md:basis-1/3 order-2 md:order-1 flex flex-col gap-4">
                     <Button
-                        className="top-2 order-last md:order-first"
+                        className="top-2 order-last md:order-first flex-shrink-0"
                         endContent={<PlusIcon className="h-6 w-6" />}
                         onPressEnd={createDeliverableModal.onOpen}
                         buttonType="confirm"
@@ -259,7 +259,7 @@ function CoursePage({ session }: SessionProps) {
                                     You need{' '}
                                     <strong>
                                         {courseQuery.data?.deliverable_goal &&
-                                            courseQuery.data?.deliverable_goal.toFixed(
+                                            courseQuery.data.deliverable_goal.toFixed(
                                                 1
                                             )}
                                         %
@@ -285,6 +285,8 @@ function CoursePage({ session }: SessionProps) {
             <Modal
                 isOpen={createDeliverableModal.isOpen}
                 onOpenChange={createDeliverableModal.onOpenChange}
+                isDismissable={false}
+                isKeyboardDismissDisabled={true}
                 className="bg-sky-100"
                 scrollBehavior="inside"
             >
@@ -297,6 +299,8 @@ function CoursePage({ session }: SessionProps) {
             <Modal
                 isOpen={updateDeliverableModal.isOpen}
                 onOpenChange={updateDeliverableModal.onOpenChange}
+                isDismissable={false}
+                isKeyboardDismissDisabled={true}
                 className="bg-sky-100"
                 scrollBehavior="inside"
             >
@@ -308,8 +312,7 @@ function CoursePage({ session }: SessionProps) {
                         ) as Updated<Deliverable>) || null
                     }
                     totalWeight={
-                        totalWeight! -
-                        (currentDeliverable?.weight || 0)
+                        totalWeight! - (currentDeliverable?.weight || 0)
                     }
                 />
             </Modal>
@@ -317,6 +320,8 @@ function CoursePage({ session }: SessionProps) {
                 isOpen={updateCourseModal.isOpen}
                 onOpenChange={updateCourseModal.onOpenChange}
                 className="bg-sky-100"
+                isDismissable={false}
+                isKeyboardDismissDisabled={true}
                 scrollBehavior="inside"
             >
                 <UpdateCourseModal

@@ -31,7 +31,7 @@ export default function CreateDeliverableModal({
         mark: 0,
         notes: '',
         start_date: now(getLocalTimeZone()),
-        deadline: now(getLocalTimeZone()),
+        deadline: now(getLocalTimeZone()).set({hour: 23, minute: 59}),
     });
 
     const queryClient = useQueryClient();

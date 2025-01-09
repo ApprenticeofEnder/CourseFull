@@ -16,7 +16,7 @@ export interface SemesterProgressType {
     num_graded_courses: number;
     goal: number;
     status: ItemStatus;
-    grade_colour?: string;
+    grade_colour?: GradeColours;
 }
 
 export interface BasicUserData {
@@ -29,4 +29,9 @@ export interface BasicUserData {
 
 export interface AuthHeaders {
     Authorization: string;
+}
+
+export interface GradeColours {
+    bgColour: string;
+    textColour: string;
 }

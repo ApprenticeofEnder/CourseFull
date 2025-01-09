@@ -27,15 +27,8 @@ import Link from '@components/Link';
 import CreateCourseModal from '@components/Modal/CreateCourse';
 import UpdateCourseModal from '@components/Modal/UpdateCourse';
 import UpdateSemesterModal from '@components/Modal/UpdateSemester';
-import {
-    Course,
-    Endpoints,
-    SessionProps,
-    Updated,
-} from '@coursefull';
-import {
-    classNames,
-} from '@lib/helpers';
+import { Course, Endpoints, SessionProps, Updated } from '@coursefull';
+import { classNames } from '@lib/helpers';
 import { useProtectedEndpoint, useSession } from '@lib/supabase/SessionContext';
 import { deleteSemester, getSemester } from '@services/semesterService';
 import CourseCard from '@components/Card/Course';
@@ -277,6 +270,8 @@ function SemesterPage({ session }: SessionProps) {
             <Modal
                 isOpen={createCourseModal.isOpen}
                 onOpenChange={createCourseModal.onOpenChange}
+                isDismissable={false}
+                isKeyboardDismissDisabled={true}
                 className="bg-sky-100"
             >
                 <CreateCourseModal
@@ -287,6 +282,8 @@ function SemesterPage({ session }: SessionProps) {
             <Modal
                 isOpen={updateCourseModal.isOpen}
                 onOpenChange={updateCourseModal.onOpenChange}
+                isDismissable={false}
+                isKeyboardDismissDisabled={true}
                 className="bg-sky-100"
             >
                 <UpdateCourseModal
@@ -299,13 +296,14 @@ function SemesterPage({ session }: SessionProps) {
             <Modal
                 isOpen={updateSemesterModal.isOpen}
                 onOpenChange={updateSemesterModal.onOpenChange}
+                isDismissable={false}
+                isKeyboardDismissDisabled={true}
                 className="bg-sky-100"
             >
                 <UpdateSemesterModal
                     session={session}
                     semester={semesterData!}
                 />
-                <></>
             </Modal>
         </Fragment>
     );
