@@ -83,12 +83,12 @@ export default function LoginForm() {
                         });
                         submitForm();
                     }}
-                    isLoading={loginMutation.isPending}
+                    isLoading={loginMutation.isPending || isNavigating}
                     isDisabled={!isValid}
                     buttonType="confirm"
                     data-testid="login-button"
                 >
-                    {loginMutation.isPending ? 'Logging in...' : 'Log In'}
+                    {(loginMutation.isPending || isNavigating) ? 'Logging in...' : 'Log In'}
                 </Button>
             </div>
         </Fragment>

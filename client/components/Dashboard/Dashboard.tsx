@@ -1,34 +1,18 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
-import {
-    Chip,
-    Listbox,
-    ListboxItem,
-    Modal,
-    Spinner,
-    useDisclosure,
-} from '@nextui-org/react';
+import { cn, Listbox, ListboxItem, Modal, useDisclosure } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
-import {
-    classNames,
-    determineGradeBGColour,
-    ReadableStatus,
-    semesterURL,
-} from '@lib/helpers';
+import { classNames, determineGradeBGColour, semesterURL } from '@lib/helpers';
 import Button from '@components/Button/Button';
 import LinkButton from '@components/Button/LinkButton';
 import CreateSemesterModal from '@components/Modal/CreateSemester';
-import {
-    ItemStatus,
-    SemesterProgressType,
-    SessionProps,
-    User,
-} from '@coursefull';
+import { ItemStatus, SemesterProgressType, SessionProps } from '@coursefull';
 import { getProgress, getUserData } from '@services/userService';
 import Loading from '@app/loading';
 import StatusChip from '@components/Chip/StatusChip';
+import { useGradeColours, useProgressColours } from '@lib/hooks/ui';
 
 function renderAverage(item: SemesterProgressType | null | undefined): string {
     if (!item) {
@@ -39,17 +23,6 @@ function renderAverage(item: SemesterProgressType | null | undefined): string {
         average = '--';
     }
     return average;
-}
-
-function getChipColour(status: ItemStatus) {
-    switch (status) {
-        case ItemStatus.NOT_STARTED:
-            return 'default';
-        case ItemStatus.ACTIVE:
-            return 'primary';
-        case ItemStatus.COMPLETE:
-            return 'success';
-    }
 }
 
 function renderSemester(item: SemesterProgressType) {
@@ -73,11 +46,7 @@ function renderSemester(item: SemesterProgressType) {
                 </div>
             }
             className={
-                (item.status === ItemStatus.ACTIVE ||
-                    item.status === ItemStatus.COMPLETE) &&
-                item.average
-                    ? determineGradeBGColour(item.goal, item.average)
-                    : ''
+                cn(Object.values(item.grade_colour!))
             }
             textValue={`${item.average} % out of ${item.goal} %`}
         >
@@ -89,37 +58,39 @@ function renderSemester(item: SemesterProgressType) {
 }
 
 export default function Dashboard({ session }: SessionProps) {
-    const progressResult = useQuery({
+    const {
+        data: progressData,
+        isLoading: loadingProgress,
+        error: progressError,
+    } = useQuery({
         queryKey: ['progress'],
         queryFn: () => {
             return getProgress(session);
         },
     });
 
-    const progress: SemesterProgressType[] | undefined = progressResult.data;
-    const loadingProgress: boolean = progressResult.isLoading;
-    const progressError: Error | null = progressResult.error;
     if (progressError) {
         throw progressError;
     }
 
     const activeSemester = useMemo(
         () =>
-            progress
+            progressData
                 ?.filter((semester) => semester.status === ItemStatus.ACTIVE)
                 .shift() || null,
-        [progress]
+        [progressData]
     );
 
-    const userResult = useQuery({
+    const {
+        data: userData,
+        isLoading: loadingUserData,
+        error: userError,
+    } = useQuery({
         queryKey: ['user'],
         queryFn: () => {
             return getUserData(session);
         },
     });
-    const userData: User | undefined = userResult.data;
-    const loadingUserData: boolean = userResult.isLoading;
-    const userError: Error | null = userResult.error;
     if (userError) {
         throw progressError;
     }
@@ -127,6 +98,10 @@ export default function Dashboard({ session }: SessionProps) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const router = useRouter();
+
+    const colorizedSemesters = useProgressColours(progressData);
+
+    const { bgColour, textColour } = useGradeColours(activeSemester?.goal, activeSemester?.average);   
 
     return (
         <div className="h-full">
@@ -138,12 +113,8 @@ export default function Dashboard({ session }: SessionProps) {
                     <div
                         className={classNames(
                             'basis-1/2 border-2 border-primary-600/15 rounded-lg p-4 flex flex-col justify-between gap-4',
-                            activeSemester?.average
-                                ? determineGradeBGColour(
-                                      activeSemester?.goal,
-                                      activeSemester.average
-                                  )
-                                : 'bg-primary-800'
+                            bgColour,
+                            textColour
                         )}
                     >
                         <h3 className="text-left">Active Semester</h3>
@@ -185,7 +156,7 @@ export default function Dashboard({ session }: SessionProps) {
                         </div>
 
                         <Listbox
-                            items={progress}
+                            items={colorizedSemesters}
                             aria-label="Semesters"
                             className="my-4"
                             itemClasses={{
@@ -199,12 +170,13 @@ export default function Dashboard({ session }: SessionProps) {
                             }}
                             emptyContent={
                                 <div className="text-center">
-                                    You don&apos;t have any semesters. Start by
-                                    adding some!
+                                    {
+                                        "You don't have any semesters. Start by adding some!"
+                                    }
                                 </div>
                             }
                         >
-                            {(item) => renderSemester(item)}
+                            {(item: SemesterProgressType) => renderSemester(item)}
                         </Listbox>
                     </div>
                 </div>
@@ -216,6 +188,8 @@ export default function Dashboard({ session }: SessionProps) {
                     onOpenChange={onOpenChange}
                     className="bg-sky-100"
                     scrollBehavior="inside"
+                    isDismissable={false}
+                    isKeyboardDismissDisabled={true}
                     classNames={{ footer: 'justify-between' }}
                 >
                     <CreateSemesterModal
