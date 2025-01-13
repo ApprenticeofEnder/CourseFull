@@ -115,7 +115,7 @@ function CoursePage({ session }: SessionProps) {
         }, 0);
     }, [deliverables]);
 
-    return session && !courseQuery.isLoading ? (
+    return !courseQuery.isLoading ? (
         <Fragment>
             <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap gap-4 justify-between items-end">

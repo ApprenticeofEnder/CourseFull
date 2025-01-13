@@ -1,17 +1,19 @@
 'use client';
 
 import { Session } from '@supabase/supabase-js';
-import supabase from '@lib/supabase/client';
+import { AUTH_TOKEN_STORAGE_KEY, useSupabase } from '@lib/supabase/client';
 import {
     FC,
     ReactNode,
     createContext,
     useContext,
     useEffect,
+    useMemo,
     useState,
 } from 'react';
 import { Endpoints } from '@coursefull';
 import { useRouter } from 'next/navigation';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const SessionContext = createContext<{
     session: Session | null;
@@ -19,10 +21,9 @@ export const SessionContext = createContext<{
 }>({ session: null, loadingSession: true });
 
 const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
+    const supabase = useSupabase();
     function loadSession(): Session | null {
-        let authTokenData = window.localStorage.getItem(
-            'sb-coursefull-auth-token'
-        );
+        let authTokenData = window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
         if (authTokenData === null) {
             return null;
         }
@@ -31,39 +32,73 @@ const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return session;
     }
 
-    const [session, setSession] = useState<Session | null>(null);
-    const [loadingSession, setLoadingSession] = useState(true);
+    // const [session, setSession] = useState<Session | null>(null);
+    // const [loadingSession, setLoadingSession] = useState(true);
+
     useEffect(() => {
-        // supabase.auth.setSession()
         console.info('Attempting to load session from local storage...');
-        const loadedSession = loadSession();
-        if (loadedSession !== null) {
-            const { access_token, refresh_token } = loadedSession;
-            console.info('Session loaded from local storage.');
-            supabase.auth.setSession({
-                access_token,
-                refresh_token,
-            });
-        } else {
+        let authTokenData = window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+        if (authTokenData === null) {
             console.info('No local session found.');
+            return;
         }
+        console.info('Session found.');
+        const session: Session = JSON.parse(authTokenData);
+        supabase.auth.setSession(session);
+    }, [supabase]);
 
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setLoadingSession(false);
-        });
+    const queryClient = useQueryClient();
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['session'],
+        queryFn: async () => {
+            const { data, error } = await supabase.auth.getSession();
+            if (error) {
+                throw error;
+            }
+            return data.session;
+        },
+    });
+    if (error) {
+        throw error;
+    }
 
+    const session = useMemo(() => {
+        if (!data) {
+            return null;
+        }
+        return data;
+    }, [data]);
+
+    useEffect(() => {
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
+        } = supabase.auth.onAuthStateChange((event, newSession) => {
+            if (event === 'INITIAL_SESSION') {
+                return;
+            }
+            const isSameUser = newSession?.user.email === session?.user.email;
+            if (event === 'SIGNED_IN' && isSameUser) {
+                return;
+            }
+
+            queryClient.invalidateQueries({ queryKey: ['session'] });
+            if (event !== 'SIGNED_OUT') {
+                return;
+            }
+
+            // In this case we're in the SIGNED_OUT event
+            [window.localStorage, window.sessionStorage].forEach((storage) => {
+                Object.entries(storage).forEach(([key]) => {
+                    storage.removeItem(key);
+                });
+            });
         });
 
         return () => subscription.unsubscribe();
-    }, []);
+    }, [supabase, queryClient, session]);
 
     return (
-        <SessionContext.Provider value={{ session, loadingSession }}>
+        <SessionContext.Provider value={{ session, loadingSession: isLoading }}>
             {children}
         </SessionContext.Provider>
     );
