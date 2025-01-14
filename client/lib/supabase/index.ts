@@ -1,1 +1,1 @@
-export { default as supabase, useSupabase } from '@lib/supabase/client';
+export { useSupabase } from '@lib/supabase/client';

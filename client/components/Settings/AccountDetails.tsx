@@ -5,10 +5,11 @@ import { Input } from '@nextui-org/react';
 import { SessionProps } from '@coursefull';
 import Button from '@components/Button/Button';
 import { useToast } from '@lib/use-toast';
-import { supabase } from '@lib/supabase';
+import { useSupabase } from '@lib/supabase';
 
 export default function AccountDetails({ session }: SessionProps) {
     const { toast } = useToast();
+    const supabase = useSupabase();
 
     const [firstName, setFirstName] = useState(
         session.user.user_metadata.first_name

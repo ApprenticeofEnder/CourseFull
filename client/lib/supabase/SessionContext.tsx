@@ -22,19 +22,7 @@ export const SessionContext = createContext<{
 
 const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const supabase = useSupabase();
-    function loadSession(): Session | null {
-        let authTokenData = window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
-        if (authTokenData === null) {
-            return null;
-        }
-
-        const session: Session = JSON.parse(authTokenData);
-        return session;
-    }
-
-    // const [session, setSession] = useState<Session | null>(null);
-    // const [loadingSession, setLoadingSession] = useState(true);
-
+    
     useEffect(() => {
         console.info('Attempting to load session from local storage...');
         let authTokenData = window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);

@@ -13,7 +13,7 @@ import {
     Spacer,
 } from '@nextui-org/react';
 import { Endpoints } from '@coursefull';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useSession } from '@lib/supabase/SessionContext';
 import Link from '@components/Link';
 import LinkButton from '@components/Button/LinkButton';
@@ -25,7 +25,7 @@ const GITHUB_LINK: string = 'https://github.com/ApprenticeofEnder/CourseFull';
 export default function CourseFullNavbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const { session, loadingSession } = useSession()!;
+    const { session, loadingSession } = useSession();
     const { refs: homeRefs } = useHomePage();
 
     interface MenuItem {
@@ -111,7 +111,7 @@ export default function CourseFullNavbar() {
                     </p>
                     <Link
                         color="foreground"
-                        href={Endpoints.ROOT}
+                        href={session ? Endpoints.DASHBOARD : Endpoints.ROOT}
                         underline="hover"
                     >
                         {/* <AcmeLogo /> */}

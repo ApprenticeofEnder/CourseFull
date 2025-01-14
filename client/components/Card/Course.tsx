@@ -3,26 +3,16 @@ import { Image } from '@nextui-org/react';
 
 import {
     Course,
-    DeletableProps,
-    EditableProps,
     SessionProps,
     Updated,
     ViewableProps,
 } from '@coursefull';
 
-import Button from '@components/Button/Button';
-import Link from '@components/Link';
-
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
-    ReadableStatus,
     classNames,
     courseURL,
-    determineGradeBGColour,
 } from '@lib/helpers';
-import { deleteCourse } from '@services/courseService';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
 import { useGradeColours } from '@lib/hooks/ui';
 import StatusChip from '@components/Chip/StatusChip';
 

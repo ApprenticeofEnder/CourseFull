@@ -12,6 +12,7 @@ import { Endpoints } from '@coursefull';
 import { createUser } from '@services/userService';
 import LinkButton from '@components/Button/LinkButton';
 import { signupSchema, SignupSchema } from '@lib/validation';
+import { useSupabase } from '@lib/supabase';
 
 export default function SignupForm({}) {
     const router = useRouter();
@@ -34,9 +35,11 @@ export default function SignupForm({}) {
         mode: 'onChange',
     });
 
+    const supabase = useSupabase();
+
     const signupMutation = useMutation({
         mutationFn: (signupData: SignupSchema) => {
-            return createUser(signupData);
+            return createUser(signupData, supabase);
         },
         onSuccess: () => {
             router.push(Endpoints.EMAIL_VERIFY);

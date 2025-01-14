@@ -104,7 +104,7 @@ export default function Dashboard({ session }: SessionProps) {
     const { bgColour, textColour } = useGradeColours(activeSemester?.goal, activeSemester?.average);   
 
     return (
-        <div className="h-full">
+        <div className='flex-grow'>
             <h1>Hey, {session.user.user_metadata.first_name}!</h1>
             {loadingProgress ? (
                 <Loading message="Loading Progress..." />

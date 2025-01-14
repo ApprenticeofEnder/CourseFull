@@ -1,16 +1,25 @@
 current-dir := invocation_directory()
+env-file := current-dir / ".env.tpl"
 
 alias test := _test-all
 
 dev $COURSEFULL_ENV='Dev':
     bin/dev
 
+supabase-start $COURSEFULL_ENV='Dev':
+    op run --env-file={{env-file}} \
+        -- supabase start
+
+supabase-stop $COURSEFULL_ENV='Dev':
+    op run --env-file={{env-file}} \
+        -- supabase stop
+
 populate:
     cd client && \
         op run --env-file={{current-dir}}/.env.tpl \
         -- pnpm populate
 
-test-playwright-single test-name $COURSEFULL_ENV='test':
+test-playwright-single test-name $COURSEFULL_ENV='Test':
     cd client && \
         op run --env-file={{current-dir}}/.env.tpl \
         -- pnpm exec playwright test {{test-name}}.spec.ts --trace on

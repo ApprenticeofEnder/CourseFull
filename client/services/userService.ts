@@ -1,3 +1,5 @@
+'use client'
+
 import {
     Endpoints,
     BasicUserData,
@@ -5,8 +7,7 @@ import {
     SemesterProgressType,
 } from '@coursefull';
 import { apiHandler, authenticatedApiHandler, sleep } from '@lib/helpers';
-import { supabase } from '@lib/supabase';
-import { Session } from '@supabase/supabase-js';
+import { Session, SupabaseClient } from '@supabase/supabase-js';
 import { api } from '@services';
 
 export async function createUser({
@@ -15,7 +16,7 @@ export async function createUser({
     email,
     password,
     subscribed,
-}: BasicUserData): Promise<void> {
+}: BasicUserData, supabase: SupabaseClient): Promise<void> {
     await apiHandler<User>(async () => {
         const supabaseResponse = await supabase.auth.signUp({
             email,
@@ -51,7 +52,7 @@ export async function createUser({
     });
 }
 
-export async function login(email: string, password: string): Promise<void> {
+export async function login(email: string, password: string, supabase: SupabaseClient): Promise<void> {
     const { error } = await supabase.auth.signInWithPassword({
         email,
         password,

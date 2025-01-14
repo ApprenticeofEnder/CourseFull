@@ -12,6 +12,7 @@ import { LoginSchema, loginSchema } from '@lib/validation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useSupabase } from '@lib/supabase';
 
 export default function LoginForm() {
     const router = useRouter();
@@ -30,9 +31,11 @@ export default function LoginForm() {
         mode: "onChange"
     });
 
+    const supabase = useSupabase();
+
     const loginMutation = useMutation({
         mutationFn: ({ email, password }: LoginSchema) => {
-            return login(email, password);
+            return login(email, password, supabase);
         },
         onSuccess: () => {
             router.push(Endpoints.DASHBOARD);

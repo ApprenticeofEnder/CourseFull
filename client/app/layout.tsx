@@ -13,6 +13,7 @@ import QueryProvider from '@lib/query/QueryContext';
 import SessionProvider from '@lib/supabase/SessionContext';
 
 import './globals.css';
+import Footer from '@components/Footer';
 
 const atkinsonHyperlegible = Atkinson_Hyperlegible({
     weight: ['400', '700'],
@@ -51,10 +52,16 @@ export default function RootLayout({
         <html lang="en">
             <body className={atkinsonHyperlegible.className}>
                 <Contexts>
-                    <Navbar />
-                    <ScrollShadow className="relative flex justify-center h-[calc(100dvh-64px)]">
-                        <Spacer>{children}</Spacer>
-                    </ScrollShadow>
+                    <div className="flex h-dvh flex-col overflow-x-clip">
+                        <Navbar />
+                        <ScrollShadow
+                            hideScrollBar
+                            className="flex flex-grow flex-col mx-auto w-full max-w-[1024px] px-6 bg-background-900"
+                        >
+                            {children}
+                        </ScrollShadow>
+                        <Footer />
+                    </div>
                     <Toaster />
                 </Contexts>
             </body>

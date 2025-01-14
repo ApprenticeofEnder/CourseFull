@@ -11,7 +11,15 @@ services:
       - 3000:3000
     secrets:
       - op_service_account_token
-    
+  client:
+    build:
+      context: client
+      secrets:
+        - op_service_account_token
+    ports:
+      - 5100:5100
+    secrets:
+      - op_service_account_token
   caddy:
     image: caddy:2
     ports:

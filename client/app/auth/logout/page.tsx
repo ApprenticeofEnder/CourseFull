@@ -4,11 +4,12 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@nextui-org/react';
 
-import { supabase } from '@lib/supabase';
+import { useSupabase } from '@lib/supabase';
 import { useCart } from '@lib/cart/CartContext';
 import { Endpoints } from '@coursefull';
 
 export default function Logout() {
+    const supabase = useSupabase();
     const router = useRouter();
     const { dispatch } = useCart()!;
 

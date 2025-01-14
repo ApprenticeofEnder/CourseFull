@@ -12,15 +12,14 @@ const Dashboard = dynamic(() => import('@components/Dashboard/Dashboard'), {
 export default function DashboardPage() {
     const { session, loadingSession } = useSession();
     useProtectedEndpoint(session, loadingSession);
+    if(loadingSession){
+        return <Loading message="Hey there!" />;
+    }
+    if(!session){
+        return <h1>One sec!</h1>;
+    }
+
     return (
-        <div className="flex flex-col justify-center w-full">
-            {loadingSession ? (
-                <Loading message="Hey there!" />
-            ) : session ? (
-                <Dashboard session={session} />
-            ) : (
-                <h1>One Sec!</h1>
-            )}
-        </div>
+        <Dashboard session={session} />
     );
 }

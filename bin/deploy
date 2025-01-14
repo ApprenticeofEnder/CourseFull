@@ -2,22 +2,10 @@
 export COURSEFULL_ENV=Prod
 
 DEPLOY_ENV_FILE=$PWD/secrets/deploy.env.tpl
-BUILD_ENV_FILE=$PWD/.env.tpl
 
 function docker-compose-run () {
     op run --env-file=$DEPLOY_ENV_FILE -- docker compose "$@"
 }
 
-function pnpm-run() {
-    op run --env-file=$BUILD_ENV_FILE -- pnpm "$@"
-}
-
-cd client
-pnpm i
-rm -rf out/ .next/
-pnpm-run build
-cp -r out/* ../public
-# pnpm-run upload-assets Figure out what's wrong with Supabase
-cd ..
 docker-compose-run down
 docker-compose-run up --build -d

@@ -8,6 +8,32 @@ import {
     differenceInSeconds,
 } from 'date-fns';
 
+function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+        width,
+        height,
+    };
+}
+
+export default function useWindowDimensions() {
+    const [windowDimensions, setWindowDimensions] = useState({
+        width: 0,
+        height: 0,
+    });
+
+    useEffect(() => {
+        function handleResize() {
+            setWindowDimensions(getWindowDimensions());
+        }
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    return windowDimensions;
+}
+
 export function useGradeColours(
     goal: number | undefined,
     grade: number | undefined,
@@ -102,7 +128,7 @@ export function useTimeRemaining(
         message: '',
         status,
     });
-    const getTimeRemaining = useCallback(()=> {
+    const getTimeRemaining = useCallback(() => {
         const deadlineDate = deadline.toDate();
         const currentDate = now(getLocalTimeZone()).toDate();
         const days = differenceInDays(deadlineDate, currentDate);
