@@ -1,11 +1,12 @@
 import { nextui } from '@nextui-org/react';
+import tailwindAnimate from 'tailwindcss-animate';
 import type { Config } from 'tailwindcss';
 
-const config: Config = {
+export default {
     content: [
-        './pages/**/*.{js,ts,jsx,tsx,mdx}',
-        './components/**/*.{js,ts,jsx,tsx,mdx}',
-        './app/**/*.{js,ts,jsx,tsx,mdx}',
+        './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+        './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+        './src/app/**/*.{js,ts,jsx,tsx,mdx}',
         './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
     ],
     theme: {
@@ -239,19 +240,19 @@ const config: Config = {
                             foreground: '#0a0d4f',
                             DEFAULT: '#ceeafd',
                         },
-						focus: {
-							'50': '#020f18',
-							'100': '#031e30',
-							'200': '#073c5f',
-							'300': '#0a5a8f',
-							'400': '#0d78bf',
-							'500': '#1196ee',
-							'600': '#40abf2',
-							'700': '#70c0f5',
-							'800': '#a0d5f8',
-							'900': '#cfeafc',
-							DEFAULT: '#020f18'
-						},
+                        focus: {
+                            '50': '#020f18',
+                            '100': '#031e30',
+                            '200': '#073c5f',
+                            '300': '#0a5a8f',
+                            '400': '#0d78bf',
+                            '500': '#1196ee',
+                            '600': '#40abf2',
+                            '700': '#70c0f5',
+                            '800': '#a0d5f8',
+                            '900': '#cfeafc',
+                            DEFAULT: '#020f18',
+                        },
                     },
                 },
                 // dark: {
@@ -260,8 +261,7 @@ const config: Config = {
                 // },
             },
         }),
-        require('@headlessui/tailwindcss'),
-        require('tailwindcss-animate'),
+        // require("@headlessui/tailwindcss")
+        tailwindAnimate,
     ],
-};
-export default config;
+} satisfies Config;
