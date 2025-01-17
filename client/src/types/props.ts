@@ -1,9 +1,8 @@
 import { Session } from '@supabase/supabase-js';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
-
 import { ZodError } from 'zod';
 
-import { Semester, Course, Deliverable, CourseFullUser } from '@/types/data';
+import { Course, CourseFullUser, Deliverable, Semester } from '@/types/data';
 
 export type Dispatcher<T> = Dispatch<SetStateAction<T>>;
 

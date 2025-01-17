@@ -51,7 +51,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
     select_statements = [
       'api_v1_semesters.name AS semester',
       'api_v1_semesters.id AS semester_id',
-      'ROUND(AVG(CASE WHEN api_v1_deliverables.status = 1 THEN CAST(api_v1_courses.grade AS numeric) ELSE NULL END), 2) AS average',
+      'ROUND(AVG(CASE WHEN api_v1_deliverables.status=1 THEN CAST(api_v1_courses.grade AS numeric) ELSE NULL END), 2) AS average',
       'COUNT(DISTINCT api_v1_courses.id) AS num_courses',
       'COUNT(DISTINCT CASE WHEN api_v1_deliverables.status = 1 THEN api_v1_courses.id ELSE NULL END) AS num_graded_courses',
       'api_v1_semesters.goal AS goal',

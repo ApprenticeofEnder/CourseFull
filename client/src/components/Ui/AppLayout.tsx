@@ -2,10 +2,9 @@
 
 import { ScrollShadow } from '@nextui-org/react';
 
-import { ChildrenProps } from '@/types';
 import Footer from '@/components/Ui/Footer';
 import Navbar from '@/components/Ui/Navbar';
-
+import { ChildrenProps } from '@/types';
 
 /**
  * The actual cosmetic layout of the application, not counting providers and metadata.

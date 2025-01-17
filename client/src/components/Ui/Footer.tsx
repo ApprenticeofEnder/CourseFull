@@ -1,8 +1,8 @@
 'use client';
 
-import { Endpoints } from '@/types';
-import Spacer from '@/components/Ui/Spacer';
 import Link from '@/components/Ui/Link';
+import Spacer from '@/components/Ui/Spacer';
+import { Endpoints } from '@/types';
 
 export default function Footer() {
     // TODO: Add links to features, pricing, FAQ, legal disclaimers, etc.
@@ -30,8 +30,12 @@ export default function Footer() {
         <Spacer>
             <div className="flex justify-center items-center collapse md:visible gap-4 py-4">
                 {menuItems.map((menuItem) => {
-                    const {label, href, color} = menuItem
-                    return <Link key={label} href={href} color={color}>{label}</Link>;
+                    const { label, href, color } = menuItem;
+                    return (
+                        <Link key={label} href={href} color={color}>
+                            {label}
+                        </Link>
+                    );
                 })}
             </div>
         </Spacer>

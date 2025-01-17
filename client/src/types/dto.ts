@@ -1,4 +1,4 @@
-import { Semester, Course, Deliverable } from './data';
+import { Course, Deliverable, Semester } from '@/types/data';
 
 export interface SemesterDto extends Omit<Semester, 'courses'> {
     courses?: CourseDto[];

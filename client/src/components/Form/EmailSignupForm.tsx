@@ -1,16 +1,16 @@
 'use client';
 
-import { signup } from '@/app/auth/actions';
-import { signupSchema, SignupSchema } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox, Form, Input } from '@nextui-org/react';
-import { useMutation } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import LinkButton from '@/components/Button/LinkButton';
-import { Endpoints } from '@/types';
+
+import { signup } from '@/app/auth/actions';
 import Button from '@/components/Button/Button';
+import LinkButton from '@/components/Button/LinkButton';
+import { SignupSchema, signupSchema } from '@/lib/validation';
+import { Endpoints } from '@/types';
 
 export default function EmailSignupForm() {
     const searchParams = useSearchParams();
@@ -31,25 +31,15 @@ export default function EmailSignupForm() {
         mode: 'onChange',
     });
 
-    const signupMutation = useMutation({
-        mutationFn: (signupData: SignupSchema) => {
-            return signup(signupData);
-        },
-        onSuccess: () => {
-            setIsNavigating(true);
-        },
-    });
-    if (signupMutation.error) {
-        throw signupMutation.error;
+    async function onSubmit(data: SignupSchema) {
+        setIsNavigating(true);
+        signup(data);
     }
 
     return (
         <div className="flex flex-col gap-4">
             <h2>Sign Up for CourseFull</h2>
-            <Form
-                className="gap-4"
-                onSubmit={handleSubmit((data) => signupMutation.mutate(data))}
-            >
+            <Form className="gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                     <Controller
                         control={control}
@@ -181,7 +171,7 @@ export default function EmailSignupForm() {
                 <div className="flex gap-4 w-full">
                     <LinkButton
                         className="basis-1/2"
-                        isLoading={signupMutation.isPending || isNavigating}
+                        isLoading={isNavigating}
                         href={Endpoints.Auth.LOGIN}
                         onPress={() => {
                             setIsNavigating(true);
@@ -192,20 +182,13 @@ export default function EmailSignupForm() {
                     </LinkButton>
                     <Button
                         className="basis-1/2"
-                        onPressEnd={() => {
-                            const submitForm = handleSubmit(
-                                async (data: SignupSchema) => {
-                                    signupMutation.mutate(data);
-                                }
-                            );
-                            submitForm();
-                        }}
-                        isLoading={signupMutation.isPending || isNavigating}
+                        isLoading={isNavigating}
                         isDisabled={!isValid}
                         buttonType="confirm"
+                        type="submit"
                         data-testid="signup-button"
                     >
-                        {signupMutation.isPending ? 'Signing up...' : 'Sign Up'}
+                        {isNavigating ? 'Signing up...' : 'Sign Up'}
                     </Button>
                 </div>
             </Form>

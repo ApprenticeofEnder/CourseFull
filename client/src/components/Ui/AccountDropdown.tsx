@@ -1,17 +1,18 @@
+import { ShoppingCartIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import {
     Dropdown,
-    DropdownMenu,
     DropdownItem,
-    DropdownTrigger,
+    DropdownMenu,
     DropdownSection,
+    DropdownTrigger,
 } from '@nextui-org/react';
-import { ShoppingCartIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { ExitIcon, GearIcon } from '@radix-ui/react-icons';
+import { useRouter } from 'next/navigation';
+import { Key } from 'react';
 
 import Button from '@/components/Button/Button';
-import { logout } from '@/app/auth/actions';
-import { Key } from 'react';
-import { ExitIcon, GearIcon } from '@radix-ui/react-icons';
-// import { useRouter } from 'next/navigation';
+import { Endpoints } from '@/types';
+
 // import { Endpoints } from '@/types';
 
 interface AccountDropdownProps {
@@ -19,7 +20,7 @@ interface AccountDropdownProps {
 }
 
 export default function AccountDropdown({ name }: AccountDropdownProps) {
-    // const router = useRouter();
+    const router = useRouter();
 
     function action(key: Key) {
         switch (key) {
@@ -30,7 +31,7 @@ export default function AccountDropdown({ name }: AccountDropdownProps) {
                 alert('Cart');
                 break;
             case 'logout':
-                logout();
+                router.push(Endpoints.Auth.LOGOUT);
                 break;
         }
     }

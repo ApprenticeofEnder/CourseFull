@@ -33,8 +33,8 @@ test-frontend $COURSEFULL_ENV='Test': _check-test-server
         op run --env-file={{current-dir}}/.env.tpl \
         -- pnpm test
 
-test-backend $COURSEFULL_ENV='Test': _check-test-server
-    op run --env-file={{current-dir}}/.env.tpl \
+test-backend $COURSEFULL_ENV='Test':
+    op run --env-file={{env-file}} \
         -- bundle exec rspec
 
 _test-all: _check-test-server test-backend test-frontend
@@ -62,7 +62,4 @@ _test-server:
     rails db:test:prepare
     rails db:seed
 
-    cd client && pnpm run build
-    cd ..
-    cp -r client/out/* public/
     foreman start -f Procfile.test

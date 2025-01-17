@@ -1,3 +1,3 @@
-export default function InAction(){
-    return <div></div>
+export default function InAction() {
+    return <div></div>;
 }

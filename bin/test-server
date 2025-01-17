@@ -18,7 +18,4 @@ rails db:create
 rails db:migrate
 rails db:test:prepare
 rails db:seed
-cd client && pnpm run build
-cd ..
-cp -r client/out/* public/
 foreman start -f Procfile.test

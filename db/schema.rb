@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_26_062011) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_16_202109) do
   create_schema "_analytics"
   create_schema "_realtime"
   create_schema "auth"
@@ -99,6 +99,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_26_062011) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "subscribed"
+    t.index ["email"], name: "index_api_v1_users_on_email", unique: true
+    t.index ["supabase_id"], name: "index_api_v1_users_on_supabase_id", unique: true
   end
 
   add_foreign_key "api_v1_courses", "api_v1_semesters"

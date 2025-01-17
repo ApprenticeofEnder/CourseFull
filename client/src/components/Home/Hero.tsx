@@ -1,14 +1,14 @@
 'use client';
 
-import { motion } from 'motion/react';
-import { ClipboardIcon, UserIcon } from '@heroicons/react/24/solid';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { ClipboardIcon, UserIcon } from '@heroicons/react/24/solid';
+import { motion } from 'motion/react';
 
-import { Endpoints } from '@/types';
-import LinkButton from '@/components/Button/LinkButton';
 import Button from '@/components/Button/Button';
-import { useHomePage } from '@/lib/home/HomePageContext';
+import LinkButton from '@/components/Button/LinkButton';
 import { headerVariants, heroVariants } from '@/lib/animations/variants';
+import { useHomePage } from '@/lib/home/HomePageContext';
+import { Endpoints } from '@/types';
 
 export default function Hero() {
     const { refs } = useHomePage();

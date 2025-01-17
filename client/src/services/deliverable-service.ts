@@ -1,8 +1,15 @@
-import { Deliverable, DeliverableDto, Endpoints, Updated } from '@coursefull';
-import { authenticatedApiHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
-import { api } from '@services';
-import { convertDeliverableFromDto } from '@lib/dto';
+
+import { convertDeliverableFromDto } from '@/lib/helpers/dto';
+import { getApiHeaders } from '@/lib/helpers/service';
+import { api } from '@/services';
+import {
+    Deliverable,
+    DeliverableDto,
+    Endpoints,
+    Saved,
+    SavedDeliverable,
+} from '@/types';
 
 export async function createDeliverable(
     {
@@ -17,31 +24,27 @@ export async function createDeliverable(
     }: DeliverableDto,
     session: Session | null
 ): Promise<Deliverable> {
-    const { data } = await authenticatedApiHandler<DeliverableDto>(
-        async (session, headers) => {
-            return api.post<DeliverableDto>(
-                Endpoints.API_DELIVERABLES,
-                {
-                    api_v1_deliverable: {
-                        name,
-                        weight,
-                        mark,
-                        status,
-                        notes,
-                        start_date,
-                        deadline,
-                        api_v1_course_id,
-                    },
-                },
-                {
-                    headers,
-                    validateStatus: (status) => {
-                        return status === 201;
-                    },
-                }
-            );
+    const headers = getApiHeaders(session);
+    const { data } = await api.post<DeliverableDto>(
+        Endpoints.Api.API_DELIVERABLES,
+        {
+            api_v1_deliverable: {
+                name,
+                weight,
+                mark,
+                status,
+                notes,
+                start_date,
+                deadline,
+                api_v1_course_id,
+            },
         },
-        session
+        {
+            headers,
+            validateStatus: (status) => {
+                return status === 201;
+            },
+        }
     );
     return convertDeliverableFromDto(data);
 }
@@ -56,74 +59,67 @@ export async function updateDeliverable(
         notes,
         start_date,
         deadline,
-    }: Updated<DeliverableDto>,
+    }: Saved<DeliverableDto>,
     session: Session | null
 ): Promise<Deliverable> {
-    const { data } = await authenticatedApiHandler<DeliverableDto>(
-        async (session, headers) => {
-            return api.put<DeliverableDto>(
-                `${Endpoints.API_DELIVERABLES}/${id}`,
-                {
-                    api_v1_deliverable: {
-                        name,
-                        weight,
-                        mark,
-                        status,
-                        notes,
-                        start_date,
-                        deadline,
-                    },
-                },
-                {
-                    headers,
-                    validateStatus: (status) => {
-                        return status === 200;
-                    },
-                }
-            );
+    const headers = getApiHeaders(session);
+    const { data } = await api.put<DeliverableDto>(
+        `${Endpoints.Api.API_DELIVERABLES}/${id}`,
+        {
+            api_v1_deliverable: {
+                name,
+                weight,
+                mark,
+                status,
+                notes,
+                start_date,
+                deadline,
+            },
         },
-        session
+        {
+            headers,
+            validateStatus: (status) => {
+                return status === 200;
+            },
+        }
     );
     return convertDeliverableFromDto(data);
 }
 
 export async function getDeliverables(
     session: Session | null
-): Promise<Deliverable[] | null> {
-    const { data } = await authenticatedApiHandler<DeliverableDto[]>(
-        async (session, headers) => {
-            return api.get<DeliverableDto[]>(Endpoints.API_DELIVERABLES, {
-                headers,
-                validateStatus: (status) => {
-                    return status === 200;
-                },
-            });
-        },
-        session
+): Promise<SavedDeliverable[]> {
+    const headers = getApiHeaders(session);
+    const { data } = await api.get<DeliverableDto[]>(
+        Endpoints.Api.API_DELIVERABLES,
+        {
+            headers,
+            validateStatus: (status) => {
+                return status === 200;
+            },
+        }
     );
-    const deliverables: Deliverable[] = data.map(convertDeliverableFromDto);
+    const deliverables: SavedDeliverable[] = data.map((dto) => {
+        return convertDeliverableFromDto(dto) as SavedDeliverable;
+    });
     return deliverables;
 }
 
 export async function getDeliverable(
     id: string,
     session: Session | null
-): Promise<Deliverable> {
-    const { data } = await authenticatedApiHandler<DeliverableDto>(
-        async (session, headers) => {
-            return api.get<DeliverableDto>(
-                `${Endpoints.API_DELIVERABLES}/${id}`,
-                {
-                    headers,
-                    validateStatus: (status) => {
-                        return status === 200;
-                    },
-                }
-            );
-        },
-        session
+): Promise<SavedDeliverable> {
+    const headers = getApiHeaders(session);
+    const { data } = await api.get<DeliverableDto>(
+        `${Endpoints.Api.API_DELIVERABLES}/${id}`,
+        {
+            headers,
+            validateStatus: (status) => {
+                return status === 200;
+            },
+        }
     );
-    const deliverable = convertDeliverableFromDto(data);
+    const deliverable = convertDeliverableFromDto(data) as SavedDeliverable;
     return deliverable;
 }
 
@@ -131,19 +127,11 @@ export async function deleteDeliverable(
     id: string,
     session: Session | null
 ): Promise<void> {
-    await authenticatedApiHandler(
-        async (session, headers) => {
-            const apiResponse = await api.delete(
-                `${Endpoints.API_DELIVERABLES}/${id}`,
-                {
-                    headers,
-                    validateStatus: (status) => {
-                        return status === 204;
-                    },
-                }
-            );
-            return apiResponse;
+    const headers = getApiHeaders(session);
+    await api.delete(`${Endpoints.Api.API_DELIVERABLES}/${id}`, {
+        headers,
+        validateStatus: (status) => {
+            return status === 204;
         },
-        session
-    );
+    });
 }

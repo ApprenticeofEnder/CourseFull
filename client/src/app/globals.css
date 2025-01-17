@@ -82,11 +82,11 @@
     }
 
     .card-primary {
-        @apply rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10
+        @apply !rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10
     }
 
     .card-secondary {
-        @apply rounded-lg !text-secondary-200 bg-secondary-800 p-2 border-solid border-2 border-secondary-500/10
+        @apply !rounded-lg !text-secondary-200 bg-secondary-800 p-2 border-solid border-2 border-secondary-500/10
     }
 
     .icon {

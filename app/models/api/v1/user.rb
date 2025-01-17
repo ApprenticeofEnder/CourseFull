@@ -3,7 +3,9 @@
 module Api
   module V1
     class User < ApplicationRecord
-      has_many :semesters, -> { order(status: :asc, name: :asc) }, foreign_key: 'api_v1_user_id', dependent: :destroy
+      has_many :semesters, lambda {
+        order(status: :asc, name: :asc)
+      }, foreign_key: 'api_v1_user_id', dependent: :destroy, inverse_of: :user
       after_initialize :init
 
       supabase_id_error = 'Invalid Supabase ID. It may be missing or a duplicate. Please try again.'

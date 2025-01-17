@@ -1,109 +1,93 @@
 'use client';
-import {
-    Endpoints,
-    Semester,
-    SemesterDto,
-    Updated,
-} from '@coursefull';
-import { authenticatedApiHandler } from '@lib/helpers';
+
 import { Session } from '@supabase/supabase-js';
-import { api } from '@services';
-import { convertSemesterFromDto } from '@lib/dto';
+
+import { getApiHeaders } from '@/lib/helpers';
+import { convertSemesterFromDto } from '@/lib/helpers/dto';
+import { api } from '@/services';
+import { Endpoints, SavedSemester, Semester, SemesterDto } from '@/types';
 
 export async function createSemester(
     { name, status, goal }: Semester,
     session: Session | null
-): Promise<Semester> {
-    const { data } = await authenticatedApiHandler<SemesterDto>(
-        async (session, headers) => {
-            const apiResponse = await api.post<SemesterDto>(
-                Endpoints.API_SEMESTERS,
-                {
-                    api_v1_semester: {
-                        name,
-                        status,
-                        goal,
-                    },
-                },
-                {
-                    headers,
-                    validateStatus: (status) => {
-                        return status === 201;
-                    },
-                }
-            );
-            return apiResponse;
+): Promise<SavedSemester> {
+    const headers = getApiHeaders(session);
+    const { data } = await api.post<SemesterDto>(
+        Endpoints.Api.API_SEMESTERS,
+        {
+            api_v1_semester: {
+                name,
+                status,
+                goal,
+            },
         },
-        session
+        {
+            headers,
+            validateStatus: (status) => {
+                return status === 201;
+            },
+        }
     );
-    const semester = convertSemesterFromDto(data);
+    const semester = convertSemesterFromDto(data) as SavedSemester;
     return semester;
 }
 
 export async function getSemesters(
     session: Session | null
-): Promise<Semester[]> {
-    const { data } = await authenticatedApiHandler<SemesterDto[]>(
-        async (session, headers) => {
-            return api.get<SemesterDto[]>(Endpoints.API_SEMESTERS, {
-                headers,
-                validateStatus: (status) => {
-                    return status === 200;
-                },
-            });
+): Promise<SavedSemester[]> {
+    const headers = getApiHeaders(session);
+    const { data } = await api.get<SemesterDto[]>(Endpoints.Api.API_SEMESTERS, {
+        headers,
+        validateStatus: (status) => {
+            return status === 200;
         },
-        session
-    );
-    const semesters: Semester[] = data.map(convertSemesterFromDto);
+    });
+    const semesters: SavedSemester[] = data.map((dto) => {
+        return convertSemesterFromDto(dto) as SavedSemester;
+    });
     return semesters;
 }
 
 export async function getSemester(
     id: string,
     session: Session | null
-): Promise<Semester> {
-    const { data } = await authenticatedApiHandler<SemesterDto>(
-        async (session, headers) => {
-            return api.get<SemesterDto>(`${Endpoints.API_SEMESTERS}/${id}`, {
-                headers,
-                validateStatus: (status) => {
-                    return status === 200;
-                },
-            });
-        },
-        session
+): Promise<SavedSemester> {
+    const headers = getApiHeaders(session);
+    const { data } = await api.get<SemesterDto>(
+        `${Endpoints.Api.API_SEMESTERS}/${id}`,
+        {
+            headers,
+            validateStatus: (status) => {
+                return status === 200;
+            },
+        }
     );
-    const semester = convertSemesterFromDto(data);
+    const semester = convertSemesterFromDto(data) as SavedSemester;
     return semester;
 }
 
 export async function updateSemester(
-    { id, name, status, goal }: Updated<Semester>,
+    { id, name, status, goal }: SavedSemester,
     session: Session | null
-): Promise<Semester> {
-    const { data } = await authenticatedApiHandler<SemesterDto>(
-        async (session, headers) => {
-            const apiResponse = await api.put(
-                `${Endpoints.API_SEMESTERS}/${id}`,
-                {
-                    api_v1_semester: {
-                        name,
-                        status,
-                        goal,
-                    },
-                },
-                {
-                    headers,
-                    validateStatus: (status) => {
-                        return status === 200;
-                    },
-                }
-            );
-            return apiResponse;
+): Promise<SavedSemester> {
+    const headers = getApiHeaders(session);
+    const { data } = await api.put<SemesterDto>(
+        `${Endpoints.Api.API_SEMESTERS}/${id}`,
+        {
+            api_v1_semester: {
+                name,
+                status,
+                goal,
+            },
         },
-        session
+        {
+            headers,
+            validateStatus: (status) => {
+                return status === 200;
+            },
+        }
     );
-    const semester = convertSemesterFromDto(data);
+    const semester = convertSemesterFromDto(data) as SavedSemester;
     return semester;
 }
 
@@ -111,19 +95,11 @@ export async function deleteSemester(
     id: string,
     session: Session | null
 ): Promise<void> {
-    await authenticatedApiHandler(
-        async (session, headers) => {
-            const apiResponse = await api.delete(
-                `${Endpoints.API_SEMESTERS}/${id}`,
-                {
-                    headers,
-                    validateStatus: (status) => {
-                        return status === 204;
-                    },
-                }
-            );
-            return apiResponse;
+    const headers = getApiHeaders(session);
+    await api.delete(`${Endpoints.Api.API_SEMESTERS}/${id}`, {
+        headers,
+        validateStatus: (status) => {
+            return status === 204;
         },
-        session
-    );
+    });
 }

@@ -28,13 +28,11 @@ module Api
         @api_v1_course = Api::V1::Course.new(api_v1_course_params)
 
         @api_v1_course.goal = @api_v1_semester.goal
-        @api_v1_course.grade = 0.0
         @api_v1_course.deliverable_goal = @api_v1_semester.goal
         @api_v1_course.user = @api_v1_user
 
         if @api_v1_course.save
           @api_v1_user.new_course
-          @api_v1_course.update_goal
           render json: @api_v1_course, status: :created, location: @api_v1_course
         else
           render json: @api_v1_course.errors, status: :unprocessable_entity

@@ -1,3 +1,3 @@
-export default function SocialProof(){
+export default function SocialProof() {
     return <div></div>;
 }

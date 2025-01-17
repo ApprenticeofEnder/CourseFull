@@ -1,10 +1,10 @@
 import {
-    AuthEndpoints,
     ApiEndpoints,
-    PageEndpoints,
-    LegalEndpoints,
+    AuthEndpoints,
     DashboardEndpoints,
-} from './enums';
+    LegalEndpoints,
+    PageEndpoints,
+} from '@/types/enums';
 
 export * from './dto';
 export * from './data';
@@ -20,4 +20,3 @@ export class Endpoints {
     static Legal = LegalEndpoints;
     static Dashboard = DashboardEndpoints;
 }
-

@@ -1,9 +1,7 @@
-import {
-    Accordion,
-    AccordionItem,
-} from '@nextui-org/react';
-import { useHomePage } from '@/lib/home/HomePageContext';
+import { Accordion, AccordionItem } from '@nextui-org/react';
+
 import Section from '@/components/Home/Section';
+import { useHomePage } from '@/lib/home/HomePageContext';
 
 interface Question {
     question: string;
@@ -35,7 +33,7 @@ export default function Faq() {
     return (
         <Section ref={refs?.faqRef.ref} title="FAQ">
             {/* Necessary because of flexbox stuff. */}
-            <div className='w-full'>
+            <div className="w-full">
                 <Accordion variant="splitted">
                     {questions.map(({ question, answer }, index) => {
                         return (

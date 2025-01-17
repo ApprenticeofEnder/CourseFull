@@ -1,18 +1,16 @@
 'use client';
 
-import { Controller, useForm } from 'react-hook-form';
-import { Form, Input } from '@nextui-org/react';
-
-import Button from '@/components/Button/Button';
-
-import { useState } from 'react';
-import { LoginSchema, loginSchema } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { Form, Input } from '@nextui-org/react';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+
 import { login } from '@/app/auth/actions';
+import Button from '@/components/Button/Button';
+import { LoginSchema, loginSchema } from '@/lib/validation';
 
 export default function EmailLoginForm() {
-    const [isNavigating, setIsNavigating] = useState<boolean>(false);
+    const [isNavigating, setIsNavigating] = useState(false);
 
     const {
         control,
@@ -27,25 +25,15 @@ export default function EmailLoginForm() {
         mode: 'onChange',
     });
 
-    const loginMutation = useMutation({
-        mutationFn: (loginData: LoginSchema) => {
-            return login(loginData);
-        },
-        onSuccess: () => {
-            setIsNavigating(true);
-        },
-    });
-    if (loginMutation.error) {
-        throw loginMutation.error;
+    async function onSubmit(data: LoginSchema) {
+        setIsNavigating(true);
+        login(data);
     }
 
     return (
-        <div className='flex flex-col gap-4'>
+        <div className="flex flex-col gap-4">
             <h2>Log In to CourseFull</h2>
-            <Form
-                onSubmit={handleSubmit((data) => loginMutation.mutate(data))}
-                className="gap-4"
-            >
+            <Form onSubmit={handleSubmit(onSubmit)} className="gap-4">
                 <Controller
                     control={control}
                     name="email"
@@ -93,11 +81,12 @@ export default function EmailLoginForm() {
                 />
                 <Button
                     className="w-full"
+                    buttonType="confirm"
                     type="submit"
                     isDisabled={!isValid}
-                    isLoading={loginMutation.isPending || isNavigating}
+                    isLoading={isNavigating}
                 >
-                    Submit
+                    {isNavigating ? 'Logging in...' : 'Log In'}
                 </Button>
             </Form>
         </div>

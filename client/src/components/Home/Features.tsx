@@ -1,16 +1,17 @@
-import { motion } from 'motion/react';
-import { ReactNode } from 'react';
 import {
     ArrowTrendingUpIcon,
     CalendarIcon,
     EyeIcon,
     InformationCircleIcon,
 } from '@heroicons/react/24/outline';
-import Button from '@/components/Button/Button';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
-import { useHomePage } from '@/lib/home/HomePageContext';
-import { cardVariants } from '@/lib/animations/variants';
+import { motion } from 'motion/react';
+import { ReactNode } from 'react';
+
+import Button from '@/components/Button/Button';
 import Section from '@/components/Home/Section';
+import { cardVariants } from '@/lib/animations/variants';
+import { useHomePage } from '@/lib/home/HomePageContext';
 
 interface FeatureData {
     title: string;

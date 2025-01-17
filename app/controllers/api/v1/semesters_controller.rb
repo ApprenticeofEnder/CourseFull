@@ -9,12 +9,12 @@ module Api
       # GET /api/v1/semesters
       def index
         @api_v1_semesters = Api::V1::Semester.where(api_v1_user_id: @api_v1_user.id)
-        render json: @api_v1_semesters.as_json(include: :courses)
+        render json: @api_v1_semesters
       end
 
       # GET /api/v1/semesters/1
       def show
-        render json: @api_v1_semester.as_json(include: :courses)
+        render json: @api_v1_semester
       end
 
       # POST /api/v1/semesters
@@ -33,7 +33,6 @@ module Api
       # PATCH/PUT /api/v1/semesters/1
       def update
         if @api_v1_semester.update(api_v1_semester_params)
-          @api_v1_semester.update_goal
           render json: @api_v1_semester
         else
           render json: @api_v1_semester.errors, status: :unprocessable_entity

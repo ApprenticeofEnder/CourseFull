@@ -1,5 +1,6 @@
-import { ItemStatus } from '@/types/enums';
 import { ZonedDateTime } from '@internationalized/date';
+
+import { ItemStatus } from '@/types/enums';
 
 export interface BaseAcademicItem {
     id?: string;
@@ -34,9 +35,29 @@ export interface Deliverable extends BaseAcademicItem {
     goal?: number;
 }
 
-export type Updated<T extends BaseAcademicItem> = T & {
+export type Saved<T extends BaseAcademicItem> = T & {
     id: string;
-}
+    api_v1_user_id: string;
+};
+
+export type SavedDeliverable = Saved<Deliverable> & {
+    api_v1_course_id: string;
+    goal: number;
+};
+export type SavedCourse = Saved<Course> & {
+    api_v1_semester_id: string;
+    deliverables: SavedDeliverable[];
+    grade: number;
+    goal: number;
+};
+export type SavedSemester = Saved<Semester> & {
+    courses: SavedCourse[];
+    graded_courses?: GradedCourse[];
+};
+
+export type GradedCourse = SavedCourse & {
+    graded_deliverables: number;
+};
 
 export interface CourseFullUser {
     id: string;

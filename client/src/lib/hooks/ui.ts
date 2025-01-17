@@ -1,37 +1,45 @@
 'use client';
 
-import { GradeColours, ItemStatus, SemesterProgressType } from '@/types';
-import { getLocalTimeZone, now, ZonedDateTime } from '@internationalized/date';
+import { getLocalTimeZone, now } from '@internationalized/date';
+import { differenceInSeconds } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { determineCourseGradeAndGoal } from '@/lib/helpers';
+import { useTime, useTimeDispatch } from '@/lib/time/TimeContext';
 import {
-    differenceInDays,
-    differenceInHours,
-    differenceInMinutes,
-    differenceInSeconds,
-} from 'date-fns';
+    GradeColours,
+    ItemStatus,
+    SavedCourse,
+    SavedDeliverable,
+    SemesterProgressType,
+} from '@/types';
 
-function getWindowDimensions() {
-    const { innerWidth: width, innerHeight: height } = window;
-    return {
-        width,
-        height,
-    };
-}
+export function useWindowDimensions() {
+    const hasWindow = typeof window !== 'undefined';
 
-export default function useWindowDimensions() {
-    const [windowDimensions, setWindowDimensions] = useState({
-        width: 0,
-        height: 0,
-    });
+    const getWindowDimensions = useCallback(() => {
+        const width = hasWindow ? window.innerWidth : null;
+        const height = hasWindow ? window.innerHeight : null;
+        return {
+            width,
+            height,
+        };
+    }, [hasWindow]);
+
+    const [windowDimensions, setWindowDimensions] = useState(
+        getWindowDimensions()
+    );
 
     useEffect(() => {
-        function handleResize() {
-            setWindowDimensions(getWindowDimensions());
-        }
+        if (hasWindow) {
+            function handleResize() {
+                setWindowDimensions(getWindowDimensions());
+            }
 
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }
+    }, [hasWindow, getWindowDimensions]);
 
     return windowDimensions;
 }
@@ -67,6 +75,12 @@ export function useGradeColours(
             textColour: `text-${indicator}-800`,
         };
     }, [goal, grade, deliverableStatus]);
+}
+
+export function useCourseGradeColours(course: SavedCourse | null | undefined) {
+    const { grade, goal } = determineCourseGradeAndGoal(course);
+
+    return useGradeColours(goal, grade);
 }
 
 export function useProgressColours(
@@ -114,29 +128,81 @@ interface TimeRemaining {
     hours: number;
     minutes: number;
     seconds: number;
-    message: string;
+    deadlineMessage: string;
     status: ItemStatus;
 }
 
-export function useTimeRemaining(
-    deadline: ZonedDateTime,
+export function useDeliverableStatusObserver(
+    deliverable: SavedDeliverable | null | undefined,
     status: ItemStatus
+) {
+    const timeDispatch = useTimeDispatch();
+    useEffect(() => {
+        if (!deliverable) {
+            return;
+        }
+        switch (status) {
+            case ItemStatus.URGENT: {
+                timeDispatch({
+                    type: 'ADD_URGENT_DELIVERABLE',
+                    payload: deliverable,
+                });
+                return;
+            }
+            case ItemStatus.OVERDUE: {
+                timeDispatch({
+                    type: 'ADD_OVERDUE_DELIVERABLE',
+                    payload: deliverable,
+                });
+                return;
+            }
+            case ItemStatus.COMPLETE: {
+                timeDispatch({
+                    type: 'COMPLETE_DELIVERABLE',
+                    payload: deliverable,
+                });
+                return;
+            }
+        }
+    }, [deliverable, status, timeDispatch]);
+}
+
+export function useTimeRemaining(
+    deliverable: SavedDeliverable | null | undefined
 ): TimeRemaining {
-    const [timeRemaining, setTimeRemaining] = useState<TimeRemaining>({
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        message: '',
-        status,
-    });
-    const getTimeRemaining = useCallback(() => {
-        const deadlineDate = deadline.toDate();
-        const currentDate = now(getLocalTimeZone()).toDate();
-        const days = differenceInDays(deadlineDate, currentDate);
-        const hours = differenceInHours(deadlineDate, currentDate);
-        const minutes = differenceInMinutes(deadlineDate, currentDate);
+    const { time } = useTime();
+
+    const { deadlineDate, currentStatus } = useMemo(() => {
+        if (!deliverable) {
+            return {
+                deadlineDate: now(getLocalTimeZone()).toDate(),
+                currentStatus: ItemStatus.ACTIVE,
+            };
+        }
+        return {
+            deadlineDate: deliverable.deadline.toDate(),
+            currentStatus: deliverable.status,
+        };
+    }, [deliverable]);
+
+    const timeRemainingData = useMemo(() => {
+        const currentDate = time.toDate();
         const seconds = differenceInSeconds(deadlineDate, currentDate);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        if (currentStatus === ItemStatus.COMPLETE) {
+            return {
+                days,
+                hours,
+                minutes,
+                seconds,
+                status: currentStatus,
+                deadlineMessage: `Deliverable complete! Hooray!`,
+            };
+        }
+
         let messageVariableData = 'No time';
         if (days > 0) {
             messageVariableData = `${days} days`;
@@ -147,22 +213,30 @@ export function useTimeRemaining(
         } else if (seconds >= 0) {
             messageVariableData = `${seconds} seconds`;
         }
-        const incomplete = status !== ItemStatus.COMPLETE;
-        setTimeRemaining({
+
+        const stillTimeRemaining = seconds > 0;
+        const isBeyondThreeDays = days >= 3;
+        let status = ItemStatus.OVERDUE;
+        if (stillTimeRemaining) {
+            status = ItemStatus.URGENT;
+        }
+        if (isBeyondThreeDays) {
+            status = ItemStatus.ACTIVE;
+        }
+
+        return {
             days,
             hours,
             minutes,
             seconds,
-            status: seconds < 0 && incomplete ? ItemStatus.OVERDUE : status,
-            message: `${messageVariableData} remaining`,
-        });
-    }, [deadline, status]);
-    useEffect(() => {
-        getTimeRemaining();
-        const timer = setInterval(getTimeRemaining, 1000);
-        return () => {
-            clearInterval(timer);
+            status,
+            deadlineMessage: `${messageVariableData} remaining`,
         };
-    }, [getTimeRemaining]);
-    return timeRemaining;
+    }, [deadlineDate, time, currentStatus]);
+
+    const { status } = timeRemainingData;
+
+    useDeliverableStatusObserver(deliverable, status);
+
+    return timeRemainingData;
 }

@@ -1,12 +1,8 @@
-import {
-    CartItem,
-    Endpoints,
-    PaymentLinkDto,
-} from '@coursefull';
-import { authenticatedApiHandler } from '@lib/helpers';
 import { Session } from '@supabase/supabase-js';
-import axios from 'axios';
-import { api } from '@services';
+
+import { authenticatedApiHandler } from '@/lib/helpers';
+import { api } from '@/services';
+import { CartItem, Endpoints, PaymentLinkDto } from '@/types';
 
 export async function createPayment(
     cart: CartItem[],

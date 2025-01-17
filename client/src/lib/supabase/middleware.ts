@@ -1,6 +1,7 @@
-import { Endpoints } from '@/types';
 import { createServerClient } from '@supabase/ssr';
-import { NextResponse, type NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+
+import { Endpoints } from '@/types';
 
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
@@ -55,9 +56,7 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    if (
-        user && isHome
-    ) {
+    if (user && isHome) {
         const url = request.nextUrl.clone();
         url.pathname = Endpoints.Dashboard.DASHBOARD;
         return NextResponse.redirect(url);

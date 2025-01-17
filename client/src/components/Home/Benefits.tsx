@@ -1,7 +1,3 @@
-import { useHomePage } from '@/lib/home/HomePageContext';
-import { motion } from 'motion/react';
-import { expositionVariants, cardVariants } from '@/lib/animations/variants';
-import { ReactNode } from 'react';
 import {
     ArrowRightIcon,
     ClipboardDocumentCheckIcon,
@@ -10,7 +6,12 @@ import {
     FaceFrownIcon,
     FaceSmileIcon,
 } from '@heroicons/react/24/outline';
+import { motion } from 'motion/react';
+import { ReactNode } from 'react';
+
 import Section from '@/components/Home/Section';
+import { cardVariants, expositionVariants } from '@/lib/animations/variants';
+import { useHomePage } from '@/lib/home/HomePageContext';
 
 export default function Benefits() {
     const { refs } = useHomePage();

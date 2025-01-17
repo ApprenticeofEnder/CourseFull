@@ -1,5 +1,11 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { cn, Listbox, ListboxItem, Modal, useDisclosure } from '@nextui-org/react';
+import {
+    cn,
+    Listbox,
+    ListboxItem,
+    Modal,
+    useDisclosure,
+} from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -41,13 +47,11 @@ function renderSemester(item: SemesterProgressType) {
             }
             endContent={
                 <div className="sm:text-lg basis-1/4 text-right flex flex-col sm:flex-row sm:gap-1 sm:justify-end">
-                    <div className="text-center">{renderAverage(item)} /</div>
+                    <div className="text-center">{renderSemesterAverage(item)} /</div>
                     <div className="text-center">{item.goal}</div>
                 </div>
             }
-            className={
-                cn(Object.values(item.grade_colour!))
-            }
+            className={cn(Object.values(item.grade_colour!))}
             textValue={`${item.average} % out of ${item.goal} %`}
         >
             <div className="hidden md:flex md:justify-center">
@@ -99,10 +103,13 @@ export default function Dashboard({ session }: SessionProps) {
 
     const colorizedSemesters = useProgressColours(progressData);
 
-    const { bgColour, textColour } = useGradeColours(activeSemester?.goal, activeSemester?.average);   
+    const { bgColour, textColour } = useGradeColours(
+        activeSemester?.goal,
+        activeSemester?.average
+    );
 
     return (
-        <div className='flex-grow'>
+        <div className="flex-grow">
             <h1>Hey, {session.user.user_metadata.first_name}!</h1>
             {loadingProgress ? (
                 <Loading message="Loading Progress..." />
@@ -174,7 +181,9 @@ export default function Dashboard({ session }: SessionProps) {
                                 </div>
                             }
                         >
-                            {(item: SemesterProgressType) => renderSemester(item)}
+                            {(item: SemesterProgressType) =>
+                                renderSemester(item)
+                            }
                         </Listbox>
                     </div>
                 </div>

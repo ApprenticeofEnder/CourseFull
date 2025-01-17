@@ -1,3 +1,3 @@
-export default function CallToValue(){
-    return <div></div>
+export default function CallToValue() {
+    return <div></div>;
 }

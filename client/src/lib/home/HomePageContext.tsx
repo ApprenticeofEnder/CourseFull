@@ -1,13 +1,8 @@
 'use client';
 
-import {
-    FC,
-    ReactNode,
-    createContext,
-    useContext,
-    useRef,
-} from 'react';
 import { useRouter } from 'next/navigation';
+import { FC, ReactNode, createContext, useContext, useRef } from 'react';
+
 import { Endpoints, HomePageRef, HomePageRefs } from '@/types';
 
 type HomePageRefOptions = {

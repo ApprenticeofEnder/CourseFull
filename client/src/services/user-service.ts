@@ -1,21 +1,21 @@
 import { Session } from '@supabase/supabase-js';
+import assert from 'assert';
 
 import { getApiHeaders } from '@/lib/helpers/service';
 import { api } from '@/services';
 import {
-    Endpoints,
-    CourseFullUser,
-    SemesterProgressType,
     BasicUserData,
+    CourseFullUser,
+    Endpoints,
+    SemesterProgressType,
 } from '@/types';
-import assert from 'assert';
 
-export async function createUser(data: BasicUserData): Promise<CourseFullUser>{
+export async function createUser(data: BasicUserData): Promise<CourseFullUser> {
     assert(data.supabase_id);
     const apiResponse = await api.post<CourseFullUser>(
         Endpoints.Api.API_USER,
         {
-            api_v1_user: data
+            api_v1_user: data,
         },
         {
             validateStatus: (status) => {
@@ -27,7 +27,7 @@ export async function createUser(data: BasicUserData): Promise<CourseFullUser>{
 }
 
 export async function getProgress(
-    session: Session
+    session: Session | null
 ): Promise<SemesterProgressType[]> {
     const headers = getApiHeaders(session);
     const apiResponse = await api.get<SemesterProgressType[]>(
@@ -42,7 +42,9 @@ export async function getProgress(
     return apiResponse.data;
 }
 
-export async function getUserData(session: Session): Promise<CourseFullUser> {
+export async function getUserData(
+    session: Session | null
+): Promise<CourseFullUser> {
     const headers = getApiHeaders(session);
     const apiResponse = await api.get<CourseFullUser>(
         `${Endpoints.Api.API_USER}/me`,

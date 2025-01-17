@@ -7,10 +7,11 @@ module Api
       attribute :deadline, :datetime
 
       # Relationships
-      belongs_to :course, foreign_key: 'api_v1_course_id'
+      belongs_to :course, foreign_key: 'api_v1_course_id', inverse_of: :deliverables
       belongs_to :user, foreign_key: 'api_v1_user_id'
 
       # Scopes
+      default_scope { order(deadline: :asc) }
       scope :active, -> { where(status: :active) }
       scope :complete, -> { where(status: :complete) }
 

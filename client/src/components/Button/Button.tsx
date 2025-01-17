@@ -1,7 +1,11 @@
 'use client';
 
+import {
+    Button as BaseButton,
+    ButtonProps as BaseButtonProps,
+    cn,
+} from '@nextui-org/react';
 import { forwardRef } from 'react';
-import { Button as BaseButton, ButtonProps as BaseButtonProps, cn } from '@nextui-org/react';
 
 export interface ButtonProps extends BaseButtonProps {
     buttonSize?: 'sm' | 'md' | 'lg';
@@ -54,4 +58,3 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = 'Button';
 
 export default Button;
-

@@ -53,4 +53,4 @@ export const cardVariants: Variants = {
         ...expositionVariants.onscreen,
         x: '0%',
     },
-}
+};

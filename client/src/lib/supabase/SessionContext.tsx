@@ -1,7 +1,6 @@
 'use client';
 
 import { Session, User } from '@supabase/supabase-js';
-import { createClient } from '@/lib/supabase/client';
 import {
     FC,
     ReactNode,
@@ -10,6 +9,8 @@ import {
     useEffect,
     useState,
 } from 'react';
+
+import { createClient } from '@/lib/supabase/client';
 
 export const AuthContext = createContext<{
     session: Session | null;

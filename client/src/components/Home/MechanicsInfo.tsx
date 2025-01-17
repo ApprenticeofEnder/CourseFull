@@ -1,7 +1,8 @@
-import { useHomePage } from '@/lib/home/HomePageContext';
-import { expositionVariants, cardVariants } from '@/lib/animations/variants';
 import { motion } from 'motion/react';
+
 import Section from '@/components/Home/Section';
+import { cardVariants, expositionVariants } from '@/lib/animations/variants';
+import { useHomePage } from '@/lib/home/HomePageContext';
 
 interface Step {
     stepNumber: number;

@@ -1,7 +1,9 @@
 'use client';
-import Button, { ButtonProps } from '@/components/Button/Button';
+
 import { useRouter } from 'next/navigation';
 import { forwardRef } from 'react';
+
+import Button, { ButtonProps } from '@/components/Button/Button';
 
 export interface LinkButtonProps extends ButtonProps {
     href: string;
@@ -16,7 +18,9 @@ const LinkButton = forwardRef<HTMLButtonElement, LinkButtonProps>(function (
     return (
         <Button
             className={className}
-            onPressEnd={() => router.push(href)}
+            onPress={() => {
+                router.push(href);
+            }}
             {...props}
             ref={ref}
             buttonType={confirm ? 'confirm' : 'default'}

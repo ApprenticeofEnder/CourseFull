@@ -1,11 +1,9 @@
 import axios from 'axios';
 
 const baseURL =
-    process.env.NODE_ENV === 'production'
-        ? '/'
-        : 'http://localhost:8080';
+    process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:8080';
 
-const DEBUG = process.env.NODE_ENV === "development";
+const DEBUG = process.env.NODE_ENV === 'development';
 
 const api = axios.create({
     baseURL,
@@ -16,11 +14,15 @@ const api = axios.create({
 
 api.interceptors.request.use(
     function (config) {
-        if (DEBUG) { console.info("✉️ ", config); }
+        if (DEBUG) {
+            console.info('✉️ ', config);
+        }
         return config;
     },
     function (error) {
-        if (DEBUG) { console.error("✉️ ", error); }
+        if (DEBUG) {
+            console.error('✉️ ', error);
+        }
         if (error.response.status === 401) {
             window.location.href = '/';
         }

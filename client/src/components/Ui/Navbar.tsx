@@ -1,21 +1,22 @@
 import {
     Navbar as BaseNavbar,
+    Divider,
     NavbarBrand,
-    NavbarMenuToggle,
-    NavbarMenu,
-    NavbarMenuItem,
     NavbarContent,
     NavbarItem,
+    NavbarMenu,
+    NavbarMenuItem,
+    NavbarMenuToggle,
     Spacer,
-    Divider,
 } from '@nextui-org/react';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
-import { Endpoints } from '@/types';
 import { useState } from 'react';
-import Link from '@/components/Ui/Link';
-import AccountDropdown from './AccountDropdown';
-import { useSession } from '@/lib/supabase/SessionContext';
+
 import LinkButton from '@/components/Button/LinkButton';
+import AccountDropdown from '@/components/Ui/AccountDropdown';
+import Link from '@/components/Ui/Link';
+import { useSession } from '@/lib/supabase/SessionContext';
+import { Endpoints } from '@/types';
 
 // interface MenuItem {
 //     label: string;
