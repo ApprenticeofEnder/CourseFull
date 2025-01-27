@@ -4,7 +4,7 @@ import {
     Card as BaseCard,
     CardProps as BaseCardProps,
     cn,
-} from "@heroui/react";
+} from '@heroui/react';
 import { forwardRef } from 'react';
 
 export interface CardProps extends BaseCardProps {
@@ -36,7 +36,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
                     types[cardType],
                     className || '',
                     isPressable
-                        ? 'hover:bg-background-900 transition-colours'
+                        ? 'transition-colours hover:bg-background-900'
                         : ''
                 )}
                 isPressable={isPressable}

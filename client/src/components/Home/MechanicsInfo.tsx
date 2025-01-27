@@ -32,7 +32,7 @@ export default function MechanicsInfo() {
             >
                 {"It's easier than you think."}
             </motion.p>
-            <div className="flex flex-col sm:flex-row justify-between gap-4">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row">
                 {cardData.map(({ stepNumber, step }: Step, index: number) => (
                     <motion.div
                         key={stepNumber}
@@ -42,10 +42,10 @@ export default function MechanicsInfo() {
                         transition={{
                             delay: 0.1 * (index + 1),
                         }}
-                        className="basis-1/3 card-secondary lg:p-8 flex flex-col justify-between items-center gap-2 lg:gap-4 rounded-lg"
+                        className="card-secondary flex basis-1/3 flex-col items-center justify-between gap-2 rounded-lg lg:gap-4 lg:p-8"
                     >
                         <h1>{stepNumber}</h1>
-                        <div className="flex flex-col justify-center basis-1/2">
+                        <div className="flex basis-1/2 flex-col justify-center">
                             <p className="text-center text-xl">{step}</p>
                         </div>
                     </motion.div>

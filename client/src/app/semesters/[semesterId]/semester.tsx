@@ -26,7 +26,7 @@ const SemesterPage: FC<{ semesterId: string }> = ({ semesterId }) => {
 
     return (
         <>
-            <div className="flex flex-wrap gap-4 justify-between items-end">
+            <div className="flex flex-wrap items-end justify-between gap-4">
                 <Breadcrumbs
                     size="lg"
                     itemsBeforeCollapse={0}
@@ -51,23 +51,23 @@ const SemesterPage: FC<{ semesterId: string }> = ({ semesterId }) => {
                     </BreadcrumbItem>
                 </Breadcrumbs>
             </div>
-            <div className="flex justify-between items-center">
-                <h2 className="text-left font-bold flex flex-wrap">
+            <div className="flex items-center justify-between">
+                <h2 className="flex flex-wrap text-left font-bold">
                     <span>{semester?.name}</span>
                 </h2>
             </div>
             <Divider></Divider>
-            <div className="flex flex-col md:flex-row gap-4 my-4 md:h-screen">
-                <div className="w-full md:basis-1/2 lg:basis-1/3 order-2 md:order-1 flex flex-col gap-4">
+            <div className="my-4 flex flex-col gap-4 md:h-screen md:flex-row">
+                <div className="order-2 flex w-full flex-col gap-4 md:order-1 md:basis-1/2 lg:basis-1/3">
                     <Button
-                        className="top-2 order-last md:order-first flex-shrink-0"
+                        className="top-2 order-last flex-shrink-0 md:order-first"
                         endContent={<PlusIcon className="icon" />}
                         onPress={() => {}}
                         buttonType="confirm"
                     >
                         Add Course
                     </Button>
-                    <Divider className="collapse md:visible mt-2"></Divider>
+                    <Divider className="collapse mt-2 md:visible"></Divider>
                     {coursesToRender.map((course, index) => {
                         return (
                             <CourseCard
@@ -85,7 +85,7 @@ const SemesterPage: FC<{ semesterId: string }> = ({ semesterId }) => {
                         );
                     })}
                 </div>
-                <div className="w-full md:h-full md:basis-1/2 lg:basis-2/3 order-1 md:flex-1 md:order-2 flex flex-col gap-4">
+                <div className="order-1 flex w-full flex-col gap-4 md:order-2 md:h-full md:flex-1 md:basis-1/2 lg:basis-2/3">
                     Test
                 </div>
             </div>

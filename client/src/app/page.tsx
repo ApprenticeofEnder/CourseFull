@@ -16,7 +16,7 @@ const SocialProof = dynamic(() => import('@/components/Home/SocialProof'));
 
 export default function HomePage() {
     return (
-        <div className="flex flex-col justify-center w-full">
+        <div className="flex w-full flex-col justify-center">
             <div className="flex flex-col gap-8 lg:gap-16">
                 <Hero />
                 <Features />

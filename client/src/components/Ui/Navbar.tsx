@@ -8,7 +8,7 @@ import {
     NavbarMenuItem,
     NavbarMenuToggle,
     Spacer,
-} from "@heroui/react";
+} from '@heroui/react';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 
@@ -68,7 +68,7 @@ export default function Navbar() {
                         <h3 className="font-bold text-inherit lg:hidden">
                             CourseFull
                         </h3>
-                        <h2 className="font-bold text-inherit hidden lg:flex">
+                        <h2 className="hidden font-bold text-inherit lg:flex">
                             CourseFull
                         </h2>
                     </Link>
@@ -102,7 +102,7 @@ export default function Navbar() {
                     </>
                 )}
             </NavbarContent>
-            <NavbarMenu className="bg-background-900 max-w-[1024px] mx-auto">
+            <NavbarMenu className="mx-auto max-w-[1024px] bg-background-900">
                 {session ? authenticatedMenuItems() : homeMenuItems()}
                 <Divider />
                 <NavbarMenuItem
@@ -112,7 +112,7 @@ export default function Navbar() {
                     }}
                 >
                     <a
-                        className="w-full flex"
+                        className="flex w-full"
                         href={GITHUB_LINK}
                         color="foreground"
                         target="_blank"

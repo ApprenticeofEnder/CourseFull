@@ -14,7 +14,7 @@ const Section = forwardRef(function Section(
 ) {
     return (
         <motion.div
-            className="flex flex-col justify-center items-center gap-4 py-4 sm:px-16 sm:py-8"
+            className="flex flex-col items-center justify-center gap-4 py-4 sm:px-16 sm:py-8"
             ref={ref}
         >
             <motion.h2

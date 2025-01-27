@@ -39,7 +39,7 @@ export default function Benefits() {
             subtitle:
                 'Managing all your deadlines and knowing where you stand can be a lot. We can help.',
             visual: (
-                <div className="flex gap-1 justify-center">
+                <div className="flex justify-center gap-1">
                     <FaceFrownIcon className="icon-lg" />
                     <ArrowRightIcon className="icon-lg" />
                     <FaceSmileIcon className="icon-lg" />
@@ -64,11 +64,11 @@ export default function Benefits() {
             >
                 {"What's in it for you? A lot, actually!"}
             </motion.p>
-            <motion.div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-2">
+            <motion.div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
                 {benefits.map(({ title, subtitle, visual }, index) => {
                     return (
                         <motion.div
-                            className="card-secondary flex flex-col gap-2 justify-between items-center p-4"
+                            className="card-secondary flex flex-col items-center justify-between gap-2 p-4"
                             key={title}
                             initial="offscreen"
                             whileInView="onscreen"
@@ -78,7 +78,7 @@ export default function Benefits() {
                         >
                             <motion.h3>{title}</motion.h3>
                             {visual}
-                            <motion.h4 className="text-center basis-1/3 flex flex-col justify-center">
+                            <motion.h4 className="flex basis-1/3 flex-col justify-center text-center">
                                 {subtitle}
                             </motion.h4>
                         </motion.div>

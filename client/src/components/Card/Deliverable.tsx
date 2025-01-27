@@ -63,7 +63,7 @@ const DeliverableCard = forwardRef<HTMLDivElement, DeliverableCardProps>(
                             {renderDeliverableMark(deliverable)}
                         </h3>
                     </CardHeader>
-                    <CardFooter className="flex justify-between items-center">
+                    <CardFooter className="flex items-center justify-between">
                         <h4 className="text-left">
                             <div>
                                 {renderDeliverableDeadline(

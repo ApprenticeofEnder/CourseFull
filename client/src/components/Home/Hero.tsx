@@ -24,13 +24,13 @@ export default function Hero() {
             href: Endpoints.Auth.LOGIN,
             text: 'Start Tracking Your Goals',
             testId: 'home-login',
-            endContent: <UserIcon className="w-6 h-6"></UserIcon>,
+            endContent: <UserIcon className="h-6 w-6"></UserIcon>,
         },
         {
             href: Endpoints.Auth.SIGN_UP,
             text: 'Try a Better Way to Manage Goals',
             testId: 'home-signup',
-            endContent: <ClipboardIcon className="w-6 h-6"></ClipboardIcon>,
+            endContent: <ClipboardIcon className="h-6 w-6"></ClipboardIcon>,
         },
     ];
 
@@ -40,7 +40,7 @@ export default function Hero() {
 
     return (
         <div
-            className="flex flex-col sm:flex-row items-center justify-between sm:px-16 sm:py-8"
+            className="flex flex-col items-center justify-between sm:flex-row sm:px-16 sm:py-8"
             ref={refs?.heroRef.ref}
         >
             <div className="sm:basis-1/2">
@@ -69,7 +69,7 @@ export default function Hero() {
                     variants={heroVariants}
                     transition={heroTransition}
                     viewport={{ once: true }}
-                    className="text-xl sm:text-2xl my-5"
+                    className="my-5 text-xl sm:text-2xl"
                 >
                     CourseFull tracks your grades, and what you need to achieve
                     your goals, so you can get the report card of your dreams.
@@ -83,9 +83,9 @@ export default function Hero() {
                         delay: heroDelay + 0.1,
                     }}
                     viewport={{ once: true }}
-                    className="p-4 my-4 border-s-4 hidden md:block border-background-300"
+                    className="my-4 hidden border-s-4 border-background-300 p-4 md:block"
                 >
-                    <p className="text-xl italic font-medium leading-relaxed">
+                    <p className="text-xl font-medium italic leading-relaxed">
                         {
                             "It's not what we do once in a while that shapes our lives. It's what we do consistently."
                         }
@@ -93,7 +93,7 @@ export default function Hero() {
                     <p>~ Tony Robbins</p>
                 </motion.blockquote>
             </div>
-            <div className="sm:basis-1/2 flex flex-col gap-8">
+            <div className="flex flex-col gap-8 sm:basis-1/2">
                 {heroLinkButtons.map((button, index) => (
                     <motion.div
                         key={`herobutton-${index}`}
@@ -105,7 +105,7 @@ export default function Hero() {
                             delay: heroButtonDelay + 0.1 * index,
                         }}
                         viewport={{ once: true }}
-                        className="w-full sm:w-3/4 ms-auto me-2"
+                        className="me-2 ms-auto w-full sm:w-3/4"
                     >
                         <LinkButton
                             href={button.href}
@@ -126,13 +126,13 @@ export default function Hero() {
                         delay: heroButtonDelay + 0.1 * heroLinkButtons.length,
                     }}
                     viewport={{ once: true }}
-                    className="w-full sm:w-3/4 ms-auto me-2"
+                    className="me-2 ms-auto w-full sm:w-3/4"
                 >
                     <Button
                         className="w-full"
                         data-testid="home-learn-more"
                         endContent={
-                            <InformationCircleIcon className="w-6 h-6"></InformationCircleIcon>
+                            <InformationCircleIcon className="h-6 w-6"></InformationCircleIcon>
                         }
                         onPress={scrollToMechanics}
                     >

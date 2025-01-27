@@ -47,7 +47,7 @@ function renderSemester(semester: SavedSemester | null, index: number) {
                                 console.log(course);
                                 router.push(courseUrl(course));
                             }}
-                            className="w-full h-full"
+                            className="h-full w-full"
                             isLoading={false}
                         />
                     );

@@ -5,8 +5,8 @@ import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
 import { LoginSchema, SignupSchema } from '@/lib/validation';
-import { Endpoints } from '@/types';
 import { createUser } from '@/services/user-service';
+import { Endpoints } from '@/types';
 
 export async function login(data: LoginSchema) {
     const supabase = await createClient();
@@ -33,9 +33,9 @@ export async function signup(user: SignupSchema) {
         options: {
             data: {
                 first_name,
-                last_name
-            }
-        }
+                last_name,
+            },
+        },
     });
 
     if (error || !data.user) {
@@ -44,7 +44,7 @@ export async function signup(user: SignupSchema) {
 
     const supabase_id = data.user.id;
 
-    await createUser({...user, supabase_id});
+    await createUser({ ...user, supabase_id });
 
     revalidatePath(Endpoints.Auth.EMAIL_VERIFY, 'layout');
     redirect(Endpoints.Auth.EMAIL_VERIFY);

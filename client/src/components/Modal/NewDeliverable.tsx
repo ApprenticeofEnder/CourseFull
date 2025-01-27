@@ -7,12 +7,9 @@ import {
     ModalFooter,
     ModalHeader,
     ModalProps,
-    useDisclosure,
 } from '@heroui/react';
-import { useRouter } from 'next/navigation';
 
 import Button from '@/components/Button/Button';
-import { Dispatcher } from '@/types';
 
 interface NewDeliverableModalProps extends Omit<ModalProps, 'children'> {
     api_v1_course_id: string;

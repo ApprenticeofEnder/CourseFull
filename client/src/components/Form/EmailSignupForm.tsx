@@ -1,7 +1,7 @@
 'use client';
 
+import { Checkbox, Form, Input } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Checkbox, Form, Input } from "@heroui/react";
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -40,7 +40,7 @@ export default function EmailSignupForm() {
         <div className="flex flex-col gap-4">
             <h2>Sign Up for CourseFull</h2>
             <Form className="gap-4" onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
                     <Controller
                         control={control}
                         name="first_name"
@@ -168,7 +168,7 @@ export default function EmailSignupForm() {
                         </Checkbox>
                     )}
                 />
-                <div className="flex gap-4 w-full">
+                <div className="flex w-full gap-4">
                     <LinkButton
                         className="basis-1/2"
                         isLoading={isNavigating}

@@ -4,7 +4,7 @@ import {
     EyeIcon,
     InformationCircleIcon,
 } from '@heroicons/react/24/outline';
-import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { motion } from 'motion/react';
 import { ReactNode } from 'react';
 
@@ -49,7 +49,7 @@ export default function Features() {
 
     return (
         <Section ref={refs?.featuresRef.ref} title="Features">
-            <div className="flex flex-col md:flex-row gap-4 justify-center">
+            <div className="flex flex-col justify-center gap-4 md:flex-row">
                 {features.map(
                     (
                         { title, subtitle: subheading, visual, description },
@@ -57,7 +57,7 @@ export default function Features() {
                     ) => {
                         return (
                             <motion.div
-                                className="card-primary pb-4 flex flex-col gap-4 justify-between items-center basis-1/3"
+                                className="card-primary flex basis-1/3 flex-col items-center justify-between gap-4 pb-4"
                                 key={`feature-${index}`}
                                 variants={cardVariants}
                                 initial="offscreen"
@@ -80,7 +80,7 @@ export default function Features() {
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="bg-secondary-800">
-                                        <div className="px-1 py-2 max-w-64">
+                                        <div className="max-w-64 px-1 py-2">
                                             <h4 className="font-bold">
                                                 {title}
                                             </h4>

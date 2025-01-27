@@ -1,4 +1,4 @@
-import { CardFooter, CardHeader, Skeleton, cn } from "@heroui/react";
+import { CardFooter, CardHeader, Skeleton, cn } from '@heroui/react';
 import { useMemo } from 'react';
 
 import Card from '@/components/Card/Card';
@@ -52,7 +52,7 @@ export default function SemesterCard({
                         {renderMarkVsGoal(average, semester?.goal)}
                     </h3>
                 </CardHeader>
-                <CardFooter className="flex justify-between items-end">
+                <CardFooter className="flex items-end justify-between">
                     <h4 className="text-left">
                         <b>Courses:</b> {semester?.courses.length}
                     </h4>

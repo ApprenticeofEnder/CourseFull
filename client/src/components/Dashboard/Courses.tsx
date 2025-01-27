@@ -1,4 +1,4 @@
-import { CardFooter, CardHeader } from "@heroui/react";
+import { CardFooter, CardHeader } from '@heroui/react';
 import { Fragment, useMemo } from 'react';
 
 import Card from '@/components/Card/Card';
@@ -38,9 +38,8 @@ function renderSemester(semester: SavedSemester | null, index: number) {
                         <CourseCard
                             key={`semesters-${index}-${courseIndex}`}
                             course={course}
-                            handleView={() => {}}
                             isPressable
-                            className="w-full h-full"
+                            className="h-full w-full"
                             isLoading={false}
                         />
                     );

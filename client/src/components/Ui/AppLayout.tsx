@@ -1,6 +1,6 @@
 'use client';
 
-import { ScrollShadow } from "@heroui/react";
+import { ScrollShadow } from '@heroui/react';
 
 import Footer from '@/components/Ui/Footer';
 import Navbar from '@/components/Ui/Navbar';
@@ -15,7 +15,7 @@ export default function AppLayout({ children }: ChildrenProps) {
             <Navbar />
             <ScrollShadow
                 hideScrollBar
-                className="flex flex-grow flex-col mx-auto w-full max-w-[1024px] px-6 bg-background-900"
+                className="mx-auto flex w-full max-w-[1024px] flex-grow flex-col bg-background-900 px-6"
             >
                 {children}
             </ScrollShadow>

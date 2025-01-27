@@ -28,7 +28,7 @@ const CourseCard = forwardRef<HTMLDivElement, CourseCardProps>(
                         className,
                         bgColour,
                         textColour,
-                        'w-full flex flex-col justify-between'
+                        'flex w-full flex-col justify-between'
                     )}
                 >
                     <CardHeader className="flex justify-between">
@@ -39,7 +39,7 @@ const CourseCard = forwardRef<HTMLDivElement, CourseCardProps>(
                             {renderCourseGrade(course)}
                         </h3>
                     </CardHeader>
-                    <CardFooter className="flex justify-between items-end">
+                    <CardFooter className="flex items-end justify-between">
                         <h4 className="text-left text-lg">{course?.title}</h4>
                         <StatusChip
                             status={course?.status || ItemStatus.ACTIVE}

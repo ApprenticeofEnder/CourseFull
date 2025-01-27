@@ -18,7 +18,7 @@ export default function UpcomingDeliverables({
 
     if (deliverablesToRender.length === 0) {
         return (
-            <h4 className="text-xl text-center">
+            <h4 className="text-center text-xl">
                 No deliverables upcoming. Hooray!
             </h4>
         );

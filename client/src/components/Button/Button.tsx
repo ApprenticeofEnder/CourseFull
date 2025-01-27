@@ -4,7 +4,7 @@ import {
     Button as BaseButton,
     ButtonProps as BaseButtonProps,
     cn,
-} from "@heroui/react";
+} from '@heroui/react';
 import { forwardRef } from 'react';
 
 export interface ButtonProps extends BaseButtonProps {
@@ -40,7 +40,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             <BaseButton
                 ref={ref}
                 className={cn(
-                    'button font-bold rounded-lg top-1 hover:-translate-y-1 active:translate-y-0 active:shadow-none h-fit',
+                    'button top-1 h-fit rounded-lg font-bold hover:-translate-y-1 active:translate-y-0 active:shadow-none',
                     types[buttonType],
                     'text-text-200 focus:bg-warning-100',
                     className || '',

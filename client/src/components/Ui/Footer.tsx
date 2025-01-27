@@ -28,7 +28,7 @@ export default function Footer() {
 
     return (
         <Spacer>
-            <div className="flex justify-center items-center collapse md:visible gap-4 py-4">
+            <div className="collapse flex items-center justify-center gap-4 py-4 md:visible">
                 {menuItems.map((menuItem) => {
                     const { label, href, color } = menuItem;
                     return (

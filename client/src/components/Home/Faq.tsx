@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem } from "@heroui/react";
+import { Accordion, AccordionItem } from '@heroui/react';
 
 import Section from '@/components/Home/Section';
 import { useHomePage } from '@/lib/home/HomePageContext';
