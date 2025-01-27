@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Checkbox, Form, Input } from '@nextui-org/react';
+import { Checkbox, Form, Input } from "@heroui/react";
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';

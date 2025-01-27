@@ -1,4 +1,4 @@
-import { CardFooter, CardHeader, Skeleton, cn } from '@nextui-org/react';
+import { CardFooter, CardHeader, Skeleton, cn } from "@heroui/react";
 import { useMemo } from 'react';
 
 import Card from '@/components/Card/Card';

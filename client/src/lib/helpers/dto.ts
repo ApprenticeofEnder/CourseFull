@@ -5,34 +5,37 @@ import {
     CourseDto,
     Deliverable,
     DeliverableDto,
+    SavedCourse,
+    SavedDeliverable,
+    SavedSemester,
     Semester,
     SemesterDto,
 } from '@/types';
 
-export function convertSemesterFromDto(dto: SemesterDto): Semester {
+export function convertSemesterFromDto(dto: SemesterDto): SavedSemester {
     const courseDtos: CourseDto[] = dto.courses || [];
-    const courses: Course[] = courseDtos.map(convertCourseFromDto);
-    const semester: Semester = {
+    const courses: SavedCourse[] = courseDtos.map(convertCourseFromDto);
+    const semester: SavedSemester = {
         ...dto,
         courses,
-    };
+    } as SavedSemester;
     return semester;
 }
 
-export function convertCourseFromDto(dto: CourseDto): Course {
+export function convertCourseFromDto(dto: CourseDto): SavedCourse {
     const deliverableDtos: DeliverableDto[] = dto.deliverables || [];
-    const deliverables: Deliverable[] = deliverableDtos.map(
+    const deliverables: SavedDeliverable[] = deliverableDtos.map(
         convertDeliverableFromDto
     );
 
     return {
         ...dto,
         deliverables,
-    };
+    } as SavedCourse;
 }
 
 export function convertCourseToDto(data: Course): CourseDto {
-    const deliverables: Deliverable[] = data.deliverables || [];
+    const deliverables: Deliverable[] = [];
     const deliverableDtos: DeliverableDto[] = deliverables.map(
         convertDeliverableToDto
     );
@@ -42,14 +45,16 @@ export function convertCourseToDto(data: Course): CourseDto {
     };
 }
 
-export function convertDeliverableFromDto(dto: DeliverableDto): Deliverable {
+export function convertDeliverableFromDto(
+    dto: DeliverableDto
+): SavedDeliverable {
     const start_date = parseAbsolute(dto.start_date, getLocalTimeZone());
     const deadline = parseAbsolute(dto.deadline, getLocalTimeZone());
     return {
         ...dto,
         start_date,
         deadline,
-    };
+    } as SavedDeliverable;
 }
 
 export function convertDeliverableToDto(data: Deliverable): DeliverableDto {

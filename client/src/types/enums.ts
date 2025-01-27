@@ -8,12 +8,6 @@ export enum AuthEndpoints {
     OAUTH_CALLBACK = '/auth/callback',
 }
 
-export enum DashboardEndpoints {
-    DASHBOARD = '/dashboard',
-    SEMESTER_DASHBOARD = '/dashboard/semesters',
-    COURSE_DASHBOARD = '/dashboard/courses',
-}
-
 export enum LegalEndpoints {
     TERMS_OF_SERVICE = '/legal/terms-of-service',
     PRIVACY_POLICY = '/legal/privacy-policy',
@@ -30,11 +24,14 @@ export enum ApiEndpoints {
 }
 
 export enum PageEndpoints {
-    PRODUCTS = '/products',
+    COURSES = '/courses',
     CHECKOUT = '/payments/checkout',
-    SETTINGS = '/settings',
     CONTACT = '/contact',
+    DASHBOARD = '/dashboard',
     HOME = '/',
+    PRODUCTS = '/products',
+    SEMESTERS = '/semesters',
+    SETTINGS = '/settings',
 }
 
 export enum ItemStatus {

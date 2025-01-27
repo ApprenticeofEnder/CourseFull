@@ -83,6 +83,40 @@ export function useCourseGradeColours(course: SavedCourse | null | undefined) {
     return useGradeColours(goal, grade);
 }
 
+export function useCourseProgressCard(course: SavedCourse | null | undefined) {
+    const { bgColour, textColour } = useCourseGradeColours(course);
+    switch (bgColour) {
+        case 'bg-success-200': {
+            return {
+                bgColour,
+                textColour,
+                message: "You're on track!",
+            };
+        }
+        case 'bg-warning-200': {
+            return {
+                bgColour,
+                textColour,
+                message: "You're getting there!",
+            };
+        }
+        case 'bg-warning-200': {
+            return {
+                bgColour,
+                textColour,
+                message: 'You might need some help here!',
+            };
+        }
+        default: {
+            return {
+                bgColour,
+                textColour,
+                message: 'No marks yet.',
+            };
+        }
+    }
+}
+
 export function useProgressColours(
     semesters: SemesterProgressType[] | undefined
 ): SemesterProgressType[] {
@@ -167,6 +201,43 @@ export function useDeliverableStatusObserver(
     }, [deliverable, status, timeDispatch]);
 }
 
+interface DeliverableIndicator {
+    chipColour: 'primary' | 'danger' | 'warning';
+    showChip: boolean;
+}
+
+export function useDeliverablesIndicator(
+    upcomingDeliverables: SavedDeliverable[] | undefined
+): DeliverableIndicator {
+    const {
+        deliverables: { overdue, urgent },
+    } = useTime();
+
+    return useMemo(() => {
+        if (!upcomingDeliverables) {
+            return {
+                showChip: false,
+                chipColour: 'primary',
+            };
+        }
+        const overdueCount = overdue.length;
+        const urgentCount = urgent.length;
+
+        let chipColour: 'primary' | 'danger' | 'warning' = 'primary';
+        if (urgentCount > 0) {
+            chipColour = 'warning';
+        }
+        if (overdueCount > 0) {
+            chipColour = 'danger';
+        }
+
+        return {
+            chipColour,
+            showChip: upcomingDeliverables.length > 0,
+        };
+    }, [overdue, urgent, upcomingDeliverables]);
+}
+
 export function useTimeRemaining(
     deliverable: SavedDeliverable | null | undefined
 ): TimeRemaining {
@@ -199,7 +270,7 @@ export function useTimeRemaining(
                 minutes,
                 seconds,
                 status: currentStatus,
-                deadlineMessage: `Deliverable complete! Hooray!`,
+                deadlineMessage: `Done`,
             };
         }
 

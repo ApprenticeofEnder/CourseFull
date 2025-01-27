@@ -22,7 +22,7 @@
     h3 {
         @apply text-2xl lg:text-3xl text-center;
     }
-  :root {
+    :root {
         --radius: 0.5rem;
     }
 }
@@ -32,8 +32,8 @@
         background-color: theme('colors.primary.800');
         border-radius: theme('borderRadius.lg');
         border: solid theme('borderWidth.2') theme('colors.primary.700');
-        box-shadow: 0 theme('spacing.button-shadow') 0 0
-                theme('colors.primary.700'),
+        box-shadow:
+            0 theme('spacing.button-shadow') 0 0 theme('colors.primary.700'),
             0 theme('spacing.button-shadow') theme('spacing.button-shadow') 0
                 rgba(0, 0, 0, 0.4);
         font-weight: theme('fontWeight.bold');
@@ -43,7 +43,8 @@
     }
 
     .button:hover {
-        box-shadow: 0 theme('spacing.button-shadow-hover') 0 0
+        box-shadow:
+            0 theme('spacing.button-shadow-hover') 0 0
                 theme('colors.primary.700'),
             0 theme('spacing.button-shadow-hover')
                 theme('spacing.button-shadow-hover') 0 rgba(0, 0, 0, 0.4);
@@ -52,14 +53,15 @@
     .button-confirm {
         background-color: theme('colors.success.200');
         border: solid theme('borderWidth.2') theme('colors.success.400');
-        box-shadow: 0 theme('spacing.button-shadow') 0 0
-                theme('colors.success.400'),
+        box-shadow:
+            0 theme('spacing.button-shadow') 0 0 theme('colors.success.400'),
             0 theme('spacing.button-shadow') theme('spacing.button-shadow') 0
                 rgba(0, 0, 0, 0.4);
     }
 
     .button-confirm:hover {
-        box-shadow: 0 theme('spacing.button-shadow-hover') 0 0
+        box-shadow:
+            0 theme('spacing.button-shadow-hover') 0 0
                 theme('colors.success.400'),
             0 theme('spacing.button-shadow-hover')
                 theme('spacing.button-shadow-hover') 0 rgba(0, 0, 0, 0.4);
@@ -68,33 +70,33 @@
     .button-danger {
         background-color: theme('colors.danger.200');
         border: solid theme('borderWidth.2') theme('colors.danger.300');
-        box-shadow: 0 theme('spacing.button-shadow') 0 0
-                theme('colors.danger.300'),
+        box-shadow:
+            0 theme('spacing.button-shadow') 0 0 theme('colors.danger.300'),
             0 theme('spacing.button-shadow') theme('spacing.button-shadow') 0
                 rgba(0, 0, 0, 0.4);
     }
 
     .button-danger:hover {
-        box-shadow: 0 theme('spacing.button-shadow-hover') 0 0
+        box-shadow:
+            0 theme('spacing.button-shadow-hover') 0 0
                 theme('colors.danger.300'),
             0 theme('spacing.button-shadow-hover')
                 theme('spacing.button-shadow-hover') 0 rgba(0, 0, 0, 0.4);
     }
 
     .card-primary {
-        @apply !rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10
+        @apply !rounded-lg bg-primary-800 p-2 border-solid border-2 border-primary-500/10;
     }
 
     .card-secondary {
-        @apply !rounded-lg !text-secondary-200 bg-secondary-800 p-2 border-solid border-2 border-secondary-500/10
+        @apply !rounded-lg !text-secondary-200 bg-secondary-800 p-2 border-solid border-2 border-secondary-500/10;
     }
 
     .icon {
-        @apply h-6 w-6
+        @apply h-6 w-6;
     }
 
     .icon-lg {
-        @apply h-8 w-8 sm:h-16 sm:w-16
+        @apply h-8 w-8 sm:h-16 sm:w-16;
     }
 }
-

@@ -4,7 +4,7 @@ import {
     Button as BaseButton,
     ButtonProps as BaseButtonProps,
     cn,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { forwardRef } from 'react';
 
 export interface ButtonProps extends BaseButtonProps {

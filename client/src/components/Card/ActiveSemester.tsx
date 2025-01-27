@@ -1,6 +1,6 @@
 'use client';
 
-import { CardBody, CardFooter, CardHeader, cn } from '@nextui-org/react';
+import { CardBody, CardFooter, CardHeader, cn } from "@heroui/react";
 
 import Card from '@/components/Card/Card';
 import { renderSemesterProgressAverage } from '@/lib/helpers/render';

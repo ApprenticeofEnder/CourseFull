@@ -1,5 +1,5 @@
-import EmailSignupForm from "@/components/Form/EmailSignupForm";
+import EmailSignupForm from '@/components/Form/EmailSignupForm';
 
-export default function EmailSignupPage(){
-    return <EmailSignupForm />
+export default function EmailSignupPage() {
+    return <EmailSignupForm />;
 }

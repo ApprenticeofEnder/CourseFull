@@ -1,6 +1,6 @@
 'use client';
 
-import { Link as BaseLink, LinkProps } from '@nextui-org/react';
+import { Link as BaseLink, LinkProps } from "@heroui/react";
 
 export default function Link({ children, href, ...props }: LinkProps) {
     return (

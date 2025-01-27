@@ -4,7 +4,7 @@ import {
     EyeIcon,
     InformationCircleIcon,
 } from '@heroicons/react/24/outline';
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { motion } from 'motion/react';
 import { ReactNode } from 'react';
 

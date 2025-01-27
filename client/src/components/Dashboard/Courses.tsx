@@ -1,15 +1,53 @@
-import { CardFooter, CardHeader } from '@nextui-org/react';
-import { useMemo } from 'react';
+import { CardFooter, CardHeader } from "@heroui/react";
+import { Fragment, useMemo } from 'react';
 
-import { SavedCourse, SavedSemester } from '@/types';
-
-import Card from '../Card/Card';
-import CourseCard from '../Card/Course';
-import StatusChip from '../Chip/StatusChip';
+import Card from '@/components/Card/Card';
+import CourseCard from '@/components/Card/Course';
+import StatusChip from '@/components/Chip/StatusChip';
+import { ItemStatus, SavedSemester } from '@/types';
 
 interface CoursesProps {
     semesters: SavedSemester[] | undefined;
     loadingSemesters: boolean;
+}
+
+function renderSemester(semester: SavedSemester | null, index: number) {
+    const courses = semester?.courses || (Array(3).fill(null) as null[]);
+
+    return (
+        <Fragment key={`semesters-${index}-container`}>
+            <Card
+                className={`row-span-${semester?.courses.length} flex flex-col justify-between`}
+                key={`semesters-${index}-root`}
+            >
+                <CardHeader>
+                    <h3 className="text-left">{semester?.name}</h3>
+                </CardHeader>
+                <CardFooter className="items-end">
+                    <StatusChip
+                        status={semester?.status ?? ItemStatus.NOT_STARTED}
+                    />
+                </CardFooter>
+            </Card>
+            <div
+                className={`grid grid-cols-subgrid gap-2 row-span-${semester?.courses.length}`}
+                key={`semesters-${index}-container`}
+            >
+                {courses.map((course, courseIndex) => {
+                    return (
+                        <CourseCard
+                            key={`semesters-${index}-${courseIndex}`}
+                            course={course}
+                            handleView={() => {}}
+                            isPressable
+                            className="w-full h-full"
+                            isLoading={false}
+                        />
+                    );
+                })}
+            </div>
+        </Fragment>
+    );
 }
 
 export default function Courses({ semesters, loadingSemesters }: CoursesProps) {
@@ -22,64 +60,7 @@ export default function Courses({ semesters, loadingSemesters }: CoursesProps) {
 
     return (
         <div className="grid grid-cols-[1fr_2fr] gap-4">
-            {semestersToRender.map((semester, index) => {
-                if (!semester) {
-                    return (
-                        <>
-                            <div
-                                className={`row-span-3`}
-                                key={`semesters-${index}-root`}
-                            >
-                                a
-                            </div>
-                            <div
-                                className="grid grid-cols-subgrid row-span-3"
-                                key={`semesters-${index}-container`}
-                            >
-                                {[0, 1, 2].map((num, courseIndex) => (
-                                    <div
-                                        key={`semesters-${index}-${courseIndex}`}
-                                    >
-                                        {num}
-                                    </div>
-                                ))}
-                            </div>
-                        </>
-                    );
-                }
-                return (
-                    <>
-                        <Card
-                            className={`row-span-${semester.courses.length} flex flex-col justify-between`}
-                            key={`semesters-${index}-root`}
-                        >
-                            <CardHeader>
-                                <h3 className="text-left">{semester.name}</h3>
-                            </CardHeader>
-                            <CardFooter className="items-end">
-                                <StatusChip status={semester.status} />
-                            </CardFooter>
-                        </Card>
-                        <div
-                            className={`grid grid-cols-subgrid gap-2 row-span-${semester.courses.length}`}
-                            key={`semesters-${index}-container`}
-                        >
-                            {semester.courses.map((course, courseIndex) => {
-                                return (
-                                    <CourseCard
-                                        key={`semesters-${index}-${courseIndex}`}
-                                        course={course as SavedCourse}
-                                        handleView={() => {}}
-                                        isPressable
-                                        className="w-full h-full"
-                                        isLoading={false}
-                                    />
-                                );
-                            })}
-                        </div>
-                    </>
-                );
-            })}
+            {semestersToRender.map(renderSemester)}
         </div>
     );
 }

@@ -1,20 +1,31 @@
 import { Session } from '@supabase/supabase-js';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { queryOptions, useQueries, useQuery } from '@tanstack/react-query';
 
-import { getCourse } from '@/services/course-service';
-import { getSemesters } from '@/services/semester-service';
+import { getSemester, getSemesters } from '@/services/semester-service';
 import { SavedSemester } from '@/types';
 
-export function useSemestersQuery(session: Session | null) {
+import { courseQueryOptions } from './course';
+
+export function semesterListQueryOptions(
+    session: Session | null,
+    enabled: boolean = true
+) {
+    return queryOptions({
+        queryKey: ['semesters'],
+        queryFn: () => getSemesters(session),
+        enabled: !!session && enabled,
+    });
+}
+
+export function useSemesterListQuery(
+    session: Session | null,
+    enabled: boolean = true
+) {
     const {
         data: semesters,
         isLoading: loadingSemesters,
         error,
-    } = useQuery({
-        queryKey: ['semesters'],
-        queryFn: () => getSemesters(session),
-        enabled: !!session,
-    });
+    } = useQuery(semesterListQueryOptions(session, enabled));
 
     if (error) {
         throw error;
@@ -26,6 +37,39 @@ export function useSemestersQuery(session: Session | null) {
     };
 }
 
+export function semesterQueryOptions(
+    session: Session | null,
+    api_v1_semester_id: string | undefined,
+    enabled: boolean = true
+) {
+    return queryOptions({
+        queryKey: ['semesters', api_v1_semester_id!],
+        queryFn: () => getSemester(api_v1_semester_id!, session),
+        enabled: !!session && !!api_v1_semester_id && enabled,
+    });
+}
+
+export function useSemesterQuery(
+    session: Session | null,
+    api_v1_semester_id: string | undefined,
+    enabled: boolean = true
+) {
+    const {
+        data: semester,
+        isLoading: loadingSemester,
+        error,
+    } = useQuery(semesterQueryOptions(session, api_v1_semester_id, enabled));
+
+    if (error) {
+        throw error;
+    }
+
+    return {
+        semester,
+        loadingSemester,
+    };
+}
+
 export function useCoursesInSemesterQuery(
     session: Session | null,
     semester: SavedSemester | null
@@ -33,11 +77,7 @@ export function useCoursesInSemesterQuery(
     const courses = semester?.courses ?? [];
     const queries =
         courses.map((course) => {
-            return {
-                queryKey: ['course', course.id!],
-                queryFn: () => getCourse(course.id!, session),
-                enabled: !!session && !!course,
-            };
+            return courseQueryOptions(session, course.id, !!semester);
         }) || [];
 
     const courseQueries = useQueries({

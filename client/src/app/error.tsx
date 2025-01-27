@@ -1,8 +1,11 @@
-'use client'; // Error boundaries must be Client Components
+'use client';
+
+// Error boundaries must be Client Components
+import { isAxiosError } from 'axios';
+import { useEffect } from 'react';
+
 import Button from '@/components/Button/Button';
 import Spacer from '@/components/Ui/Spacer';
-import { useEffect } from 'react';
-import { isAxiosError } from 'axios';
 
 export default function Error({
     error,

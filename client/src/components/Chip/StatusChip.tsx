@@ -1,4 +1,4 @@
-import { Chip } from '@nextui-org/react';
+import { Chip } from "@heroui/react";
 
 import { readableStatus } from '@/lib/helpers';
 import { ItemStatus } from '@/types';

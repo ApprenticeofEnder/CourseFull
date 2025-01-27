@@ -8,7 +8,7 @@ import {
     NavbarMenuItem,
     NavbarMenuToggle,
     Spacer,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 

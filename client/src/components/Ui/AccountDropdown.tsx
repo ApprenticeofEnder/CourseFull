@@ -5,7 +5,7 @@ import {
     DropdownMenu,
     DropdownSection,
     DropdownTrigger,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { ExitIcon, GearIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
 import { Key } from 'react';

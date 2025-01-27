@@ -1,13 +1,15 @@
 'use client';
+
+import { EnvelopeIcon } from '@heroicons/react/24/outline';
+import { Checkbox, Divider } from '@heroui/react';
+import { Google } from '@mui/icons-material';
+import { Provider } from '@supabase/supabase-js';
+import { useCallback, useState } from 'react';
+
 import Button from '@/components/Button/Button';
 import LinkButton from '@/components/Button/LinkButton';
 import { createClient } from '@/lib/supabase/client';
 import { Endpoints } from '@/types';
-import { EnvelopeIcon } from '@heroicons/react/24/outline';
-import { Google } from '@mui/icons-material';
-import { Checkbox, Divider } from '@nextui-org/react';
-import { Provider } from '@supabase/supabase-js';
-import { useCallback, useState } from 'react';
 
 export default function SignupPage() {
     // TODO: Add Notion Oauth (Priority 1)

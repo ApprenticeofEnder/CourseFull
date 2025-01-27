@@ -8,7 +8,7 @@ import { Course, CourseDto, Endpoints, SavedCourse } from '@/types';
 export async function createCourse(
     { title, course_code, status, api_v1_semester_id }: Course,
     session: Session | null
-): Promise<Course> {
+): Promise<SavedCourse> {
     const headers = getApiHeaders(session);
     const { data } = await api.post<CourseDto>(
         Endpoints.Api.API_COURSES,
@@ -28,7 +28,7 @@ export async function createCourse(
         }
     );
 
-    const course: Course = convertCourseFromDto(data);
+    const course: SavedCourse = convertCourseFromDto(data);
     return course;
 }
 
@@ -42,9 +42,7 @@ export async function getCourses(
             return status === 200;
         },
     });
-    const courses: SavedCourse[] = data.map((dto) => {
-        return convertCourseFromDto(dto) as SavedCourse;
-    });
+    const courses: SavedCourse[] = data.map(convertCourseFromDto);
     return courses;
 }
 
@@ -62,52 +60,46 @@ export async function getCourse(
             },
         }
     );
-    const course: SavedCourse = convertCourseFromDto(data) as SavedCourse;
+    const course: SavedCourse = convertCourseFromDto(data);
     return course;
 }
 
-// export async function updateCourse(
-//     { id, title, course_code, status }: Updated<Course>,
-//     session: Session | null
-// ): Promise<Course> {
-//     const { data } = await authenticatedApiHandler<CourseDto>(
-//         async (session, headers) => {
-//             const apiResponse = await api.put<CourseDto>(
-//                 `${Endpoints.API_COURSES}/${id}`,
-//                 {
-//                     api_v1_course: {
-//                         title,
-//                         course_code,
-//                         status,
-//                     },
-//                 },
-//                 {
-//                     headers,
-//                     validateStatus: (status) => {
-//                         return status === 200;
-//                     },
-//                 }
-//             );
-//             return apiResponse;
-//         },
-//         session
-//     );
-//     const course: Course = convertCourseFromDto(data);
+export async function updateCourse(
+    { id, title, course_code, status }: SavedCourse,
+    session: Session | null
+): Promise<SavedCourse> {
+    const headers = getApiHeaders(session);
+    const { data } = await api.put<CourseDto>(
+        `${Endpoints.Api.API_COURSES}/${id}`,
+        {
+            api_v1_course: {
+                title,
+                course_code,
+                status,
+            },
+        },
+        {
+            headers,
+            validateStatus: (status) => {
+                return status === 200;
+            },
+        }
+    );
 
-//     return course;
-// }
+    const course: SavedCourse = convertCourseFromDto(data);
 
-// export async function deleteCourse(
-//     id: string,
-//     session: Session | null
-// ): Promise<void> {
-//     await authenticatedApiHandler(async (session, headers) => {
-//         const apiResponse = await api.delete(`${Endpoints.API_COURSES}/${id}`, {
-//             headers,
-//             validateStatus: (status) => {
-//                 return status === 204;
-//             },
-//         });
-//         return apiResponse;
-//     }, session);
-// }
+    return course;
+}
+
+export async function deleteCourse(
+    api_v1_course_id: string,
+    session: Session | null
+): Promise<void> {
+    const headers = getApiHeaders(session);
+    await api.delete(`${Endpoints.Api.API_COURSES}/${api_v1_course_id}`, {
+        headers,
+        validateStatus: (status) => {
+            return status === 204;
+        },
+    });
+}

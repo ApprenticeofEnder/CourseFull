@@ -58,7 +58,7 @@ export async function updateSession(request: NextRequest) {
 
     if (user && isHome) {
         const url = request.nextUrl.clone();
-        url.pathname = Endpoints.Dashboard.DASHBOARD;
+        url.pathname = Endpoints.Page.DASHBOARD;
         return NextResponse.redirect(url);
     }
 

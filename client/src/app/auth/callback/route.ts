@@ -1,18 +1,18 @@
+import { Provider } from '@supabase/supabase-js';
+import { isAxiosError } from 'axios';
 import { NextResponse } from 'next/server';
+
 // The client you created from the Server-Side Auth instructions
 import { createClient } from '@/lib/supabase/server';
-import { Endpoints } from '@/types';
-import { Provider } from '@supabase/supabase-js';
 import { createUser, getUserData } from '@/services/user-service';
-import { isAxiosError } from 'axios';
+import { Endpoints } from '@/types';
 
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get('code');
     // if "next" is in param, use it as the redirect URL
-    const next = searchParams.get('next') ?? Endpoints.Dashboard.DASHBOARD;
-    const subscribed =
-        searchParams.get('subscribed-to-marketing') === 'true';
+    const next = searchParams.get('next') ?? Endpoints.Page.DASHBOARD;
+    const subscribed = searchParams.get('subscribed-to-marketing') === 'true';
 
     if (!code) {
         console.warn('No auth code present.');

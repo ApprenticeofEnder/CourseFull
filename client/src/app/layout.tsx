@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import { Atkinson_Hyperlegible } from 'next/font/google';
+
 import '@/app/globals.css';
-import { Providers } from './providers';
 import AppLayout from '@/components/Ui/AppLayout';
+
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
     title: 'CourseFull',

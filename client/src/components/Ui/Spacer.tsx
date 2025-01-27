@@ -1,4 +1,4 @@
-import { SpacerProps, cn } from '@nextui-org/react';
+import { SpacerProps, cn } from "@heroui/react";
 
 /**
  * A spacer component to be wrapped around page content. Used to keep consistent spacing.

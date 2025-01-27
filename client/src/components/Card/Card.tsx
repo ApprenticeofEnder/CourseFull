@@ -4,7 +4,7 @@ import {
     Card as BaseCard,
     CardProps as BaseCardProps,
     cn,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { forwardRef } from 'react';
 
 export interface CardProps extends BaseCardProps {

@@ -1,6 +1,6 @@
 'use client';
 
-import { ScrollShadow } from '@nextui-org/react';
+import { ScrollShadow } from "@heroui/react";
 
 import Footer from '@/components/Ui/Footer';
 import Navbar from '@/components/Ui/Navbar';

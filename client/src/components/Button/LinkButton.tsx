@@ -11,7 +11,7 @@ export interface LinkButtonProps extends ButtonProps {
 }
 
 const LinkButton = forwardRef<HTMLButtonElement, LinkButtonProps>(function (
-    { children, href, className, confirm, ...props },
+    { children, href, className, ...props },
     ref
 ) {
     const router = useRouter();
@@ -23,7 +23,6 @@ const LinkButton = forwardRef<HTMLButtonElement, LinkButtonProps>(function (
             }}
             {...props}
             ref={ref}
-            buttonType={confirm ? 'confirm' : 'default'}
         >
             <div className="flex justify-between">{children}</div>
         </Button>

@@ -23,7 +23,7 @@ export async function createDeliverable(
         api_v1_course_id,
     }: DeliverableDto,
     session: Session | null
-): Promise<Deliverable> {
+): Promise<SavedDeliverable> {
     const headers = getApiHeaders(session);
     const { data } = await api.post<DeliverableDto>(
         Endpoints.Api.API_DELIVERABLES,
@@ -61,7 +61,7 @@ export async function updateDeliverable(
         deadline,
     }: Saved<DeliverableDto>,
     session: Session | null
-): Promise<Deliverable> {
+): Promise<SavedDeliverable> {
     const headers = getApiHeaders(session);
     const { data } = await api.put<DeliverableDto>(
         `${Endpoints.Api.API_DELIVERABLES}/${id}`,
@@ -99,9 +99,9 @@ export async function getDeliverables(
             },
         }
     );
-    const deliverables: SavedDeliverable[] = data.map((dto) => {
-        return convertDeliverableFromDto(dto) as SavedDeliverable;
-    });
+    const deliverables: SavedDeliverable[] = data.map(
+        convertDeliverableFromDto
+    );
     return deliverables;
 }
 
@@ -119,7 +119,7 @@ export async function getDeliverable(
             },
         }
     );
-    const deliverable = convertDeliverableFromDto(data) as SavedDeliverable;
+    const deliverable = convertDeliverableFromDto(data);
     return deliverable;
 }
 

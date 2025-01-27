@@ -28,7 +28,7 @@ export async function createSemester(
             },
         }
     );
-    const semester = convertSemesterFromDto(data) as SavedSemester;
+    const semester = convertSemesterFromDto(data);
     return semester;
 }
 
@@ -42,9 +42,7 @@ export async function getSemesters(
             return status === 200;
         },
     });
-    const semesters: SavedSemester[] = data.map((dto) => {
-        return convertSemesterFromDto(dto) as SavedSemester;
-    });
+    const semesters: SavedSemester[] = data.map(convertSemesterFromDto);
     return semesters;
 }
 
@@ -62,7 +60,7 @@ export async function getSemester(
             },
         }
     );
-    const semester = convertSemesterFromDto(data) as SavedSemester;
+    const semester = convertSemesterFromDto(data);
     return semester;
 }
 
@@ -87,7 +85,7 @@ export async function updateSemester(
             },
         }
     );
-    const semester = convertSemesterFromDto(data) as SavedSemester;
+    const semester = convertSemesterFromDto(data);
     return semester;
 }
 
