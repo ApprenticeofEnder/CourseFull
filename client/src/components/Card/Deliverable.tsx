@@ -11,7 +11,7 @@ import {
 import { useGradeColours, useTimeRemaining } from '@/lib/hooks/ui';
 import { useCourseQuery } from '@/lib/query/course';
 import { useSession } from '@/lib/supabase/SessionContext';
-import { SavedDeliverable, ViewableProps } from '@/types';
+import { SavedDeliverable } from '@/types';
 
 interface DeliverableCardProps extends CardProps {
     deliverable: SavedDeliverable | null;

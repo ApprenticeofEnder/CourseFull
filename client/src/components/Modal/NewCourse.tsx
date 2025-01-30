@@ -6,40 +6,29 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    useDisclosure,
 } from '@heroui/react';
-import { useRouter } from 'next/navigation';
 
 import Button from '@/components/Button/Button';
+import { ModalProps } from '@/types';
 
-interface NewCourseModalProps {
+interface NewCourseModalProps extends ModalProps {
     api_v1_semester_id: string;
 }
 
 export default function NewCourseModal({
     api_v1_semester_id,
+    isDismissable,
+    ...props
 }: NewCourseModalProps) {
-    const router = useRouter();
-    const { isOpen, onOpenChange, onClose } = useDisclosure({
-        defaultOpen: true,
-        onClose() {
-            router.back();
-        },
-    });
     return (
-        <Modal
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
-            onClose={onClose}
-            isDismissable={false}
-        >
+        <Modal {...props} isDismissable={false}>
             <ModalContent>
                 {(onClose) => (
                     <>
                         <ModalHeader>
                             <h3 className="text-left">Create New Course</h3>
                         </ModalHeader>
-                        <ModalBody>Neener Neener</ModalBody>
+                        <ModalBody>{api_v1_semester_id}</ModalBody>
                         <ModalFooter>
                             <Button onPress={onClose}>Cancel</Button>
                         </ModalFooter>

@@ -5,12 +5,12 @@ import Card, { CardProps } from '@/components/Card/Card';
 import { useCourseProgressCard } from '@/lib/hooks/ui';
 import { SavedCourse } from '@/types';
 
-interface ProgressCardProps extends CardProps {
+interface CourseProgressCardProps extends CardProps {
     course: SavedCourse | undefined;
     isLoading?: boolean;
 }
 
-const ProgressCard = forwardRef<HTMLDivElement, ProgressCardProps>(
+const CourseProgressCard = forwardRef<HTMLDivElement, CourseProgressCardProps>(
     ({ course, className, isLoading = false, ...props }, ref) => {
         const { bgColour, textColour, message } = useCourseProgressCard(course);
 
@@ -50,6 +50,6 @@ const ProgressCard = forwardRef<HTMLDivElement, ProgressCardProps>(
     }
 );
 
-ProgressCard.displayName = 'ProgressCard';
+CourseProgressCard.displayName = 'CourseProgressCard';
 
-export default ProgressCard;
+export default CourseProgressCard;

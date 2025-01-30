@@ -1,3 +1,4 @@
+import { ModalProps as BaseModalProps } from '@heroui/react';
 import { Session } from '@supabase/supabase-js';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { ZodError } from 'zod';
@@ -10,40 +11,14 @@ export interface ChildrenProps {
     children: ReactNode;
 }
 
-export interface ModalProps {
-    open: boolean;
-}
-
-export interface SessionProps {
-    session: Session;
-}
-
-export interface UserDataProps {
-    userData: CourseFullUser;
-}
-
-export interface SpacerProps extends ChildrenProps {
-    className?: string;
-}
+export interface ModalProps
+    extends Omit<
+        BaseModalProps,
+        'children' | 'onOpen' | 'isControlled' | 'getButtonProps'
+    > {}
 
 export interface LoadingProps {
     message?: string;
-}
-
-export interface EditableProps {
-    handleEdit: () => void;
-}
-
-export interface ViewableProps {
-    handleView: () => void;
-}
-
-export interface ExitProps {
-    handleExit: () => void;
-}
-
-export interface DeletableProps {
-    handleDelete: () => void;
 }
 
 export interface AnimateOnScrollProps extends ChildrenProps {

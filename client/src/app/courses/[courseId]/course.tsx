@@ -16,7 +16,6 @@ const CoursePage: FC<{ courseId: string }> = ({ courseId }) => {
     const { session } = useSession();
     const { course, loadingCourse } = useCourseQuery(session, courseId);
     const { semester, loadingSemester } = useSemesterQuery(
-        session,
         course?.api_v1_semester_id,
         !!course
     );

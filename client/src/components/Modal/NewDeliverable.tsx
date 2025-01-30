@@ -6,28 +6,22 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    ModalProps,
 } from '@heroui/react';
 
 import Button from '@/components/Button/Button';
+import { ModalProps } from '@/types';
 
-interface NewDeliverableModalProps extends Omit<ModalProps, 'children'> {
+interface NewDeliverableModalProps extends ModalProps {
     api_v1_course_id: string;
 }
 
 export default function NewDeliverableModal({
-    isOpen,
-    onOpenChange,
     api_v1_course_id,
-    onClose,
+    isDismissable,
+    ...props
 }: NewDeliverableModalProps) {
     return (
-        <Modal
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
-            onClose={onClose}
-            isDismissable={false}
-        >
+        <Modal {...props} isDismissable={false}>
             <ModalContent>
                 {(onClose) => (
                     <>

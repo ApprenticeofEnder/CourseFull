@@ -1,10 +1,14 @@
 import { DateFormatter, getLocalTimeZone, now } from '@internationalized/date';
 
 import {
-    GradedCourse,
+    determineCourseGradeAndGoal,
+    determineSemesterAverageAndGoal,
+} from '@/lib/helpers/calculations';
+import {
     ItemStatus,
     SavedCourse,
     SavedDeliverable,
+    SavedSemester,
     SemesterProgressType,
 } from '@/types';
 
@@ -35,27 +39,12 @@ export function renderMarkVsGoal(
     return `${markText} / ${goalText} %`;
 }
 
-export function determineCourseGradeAndGoal(
-    course: SavedCourse | null | undefined
+export function renderSemesterAverage(
+    semester: SavedSemester | null | undefined
 ) {
-    if (!course) {
-        return {
-            grade: undefined,
-            goal: undefined,
-        };
-    }
-    const isActive = course.status === ItemStatus.ACTIVE;
-    if (isActive && course.grade === 0) {
-        return {
-            grade: undefined,
-            goal: course.goal,
-        };
-    }
+    const { average, goal } = determineSemesterAverageAndGoal(semester);
 
-    return {
-        grade: course.grade,
-        goal: course.goal,
-    };
+    return renderMarkVsGoal(average, goal);
 }
 
 export function renderCourseGrade(course: SavedCourse | null | undefined) {

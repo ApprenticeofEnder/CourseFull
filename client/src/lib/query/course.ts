@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 
 import { processPossibleApiError } from '@/lib/errors';
+import { useTimeDispatch } from '@/lib/time/TimeContext';
 import {
     deleteCourse,
     getCourse,
@@ -116,6 +117,7 @@ export function useCourseDeleteMutation(
     course: SavedCourse | undefined
 ) {
     const queryClient = useQueryClient();
+    const timeDispatch = useTimeDispatch();
     const {
         isPending: courseDeletePending,
         mutate: courseDeleteMutate,
@@ -129,14 +131,15 @@ export function useCourseDeleteMutation(
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['semester', course?.api_v1_semester_id],
+                queryKey: ['semester'],
             });
             queryClient.invalidateQueries({
-                queryKey: ['course', course?.id],
+                queryKey: ['course'],
             });
             queryClient.invalidateQueries({
                 queryKey: ['deliverables'],
             });
+            timeDispatch({ type: 'CLEAR_DELIVERABLES' });
         },
     });
     if (error) {

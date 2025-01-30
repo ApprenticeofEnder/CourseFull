@@ -14,7 +14,8 @@ export type TimeAction =
     | {
           type: 'COMPLETE_DELIVERABLE';
           payload: SavedDeliverable;
-      };
+      }
+    | { type: 'CLEAR_DELIVERABLES' };
 
 export interface TimeState {
     deliverables: {

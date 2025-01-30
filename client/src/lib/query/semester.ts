@@ -1,10 +1,22 @@
 import { Session } from '@supabase/supabase-js';
-import { queryOptions, useQueries, useQuery } from '@tanstack/react-query';
+import {
+    queryOptions,
+    useMutation,
+    useQueries,
+    useQuery,
+    useQueryClient,
+} from '@tanstack/react-query';
 
-import { getSemester, getSemesters } from '@/services/semester-service';
+import { processPossibleApiError } from '@/lib/errors';
+import { courseQueryOptions } from '@/lib/query/course';
+import { useSession } from '@/lib/supabase/SessionContext';
+import { useTimeDispatch } from '@/lib/time/TimeContext';
+import {
+    deleteSemester,
+    getSemester,
+    getSemesters,
+} from '@/services/semester-service';
 import { SavedSemester } from '@/types';
-
-import { courseQueryOptions } from './course';
 
 export function semesterListQueryOptions(
     session: Session | null,
@@ -17,10 +29,8 @@ export function semesterListQueryOptions(
     });
 }
 
-export function useSemesterListQuery(
-    session: Session | null,
-    enabled: boolean = true
-) {
+export function useSemesterListQuery(enabled: boolean = true) {
+    const { session } = useSession();
     const {
         data: semesters,
         isLoading: loadingSemesters,
@@ -50,10 +60,10 @@ export function semesterQueryOptions(
 }
 
 export function useSemesterQuery(
-    session: Session | null,
     api_v1_semester_id: string | undefined,
     enabled: boolean = true
 ) {
+    const { session } = useSession();
     const {
         data: semester,
         isLoading: loadingSemester,
@@ -72,7 +82,7 @@ export function useSemesterQuery(
 
 export function useCoursesInSemesterQuery(
     session: Session | null,
-    semester: SavedSemester | null
+    semester: SavedSemester | null | undefined
 ) {
     const courses = semester?.courses ?? [];
     const queries =
@@ -85,4 +95,43 @@ export function useCoursesInSemesterQuery(
     });
 
     return courseQueries;
+}
+
+export function useSemesterDeleteMutation(
+    session: Session | null,
+    semester: SavedSemester | undefined
+) {
+    const queryClient = useQueryClient();
+    const timeDispatch = useTimeDispatch();
+    const {
+        isPending: semesterDeletePending,
+        mutate: semesterDeleteMutate,
+        error,
+    } = useMutation({
+        mutationFn: () => {
+            if (!semester) {
+                return Promise.reject('Semester not defined');
+            }
+            return deleteSemester(semester.id, session);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['semester'],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ['course'],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ['deliverables'],
+            });
+            timeDispatch({ type: 'CLEAR_DELIVERABLES' });
+        },
+    });
+    if (error) {
+        processPossibleApiError(error);
+    }
+    return {
+        semesterDeletePending,
+        semesterDeleteMutate,
+    };
 }

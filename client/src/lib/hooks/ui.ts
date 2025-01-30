@@ -4,13 +4,19 @@ import { getLocalTimeZone, now } from '@internationalized/date';
 import { differenceInSeconds } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { determineCourseGradeAndGoal } from '@/lib/helpers';
+import {
+    determineCourseGradeAndGoal,
+    determineSemesterAverageAndGoal,
+    renderCourseGrade,
+    renderSemesterAverage,
+} from '@/lib/helpers';
 import { useTime, useTimeDispatch } from '@/lib/time/TimeContext';
 import {
     GradeColours,
     ItemStatus,
     SavedCourse,
     SavedDeliverable,
+    SavedSemester,
     SemesterProgressType,
 } from '@/types';
 
@@ -59,7 +65,7 @@ export function useGradeColours(
         if (goal === undefined || grade === undefined || grade === 0) {
             return defaultResult;
         }
-        if (deliverableStatus && deliverableStatus !== ItemStatus.COMPLETE) {
+        if (deliverableStatus === ItemStatus.ACTIVE) {
             return defaultResult;
         }
         let indicator: string = 'danger';
@@ -77,14 +83,29 @@ export function useGradeColours(
     }, [goal, grade, deliverableStatus]);
 }
 
-export function useCourseGradeColours(course: SavedCourse | null | undefined) {
-    const { grade, goal } = determineCourseGradeAndGoal(course);
+export function useCourseGrade(course: SavedCourse | null | undefined) {
+    const { grade, goal, renderedGrade } = useMemo(() => {
+        return {
+            ...determineCourseGradeAndGoal(course),
+            renderedGrade: renderCourseGrade(course),
+        };
+    }, [course]);
 
-    return useGradeColours(goal, grade);
+    return { colours: useGradeColours(goal, grade), renderedGrade };
 }
 
-export function useCourseProgressCard(course: SavedCourse | null | undefined) {
-    const { bgColour, textColour } = useCourseGradeColours(course);
+export function useSemesterAverage(semester: SavedSemester | null | undefined) {
+    const { average, goal, renderedAverage } = useMemo(() => {
+        return {
+            ...determineSemesterAverageAndGoal(semester),
+            renderedAverage: renderSemesterAverage(semester),
+        };
+    }, [semester]);
+
+    return { colours: useGradeColours(goal, average), renderedAverage };
+}
+
+export function useProgressCard({ bgColour, textColour }: GradeColours) {
     switch (bgColour) {
         case 'bg-success-200': {
             return {
@@ -115,6 +136,18 @@ export function useCourseProgressCard(course: SavedCourse | null | undefined) {
             };
         }
     }
+}
+
+export function useSemesterProgressCard(
+    semester: SavedSemester | null | undefined
+) {
+    const { colours } = useSemesterAverage(semester);
+    return useProgressCard(colours);
+}
+
+export function useCourseProgressCard(course: SavedCourse | null | undefined) {
+    const { colours } = useCourseGrade(course);
+    return useProgressCard(colours);
 }
 
 export function useProgressColours(

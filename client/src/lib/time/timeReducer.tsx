@@ -65,5 +65,14 @@ export function timeReducer(state: TimeState, action: TimeAction): TimeState {
                 },
             };
         }
+        case 'CLEAR_DELIVERABLES': {
+            return {
+                ...state,
+                deliverables: {
+                    urgent: [],
+                    overdue: [],
+                },
+            };
+        }
     }
 }

@@ -6,28 +6,19 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    useDisclosure,
 } from '@heroui/react';
-import { useRouter } from 'next/navigation';
 
 import Button from '@/components/Button/Button';
-import { Endpoints } from '@/types';
+import { ModalProps } from '@/types';
 
-export default function NewSemesterModal({}) {
-    const router = useRouter();
-    const { isOpen, onOpenChange, onClose } = useDisclosure({
-        defaultOpen: true,
-        onClose() {
-            router.push(Endpoints.Page.DASHBOARD);
-        },
-    });
+interface NewSemesterModalProps extends ModalProps {}
+
+export default function NewSemesterModal({
+    isDismissable,
+    ...props
+}: NewSemesterModalProps) {
     return (
-        <Modal
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
-            onClose={onClose}
-            isDismissable={false}
-        >
+        <Modal {...props} isDismissable={false}>
             <ModalContent>
                 {(onClose) => (
                     <>

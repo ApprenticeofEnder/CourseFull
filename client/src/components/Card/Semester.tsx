@@ -1,66 +1,55 @@
-import { CardFooter, CardHeader, Skeleton, cn } from '@heroui/react';
-import { useMemo } from 'react';
+import { CardFooter, CardHeader, CardProps, Skeleton, cn } from '@heroui/react';
+import { forwardRef, useMemo } from 'react';
 
 import Card from '@/components/Card/Card';
-import { renderMarkVsGoal } from '@/lib/helpers';
-import { useGradeColours } from '@/lib/hooks/ui';
-import { ItemStatus, SavedSemester, ViewableProps } from '@/types';
+import StatusChip from '@/components/Chip/StatusChip';
+import { useSemesterAverage } from '@/lib/hooks/ui';
+import { ItemStatus, SavedSemester } from '@/types';
 
-import StatusChip from '../Chip/StatusChip';
-
-interface SemesterCardProps extends ViewableProps {
+interface SemesterCardProps extends CardProps {
     semester: SavedSemester | null;
     isLoading: boolean;
 }
 
-export default function SemesterCard({
-    semester,
-    isLoading,
-    handleView,
-}: SemesterCardProps) {
-    const average = useMemo(() => {
-        if (!semester) {
-            return undefined;
-        }
-
-        const { graded_courses } = semester;
-        if (!graded_courses || graded_courses.length === 0) {
-            return undefined;
-        }
-
-        const gradeSum = graded_courses.reduce((sum, course) => {
-            return sum + course.grade;
-        }, 0);
-        return gradeSum / graded_courses.length;
-    }, [semester]);
-
-    const { bgColour, textColour } = useGradeColours(semester?.goal, average);
-
-    return (
-        <Skeleton
-            isLoaded={!isLoading && !!semester}
-            classNames={{ content: 'h-full' }}
-        >
-            <Card
-                className={cn('w-full', bgColour, textColour)}
-                isPressable
-                onPress={handleView}
+const SemesterCard = forwardRef<HTMLDivElement, SemesterCardProps>(
+    ({ semester, className, isLoading, ...props }, ref) => {
+        const {
+            colours: { bgColour, textColour },
+            renderedAverage,
+        } = useSemesterAverage(semester);
+        return (
+            <Skeleton
+                isLoaded={!isLoading && !!semester}
+                classNames={{ content: 'h-full' }}
             >
-                <CardHeader className="flex justify-between">
-                    <h3 className="text-lg font-bold">{semester?.name}</h3>
-                    <h3 className="text-lg font-bold">
-                        {renderMarkVsGoal(average, semester?.goal)}
-                    </h3>
-                </CardHeader>
-                <CardFooter className="flex items-end justify-between">
-                    <h4 className="text-left">
-                        <b>Courses:</b> {semester?.courses.length}
-                    </h4>
-                    <StatusChip
-                        status={semester?.status || ItemStatus.NOT_STARTED}
-                    />
-                </CardFooter>
-            </Card>
-        </Skeleton>
-    );
-}
+                <Card
+                    ref={ref}
+                    className={cn(
+                        className,
+                        bgColour,
+                        textColour,
+                        'flex w-full flex-col justify-between'
+                    )}
+                    {...props}
+                >
+                    <CardHeader className="flex justify-between">
+                        <h3 className="text-lg font-bold">{semester?.name}</h3>
+                        <h3 className="text-lg font-bold">{renderedAverage}</h3>
+                    </CardHeader>
+                    <CardFooter className="flex items-end justify-between">
+                        <h4 className="text-left">
+                            <b>Courses:</b> {semester?.courses.length}
+                        </h4>
+                        <StatusChip
+                            status={semester?.status || ItemStatus.NOT_STARTED}
+                        />
+                    </CardFooter>
+                </Card>
+            </Skeleton>
+        );
+    }
+);
+
+SemesterCard.displayName = 'SemesterCard';
+
+export default SemesterCard;

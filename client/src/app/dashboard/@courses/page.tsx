@@ -58,8 +58,7 @@ function renderSemester(semester: SavedSemester | null, index: number) {
 }
 
 export default function Page() {
-    const { session } = useSession();
-    const { semesters, loadingSemesters } = useSemesterListQuery(session);
+    const { semesters, loadingSemesters } = useSemesterListQuery();
     const semestersToRender = useMemo(() => {
         if (loadingSemesters) {
             return Array(3).fill(null) as null[];

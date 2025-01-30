@@ -17,8 +17,8 @@ export async function login(data: LoginSchema) {
         throw error;
     }
 
-    revalidatePath(Endpoints.Dashboard.DASHBOARD, 'layout');
-    redirect(Endpoints.Dashboard.DASHBOARD);
+    revalidatePath(Endpoints.Page.DASHBOARD, 'layout');
+    redirect(Endpoints.Page.DASHBOARD);
 }
 
 export async function signup(user: SignupSchema) {

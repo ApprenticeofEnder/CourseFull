@@ -2,9 +2,8 @@ import { CardFooter, CardHeader, Skeleton, cn } from '@heroui/react';
 import { forwardRef } from 'react';
 
 import Card, { CardProps } from '@/components/Card/Card';
-import { renderCourseGrade } from '@/lib/helpers';
-import { useCourseGradeColours } from '@/lib/hooks/ui';
-import { ItemStatus, SavedCourse, ViewableProps } from '@/types';
+import { useCourseGrade } from '@/lib/hooks/ui';
+import { ItemStatus, SavedCourse } from '@/types';
 
 import StatusChip from '../Chip/StatusChip';
 
@@ -12,9 +11,13 @@ interface CourseCardProps extends CardProps {
     course: SavedCourse | null;
     isLoading: boolean;
 }
+
 const CourseCard = forwardRef<HTMLDivElement, CourseCardProps>(
     ({ course, className, isLoading, ...props }, ref) => {
-        const { bgColour, textColour } = useCourseGradeColours(course);
+        const {
+            colours: { bgColour, textColour },
+            renderedGrade,
+        } = useCourseGrade(course);
 
         return (
             <Skeleton
@@ -35,9 +38,7 @@ const CourseCard = forwardRef<HTMLDivElement, CourseCardProps>(
                         <h3 className="text-lg font-bold">
                             {course?.course_code}
                         </h3>
-                        <h3 className="text-lg font-bold">
-                            {renderCourseGrade(course)}
-                        </h3>
+                        <h3 className="text-lg font-bold">{renderedGrade}</h3>
                     </CardHeader>
                     <CardFooter className="flex items-end justify-between">
                         <h4 className="text-left text-lg">{course?.title}</h4>

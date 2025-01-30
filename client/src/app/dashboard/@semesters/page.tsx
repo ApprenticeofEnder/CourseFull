@@ -8,13 +8,11 @@ import SemesterCard from '@/components/Card/Semester';
 import { semesterUrl } from '@/lib/helpers/routing';
 import { useSkeletonItems } from '@/lib/hooks/data';
 import { useSemesterListQuery } from '@/lib/query/semester';
-import { useSession } from '@/lib/supabase/SessionContext';
 import { SavedSemester } from '@/types';
 
 export default function SemestersPage() {
-    const { session } = useSession();
     const router = useRouter();
-    const { semesters, loadingSemesters } = useSemesterListQuery(session);
+    const { semesters, loadingSemesters } = useSemesterListQuery();
 
     const semestersToRender = useSkeletonItems<SavedSemester>(
         semesters,
@@ -28,7 +26,8 @@ export default function SemestersPage() {
                         key={`semester-${index}`}
                         semester={semester}
                         isLoading={loadingSemesters}
-                        handleView={() => {
+                        isPressable
+                        onPress={() => {
                             if (!semester) {
                                 return;
                             }

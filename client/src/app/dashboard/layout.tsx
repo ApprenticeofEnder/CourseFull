@@ -1,7 +1,6 @@
 'use client';
 
 import { Divider, Tab, Tabs } from '@heroui/react';
-import { useState } from 'react';
 
 import Loading from '@/app/loading';
 import { useSession } from '@/lib/supabase/SessionContext';
