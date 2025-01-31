@@ -8,17 +8,18 @@ import { Endpoints } from '@/types';
 
 export default function Page() {
     const router = useRouter();
-    const {
-        onOpen,
-        getButtonProps,
-        getDisclosureProps,
-        isControlled,
-        ...newSemesterModal
-    } = useDisclosure({
+    const newSemesterModal = useDisclosure({
         defaultOpen: true,
         onClose() {
             router.push(Endpoints.Page.DASHBOARD);
         },
     });
-    return <NewSemesterModal {...newSemesterModal} />;
+    const {
+        onOpen,
+        isControlled,
+        getButtonProps,
+        getDisclosureProps,
+        ...modalProps
+    } = newSemesterModal;
+    return <NewSemesterModal {...modalProps} />;
 }

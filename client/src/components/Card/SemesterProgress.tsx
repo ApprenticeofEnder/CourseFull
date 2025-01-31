@@ -31,7 +31,7 @@ const SemesterProgressCard = forwardRef<
                     className,
                     bgColour,
                     textColour,
-                    'flex h-full w-full flex-col justify-between'
+                    'flex h-fit w-full flex-col justify-between'
                 )}
             >
                 <CardBody className="justify-center">

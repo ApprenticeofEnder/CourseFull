@@ -3,13 +3,7 @@ import { Session } from '@supabase/supabase-js';
 import { convertDeliverableFromDto } from '@/lib/helpers/dto';
 import { getApiHeaders } from '@/lib/helpers/service';
 import { api } from '@/services';
-import {
-    Deliverable,
-    DeliverableDto,
-    Endpoints,
-    Saved,
-    SavedDeliverable,
-} from '@/types';
+import { DeliverableDto, Endpoints, Saved, SavedDeliverable } from '@/types';
 
 export async function createDeliverable(
     {

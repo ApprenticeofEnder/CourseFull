@@ -86,3 +86,10 @@ export function readableStatus(status: ItemStatus) {
             return 'Overdue';
     }
 }
+
+export function createStatusObjects(statuses: ItemStatus[]) {
+    return statuses.map((status) => ({
+        key: status,
+        label: readableStatus(status),
+    }));
+}

@@ -11,12 +11,7 @@ import {
 import Button from '@/components/Button/Button';
 import { ModalProps } from '@/types';
 
-interface NewSemesterModalProps extends ModalProps {}
-
-export default function NewSemesterModal({
-    isDismissable,
-    ...props
-}: NewSemesterModalProps) {
+export default function NewSemesterModal(props: ModalProps) {
     return (
         <Modal {...props} isDismissable={false}>
             <ModalContent>

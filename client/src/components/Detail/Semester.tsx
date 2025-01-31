@@ -1,5 +1,6 @@
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Divider, cn, useDisclosure } from '@heroui/react';
+import { Divider, useDisclosure } from '@heroui/react';
+import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
 import Button from '@/components/Button/Button';
@@ -7,7 +8,7 @@ import StatusChip from '@/components/Chip/StatusChip';
 import { renderSemesterAverage } from '@/lib/helpers';
 import { useSemesterDeleteMutation } from '@/lib/query/semester';
 import { useSession } from '@/lib/supabase/SessionContext';
-import { ItemStatus, SavedSemester } from '@/types';
+import { Endpoints, ItemStatus, SavedSemester } from '@/types';
 
 import SemesterProgressCard from '../Card/SemesterProgress';
 import NewCourseModal from '../Modal/NewCourse';
@@ -17,6 +18,7 @@ interface SemesterDetailProps {
 }
 
 export default function SemesterDetail({ semester }: SemesterDetailProps) {
+    const router = useRouter();
     const { session } = useSession();
     const { semesterDeleteMutate, semesterDeletePending } =
         useSemesterDeleteMutation(session, semester);
@@ -25,7 +27,14 @@ export default function SemesterDetail({ semester }: SemesterDetailProps) {
         return renderSemesterAverage(semester);
     }, [semester]);
 
-    const newCourseModal = useDisclosure();
+    const {
+        onOpen: newCourseOpen,
+        isControlled: isNewCourseControlled,
+        getButtonProps: getNewCourseButtonProps,
+        getDisclosureProps: getNewCourseDisclosureProps,
+        ...newCourseModal
+    } = useDisclosure();
+
     return (
         <>
             <div className="flex items-start justify-between gap-4">
@@ -45,10 +54,10 @@ export default function SemesterDetail({ semester }: SemesterDetailProps) {
                 <Button
                     className="flex-shrink-0"
                     endContent={<PlusIcon className="icon" />}
-                    onPress={newCourseModal.onOpen}
+                    onPress={newCourseOpen}
                     buttonType="confirm"
                 >
-                    Add Deliverable
+                    Add Course
                 </Button>
                 <Divider></Divider>
                 <Button
@@ -67,7 +76,11 @@ export default function SemesterDetail({ semester }: SemesterDetailProps) {
                         ) {
                             return;
                         }
-                        semesterDeleteMutate();
+                        semesterDeleteMutate(undefined, {
+                            onSuccess() {
+                                router.push(Endpoints.Page.DASHBOARD);
+                            },
+                        });
                     }}
                     buttonType="danger"
                     isLoading={semesterDeletePending}

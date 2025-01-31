@@ -8,7 +8,6 @@ import {
     SavedCourse,
     SavedDeliverable,
     SavedSemester,
-    Semester,
     SemesterDto,
 } from '@/types';
 

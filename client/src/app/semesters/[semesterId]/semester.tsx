@@ -2,13 +2,14 @@
 
 import { BreadcrumbItem, Breadcrumbs, Divider } from '@heroui/react';
 import { useRouter } from 'next/navigation';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import CourseCard from '@/components/Card/Course';
 import SemesterDetail from '@/components/Detail/Semester';
 import Link from '@/components/Ui/Link';
 import { courseUrl } from '@/lib/helpers/routing';
 import { useSkeletonItems } from '@/lib/hooks/data';
+import { useWindowDimensions } from '@/lib/hooks/ui';
 import { useSemesterQuery } from '@/lib/query/semester';
 import { Endpoints } from '@/types';
 
@@ -21,6 +22,15 @@ const SemesterPage: FC<{ semesterId: string }> = ({ semesterId }) => {
         loadingSemester
     );
 
+    const { width } = useWindowDimensions();
+
+    const maxBreadcrumbItems = useMemo(() => {
+        if (!width || width < 640) {
+            return 1;
+        }
+        return 3;
+    }, [width]);
+
     return (
         <>
             <div className="flex flex-wrap items-end justify-between gap-4">
@@ -28,7 +38,7 @@ const SemesterPage: FC<{ semesterId: string }> = ({ semesterId }) => {
                     size="lg"
                     itemsBeforeCollapse={0}
                     itemsAfterCollapse={1}
-                    maxItems={1}
+                    maxItems={maxBreadcrumbItems}
                 >
                     <BreadcrumbItem>
                         <Link
@@ -79,7 +89,7 @@ const SemesterPage: FC<{ semesterId: string }> = ({ semesterId }) => {
                         </div>
                     )}
                 </div>
-                <div className="card-primary order-1 flex w-full flex-col gap-4 md:order-2 md:h-full md:flex-1 md:basis-1/2 lg:basis-2/3">
+                <div className="card-primary order-1 flex w-full flex-col gap-4 p-4 md:order-2 md:h-fit md:flex-1 md:basis-1/2 lg:basis-2/3">
                     <SemesterDetail semester={semester} />
                 </div>
             </div>

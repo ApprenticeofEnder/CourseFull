@@ -1,4 +1,4 @@
-import { CardBody, CardFooter, CardHeader, Skeleton, cn } from '@heroui/react';
+import { CardBody, CardFooter, Skeleton, cn } from '@heroui/react';
 import { forwardRef } from 'react';
 
 import Card, { CardProps } from '@/components/Card/Card';
@@ -29,7 +29,7 @@ const CourseProgressCard = forwardRef<HTMLDivElement, CourseProgressCardProps>(
                         className,
                         bgColour,
                         textColour,
-                        'flex h-full w-full flex-col justify-between'
+                        'flex h-fit w-full flex-col justify-between'
                     )}
                 >
                     <CardBody className="justify-center">

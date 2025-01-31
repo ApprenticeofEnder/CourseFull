@@ -115,15 +115,7 @@ export function useSemesterDeleteMutation(
             return deleteSemester(semester.id, session);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['semester'],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['course'],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['deliverables'],
-            });
+            queryClient.invalidateQueries();
             timeDispatch({ type: 'CLEAR_DELIVERABLES' });
         },
     });

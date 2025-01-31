@@ -9,12 +9,15 @@ import {
 import { processPossibleApiError } from '@/lib/errors';
 import { useTimeDispatch } from '@/lib/time/TimeContext';
 import {
+    createCourse,
     deleteCourse,
     getCourse,
     getCourses,
     updateCourse,
 } from '@/services/course-service';
-import { SavedCourse } from '@/types';
+import { Course, SavedCourse } from '@/types';
+
+import { useSession } from '../supabase/SessionContext';
 
 export function courseQueryOptions(
     session: Session | null,
@@ -78,32 +81,47 @@ export function useCourseListQuery(
     };
 }
 
-export function useCourseUpdateMutation(
-    session: Session | null,
-    course: SavedCourse | undefined
-) {
+export function useCourseCreateMutation() {
+    const queryClient = useQueryClient();
+    const { session } = useSession();
+    const {
+        isPending: courseCreatePending,
+        mutate: courseCreateMutate,
+        error,
+    } = useMutation({
+        mutationFn: (course: Course) => {
+            if (!course) {
+                return Promise.reject('Course not defined');
+            }
+            return createCourse(course, session);
+        },
+        onSuccess: () => {
+            // For some reason invalidating individual queries wasn't doing it?
+            queryClient.invalidateQueries();
+        },
+    });
+    if (error) {
+        processPossibleApiError(error);
+    }
+    return { courseCreatePending, courseCreateMutate };
+}
+
+export function useCourseUpdateMutation() {
+    const { session } = useSession();
     const queryClient = useQueryClient();
     const {
         isPending: courseUpdatePending,
         mutate: courseUpdateMutate,
         error,
     } = useMutation({
-        mutationFn: () => {
+        mutationFn: (course: SavedCourse | undefined) => {
             if (!course) {
                 return Promise.reject('Course not defined');
             }
             return updateCourse(course, session);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['semester', course?.api_v1_semester_id],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['course', course?.id],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['deliverables'],
-            });
+            queryClient.invalidateQueries();
         },
     });
     if (error) {
@@ -130,16 +148,8 @@ export function useCourseDeleteMutation(
             return deleteCourse(course.id, session);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['semester'],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['course'],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['deliverables'],
-            });
             timeDispatch({ type: 'CLEAR_DELIVERABLES' });
+            queryClient.invalidateQueries();
         },
     });
     if (error) {

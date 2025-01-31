@@ -17,7 +17,6 @@ interface NewDeliverableModalProps extends ModalProps {
 
 export default function NewDeliverableModal({
     api_v1_course_id,
-    isDismissable,
     ...props
 }: NewDeliverableModalProps) {
     return (

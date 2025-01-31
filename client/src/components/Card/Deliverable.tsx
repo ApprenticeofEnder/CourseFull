@@ -22,14 +22,7 @@ interface DeliverableCardProps extends CardProps {
 
 const DeliverableCard = forwardRef<HTMLDivElement, DeliverableCardProps>(
     (
-        {
-            deliverable,
-            className,
-            isLoading,
-            showCourse = false,
-            showDeadlineMessage = false,
-            ...props
-        },
+        { deliverable, className, isLoading, showCourse = false, ...props },
         ref
     ) => {
         const { session } = useSession();
@@ -52,7 +45,7 @@ const DeliverableCard = forwardRef<HTMLDivElement, DeliverableCardProps>(
                 <Card
                     ref={ref}
                     {...props}
-                    className={cn('w-full', bgColour, textColour)}
+                    className={cn(className, 'w-full', bgColour, textColour)}
                 >
                     <CardHeader className="flex flex-wrap justify-between">
                         <h3 className="text-lg font-bold">
@@ -80,5 +73,7 @@ const DeliverableCard = forwardRef<HTMLDivElement, DeliverableCardProps>(
         );
     }
 );
+
+DeliverableCard.displayName = 'DeliverableCard';
 
 export default DeliverableCard;

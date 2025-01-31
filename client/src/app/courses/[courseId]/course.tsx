@@ -1,12 +1,13 @@
 'use client';
 
 import { BreadcrumbItem, Breadcrumbs, Divider, Link } from '@heroui/react';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import DeliverableCard from '@/components/Card/Deliverable';
 import CourseDetail from '@/components/Detail/Course';
-import { courseUrl, semesterUrl } from '@/lib/helpers/routing';
+import { semesterUrl } from '@/lib/helpers/routing';
 import { useSkeletonItems } from '@/lib/hooks/data';
+import { useWindowDimensions } from '@/lib/hooks/ui';
 import { useCourseQuery } from '@/lib/query/course';
 import { useSemesterQuery } from '@/lib/query/semester';
 import { useSession } from '@/lib/supabase/SessionContext';
@@ -15,15 +16,21 @@ import { Endpoints } from '@/types';
 const CoursePage: FC<{ courseId: string }> = ({ courseId }) => {
     const { session } = useSession();
     const { course, loadingCourse } = useCourseQuery(session, courseId);
-    const { semester, loadingSemester } = useSemesterQuery(
-        course?.api_v1_semester_id,
-        !!course
-    );
+    const { semester } = useSemesterQuery(course?.api_v1_semester_id, !!course);
 
     const deliverablesToRender = useSkeletonItems(
         course?.deliverables,
         loadingCourse
     );
+
+    const { width } = useWindowDimensions();
+
+    const maxBreadcrumbItems = useMemo(() => {
+        if (!width || width < 640) {
+            return 1;
+        }
+        return 4;
+    }, [width]);
 
     return (
         <>
@@ -32,7 +39,7 @@ const CoursePage: FC<{ courseId: string }> = ({ courseId }) => {
                     size="lg"
                     itemsBeforeCollapse={0}
                     itemsAfterCollapse={1}
-                    maxItems={1}
+                    maxItems={maxBreadcrumbItems}
                 >
                     <BreadcrumbItem>
                         <Link
@@ -89,7 +96,7 @@ const CoursePage: FC<{ courseId: string }> = ({ courseId }) => {
                         </div>
                     )}
                 </div>
-                <div className="card-primary order-1 flex w-full flex-col justify-between gap-4 md:order-2 md:h-full md:flex-1 md:basis-1/2 lg:basis-2/3">
+                <div className="card-primary order-1 flex w-full flex-col justify-between gap-4 p-4 md:order-2 md:h-fit md:flex-1 md:basis-1/2 lg:basis-2/3">
                     <CourseDetail course={course} />
                 </div>
             </div>

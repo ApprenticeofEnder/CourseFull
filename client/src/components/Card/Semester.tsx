@@ -1,5 +1,5 @@
 import { CardFooter, CardHeader, CardProps, Skeleton, cn } from '@heroui/react';
-import { forwardRef, useMemo } from 'react';
+import { forwardRef } from 'react';
 
 import Card from '@/components/Card/Card';
 import StatusChip from '@/components/Chip/StatusChip';

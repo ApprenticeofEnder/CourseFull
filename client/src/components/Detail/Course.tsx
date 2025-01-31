@@ -1,12 +1,15 @@
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Divider, useDisclosure } from '@heroui/react';
+import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
 import Button from '@/components/Button/Button';
 import CourseProgressCard from '@/components/Card/CourseProgress';
 import StatusChip from '@/components/Chip/StatusChip';
+import EditCourseModal from '@/components/Modal/EditCourse';
 import NewDeliverableModal from '@/components/Modal/NewDeliverable';
 import { renderCourseGrade } from '@/lib/helpers';
+import { semesterUrlFromCourse } from '@/lib/helpers/routing';
 import { useCourseDeleteMutation } from '@/lib/query/course';
 import { useSession } from '@/lib/supabase/SessionContext';
 import { ItemStatus, SavedCourse } from '@/types';
@@ -16,6 +19,7 @@ interface CourseDetailProps {
 }
 
 export default function CourseDetail({ course }: CourseDetailProps) {
+    const router = useRouter();
     const { session } = useSession();
     const { courseDeleteMutate, courseDeletePending } = useCourseDeleteMutation(
         session,
@@ -26,7 +30,20 @@ export default function CourseDetail({ course }: CourseDetailProps) {
         return renderCourseGrade(course);
     }, [course]);
 
-    const newDeliverableModal = useDisclosure();
+    const {
+        onOpen: newDeliverableOpen,
+        isControlled: newDeliverableControlled,
+        getButtonProps: newDeliverableButtonProps,
+        getDisclosureProps: newDeliverableDisclosureProps,
+        ...newDeliverableModal
+    } = useDisclosure();
+    const {
+        onOpen: editCourseOpen,
+        isControlled: editCourseControlled,
+        getButtonProps: editCourseButtonProps,
+        getDisclosureProps: editCourseDisclosureProps,
+        ...editCourseModal
+    } = useDisclosure();
     return (
         <>
             <div className="flex items-start justify-between gap-4">
@@ -41,7 +58,7 @@ export default function CourseDetail({ course }: CourseDetailProps) {
                 <Button
                     className="flex-shrink-0"
                     endContent={<PlusIcon className="icon" />}
-                    onPress={newDeliverableModal.onOpen}
+                    onPress={newDeliverableOpen}
                     buttonType="confirm"
                 >
                     Add Deliverable
@@ -49,7 +66,7 @@ export default function CourseDetail({ course }: CourseDetailProps) {
                 <Divider></Divider>
                 <Button
                     endContent={<PencilIcon className="icon" />}
-                    onPress={() => {}}
+                    onPress={editCourseOpen}
                 >
                     Edit
                 </Button>
@@ -63,7 +80,11 @@ export default function CourseDetail({ course }: CourseDetailProps) {
                         ) {
                             return;
                         }
-                        courseDeleteMutate();
+                        courseDeleteMutate(undefined, {
+                            onSuccess() {
+                                router.push(semesterUrlFromCourse(course!));
+                            },
+                        });
                     }}
                     buttonType="danger"
                     isLoading={courseDeletePending}
@@ -75,6 +96,7 @@ export default function CourseDetail({ course }: CourseDetailProps) {
                 api_v1_course_id={course?.id || ''}
                 {...newDeliverableModal}
             />
+            {course && <EditCourseModal course={course} {...editCourseModal} />}
         </>
     );
 }

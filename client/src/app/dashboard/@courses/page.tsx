@@ -1,6 +1,7 @@
 'use client';
 
 import { CardFooter, CardHeader } from '@heroui/react';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
 import { Fragment, useMemo } from 'react';
 
@@ -9,11 +10,13 @@ import CourseCard from '@/components/Card/Course';
 import StatusChip from '@/components/Chip/StatusChip';
 import { courseUrl } from '@/lib/helpers/routing';
 import { useSemesterListQuery } from '@/lib/query/semester';
-import { useSession } from '@/lib/supabase/SessionContext';
 import { ItemStatus, SavedSemester } from '@/types';
 
-function renderSemester(semester: SavedSemester | null, index: number) {
-    const router = useRouter();
+function renderSemester(
+    semester: SavedSemester | null,
+    index: number,
+    router: AppRouterInstance
+) {
     const courses = semester?.courses || (Array(3).fill(null) as null[]);
     return (
         <Fragment key={`semesters-${index}-container`}>
@@ -58,6 +61,7 @@ function renderSemester(semester: SavedSemester | null, index: number) {
 }
 
 export default function Page() {
+    const router = useRouter();
     const { semesters, loadingSemesters } = useSemesterListQuery();
     const semestersToRender = useMemo(() => {
         if (loadingSemesters) {
@@ -67,7 +71,9 @@ export default function Page() {
     }, [semesters, loadingSemesters]);
     return (
         <div className="grid grid-cols-[1fr_2fr] gap-4">
-            {semestersToRender.map(renderSemester)}
+            {semestersToRender.map((semester, index) => {
+                return renderSemester(semester, index, router);
+            })}
         </div>
     );
 }

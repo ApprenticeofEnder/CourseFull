@@ -11,7 +11,7 @@ module Api
       belongs_to :user, foreign_key: 'api_v1_user_id'
 
       # Scopes
-      default_scope { order(deadline: :asc) }
+      default_scope { order(status: :asc, deadline: :asc) }
       scope :active, -> { where(status: :active) }
       scope :complete, -> { where(status: :complete) }
 

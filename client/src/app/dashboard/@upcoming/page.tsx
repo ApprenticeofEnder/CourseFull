@@ -6,7 +6,7 @@ import { useUpcomingDeliverablesQuery } from '@/lib/query/deliverable';
 import { useSession } from '@/lib/supabase/SessionContext';
 
 export default function Page() {
-    const { session, user } = useSession();
+    const { session } = useSession();
     const { upcomingDeliverables, loadingDeliverables } =
         useUpcomingDeliverablesQuery(session);
     const deliverablesToRender = useSkeletonItems(

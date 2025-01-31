@@ -1,12 +1,13 @@
 'use client';
 
-import { Form, Input } from '@heroui/react';
+import { Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { login } from '@/app/auth/actions';
 import Button from '@/components/Button/Button';
+import { Input } from '@/components/Form/Input/Input';
 import { LoginSchema, loginSchema } from '@/lib/validation';
 
 export default function EmailLoginForm() {
@@ -34,50 +35,12 @@ export default function EmailLoginForm() {
         <div className="flex flex-col gap-4">
             <h2>Log In to CourseFull</h2>
             <Form onSubmit={handleSubmit(onSubmit)} className="gap-4">
-                <Controller
-                    control={control}
-                    name="email"
-                    render={({
-                        field: { name, value, onChange, onBlur, ref },
-                        fieldState: { error, invalid },
-                    }) => (
-                        <Input
-                            ref={ref}
-                            isRequired
-                            errorMessage={error?.message}
-                            // Let React Hook Form handle validation instead of the browser.
-                            validationBehavior="aria"
-                            isInvalid={invalid}
-                            label="Email"
-                            name={name}
-                            value={value}
-                            onBlur={onBlur}
-                            onChange={onChange}
-                        />
-                    )}
-                />
-                <Controller
+                <Input control={control} name="email" label="Email" />
+                <Input
                     control={control}
                     name="password"
-                    render={({
-                        field: { name, value, onChange, onBlur, ref },
-                        fieldState: { error, invalid },
-                    }) => (
-                        <Input
-                            ref={ref}
-                            isRequired
-                            errorMessage={error?.message}
-                            type="password"
-                            // Let React Hook Form handle validation instead of the browser.
-                            validationBehavior="aria"
-                            isInvalid={invalid}
-                            label="Password"
-                            name={name}
-                            value={value}
-                            onBlur={onBlur}
-                            onChange={onChange}
-                        />
-                    )}
+                    label="Password"
+                    type="password"
                 />
                 <Button
                     className="w-full"

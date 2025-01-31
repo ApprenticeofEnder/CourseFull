@@ -1,5 +1,4 @@
 import { ModalProps as BaseModalProps } from '@heroui/react';
-import { Session } from '@supabase/supabase-js';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { ZodError } from 'zod';
 
@@ -11,11 +10,7 @@ export interface ChildrenProps {
     children: ReactNode;
 }
 
-export interface ModalProps
-    extends Omit<
-        BaseModalProps,
-        'children' | 'onOpen' | 'isControlled' | 'getButtonProps'
-    > {}
+export type ModalProps = Omit<BaseModalProps, 'children'>;
 
 export interface LoadingProps {
     message?: string;

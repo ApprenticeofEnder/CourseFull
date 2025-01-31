@@ -21,31 +21,27 @@ import {
 } from '@/types';
 
 export function useWindowDimensions() {
-    const hasWindow = typeof window !== 'undefined';
-
     const getWindowDimensions = useCallback(() => {
-        const width = hasWindow ? window.innerWidth : null;
-        const height = hasWindow ? window.innerHeight : null;
         return {
-            width,
-            height,
+            width: window.innerWidth,
+            height: window.innerHeight,
         };
-    }, [hasWindow]);
+    }, []);
 
-    const [windowDimensions, setWindowDimensions] = useState(
-        getWindowDimensions()
-    );
+    const [windowDimensions, setWindowDimensions] = useState<{
+        width: number | null;
+        height: number | null;
+    }>({ width: null, height: null });
 
     useEffect(() => {
-        if (hasWindow) {
-            function handleResize() {
-                setWindowDimensions(getWindowDimensions());
-            }
-
-            window.addEventListener('resize', handleResize);
-            return () => window.removeEventListener('resize', handleResize);
+        setWindowDimensions(getWindowDimensions());
+        function handleResize() {
+            setWindowDimensions(getWindowDimensions());
         }
-    }, [hasWindow, getWindowDimensions]);
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [getWindowDimensions]);
 
     return windowDimensions;
 }
