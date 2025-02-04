@@ -7,7 +7,6 @@ import Button from '@/components/Button/Button';
 import StatusChip from '@/components/Chip/StatusChip';
 import { renderSemesterAverage } from '@/lib/helpers';
 import { useSemesterDeleteMutation } from '@/lib/query/semester';
-import { useSession } from '@/lib/supabase/SessionContext';
 import { Endpoints, ItemStatus, SavedSemester } from '@/types';
 
 import SemesterProgressCard from '../Card/SemesterProgress';
@@ -19,21 +18,14 @@ interface SemesterDetailProps {
 
 export default function SemesterDetail({ semester }: SemesterDetailProps) {
     const router = useRouter();
-    const { session } = useSession();
     const { semesterDeleteMutate, semesterDeletePending } =
-        useSemesterDeleteMutation(session, semester);
+        useSemesterDeleteMutation();
 
     const semesterAverage = useMemo(() => {
         return renderSemesterAverage(semester);
     }, [semester]);
 
-    const {
-        onOpen: newCourseOpen,
-        isControlled: isNewCourseControlled,
-        getButtonProps: getNewCourseButtonProps,
-        getDisclosureProps: getNewCourseDisclosureProps,
-        ...newCourseModal
-    } = useDisclosure();
+    const newCourseModal = useDisclosure();
 
     return (
         <>
@@ -54,7 +46,7 @@ export default function SemesterDetail({ semester }: SemesterDetailProps) {
                 <Button
                     className="flex-shrink-0"
                     endContent={<PlusIcon className="icon" />}
-                    onPress={newCourseOpen}
+                    onPress={newCourseModal.onOpen}
                     buttonType="confirm"
                 >
                     Add Course
@@ -76,7 +68,7 @@ export default function SemesterDetail({ semester }: SemesterDetailProps) {
                         ) {
                             return;
                         }
-                        semesterDeleteMutate(undefined, {
+                        semesterDeleteMutate(semester, {
                             onSuccess() {
                                 router.push(Endpoints.Page.DASHBOARD);
                             },
@@ -90,7 +82,9 @@ export default function SemesterDetail({ semester }: SemesterDetailProps) {
             </div>
             <NewCourseModal
                 api_v1_semester_id={semester?.id || ''}
-                {...newCourseModal}
+                isOpen={newCourseModal.isOpen}
+                onClose={newCourseModal.onClose}
+                onOpenChange={newCourseModal.onOpenChange}
             />
         </>
     );

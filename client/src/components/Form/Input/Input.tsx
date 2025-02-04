@@ -12,9 +12,11 @@ interface InputProps<T extends FieldValues>
     label?: ReactNode;
     type?: 'text' | 'email' | 'url' | 'password' | 'tel' | 'search' | 'file';
     className?: string;
+    placeholder?: string;
+    description?: string;
 }
 
-export function Input<T extends FieldValues>({
+export default function Input<T extends FieldValues>({
     className,
     ...props
 }: InputProps<T>): ReactElement {
@@ -25,6 +27,10 @@ export function Input<T extends FieldValues>({
     return (
         <BaseInput
             className={className}
+            classNames={{
+                input: 'placeholder:text-grey-300',
+                description: 'text-foreground',
+            }}
             defaultValue={props.defaultValue}
             {...props}
             errorMessage={error?.message}

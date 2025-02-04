@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    Modal,
     ModalBody,
     ModalContent,
     ModalFooter,
@@ -12,11 +11,12 @@ import { useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import Button from '@/components/Button/Button';
+import CourseForm from '@/components/Form/CourseForm';
 import { useCourseCreateMutation } from '@/lib/query/course';
 import { CourseSchema, courseSchema } from '@/lib/validation';
-import { ItemStatus, ModalProps } from '@/types';
+import { ItemStatus } from '@/types';
 
-import CourseForm from '../Form/CourseForm';
+import Modal, { ModalProps } from './Modal';
 
 interface NewCourseModalProps extends ModalProps {
     api_v1_semester_id: string;
@@ -32,7 +32,7 @@ export default function NewCourseModal({
     api_v1_semester_id,
     ...props
 }: NewCourseModalProps) {
-    const methods = useForm<CourseSchema>({
+    const formMethods = useForm<CourseSchema>({
         resolver: zodResolver(courseSchema),
         defaultValues: DEFAULT_COURSE,
         mode: 'onChange',
@@ -40,16 +40,31 @@ export default function NewCourseModal({
     const {
         handleSubmit,
         formState: { isValid },
-    } = methods;
+    } = formMethods;
 
     const { courseCreateMutate, courseCreatePending } =
         useCourseCreateMutation();
 
+    const submitForm = useCallback(
+        async (onClose: () => void) => {
+            const submit = handleSubmit((courseData) => {
+                courseCreateMutate(
+                    { api_v1_semester_id, ...courseData },
+                    {
+                        onSuccess: onClose,
+                    }
+                );
+            });
+            await submit();
+        },
+        [handleSubmit, courseCreateMutate]
+    );
+
     return (
-        <Modal {...props} isDismissable={false}>
+        <Modal className="bg-background-900" {...props} isDismissable={false}>
             <ModalContent>
                 {(onClose) => (
-                    <FormProvider {...methods}>
+                    <FormProvider {...formMethods}>
                         <ModalHeader>
                             <h3 className="text-left">Create New Course</h3>
                         </ModalHeader>
@@ -60,15 +75,7 @@ export default function NewCourseModal({
                             <Button onPress={onClose}>Cancel</Button>
                             <Button
                                 onPress={async () => {
-                                    await handleSubmit((courseData) => {
-                                        courseCreateMutate(
-                                            {
-                                                api_v1_semester_id,
-                                                ...courseData,
-                                            },
-                                            { onSuccess: onClose }
-                                        );
-                                    })();
+                                    await submitForm(onClose);
                                 }}
                                 buttonType="confirm"
                                 isLoading={courseCreatePending}

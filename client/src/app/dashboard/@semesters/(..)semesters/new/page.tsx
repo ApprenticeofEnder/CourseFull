@@ -14,12 +14,12 @@ export default function Page() {
             router.push(Endpoints.Page.DASHBOARD);
         },
     });
-    const {
-        onOpen,
-        isControlled,
-        getButtonProps,
-        getDisclosureProps,
-        ...modalProps
-    } = newSemesterModal;
-    return <NewSemesterModal {...modalProps} />;
+
+    return (
+        <NewSemesterModal
+            isOpen={newSemesterModal.isOpen}
+            onClose={newSemesterModal.onClose}
+            onOpenChange={newSemesterModal.onOpenChange}
+        />
+    );
 }

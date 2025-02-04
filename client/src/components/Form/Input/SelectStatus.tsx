@@ -23,7 +23,7 @@ interface SelectStatusProps<T extends FieldValues>
     items: ItemStatus[];
 }
 
-export function SelectStatus<T extends FieldValues>({
+export default function SelectStatus<T extends FieldValues>({
     className,
     items,
     ...props

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    Modal,
     ModalBody,
     ModalContent,
     ModalFooter,
@@ -9,7 +8,8 @@ import {
 } from '@heroui/react';
 
 import Button from '@/components/Button/Button';
-import { ModalProps } from '@/types';
+
+import Modal, { type ModalProps } from './Modal';
 
 interface NewDeliverableModalProps extends ModalProps {
     api_v1_course_id: string;

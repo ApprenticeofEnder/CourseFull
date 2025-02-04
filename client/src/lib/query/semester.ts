@@ -12,11 +12,12 @@ import { courseQueryOptions } from '@/lib/query/course';
 import { useSession } from '@/lib/supabase/SessionContext';
 import { useTimeDispatch } from '@/lib/time/TimeContext';
 import {
+    createSemester,
     deleteSemester,
     getSemester,
     getSemesters,
 } from '@/services/semester-service';
-import { SavedSemester } from '@/types';
+import { SavedSemester, Semester } from '@/types';
 
 export function semesterListQueryOptions(
     session: Session | null,
@@ -97,18 +98,40 @@ export function useCoursesInSemesterQuery(
     return courseQueries;
 }
 
-export function useSemesterDeleteMutation(
-    session: Session | null,
-    semester: SavedSemester | undefined
-) {
+export function useSemesterCreateMutation() {
     const queryClient = useQueryClient();
+    const { session } = useSession();
+    const {
+        isPending: semesterCreatePending,
+        mutate: semesterCreateMutate,
+        error,
+    } = useMutation({
+        mutationFn: (semester: Semester) => {
+            return createSemester(semester, session);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries();
+        },
+    });
+    if (error) {
+        processPossibleApiError(error);
+    }
+    return {
+        semesterCreateMutate,
+        semesterCreatePending,
+    };
+}
+
+export function useSemesterDeleteMutation() {
+    const queryClient = useQueryClient();
+    const { session } = useSession();
     const timeDispatch = useTimeDispatch();
     const {
         isPending: semesterDeletePending,
         mutate: semesterDeleteMutate,
         error,
     } = useMutation({
-        mutationFn: () => {
+        mutationFn: (semester: SavedSemester | undefined) => {
             if (!semester) {
                 return Promise.reject('Semester not defined');
             }

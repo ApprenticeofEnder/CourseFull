@@ -1,22 +1,31 @@
 import { Form } from '@heroui/react';
 import { useFormContext } from 'react-hook-form';
 
-// import { createStatusObjects } from '@/lib/helpers';
 import { CourseSchema } from '@/lib/validation';
 import { ItemStatus } from '@/types';
 
-// import { ItemStatus } from '@/types';
-
-import { Input } from './Input/Input';
-import { SelectStatus } from './Input/SelectStatus';
+import { Input, SelectStatus } from './Input';
 
 export default function CourseForm() {
     const { control } = useFormContext<CourseSchema>();
 
     return (
         <Form>
-            <Input control={control} name="course_code" label="Course Code" />
-            <Input control={control} name="title" label="Title" isRequired />
+            <Input
+                control={control}
+                name="course_code"
+                label="Course Code"
+                isRequired
+                placeholder="PSYC 1001"
+            />
+            <Input
+                control={control}
+                name="title"
+                label="Title"
+                isRequired
+                placeholder="Introduction to Psychology"
+                description="In case you need the full title."
+            />
             <SelectStatus
                 control={control}
                 name="status"

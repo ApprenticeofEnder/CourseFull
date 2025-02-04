@@ -16,7 +16,7 @@ interface InputProps<T extends FieldValues>
     className?: string;
 }
 
-export function Input<T extends FieldValues>({
+export default function Input<T extends FieldValues>({
     className,
     ...props
 }: InputProps<T>): ReactElement {

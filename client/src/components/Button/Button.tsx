@@ -8,19 +8,12 @@ import {
 import { forwardRef } from 'react';
 
 export interface ButtonProps extends BaseButtonProps {
-    buttonSize?: 'sm' | 'md' | 'lg';
     buttonType?: 'default' | 'danger' | 'confirm' | 'warning';
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     (
-        {
-            children,
-            buttonSize = 'md',
-            className,
-            buttonType = 'default',
-            ...props
-        },
+        { children, size = 'md', className, buttonType = 'default', ...props },
         ref
     ) => {
         const sizes = {
@@ -44,7 +37,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     types[buttonType],
                     'text-text-200 focus:bg-warning-100',
                     className || '',
-                    sizes[buttonSize]
+                    sizes[size]
                 )}
                 disableRipple
                 {...props}

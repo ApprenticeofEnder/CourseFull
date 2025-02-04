@@ -90,9 +90,7 @@ export function useCourseCreateMutation() {
         error,
     } = useMutation({
         mutationFn: (course: Course) => {
-            if (!course) {
-                return Promise.reject('Course not defined');
-            }
+            console.log(session);
             return createCourse(course, session);
         },
         onSuccess: () => {

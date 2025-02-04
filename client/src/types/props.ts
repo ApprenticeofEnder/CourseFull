@@ -10,8 +10,6 @@ export interface ChildrenProps {
     children: ReactNode;
 }
 
-export type ModalProps = Omit<BaseModalProps, 'children'>;
-
 export interface LoadingProps {
     message?: string;
 }

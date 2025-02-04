@@ -30,20 +30,8 @@ export default function CourseDetail({ course }: CourseDetailProps) {
         return renderCourseGrade(course);
     }, [course]);
 
-    const {
-        onOpen: newDeliverableOpen,
-        isControlled: newDeliverableControlled,
-        getButtonProps: newDeliverableButtonProps,
-        getDisclosureProps: newDeliverableDisclosureProps,
-        ...newDeliverableModal
-    } = useDisclosure();
-    const {
-        onOpen: editCourseOpen,
-        isControlled: editCourseControlled,
-        getButtonProps: editCourseButtonProps,
-        getDisclosureProps: editCourseDisclosureProps,
-        ...editCourseModal
-    } = useDisclosure();
+    const newDeliverableModal = useDisclosure();
+    const editCourseModal = useDisclosure();
     return (
         <>
             <div className="flex items-start justify-between gap-4">
@@ -58,7 +46,7 @@ export default function CourseDetail({ course }: CourseDetailProps) {
                 <Button
                     className="flex-shrink-0"
                     endContent={<PlusIcon className="icon" />}
-                    onPress={newDeliverableOpen}
+                    onPress={newDeliverableModal.onOpen}
                     buttonType="confirm"
                 >
                     Add Deliverable
@@ -66,7 +54,7 @@ export default function CourseDetail({ course }: CourseDetailProps) {
                 <Divider></Divider>
                 <Button
                     endContent={<PencilIcon className="icon" />}
-                    onPress={editCourseOpen}
+                    onPress={editCourseModal.onOpen}
                 >
                     Edit
                 </Button>
@@ -94,9 +82,18 @@ export default function CourseDetail({ course }: CourseDetailProps) {
             </div>
             <NewDeliverableModal
                 api_v1_course_id={course?.id || ''}
-                {...newDeliverableModal}
+                isOpen={newDeliverableModal.isOpen}
+                onClose={newDeliverableModal.onClose}
+                onOpenChange={newDeliverableModal.onOpenChange}
             />
-            {course && <EditCourseModal course={course} {...editCourseModal} />}
+            {course && (
+                <EditCourseModal
+                    course={course}
+                    isOpen={editCourseModal.isOpen}
+                    onOpenChange={editCourseModal.onOpenChange}
+                    onClose={editCourseModal.onClose}
+                />
+            )}
         </>
     );
 }
