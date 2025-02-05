@@ -13,8 +13,6 @@ import { Key } from 'react';
 import Button from '@/components/Button/Button';
 import { Endpoints } from '@/types';
 
-// import { Endpoints } from '@/types';
-
 interface AccountDropdownProps {
     name: string;
 }
@@ -40,12 +38,12 @@ export default function AccountDropdown({ name }: AccountDropdownProps) {
         {
             key: 'cart',
             label: 'Cart',
-            icon: <ShoppingCartIcon className="icon"></ShoppingCartIcon>,
+            icon: <ShoppingCartIcon className="icon" />,
         },
         {
             key: 'account',
             label: 'My Account',
-            icon: <GearIcon className="icon"></GearIcon>,
+            icon: <GearIcon className="icon" />,
         },
     ];
 

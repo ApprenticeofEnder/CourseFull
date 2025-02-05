@@ -39,7 +39,6 @@ export default function SelectStatus<T extends FieldValues>({
         if (!e.target.value) {
             return;
         }
-        console.log(e.target.value);
         field.onChange(e.target.value as ItemStatus);
         setValue(e.target.value as ItemStatus);
     }
@@ -78,16 +77,5 @@ export default function SelectStatus<T extends FieldValues>({
                 </SelectItem>
             )}
         </BaseSelect>
-        // <BaseInput
-        //     className={className}
-        //     defaultValue={props.defaultValue}
-        //     {...props}
-        //     errorMessage={error?.message}
-        //     validationBehavior="aria"
-        //     isInvalid={invalid}
-        //     isDisabled={disabled}
-        //     {...field}
-        //     {...fieldState}
-        // />
     );
 }

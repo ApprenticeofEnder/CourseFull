@@ -7,7 +7,7 @@ import { Controller, useForm } from 'react-hook-form';
 
 import { login } from '@/app/auth/actions';
 import Button from '@/components/Button/Button';
-import { Input } from '@/components/Form/Input/Input';
+import { Input } from '@/components/Form/Input';
 import { LoginSchema, loginSchema } from '@/lib/validation';
 
 export default function EmailLoginForm() {

@@ -61,7 +61,7 @@ export default function NewCourseModal({
     );
 
     return (
-        <Modal className="bg-background-900" {...props} isDismissable={false}>
+        <Modal {...props} isDismissable={false}>
             <ModalContent>
                 {(onClose) => (
                     <FormProvider {...formMethods}>
